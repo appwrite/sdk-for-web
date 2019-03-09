@@ -1,0 +1,14 @@
+{
+  "name": "appwrite",
+  "homepage": "https://appwrite.io/support",
+  "description": "Official Appwrite SDK. For full API documentation and tutorials go to [https://appwrite.io/docs](https://appwrite.io/docs)",
+  "version": "v1.0.0",
+  "license": "MIT",
+  "main": "src/sdk.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appwrite/sdk-for-js.git"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}

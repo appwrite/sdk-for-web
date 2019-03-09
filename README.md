@@ -12,19 +12,6 @@ To install via [NPM](https://www.npmjs.com/):
 npm install appwrite --save
 ```
 
-## Getting Started
-
-To get started with using the SDK you need to setup a client with your API credentials.
-
-```php
-use Appwrite\Client;
-use Appwrite\Api;
-
-$client = new Client();
-$api    = new Api($client)
-
-```
-
 ## License
 
 Please see the [MIT license]() file for more information.

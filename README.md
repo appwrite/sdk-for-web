@@ -1,8 +1,10 @@
-# Appwrite SDK for Javascript
+[Appwrite SDK for Javascript](https://...) &nbsp; [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Appwrite is a backend as a service for building web or mobile apps&url=http://APP_DOMAIN&via=APP_SOCIAL_TWITTER_HANDLE&hashtags=JS,javascript,reactjs,angular,ios,android)
 
-Official Appwrite SDK. For full API documentation and tutorials go to [https://appwrite.io/docs](https://appwrite.io/docs)
+Appwrite backend as a service cuts up to 70% of the time and costs required for building a modern application. We abstract and simplify common development tasks behind a REST APIs, to help you develop your app in a fast and secure way. For full API documentation and tutorials go to [https://appwrite.io/docs](https://appwrite.io/docs)
 
-**API Version: v0.0.0dev**
+![Appwrite](https://appwrite.io/v1/images/guthub.png)
+
+**API Version: v1.15.30**
 
 ## Installation
 

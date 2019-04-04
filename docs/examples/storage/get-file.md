@@ -5,7 +5,7 @@ sdk
     setKey('')
 ;
 
-let promise = sdk.storage.getFile('[ID]');
+let promise = sdk.storage.getFile('[FILE_ID]');
 
 promise.then(function (response) {
     console.log(response);

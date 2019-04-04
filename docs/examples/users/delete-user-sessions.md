@@ -5,7 +5,7 @@ sdk
     setKey('')
 ;
 
-let promise = sdk.users.deleteUserSessions('[ID]');
+let promise = sdk.users.deleteUserSessions('[USER_ID]');
 
 promise.then(function (response) {
     console.log(response);

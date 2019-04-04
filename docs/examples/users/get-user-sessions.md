@@ -5,7 +5,7 @@ sdk
     setKey('')
 ;
 
-let promise = sdk.users.getUserSessions('[ID]');
+let promise = sdk.users.getUserSessions('[USER_ID]');
 
 promise.then(function (response) {
     console.log(response);

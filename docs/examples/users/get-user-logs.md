@@ -5,7 +5,7 @@ sdk
     setKey('')
 ;
 
-let promise = sdk.users.getUserLogs('[ID]');
+let promise = sdk.users.getUserLogs('[USER_ID]');
 
 promise.then(function (response) {
     console.log(response);

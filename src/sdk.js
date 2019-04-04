@@ -283,7 +283,7 @@
             /**
              * Get Account
              *
-			 * Get currently logged in user data as JSON object.
+		 * Get currently logged in user data as JSON object.
              *
              * @throws {Error}
              * @return {Array}
@@ -300,7 +300,7 @@
             /**
              * Delete Account
              *
-			 * Delete currently logged in user account.
+		 * Delete currently logged in user account.
              *
              * @throws {Error}
              * @return {Array}
@@ -317,7 +317,7 @@
             /**
              * Update Account Email
              *
-			 * Update currently logged in user account email address. After changing user address, user confirmation status is being reset and a new confirmation mail is sent. For security measures, user password is required to complete this request.
+		 * Update currently logged in user account email address. After changing user address, user confirmation status is being reset and a new confirmation mail is sent. For security measures, user password is required to complete this request.
              *
              * @param {string} email
              * @param {string} password
@@ -346,7 +346,7 @@
             /**
              * Update Account Name
              *
-			 * Update currently logged in user account name.
+		 * Update currently logged in user account name.
              *
              * @param {string} name
              * @throws {Error}
@@ -369,7 +369,7 @@
             /**
              * Update Account Password
              *
-			 * Update currently logged in user password. For validation, user is required to pass the password twice.
+		 * Update currently logged in user password. For validation, user is required to pass the password twice.
              *
              * @param {string} password
              * @param {string} oldPassword
@@ -398,7 +398,7 @@
             /**
              * Get Account Preferences
              *
-			 * Get currently logged in user preferences key-value object.
+		 * Get currently logged in user preferences key-value object.
              *
              * @throws {Error}
              * @return {Array}
@@ -415,7 +415,7 @@
             /**
              * Update Account Prefs
              *
-			 * Update currently logged in user account preferences. You can pass only the specific settings you wish to update.
+		 * Update currently logged in user account preferences. You can pass only the specific settings you wish to update.
              *
              * @param {string} prefs
              * @throws {Error}
@@ -438,7 +438,7 @@
             /**
              * Get Account Security Log
              *
-			 * Get currently logged in user list of latest security activity logs. Each log returns user IP address, location and date and time of log.
+		 * Get currently logged in user list of latest security activity logs. Each log returns user IP address, location and date and time of log.
              *
              * @throws {Error}
              * @return {Array}
@@ -455,7 +455,7 @@
             /**
              * Get Account Active Sessions
              *
-			 * Get currently logged in user list of active sessions across different devices.
+		 * Get currently logged in user list of active sessions across different devices.
              *
              * @throws {Error}
              * @return {Array}
@@ -475,11 +475,11 @@
             /**
              * Login User
              *
-			 * Allow the user to login into his account by providing a valid email and password combination. Use the success and failure arguments to provide a redirect URL\'s back to your app when login is completed. 
-			 * 
-			 * Please notice that in order to avoid a [Redirect Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md) the only valid redirect URL's are the once from domains you have set when added your platforms in the console interface.
-			 * 
-			 * When not using the success or failure redirect arguments this endpoint will result with a 200 status code and the user account object on success and with 401 status error on failure. This behavior was applied to help the web clients deal with browsers who don't allow to set 3rd party HTTP cookies needed for saving the account session token.
+		 * Allow the user to login into his account by providing a valid email and password combination. Use the success and failure arguments to provide a redirect URL\'s back to your app when login is completed. 
+		 * 
+		 * Please notice that in order to avoid a [Redirect Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md) the only valid redirect URL's are the once from domains you have set when added your platforms in the console interface.
+		 * 
+		 * When not using the success or failure redirect arguments this endpoint will result with a 200 status code and the user account object on success and with 401 status error on failure. This behavior was applied to help the web clients deal with browsers who don't allow to set 3rd party HTTP cookies needed for saving the account session token.
              *
              * @param {string} email
              * @param {string} password
@@ -512,7 +512,7 @@
             /**
              * Logout Current Session
              *
-			 * Use this endpoint to log out the currently logged in user from his account. When succeed this endpoint will delete the user session and remove the session secret cookie.
+		 * Use this endpoint to log out the currently logged in user from his account. When succeed this endpoint will delete the user session and remove the session secret cookie.
              *
              * @throws {Error}
              * @return {Array}
@@ -529,18 +529,18 @@
             /**
              * Logout Specific Session
              *
-			 * Use this endpoint to log out the currently logged in user from all his account sessions across all his different devices. When using the option id argument, only the session unique ID provider will be deleted.
+		 * Use this endpoint to log out the currently logged in user from all his account sessions across all his different devices. When using the option id argument, only the session unique ID provider will be deleted.
              *
-             * @param {string} id
+             * @param {string} userId
              * @throws {Error}
              * @return {Array}
              */
-            logoutBySession: function(id) {
-                if(id === undefined) {
-                    throw new Error('Missing required parameter: "id"');
+            logoutBySession: function(userId) {
+                if(userId === undefined) {
+                    throw new Error('Missing required parameter: "userId"');
                 }
                 
-                let path = '/auth/logout/{id}'.replace(new RegExp('{id}', 'g'), id);
+                let path = '/auth/logout/{userId}'.replace(new RegExp('{userId}', 'g'), userId);
 
                 return http
                     .delete(path, {'Content-type': 'application/json'},
@@ -551,7 +551,7 @@
             /**
              * Password Recovery
              *
-			 * Sends the user an email with a temporary secret token for password reset. When the user clicks the confirmation link he is redirected back to your app password reset redirect URL with a secret token and email address values attached to the URL query string. Use the query string params to submit a request to the /auth/password/reset endpoint to complete the process.
+		 * Sends the user an email with a temporary secret token for password reset. When the user clicks the confirmation link he is redirected back to your app password reset redirect URL with a secret token and email address values attached to the URL query string. Use the query string params to submit a request to the /auth/password/reset endpoint to complete the process.
              *
              * @param {string} email
              * @param {string} redirect
@@ -580,9 +580,9 @@
             /**
              * Password Reset
              *
-			 * Use this endpoint to complete the user account password reset. Both the **userId** and **token** arguments will be passed as query parameters to the redirect URL you have provided when sending your request to the /auth/recovery endpoint.
-			 * 
-			 * Please notice that in order to avoid a [Redirect Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md) the only valid redirect URL's are the once from domains you have set when added your platforms in the console interface.
+		 * Use this endpoint to complete the user account password reset. Both the **userId** and **token** arguments will be passed as query parameters to the redirect URL you have provided when sending your request to the /auth/recovery endpoint.
+		 * 
+		 * Please notice that in order to avoid a [Redirect Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md) the only valid redirect URL's are the once from domains you have set when added your platforms in the console interface.
              *
              * @param {string} userId
              * @param {string} token
@@ -623,13 +623,13 @@
             /**
              * Register User
              *
-			 * Use this endpoint to allow a new user to register an account in your project. Use the success and failure URL's to redirect users back to your application after signup completes.
-			 * 
-			 * If registration completes successfully user will be sent with a confirmation email in order to confirm he is the owner of the account email address. Use the redirect parameter to redirect the user from the confirmation email back to your app. When the user is redirected, use the /auth/confirm endpoint to complete the account confirmation.
-			 * 
-			 * Please notice that in order to avoid a [Redirect Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md) the only valid redirect URL's are the once from domains you have set when added your platforms in the console interface.
-			 * 
-			 * When not using the success or failure redirect arguments this endpoint will result with a 200 status code and the user account object on success and with 401 status error on failure. This behavior was applied to help the web clients deal with browsers who don't allow to set 3rd party HTTP cookies needed for saving the account session token.
+		 * Use this endpoint to allow a new user to register an account in your project. Use the success and failure URL's to redirect users back to your application after signup completes.
+		 * 
+		 * If registration completes successfully user will be sent with a confirmation email in order to confirm he is the owner of the account email address. Use the redirect parameter to redirect the user from the confirmation email back to your app. When the user is redirected, use the /auth/confirm endpoint to complete the account confirmation.
+		 * 
+		 * Please notice that in order to avoid a [Redirect Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md) the only valid redirect URL's are the once from domains you have set when added your platforms in the console interface.
+		 * 
+		 * When not using the success or failure redirect arguments this endpoint will result with a 200 status code and the user account object on success and with 401 status error on failure. This behavior was applied to help the web clients deal with browsers who don't allow to set 3rd party HTTP cookies needed for saving the account session token.
              *
              * @param {string} email
              * @param {string} password
@@ -670,7 +670,7 @@
             /**
              * Confirm User
              *
-			 * Use this endpoint to complete the confirmation of the user account email address. Both the **userId** and **token** arguments will be passed as query parameters to the redirect URL you have provided when sending your request to the /auth/register endpoint.
+		 * Use this endpoint to complete the confirmation of the user account email address. Both the **userId** and **token** arguments will be passed as query parameters to the redirect URL you have provided when sending your request to the /auth/register endpoint.
              *
              * @param {string} userId
              * @param {string} token
@@ -699,9 +699,9 @@
             /**
              * Resend Confirmation
              *
-			 * This endpoint allows the user to request your app to resend him his email confirmation message. The redirect arguments acts the same way as in /auth/register endpoint.
-			 * 
-			 * Please notice that in order to avoid a [Redirect Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md) the only valid redirect URL's are the once from domains you have set when added your platforms in the console interface.
+		 * This endpoint allows the user to request your app to resend him his email confirmation message. The redirect arguments acts the same way as in /auth/register endpoint.
+		 * 
+		 * Please notice that in order to avoid a [Redirect Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md) the only valid redirect URL's are the once from domains you have set when added your platforms in the console interface.
              *
              * @param {string} redirect
              * @throws {Error}
@@ -786,7 +786,7 @@
             /**
              * Get Browser Icon
              *
-			 * You can use this endpoint to show different browser icons to your users, The code argument receives the browser code as appear in your user /account/sessions endpoint. Use width, height and quality arguments to change the output settings.
+		 * You can use this endpoint to show different browser icons to your users, The code argument receives the browser code as appear in your user /account/sessions endpoint. Use width, height and quality arguments to change the output settings.
              *
              * @param {string} code
              * @param {number} width
@@ -814,7 +814,7 @@
             /**
              * Get Credit Card Icon
              *
-			 * Need to display your users with your billing method or there payment methods? The credit card endpoint will return you the icon of the credit card provider you need. Use width, height and quality arguments to change the output settings.
+		 * Need to display your users with your billing method or there payment methods? The credit card endpoint will return you the icon of the credit card provider you need. Use width, height and quality arguments to change the output settings.
              *
              * @param {string} code
              * @param {number} width
@@ -842,7 +842,7 @@
             /**
              * Get Favicon
              *
-			 * Use this endpoint to fetch the favorite icon (AKA favicon) of a  any remote website URL.
+		 * Use this endpoint to fetch the favorite icon (AKA favicon) of a  any remote website URL.
              *
              * @param {string} url
              * @throws {Error}
@@ -865,7 +865,7 @@
             /**
              * Get Country Flag
              *
-			 * You can use this endpoint to show different country flags icons to your users, The code argument receives the a 2 letter country code. Use width, height and quality arguments to change the output settings.
+		 * You can use this endpoint to show different country flags icons to your users, The code argument receives the a 2 letter country code. Use width, height and quality arguments to change the output settings.
              *
              * @param {string} code
              * @param {number} width
@@ -893,7 +893,7 @@
             /**
              * Text to QR Generator
              *
-			 * Converts a given plain text to a QR code image. You can use the query parameters to change the size and style of the resulting image.
+		 * Converts a given plain text to a QR code image. You can use the query parameters to change the size and style of the resulting image.
              *
              * @param {string} text
              * @param {number} size
@@ -923,9 +923,63 @@
         let database = {
 
             /**
+             * List Collections
+             *
+		 * Get a list of all the user collections. You can use the query params to filter your results. On admin mode, this endpoint will return a list of all of the project collections. [Learn more about different API modes](/docs/modes).
+             *
+             * @param {string} search
+             * @param {number} limit
+             * @param {number} offset
+             * @param {string} orderType
+             * @throws {Error}
+             * @return {Array}
+             */
+            listCollections: function(search = '', limit = 25, offset = 0, orderType = 'ASC') {
+                let path = '/database';
+
+                return http
+                    .get(path, {'Content-type': 'application/json'},
+                        {
+                            'search': search, 
+                            'limit': limit, 
+                            'offset': offset, 
+                            'orderType': orderType
+                        });
+            },
+
+            /**
+             * Create Collection
+             *
+		 * Create a new Collection.
+             *
+             * @param {string} name
+             * @param {array} read
+             * @param {array} write
+             * @param {array} rules
+             * @throws {Error}
+             * @return {Array}
+             */
+            createCollection: function(name, read = [], write = [], rules = []) {
+                if(name === undefined) {
+                    throw new Error('Missing required parameter: "name"');
+                }
+                
+                let path = '/database';
+
+                return http
+                    .post(path, {'Content-type': 'application/json'},
+                        {
+                            'name': name, 
+                            'read': read, 
+                            'write': write, 
+                            'rules': rules
+                        });
+            },
+
+            /**
              * List Documents
              *
-			 * Get a list of all the user documents. You can use the query params to filter your results. On managed mode, this endpoint will return a list of all of the project documents. [Learn more about different API modes](/docs/modes).
+		 * Get a list of all the user documents. You can use the query params to filter your results. On admin mode, this endpoint will return a list of all of the project documents. [Learn more about different API modes](/docs/modes).
              *
              * @param {string} collectionId
              * @param {array} filters
@@ -965,7 +1019,7 @@
             /**
              * Create Document
              *
-			 * Create a new Document.
+		 * Create a new Document.
              *
              * @param {string} collectionId
              * @param {string} data
@@ -997,9 +1051,31 @@
             },
 
             /**
+             * Delete Collection
+             *
+		 * Delete a collection by its unique ID. Only users with write permissions have access to delete this resource.
+             *
+             * @param {string} collectionId
+             * @throws {Error}
+             * @return {Array}
+             */
+            deleteCollection: function(collectionId) {
+                if(collectionId === undefined) {
+                    throw new Error('Missing required parameter: "collectionId"');
+                }
+                
+                let path = '/database/{collectionId}'.replace(new RegExp('{collectionId}', 'g'), collectionId);
+
+                return http
+                    .delete(path, {'Content-type': 'application/json'},
+                        {
+                        });
+            },
+
+            /**
              * Get Document
              *
-			 * Get document by its unique ID. This endpoint response returns a JSON object with the document data.
+		 * Get document by its unique ID. This endpoint response returns a JSON object with the document data.
              *
              * @param {string} collectionId
              * @param {string} documentId
@@ -1058,7 +1134,7 @@
             /**
              * Delete Document
              *
-			 * Delete document by its unique ID. This endpoint deletes only the parent documents, his attributes and relations to other documents. Child documents **will not** be deleted.
+		 * Delete document by its unique ID. This endpoint deletes only the parent documents, his attributes and relations to other documents. Child documents **will not** be deleted.
              *
              * @param {string} collectionId
              * @param {string} documentId
@@ -1083,262 +1159,46 @@
             }
         };
 
-        let locale = {
+        let teams = {
 
             /**
-             * Get User Locale
+             * Update Team
              *
-			 * Get the current user location based on IP. Returns an object with user country code, country name, continent name, continent code, ip address and suggested currency. You can use the locale header to get the data in supported language.
+		 * Update team by its unique ID. Only team owners have write access for this resource.
              *
-             * @throws {Error}
-             * @return {Array}
-             */
-            get: function() {
-                let path = '/locale';
-
-                return http
-                    .get(path, {'Content-type': 'application/json'},
-                        {
-                        });
-            },
-
-            /**
-             * List Countries
-             *
-			 * List of all countries. You can use the locale header to get the data in supported language.
-             *
-             * @throws {Error}
-             * @return {Array}
-             */
-            getCountries: function() {
-                let path = '/locale/countries';
-
-                return http
-                    .get(path, {'Content-type': 'application/json'},
-                        {
-                        });
-            },
-
-            /**
-             * List EU Countries
-             *
-			 * List of all countries that are currently members of the EU. You can use the locale header to get the data in supported language.
-             *
-             * @throws {Error}
-             * @return {Array}
-             */
-            getCountriesEU: function() {
-                let path = '/locale/countries/eu';
-
-                return http
-                    .get(path, {'Content-type': 'application/json'},
-                        {
-                        });
-            },
-
-            /**
-             * List Countries Phone Codes
-             *
-			 * List of all countries phone codes. You can use the locale header to get the data in supported language.
-             *
-             * @throws {Error}
-             * @return {Array}
-             */
-            getCountriesPhones: function() {
-                let path = '/locale/countries/phones';
-
-                return http
-                    .get(path, {'Content-type': 'application/json'},
-                        {
-                        });
-            }
-        };
-
-        let storage = {
-
-            /**
-             * List Files
-             *
-			 * Get a list of all the user files. You can use the query params to filter your results. On managed mode, this endpoint will return a list of all of the project files. [Learn more about different API modes](/docs/modes).
-             *
-             * @param {string} search
-             * @param {number} limit
-             * @param {number} offset
-             * @param {string} orderType
-             * @throws {Error}
-             * @return {Array}
-             */
-            listFiles: function(search = '', limit = 25, offset = 0, orderType = 'ASC') {
-                let path = '/storage/files';
-
-                return http
-                    .get(path, {'Content-type': 'application/json'},
-                        {
-                            'search': search, 
-                            'limit': limit, 
-                            'offset': offset, 
-                            'orderType': orderType
-                        });
-            },
-
-            /**
-             * Create File
-             *
-			 * Create a new file. The user who creates the file will automatically be assigned to read and write access unless he has passed custom values for read and write arguments.
-             *
-             * @param {File} files
+             * @param {string} collectionId
+             * @param {string} name
              * @param {array} read
              * @param {array} write
-             * @param {string} folderId
+             * @param {array} rules
              * @throws {Error}
              * @return {Array}
              */
-            createFile: function(files, read = [], write = [], folderId = '') {
-                if(files === undefined) {
-                    throw new Error('Missing required parameter: "files"');
+            updateTeam: function(collectionId, name, read = [], write = [], rules = []) {
+                if(collectionId === undefined) {
+                    throw new Error('Missing required parameter: "collectionId"');
                 }
                 
-                let path = '/storage/files';
+                if(name === undefined) {
+                    throw new Error('Missing required parameter: "name"');
+                }
+                
+                let path = '/database/{collectionId}'.replace(new RegExp('{collectionId}', 'g'), collectionId);
 
                 return http
-                    .post(path, {'Content-type': 'application/json'},
+                    .put(path, {'Content-type': 'application/json'},
                         {
-                            'files': files, 
+                            'name': name, 
                             'read': read, 
                             'write': write, 
-                            'folderId': folderId
+                            'rules': rules
                         });
             },
-
-            /**
-             * Get File
-             *
-			 * Get file by its unique ID. This endpoint response returns a JSON object with the file metadata.
-             *
-             * @param {string} id
-             * @throws {Error}
-             * @return {Array}
-             */
-            getFile: function(id) {
-                if(id === undefined) {
-                    throw new Error('Missing required parameter: "id"');
-                }
-                
-                let path = '/storage/files/{id}'.replace(new RegExp('{id}', 'g'), id);
-
-                return http
-                    .get(path, {'Content-type': 'application/json'},
-                        {
-                        });
-            },
-
-            /**
-             * Delete File
-             *
-			 * Delete a file by its unique ID. Only users with write permissions have access for deleting this resource.
-             *
-             * @param {string} id
-             * @throws {Error}
-             * @return {Array}
-             */
-            deleteFile: function(id) {
-                if(id === undefined) {
-                    throw new Error('Missing required parameter: "id"');
-                }
-                
-                let path = '/storage/files/{id}'.replace(new RegExp('{id}', 'g'), id);
-
-                return http
-                    .delete(path, {'Content-type': 'application/json'},
-                        {
-                        });
-            },
-
-            /**
-             * Download File
-             *
-			 * Get file content by its unique ID. The endpoint response return with a 'Content-Disposition: attachment' header that tells the browser to start downloading the file to user downloads directory.
-             *
-             * @param {string} id
-             * @throws {Error}
-             * @return {Array}
-             */
-            getFileDownload: function(id) {
-                if(id === undefined) {
-                    throw new Error('Missing required parameter: "id"');
-                }
-                
-                let path = '/storage/files/{id}/download'.replace(new RegExp('{id}', 'g'), id);
-
-                return http
-                    .get(path, {'Content-type': 'application/json'},
-                        {
-                        });
-            },
-
-            /**
-             * Preview File
-             *
-			 * Get file preview image. Currently, this method supports preview for image files (jpg, png, and gif), other supported formats, like pdf, docs, slides, and spreadsheets will return file icon image. You can also pass query string arguments for cutting and resizing your preview image.
-             *
-             * @param {string} id
-             * @param {number} width
-             * @param {number} height
-             * @param {number} quality
-             * @param {string} background
-             * @param {string} output
-             * @throws {Error}
-             * @return {Array}
-             */
-            getFilePreview: function(id, width = 0, height = 0, quality = 100, background = '', output = '') {
-                if(id === undefined) {
-                    throw new Error('Missing required parameter: "id"');
-                }
-                
-                let path = '/storage/files/{id}/preview'.replace(new RegExp('{id}', 'g'), id);
-
-                return http
-                    .get(path, {'Content-type': 'application/json'},
-                        {
-                            'width': width, 
-                            'height': height, 
-                            'quality': quality, 
-                            'background': background, 
-                            'output': output
-                        });
-            },
-
-            /**
-             * View File
-             *
-			 * Get file content by its unique ID. This endpoint is similar to the download method but returns with no  'Content-Disposition: attachment' header.
-             *
-             * @param {string} id
-             * @param {string} as
-             * @throws {Error}
-             * @return {Array}
-             */
-            getFileView: function(id, as = '') {
-                if(id === undefined) {
-                    throw new Error('Missing required parameter: "id"');
-                }
-                
-                let path = '/storage/files/{id}/view'.replace(new RegExp('{id}', 'g'), id);
-
-                return http
-                    .get(path, {'Content-type': 'application/json'},
-                        {
-                            'as': as
-                        });
-            }
-        };
-
-        let teams = {
 
             /**
              * List Teams
              *
-			 * Get a list of all the current user teams. You can use the query params to filter your results. On managed mode, this endpoint will return a list of all of the project teams. [Learn more about different API modes](/docs/modes).
+		 * Get a list of all the current user teams. You can use the query params to filter your results. On admin mode, this endpoint will return a list of all of the project teams. [Learn more about different API modes](/docs/modes).
              *
              * @param {string} search
              * @param {number} limit
@@ -1363,7 +1223,7 @@
             /**
              * Create Team
              *
-			 * Create a new team. The user who creates the team will automatically be assigned as the owner of the team. The team owner can invite new members, who will be able add new owners and update or delete the team from your project.
+		 * Create a new team. The user who creates the team will automatically be assigned as the owner of the team. The team owner can invite new members, who will be able add new owners and update or delete the team from your project.
              *
              * @param {string} name
              * @param {array} roles
@@ -1388,7 +1248,7 @@
             /**
              * Get Team
              *
-			 * Get team by its unique ID. All team members have read access for this resource.
+		 * Get team by its unique ID. All team members have read access for this resource.
              *
              * @param {string} teamId
              * @throws {Error}
@@ -1410,7 +1270,7 @@
             /**
              * Update Team
              *
-			 * Update team by its unique ID. Only team owners have write access for this resource.
+		 * Update team by its unique ID. Only team owners have write access for this resource.
              *
              * @param {string} teamId
              * @param {string} name
@@ -1438,7 +1298,7 @@
             /**
              * Delete Team
              *
-			 * Delete team by its unique ID. Only team owners have write access for this resource.
+		 * Delete team by its unique ID. Only team owners have write access for this resource.
              *
              * @param {string} teamId
              * @throws {Error}
@@ -1460,7 +1320,7 @@
             /**
              * Get Team Members
              *
-			 * Get team members by the team unique ID. All team members have read access for this list of resources.
+		 * Get team members by the team unique ID. All team members have read access for this list of resources.
              *
              * @param {string} teamId
              * @throws {Error}
@@ -1482,11 +1342,11 @@
             /**
              * Create Team Membership
              *
-			 * Use this endpoint to invite a new member to your team. An email with a link to join the team will be sent to the new member email address. If member doesn't exists in the project it will be automatically created.
-			 * 
-			 * Use the redirect parameter to redirect the user from the invitation email back to your app. When the user is redirected, use the /teams/{teamId}/memberships/{inviteId}/status endpoint to finally join the user to the team.
-			 * 
-			 * Please notice that in order to avoid a [Redirect Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md) the only valid redirect URL's are the once from domains you have set when added your platforms in the console interface.
+		 * Use this endpoint to invite a new member to your team. An email with a link to join the team will be sent to the new member email address. If member doesn't exists in the project it will be automatically created.
+		 * 
+		 * Use the redirect parameter to redirect the user from the invitation email back to your app. When the user is redirected, use the /teams/{teamId}/memberships/{inviteId}/status endpoint to finally join the user to the team.
+		 * 
+		 * Please notice that in order to avoid a [Redirect Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md) the only valid redirect URL's are the once from domains you have set when added your platforms in the console interface.
              *
              * @param {string} teamId
              * @param {string} email
@@ -1528,7 +1388,7 @@
             /**
              * Delete Team Membership
              *
-			 * This endpoint allows a user to leave a team or for a team owner to delete the membership of any other team member.
+		 * This endpoint allows a user to leave a team or for a team owner to delete the membership of any other team member.
              *
              * @param {string} teamId
              * @param {string} inviteId
@@ -1555,7 +1415,7 @@
             /**
              * Create Team Membership (Resend Invitation Email)
              *
-			 * Use this endpoint to resend your invitation email for a user to join a team.
+		 * Use this endpoint to resend your invitation email for a user to join a team.
              *
              * @param {string} teamId
              * @param {string} inviteId
@@ -1588,11 +1448,11 @@
             /**
              * Update Team Membership Status
              *
-			 * Use this endpoint to let user accept an invitation to join a team after he is being redirect back to your app from the invitation email. Use the success and failure URL's to redirect users back to your application after the request completes.
-			 * 
-			 * Please notice that in order to avoid a [Redirect Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md) the only valid redirect URL's are the once from domains you have set when added your platforms in the console interface.
-			 * 
-			 * When not using the success or failure redirect arguments this endpoint will result with a 200 status code on success and with 401 status error on failure. This behavior was applied to help the web clients deal with browsers who don't allow to set 3rd party HTTP cookies needed for saving the account session token.
+		 * Use this endpoint to let user accept an invitation to join a team after he is being redirect back to your app from the invitation email. Use the success and failure URL's to redirect users back to your application after the request completes.
+		 * 
+		 * Please notice that in order to avoid a [Redirect Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md) the only valid redirect URL's are the once from domains you have set when added your platforms in the console interface.
+		 * 
+		 * When not using the success or failure redirect arguments this endpoint will result with a 200 status code on success and with 401 status error on failure. This behavior was applied to help the web clients deal with browsers who don't allow to set 3rd party HTTP cookies needed for saving the account session token.
              *
              * @param {string} teamId
              * @param {string} inviteId
@@ -1633,12 +1493,262 @@
             }
         };
 
+        let locale = {
+
+            /**
+             * Get User Locale
+             *
+		 * Get the current user location based on IP. Returns an object with user country code, country name, continent name, continent code, ip address and suggested currency. You can use the locale header to get the data in supported language.
+             *
+             * @throws {Error}
+             * @return {Array}
+             */
+            get: function() {
+                let path = '/locale';
+
+                return http
+                    .get(path, {'Content-type': 'application/json'},
+                        {
+                        });
+            },
+
+            /**
+             * List Countries
+             *
+		 * List of all countries. You can use the locale header to get the data in supported language.
+             *
+             * @throws {Error}
+             * @return {Array}
+             */
+            getCountries: function() {
+                let path = '/locale/countries';
+
+                return http
+                    .get(path, {'Content-type': 'application/json'},
+                        {
+                        });
+            },
+
+            /**
+             * List EU Countries
+             *
+		 * List of all countries that are currently members of the EU. You can use the locale header to get the data in supported language.
+             *
+             * @throws {Error}
+             * @return {Array}
+             */
+            getCountriesEU: function() {
+                let path = '/locale/countries/eu';
+
+                return http
+                    .get(path, {'Content-type': 'application/json'},
+                        {
+                        });
+            },
+
+            /**
+             * List Countries Phone Codes
+             *
+		 * List of all countries phone codes. You can use the locale header to get the data in supported language.
+             *
+             * @throws {Error}
+             * @return {Array}
+             */
+            getCountriesPhones: function() {
+                let path = '/locale/countries/phones';
+
+                return http
+                    .get(path, {'Content-type': 'application/json'},
+                        {
+                        });
+            }
+        };
+
+        let storage = {
+
+            /**
+             * List Files
+             *
+		 * Get a list of all the user files. You can use the query params to filter your results. On admin mode, this endpoint will return a list of all of the project files. [Learn more about different API modes](/docs/modes).
+             *
+             * @param {string} search
+             * @param {number} limit
+             * @param {number} offset
+             * @param {string} orderType
+             * @throws {Error}
+             * @return {Array}
+             */
+            listFiles: function(search = '', limit = 25, offset = 0, orderType = 'ASC') {
+                let path = '/storage/files';
+
+                return http
+                    .get(path, {'Content-type': 'application/json'},
+                        {
+                            'search': search, 
+                            'limit': limit, 
+                            'offset': offset, 
+                            'orderType': orderType
+                        });
+            },
+
+            /**
+             * Create File
+             *
+		 * Create a new file. The user who creates the file will automatically be assigned to read and write access unless he has passed custom values for read and write arguments.
+             *
+             * @param {File} files
+             * @param {array} read
+             * @param {array} write
+             * @param {string} folderId
+             * @throws {Error}
+             * @return {Array}
+             */
+            createFile: function(files, read = [], write = [], folderId = '') {
+                if(files === undefined) {
+                    throw new Error('Missing required parameter: "files"');
+                }
+                
+                let path = '/storage/files';
+
+                return http
+                    .post(path, {'Content-type': 'application/json'},
+                        {
+                            'files': files, 
+                            'read': read, 
+                            'write': write, 
+                            'folderId': folderId
+                        });
+            },
+
+            /**
+             * Get File
+             *
+		 * Get file by its unique ID. This endpoint response returns a JSON object with the file metadata.
+             *
+             * @param {string} fileId
+             * @throws {Error}
+             * @return {Array}
+             */
+            getFile: function(fileId) {
+                if(fileId === undefined) {
+                    throw new Error('Missing required parameter: "fileId"');
+                }
+                
+                let path = '/storage/files/{fileId}'.replace(new RegExp('{fileId}', 'g'), fileId);
+
+                return http
+                    .get(path, {'Content-type': 'application/json'},
+                        {
+                        });
+            },
+
+            /**
+             * Delete File
+             *
+		 * Delete a file by its unique ID. Only users with write permissions have access to delete this resource.
+             *
+             * @param {string} fileId
+             * @throws {Error}
+             * @return {Array}
+             */
+            deleteFile: function(fileId) {
+                if(fileId === undefined) {
+                    throw new Error('Missing required parameter: "fileId"');
+                }
+                
+                let path = '/storage/files/{fileId}'.replace(new RegExp('{fileId}', 'g'), fileId);
+
+                return http
+                    .delete(path, {'Content-type': 'application/json'},
+                        {
+                        });
+            },
+
+            /**
+             * Download File
+             *
+		 * Get file content by its unique ID. The endpoint response return with a 'Content-Disposition: attachment' header that tells the browser to start downloading the file to user downloads directory.
+             *
+             * @param {string} fileId
+             * @throws {Error}
+             * @return {Array}
+             */
+            getFileDownload: function(fileId) {
+                if(fileId === undefined) {
+                    throw new Error('Missing required parameter: "fileId"');
+                }
+                
+                let path = '/storage/files/{fileId}/download'.replace(new RegExp('{fileId}', 'g'), fileId);
+
+                return http
+                    .get(path, {'Content-type': 'application/json'},
+                        {
+                        });
+            },
+
+            /**
+             * Preview File
+             *
+		 * Get file preview image. Currently, this method supports preview for image files (jpg, png, and gif), other supported formats, like pdf, docs, slides, and spreadsheets will return file icon image. You can also pass query string arguments for cutting and resizing your preview image.
+             *
+             * @param {string} fileId
+             * @param {number} width
+             * @param {number} height
+             * @param {number} quality
+             * @param {string} background
+             * @param {string} output
+             * @throws {Error}
+             * @return {Array}
+             */
+            getFilePreview: function(fileId, width = 0, height = 0, quality = 100, background = '', output = '') {
+                if(fileId === undefined) {
+                    throw new Error('Missing required parameter: "fileId"');
+                }
+                
+                let path = '/storage/files/{fileId}/preview'.replace(new RegExp('{fileId}', 'g'), fileId);
+
+                return http
+                    .get(path, {'Content-type': 'application/json'},
+                        {
+                            'width': width, 
+                            'height': height, 
+                            'quality': quality, 
+                            'background': background, 
+                            'output': output
+                        });
+            },
+
+            /**
+             * View File
+             *
+		 * Get file content by its unique ID. This endpoint is similar to the download method but returns with no  'Content-Disposition: attachment' header.
+             *
+             * @param {string} fileId
+             * @param {string} as
+             * @throws {Error}
+             * @return {Array}
+             */
+            getFileView: function(fileId, as = '') {
+                if(fileId === undefined) {
+                    throw new Error('Missing required parameter: "fileId"');
+                }
+                
+                let path = '/storage/files/{fileId}/view'.replace(new RegExp('{fileId}', 'g'), fileId);
+
+                return http
+                    .get(path, {'Content-type': 'application/json'},
+                        {
+                            'as': as
+                        });
+            }
+        };
+
         let users = {
 
             /**
              * List Users
              *
-			 * Get a list of all the project users. You can use the query params to filter your results.
+		 * Get a list of all the project users. You can use the query params to filter your results.
              *
              * @param {string} search
              * @param {number} limit
@@ -1663,7 +1773,7 @@
             /**
              * Create User
              *
-			 * Create a new user.
+		 * Create a new user.
              *
              * @param {string} email
              * @param {string} password
@@ -1694,18 +1804,18 @@
             /**
              * Get User
              *
-			 * Get user by its unique ID.
+		 * Get user by its unique ID.
              *
-             * @param {string} id
+             * @param {string} userId
              * @throws {Error}
              * @return {Array}
              */
-            getUser: function(id) {
-                if(id === undefined) {
-                    throw new Error('Missing required parameter: "id"');
+            getUser: function(userId) {
+                if(userId === undefined) {
+                    throw new Error('Missing required parameter: "userId"');
                 }
                 
-                let path = '/users/{id}'.replace(new RegExp('{id}', 'g'), id);
+                let path = '/users/{userId}'.replace(new RegExp('{userId}', 'g'), userId);
 
                 return http
                     .get(path, {'Content-type': 'application/json'},
@@ -1716,18 +1826,18 @@
             /**
              * Get User Logs
              *
-			 * Get user activity logs list by its unique ID.
+		 * Get user activity logs list by its unique ID.
              *
-             * @param {string} id
+             * @param {string} userId
              * @throws {Error}
              * @return {Array}
              */
-            getUserLogs: function(id) {
-                if(id === undefined) {
-                    throw new Error('Missing required parameter: "id"');
+            getUserLogs: function(userId) {
+                if(userId === undefined) {
+                    throw new Error('Missing required parameter: "userId"');
                 }
                 
-                let path = '/users/{id}/logs'.replace(new RegExp('{id}', 'g'), id);
+                let path = '/users/{userId}/logs'.replace(new RegExp('{userId}', 'g'), userId);
 
                 return http
                     .get(path, {'Content-type': 'application/json'},
@@ -1738,18 +1848,18 @@
             /**
              * Get User Prefs
              *
-			 * Get user preferences by its unique ID.
+		 * Get user preferences by its unique ID.
              *
-             * @param {string} id
+             * @param {string} userId
              * @throws {Error}
              * @return {Array}
              */
-            getUserPrefs: function(id) {
-                if(id === undefined) {
-                    throw new Error('Missing required parameter: "id"');
+            getUserPrefs: function(userId) {
+                if(userId === undefined) {
+                    throw new Error('Missing required parameter: "userId"');
                 }
                 
-                let path = '/users/{id}/prefs'.replace(new RegExp('{id}', 'g'), id);
+                let path = '/users/{userId}/prefs'.replace(new RegExp('{userId}', 'g'), userId);
 
                 return http
                     .get(path, {'Content-type': 'application/json'},
@@ -1760,18 +1870,18 @@
             /**
              * Get User Sessions
              *
-			 * Get user sessions list by its unique ID.
+		 * Get user sessions list by its unique ID.
              *
-             * @param {string} id
+             * @param {string} userId
              * @throws {Error}
              * @return {Array}
              */
-            getUserSessions: function(id) {
-                if(id === undefined) {
-                    throw new Error('Missing required parameter: "id"');
+            getUserSessions: function(userId) {
+                if(userId === undefined) {
+                    throw new Error('Missing required parameter: "userId"');
                 }
                 
-                let path = '/users/{id}/sessions'.replace(new RegExp('{id}', 'g'), id);
+                let path = '/users/{userId}/sessions'.replace(new RegExp('{userId}', 'g'), userId);
 
                 return http
                     .get(path, {'Content-type': 'application/json'},
@@ -1782,18 +1892,18 @@
             /**
              * Delete User Sessions
              *
-			 * Delete all user sessions by its unique ID.
+		 * Delete all user sessions by its unique ID.
              *
-             * @param {string} id
+             * @param {string} userId
              * @throws {Error}
              * @return {Array}
              */
-            deleteUserSessions: function(id) {
-                if(id === undefined) {
-                    throw new Error('Missing required parameter: "id"');
+            deleteUserSessions: function(userId) {
+                if(userId === undefined) {
+                    throw new Error('Missing required parameter: "userId"');
                 }
                 
-                let path = '/users/{id}/sessions'.replace(new RegExp('{id}', 'g'), id);
+                let path = '/users/{userId}/sessions'.replace(new RegExp('{userId}', 'g'), userId);
 
                 return http
                     .delete(path, {'Content-type': 'application/json'},
@@ -1804,50 +1914,51 @@
             /**
              * Delete User Session
              *
-			 * Delete user sessions by its unique ID.
+		 * Delete user sessions by its unique ID.
              *
-             * @param {string} id
-             * @param {string} session
+             * @param {string} userId
+             * @param {string} sessionId
              * @throws {Error}
              * @return {Array}
              */
-            deleteUsersSession: function(id, session) {
-                if(id === undefined) {
-                    throw new Error('Missing required parameter: "id"');
+            deleteUsersSession: function(userId, sessionId) {
+                if(userId === undefined) {
+                    throw new Error('Missing required parameter: "userId"');
                 }
                 
-                if(session === undefined) {
-                    throw new Error('Missing required parameter: "session"');
+                if(sessionId === undefined) {
+                    throw new Error('Missing required parameter: "sessionId"');
                 }
                 
-                let path = '/users/{id}/sessions/{session}'.replace(new RegExp('{id}', 'g'), id).replace(new RegExp('{session}', 'g'), session);
+                let path = '/users/{userId}/sessions/:session'.replace(new RegExp('{userId}', 'g'), userId);
 
                 return http
                     .delete(path, {'Content-type': 'application/json'},
                         {
+                            'sessionId': sessionId
                         });
             },
 
             /**
              * Block User
              *
-			 * Update user status by its unique ID.
+		 * Update user status by its unique ID.
              *
-             * @param {string} id
+             * @param {string} userId
              * @param {string} status
              * @throws {Error}
              * @return {Array}
              */
-            updateUserStatus: function(id, status) {
-                if(id === undefined) {
-                    throw new Error('Missing required parameter: "id"');
+            updateUserStatus: function(userId, status) {
+                if(userId === undefined) {
+                    throw new Error('Missing required parameter: "userId"');
                 }
                 
                 if(status === undefined) {
                     throw new Error('Missing required parameter: "status"');
                 }
                 
-                let path = '/users/{id}/status'.replace(new RegExp('{id}', 'g'), id);
+                let path = '/users/{userId}/status'.replace(new RegExp('{userId}', 'g'), userId);
 
                 return http
                     .patch(path, {'Content-type': 'application/json'},
@@ -1867,9 +1978,9 @@
             auth: auth,
             avatars: avatars,
             database: database,
+            teams: teams,
             locale: locale,
             storage: storage,
-            teams: teams,
             users: users
         };
     };

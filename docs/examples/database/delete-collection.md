@@ -5,7 +5,7 @@ sdk
     setKey('')
 ;
 
-let promise = sdk.users.getUser('[USER_ID]');
+let promise = sdk.database.deleteCollection('[COLLECTION_ID]');
 
 promise.then(function (response) {
     console.log(response);

@@ -5,7 +5,7 @@ sdk
     setKey('')
 ;
 
-let promise = sdk.storage.getFileDownload('[ID]');
+let promise = sdk.storage.getFileDownload('[FILE_ID]');
 
 promise.then(function (response) {
     console.log(response);

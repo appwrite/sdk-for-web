@@ -5,7 +5,7 @@ sdk
     setKey('')
 ;
 
-let promise = sdk.storage.deleteFile('[ID]');
+let promise = sdk.storage.deleteFile('[FILE_ID]');
 
 promise.then(function (response) {
     console.log(response);

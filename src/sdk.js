@@ -1023,13 +1023,15 @@
              *
              * @param {string} collectionId
              * @param {string} data
+             * @param {array} read
+             * @param {array} write
              * @param {string} parentDocument
              * @param {string} parentProperty
              * @param {string} parentPropertyType
              * @throws {Error}
              * @return {Array}
              */
-            createDocument: function(collectionId, data, parentDocument = '', parentProperty = '', parentPropertyType = 'assign') {
+            createDocument: function(collectionId, data, read = [], write = [], parentDocument = '', parentProperty = '', parentPropertyType = 'assign') {
                 if(collectionId === undefined) {
                     throw new Error('Missing required parameter: "collectionId"');
                 }
@@ -1044,6 +1046,8 @@
                     .post(path, {'Content-type': 'application/json'},
                         {
                             'data': data, 
+                            'read': read, 
+                            'write': write, 
                             'parentDocument': parentDocument, 
                             'parentProperty': parentProperty, 
                             'parentPropertyType': parentPropertyType
@@ -1106,10 +1110,12 @@
              * @param {string} collectionId
              * @param {string} documentId
              * @param {string} data
+             * @param {array} read
+             * @param {array} write
              * @throws {Error}
              * @return {Array}
              */
-            updateDocument: function(collectionId, documentId, data) {
+            updateDocument: function(collectionId, documentId, data, read = [], write = []) {
                 if(collectionId === undefined) {
                     throw new Error('Missing required parameter: "collectionId"');
                 }
@@ -1127,7 +1133,9 @@
                 return http
                     .patch(path, {'Content-type': 'application/json'},
                         {
-                            'data': data
+                            'data': data, 
+                            'read': read, 
+                            'write': write
                         });
             },
 

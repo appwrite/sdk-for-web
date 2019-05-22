@@ -283,7 +283,7 @@
             /**
              * Get Account
              *
-			 * Get currently logged in user data as JSON object.
+             * Get currently logged in user data as JSON object.
              *
              * @throws {Error}
              * @return {Array}
@@ -300,7 +300,7 @@
             /**
              * Delete Account
              *
-			 * Delete currently logged in user account.
+             * Delete currently logged in user account.
              *
              * @throws {Error}
              * @return {Array}
@@ -317,7 +317,7 @@
             /**
              * Update Account Email
              *
-			 * Update currently logged in user account email address. After changing user
+             * Update currently logged in user account email address. After changing user
 			 * address, user confirmation status is being reset and a new confirmation
 			 * mail is sent. For security measures, user password is required to complete
 			 * this request.
@@ -349,7 +349,7 @@
             /**
              * Update Account Name
              *
-			 * Update currently logged in user account name.
+             * Update currently logged in user account name.
              *
              * @param {string} name
              * @throws {Error}
@@ -372,7 +372,7 @@
             /**
              * Update Account Password
              *
-			 * Update currently logged in user password. For validation, user is required
+             * Update currently logged in user password. For validation, user is required
 			 * to pass the password twice.
              *
              * @param {string} password
@@ -402,7 +402,7 @@
             /**
              * Get Account Preferences
              *
-			 * Get currently logged in user preferences key-value object.
+             * Get currently logged in user preferences key-value object.
              *
              * @throws {Error}
              * @return {Array}
@@ -419,7 +419,7 @@
             /**
              * Update Account Prefs
              *
-			 * Update currently logged in user account preferences. You can pass only the
+             * Update currently logged in user account preferences. You can pass only the
 			 * specific settings you wish to update.
              *
              * @param {string} prefs
@@ -443,7 +443,7 @@
             /**
              * Get Account Security Log
              *
-			 * Get currently logged in user list of latest security activity logs. Each
+             * Get currently logged in user list of latest security activity logs. Each
 			 * log returns user IP address, location and date and time of log.
              *
              * @throws {Error}
@@ -461,7 +461,7 @@
             /**
              * Get Account Active Sessions
              *
-			 * Get currently logged in user list of active sessions across different
+             * Get currently logged in user list of active sessions across different
 			 * devices.
              *
              * @throws {Error}
@@ -482,16 +482,16 @@
             /**
              * Login User
              *
-			 * Allow the user to login into his account by providing a valid email and
+             * Allow the user to login into his account by providing a valid email and
 			 * password combination. Use the success and failure arguments to provide a
 			 * redirect URL\'s back to your app when login is completed. 
-			 * 
-			 * Please notice that in order to avoid a [Redirect
+             * 
+             * Please notice that in order to avoid a [Redirect
 			 * Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md)
 			 * the only valid redirect URL's are the once from domains you have set when
 			 * added your platforms in the console interface.
-			 * 
-			 * When not using the success or failure redirect arguments this endpoint will
+             * 
+             * When not using the success or failure redirect arguments this endpoint will
 			 * result with a 200 status code and the user account object on success and
 			 * with 401 status error on failure. This behavior was applied to help the web
 			 * clients deal with browsers who don't allow to set 3rd party HTTP cookies
@@ -528,7 +528,7 @@
             /**
              * Logout Current Session
              *
-			 * Use this endpoint to log out the currently logged in user from his account.
+             * Use this endpoint to log out the currently logged in user from his account.
 			 * When succeed this endpoint will delete the user session and remove the
 			 * session secret cookie.
              *
@@ -547,7 +547,7 @@
             /**
              * Logout Specific Session
              *
-			 * Use this endpoint to log out the currently logged in user from all his
+             * Use this endpoint to log out the currently logged in user from all his
 			 * account sessions across all his different devices. When using the option id
 			 * argument, only the session unique ID provider will be deleted.
              *
@@ -571,7 +571,7 @@
             /**
              * Password Recovery
              *
-			 * Sends the user an email with a temporary secret token for password reset.
+             * Sends the user an email with a temporary secret token for password reset.
 			 * When the user clicks the confirmation link he is redirected back to your
 			 * app password reset redirect URL with a secret token and email address
 			 * values attached to the URL query string. Use the query string params to
@@ -605,12 +605,12 @@
             /**
              * Password Reset
              *
-			 * Use this endpoint to complete the user account password reset. Both the
+             * Use this endpoint to complete the user account password reset. Both the
 			 * **userId** and **token** arguments will be passed as query parameters to
 			 * the redirect URL you have provided when sending your request to the
 			 * /auth/recovery endpoint.
-			 * 
-			 * Please notice that in order to avoid a [Redirect
+             * 
+             * Please notice that in order to avoid a [Redirect
 			 * Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md)
 			 * the only valid redirect URL's are the once from domains you have set when
 			 * added your platforms in the console interface.
@@ -654,22 +654,22 @@
             /**
              * Register User
              *
-			 * Use this endpoint to allow a new user to register an account in your
+             * Use this endpoint to allow a new user to register an account in your
 			 * project. Use the success and failure URL's to redirect users back to your
 			 * application after signup completes.
-			 * 
-			 * If registration completes successfully user will be sent with a
+             * 
+             * If registration completes successfully user will be sent with a
 			 * confirmation email in order to confirm he is the owner of the account email
 			 * address. Use the redirect parameter to redirect the user from the
 			 * confirmation email back to your app. When the user is redirected, use the
 			 * /auth/confirm endpoint to complete the account confirmation.
-			 * 
-			 * Please notice that in order to avoid a [Redirect
+             * 
+             * Please notice that in order to avoid a [Redirect
 			 * Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md)
 			 * the only valid redirect URL's are the once from domains you have set when
 			 * added your platforms in the console interface.
-			 * 
-			 * When not using the success or failure redirect arguments this endpoint will
+             * 
+             * When not using the success or failure redirect arguments this endpoint will
 			 * result with a 200 status code and the user account object on success and
 			 * with 401 status error on failure. This behavior was applied to help the web
 			 * clients deal with browsers who don't allow to set 3rd party HTTP cookies
@@ -714,7 +714,7 @@
             /**
              * Confirm User
              *
-			 * Use this endpoint to complete the confirmation of the user account email
+             * Use this endpoint to complete the confirmation of the user account email
 			 * address. Both the **userId** and **token** arguments will be passed as
 			 * query parameters to the redirect URL you have provided when sending your
 			 * request to the /auth/register endpoint.
@@ -746,11 +746,11 @@
             /**
              * Resend Confirmation
              *
-			 * This endpoint allows the user to request your app to resend him his email
+             * This endpoint allows the user to request your app to resend him his email
 			 * confirmation message. The redirect arguments acts the same way as in
 			 * /auth/register endpoint.
-			 * 
-			 * Please notice that in order to avoid a [Redirect
+             * 
+             * Please notice that in order to avoid a [Redirect
 			 * Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md)
 			 * the only valid redirect URL's are the once from domains you have set when
 			 * added your platforms in the console interface.
@@ -838,7 +838,7 @@
             /**
              * Get Browser Icon
              *
-			 * You can use this endpoint to show different browser icons to your users,
+             * You can use this endpoint to show different browser icons to your users,
 			 * The code argument receives the browser code as appear in your user
 			 * /account/sessions endpoint. Use width, height and quality arguments to
 			 * change the output settings.
@@ -869,7 +869,7 @@
             /**
              * Get Credit Card Icon
              *
-			 * Need to display your users with your billing method or there payment
+             * Need to display your users with your billing method or there payment
 			 * methods? The credit card endpoint will return you the icon of the credit
 			 * card provider you need. Use width, height and quality arguments to change
 			 * the output settings.
@@ -900,7 +900,7 @@
             /**
              * Get Favicon
              *
-			 * Use this endpoint to fetch the favorite icon (AKA favicon) of a  any remote
+             * Use this endpoint to fetch the favorite icon (AKA favicon) of a  any remote
 			 * website URL.
              *
              * @param {string} url
@@ -924,7 +924,7 @@
             /**
              * Get Country Flag
              *
-			 * You can use this endpoint to show different country flags icons to your
+             * You can use this endpoint to show different country flags icons to your
 			 * users, The code argument receives the a 2 letter country code. Use width,
 			 * height and quality arguments to change the output settings.
              *
@@ -954,7 +954,7 @@
             /**
              * Text to QR Generator
              *
-			 * Converts a given plain text to a QR code image. You can use the query
+             * Converts a given plain text to a QR code image. You can use the query
 			 * parameters to change the size and style of the resulting image.
              *
              * @param {string} text
@@ -987,7 +987,7 @@
             /**
              * List Collections
              *
-			 * Get a list of all the user collections. You can use the query params to
+             * Get a list of all the user collections. You can use the query params to
 			 * filter your results. On admin mode, this endpoint will return a list of all
 			 * of the project collections. [Learn more about different API
 			 * modes](/docs/modes).
@@ -1015,7 +1015,7 @@
             /**
              * Create Collection
              *
-			 * Create a new Collection.
+             * Create a new Collection.
              *
              * @param {string} name
              * @param {array} read
@@ -1044,7 +1044,7 @@
             /**
              * List Documents
              *
-			 * Get a list of all the user documents. You can use the query params to
+             * Get a list of all the user documents. You can use the query params to
 			 * filter your results. On admin mode, this endpoint will return a list of all
 			 * of the project documents. [Learn more about different API
 			 * modes](/docs/modes).
@@ -1087,7 +1087,7 @@
             /**
              * Create Document
              *
-			 * Create a new Document.
+             * Create a new Document.
              *
              * @param {string} collectionId
              * @param {string} data
@@ -1125,7 +1125,7 @@
             /**
              * Delete Collection
              *
-			 * Delete a collection by its unique ID. Only users with write permissions
+             * Delete a collection by its unique ID. Only users with write permissions
 			 * have access to delete this resource.
              *
              * @param {string} collectionId
@@ -1148,7 +1148,7 @@
             /**
              * Get Document
              *
-			 * Get document by its unique ID. This endpoint response returns a JSON object
+             * Get document by its unique ID. This endpoint response returns a JSON object
 			 * with the document data.
              *
              * @param {string} collectionId
@@ -1212,7 +1212,7 @@
             /**
              * Delete Document
              *
-			 * Delete document by its unique ID. This endpoint deletes only the parent
+             * Delete document by its unique ID. This endpoint deletes only the parent
 			 * documents, his attributes and relations to other documents. Child documents
 			 * **will not** be deleted.
              *
@@ -1244,7 +1244,7 @@
             /**
              * Update Team
              *
-			 * Update team by its unique ID. Only team owners have write access for this
+             * Update team by its unique ID. Only team owners have write access for this
 			 * resource.
              *
              * @param {string} collectionId
@@ -1279,7 +1279,7 @@
             /**
              * List Teams
              *
-			 * Get a list of all the current user teams. You can use the query params to
+             * Get a list of all the current user teams. You can use the query params to
 			 * filter your results. On admin mode, this endpoint will return a list of all
 			 * of the project teams. [Learn more about different API modes](/docs/modes).
              *
@@ -1306,7 +1306,7 @@
             /**
              * Create Team
              *
-			 * Create a new team. The user who creates the team will automatically be
+             * Create a new team. The user who creates the team will automatically be
 			 * assigned as the owner of the team. The team owner can invite new members,
 			 * who will be able add new owners and update or delete the team from your
 			 * project.
@@ -1334,7 +1334,7 @@
             /**
              * Get Team
              *
-			 * Get team by its unique ID. All team members have read access for this
+             * Get team by its unique ID. All team members have read access for this
 			 * resource.
              *
              * @param {string} teamId
@@ -1357,7 +1357,7 @@
             /**
              * Update Team
              *
-			 * Update team by its unique ID. Only team owners have write access for this
+             * Update team by its unique ID. Only team owners have write access for this
 			 * resource.
              *
              * @param {string} teamId
@@ -1386,7 +1386,7 @@
             /**
              * Delete Team
              *
-			 * Delete team by its unique ID. Only team owners have write access for this
+             * Delete team by its unique ID. Only team owners have write access for this
 			 * resource.
              *
              * @param {string} teamId
@@ -1409,7 +1409,7 @@
             /**
              * Get Team Members
              *
-			 * Get team members by the team unique ID. All team members have read access
+             * Get team members by the team unique ID. All team members have read access
 			 * for this list of resources.
              *
              * @param {string} teamId
@@ -1432,16 +1432,16 @@
             /**
              * Create Team Membership
              *
-			 * Use this endpoint to invite a new member to your team. An email with a link
+             * Use this endpoint to invite a new member to your team. An email with a link
 			 * to join the team will be sent to the new member email address. If member
 			 * doesn't exists in the project it will be automatically created.
-			 * 
-			 * Use the redirect parameter to redirect the user from the invitation email
+             * 
+             * Use the redirect parameter to redirect the user from the invitation email
 			 * back to your app. When the user is redirected, use the
 			 * /teams/{teamId}/memberships/{inviteId}/status endpoint to finally join the
 			 * user to the team.
-			 * 
-			 * Please notice that in order to avoid a [Redirect
+             * 
+             * Please notice that in order to avoid a [Redirect
 			 * Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md)
 			 * the only valid redirect URL's are the once from domains you have set when
 			 * added your platforms in the console interface.
@@ -1486,7 +1486,7 @@
             /**
              * Delete Team Membership
              *
-			 * This endpoint allows a user to leave a team or for a team owner to delete
+             * This endpoint allows a user to leave a team or for a team owner to delete
 			 * the membership of any other team member.
              *
              * @param {string} teamId
@@ -1514,7 +1514,7 @@
             /**
              * Create Team Membership (Resend Invitation Email)
              *
-			 * Use this endpoint to resend your invitation email for a user to join a
+             * Use this endpoint to resend your invitation email for a user to join a
 			 * team.
              *
              * @param {string} teamId
@@ -1548,17 +1548,17 @@
             /**
              * Update Team Membership Status
              *
-			 * Use this endpoint to let user accept an invitation to join a team after he
+             * Use this endpoint to let user accept an invitation to join a team after he
 			 * is being redirect back to your app from the invitation email. Use the
 			 * success and failure URL's to redirect users back to your application after
 			 * the request completes.
-			 * 
-			 * Please notice that in order to avoid a [Redirect
+             * 
+             * Please notice that in order to avoid a [Redirect
 			 * Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md)
 			 * the only valid redirect URL's are the once from domains you have set when
 			 * added your platforms in the console interface.
-			 * 
-			 * When not using the success or failure redirect arguments this endpoint will
+             * 
+             * When not using the success or failure redirect arguments this endpoint will
 			 * result with a 200 status code on success and with 401 status error on
 			 * failure. This behavior was applied to help the web clients deal with
 			 * browsers who don't allow to set 3rd party HTTP cookies needed for saving
@@ -1608,7 +1608,7 @@
             /**
              * Get User Locale
              *
-			 * Get the current user location based on IP. Returns an object with user
+             * Get the current user location based on IP. Returns an object with user
 			 * country code, country name, continent name, continent code, ip address and
 			 * suggested currency. You can use the locale header to get the data in
 			 * supported language.
@@ -1628,7 +1628,7 @@
             /**
              * List Countries
              *
-			 * List of all countries. You can use the locale header to get the data in
+             * List of all countries. You can use the locale header to get the data in
 			 * supported language.
              *
              * @throws {Error}
@@ -1646,7 +1646,7 @@
             /**
              * List EU Countries
              *
-			 * List of all countries that are currently members of the EU. You can use the
+             * List of all countries that are currently members of the EU. You can use the
 			 * locale header to get the data in supported language.
              *
              * @throws {Error}
@@ -1664,7 +1664,7 @@
             /**
              * List Countries Phone Codes
              *
-			 * List of all countries phone codes. You can use the locale header to get the
+             * List of all countries phone codes. You can use the locale header to get the
 			 * data in supported language.
              *
              * @throws {Error}
@@ -1685,7 +1685,7 @@
             /**
              * List Files
              *
-			 * Get a list of all the user files. You can use the query params to filter
+             * Get a list of all the user files. You can use the query params to filter
 			 * your results. On admin mode, this endpoint will return a list of all of the
 			 * project files. [Learn more about different API modes](/docs/modes).
              *
@@ -1712,7 +1712,7 @@
             /**
              * Create File
              *
-			 * Create a new file. The user who creates the file will automatically be
+             * Create a new file. The user who creates the file will automatically be
 			 * assigned to read and write access unless he has passed custom values for
 			 * read and write arguments.
              *
@@ -1743,7 +1743,7 @@
             /**
              * Get File
              *
-			 * Get file by its unique ID. This endpoint response returns a JSON object
+             * Get file by its unique ID. This endpoint response returns a JSON object
 			 * with the file metadata.
              *
              * @param {string} fileId
@@ -1766,7 +1766,7 @@
             /**
              * Delete File
              *
-			 * Delete a file by its unique ID. Only users with write permissions have
+             * Delete a file by its unique ID. Only users with write permissions have
 			 * access to delete this resource.
              *
              * @param {string} fileId
@@ -1789,7 +1789,7 @@
             /**
              * Download File
              *
-			 * Get file content by its unique ID. The endpoint response return with a
+             * Get file content by its unique ID. The endpoint response return with a
 			 * 'Content-Disposition: attachment' header that tells the browser to start
 			 * downloading the file to user downloads directory.
              *
@@ -1813,7 +1813,7 @@
             /**
              * Preview File
              *
-			 * Get file preview image. Currently, this method supports preview for image
+             * Get file preview image. Currently, this method supports preview for image
 			 * files (jpg, png, and gif), other supported formats, like pdf, docs, slides,
 			 * and spreadsheets will return file icon image. You can also pass query
 			 * string arguments for cutting and resizing your preview image.
@@ -1848,7 +1848,7 @@
             /**
              * View File
              *
-			 * Get file content by its unique ID. This endpoint is similar to the download
+             * Get file content by its unique ID. This endpoint is similar to the download
 			 * method but returns with no  'Content-Disposition: attachment' header.
              *
              * @param {string} fileId
@@ -1876,7 +1876,7 @@
             /**
              * List Users
              *
-			 * Get a list of all the project users. You can use the query params to filter
+             * Get a list of all the project users. You can use the query params to filter
 			 * your results.
              *
              * @param {string} search
@@ -1902,7 +1902,7 @@
             /**
              * Create User
              *
-			 * Create a new user.
+             * Create a new user.
              *
              * @param {string} email
              * @param {string} password
@@ -1933,7 +1933,7 @@
             /**
              * Get User
              *
-			 * Get user by its unique ID.
+             * Get user by its unique ID.
              *
              * @param {string} userId
              * @throws {Error}
@@ -1955,7 +1955,7 @@
             /**
              * Get User Logs
              *
-			 * Get user activity logs list by its unique ID.
+             * Get user activity logs list by its unique ID.
              *
              * @param {string} userId
              * @throws {Error}
@@ -1977,7 +1977,7 @@
             /**
              * Get User Prefs
              *
-			 * Get user preferences by its unique ID.
+             * Get user preferences by its unique ID.
              *
              * @param {string} userId
              * @throws {Error}
@@ -1999,7 +1999,7 @@
             /**
              * Get User Sessions
              *
-			 * Get user sessions list by its unique ID.
+             * Get user sessions list by its unique ID.
              *
              * @param {string} userId
              * @throws {Error}
@@ -2021,7 +2021,7 @@
             /**
              * Delete User Sessions
              *
-			 * Delete all user sessions by its unique ID.
+             * Delete all user sessions by its unique ID.
              *
              * @param {string} userId
              * @throws {Error}
@@ -2043,7 +2043,7 @@
             /**
              * Delete User Session
              *
-			 * Delete user sessions by its unique ID.
+             * Delete user sessions by its unique ID.
              *
              * @param {string} userId
              * @param {string} sessionId
@@ -2071,7 +2071,7 @@
             /**
              * Block User
              *
-			 * Update user status by its unique ID.
+             * Update user status by its unique ID.
              *
              * @param {string} userId
              * @param {string} status

@@ -2,7 +2,7 @@
     window.Appwrite = function () {
 
         let config = {
-            endpoint: 'https://appwrite.io/v1',
+            endpoint: 'https://appwrite.test/v1',
             project: '',
             key: '',
             locale: '',
@@ -22,6 +22,9 @@
         /**
          * Set Project
          *
+         * Your Appwrite project ID. You can find your project ID in your Appwrite
+\         * console project settings.
+         *
          * @param value string
          *
          * @return this
@@ -37,6 +40,9 @@
 
         /**
          * Set Key
+         *
+         * Your Appwrite project secret key. You can can create a new API key from
+\         * your Appwrite console API keys dashboard.
          *
          * @param value string
          *
@@ -1244,8 +1250,7 @@
             /**
              * Update Team
              *
-             * Update team by its unique ID. Only team owners have write access for this
-             * resource.
+             * Update collection by its unique ID.
              *
              * @param {string} collectionId
              * @param {string} name
@@ -1255,7 +1260,7 @@
              * @throws {Error}
              * @return {Array}
              */
-            updateTeam: function(collectionId, name, read = [], write = [], rules = []) {
+            updateCollection: function(collectionId, name, read = [], write = [], rules = []) {
                 if(collectionId === undefined) {
                     throw new Error('Missing required parameter: "collectionId"');
                 }
@@ -1616,7 +1621,7 @@
              * @throws {Error}
              * @return {Array}
              */
-            get: function() {
+            getLocale: function() {
                 let path = '/locale';
 
                 return http
@@ -2069,7 +2074,7 @@
             },
 
             /**
-             * Block User
+             * Update user status
              *
              * Update user status by its unique ID.
              *

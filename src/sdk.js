@@ -132,7 +132,7 @@
                 globalParams.push({key: key, value: value});
             };
 
-            addGlobalHeader('x-sdk-version', 'appwrite:javascript:v1.0.2');
+            addGlobalHeader('x-sdk-version', 'appwrite:javascript:v1.0.3');
             addGlobalHeader('content-type', '');
 
             /**
@@ -523,14 +523,12 @@
                 
                 let path = '/auth/login';
 
-                return http
-                    .post(path, {'content-type': 'application/json'},
-                        {
-                            'email': email, 
-                            'password': password, 
-                            'success': success, 
-                            'failure': failure
-                        });
+                return iframe('post', config.domain + '/' + config.version + path, {project: config.project,
+                    'email': email, 
+                    'password': password, 
+                    'success': success, 
+                    'failure': failure
+                });
             },
 
             /**
@@ -707,16 +705,14 @@
                 
                 let path = '/auth/register';
 
-                return http
-                    .post(path, {'content-type': 'application/json'},
-                        {
-                            'email': email, 
-                            'password': password, 
-                            'name': name, 
-                            'redirect': redirect, 
-                            'success': success, 
-                            'failure': failure
-                        });
+                return iframe('post', config.domain + '/' + config.version + path, {project: config.project,
+                    'email': email, 
+                    'password': password, 
+                    'name': name, 
+                    'redirect': redirect, 
+                    'success': success, 
+                    'failure': failure
+                });
             },
 
             /**
@@ -1867,14 +1863,12 @@
                 
                 let path = '/teams/{teamId}/memberships/{inviteId}/status'.replace(new RegExp('{teamId}', 'g'), teamId).replace(new RegExp('{inviteId}', 'g'), inviteId);
 
-                return http
-                    .patch(path, {'content-type': 'application/json'},
-                        {
-                            'userId': userId, 
-                            'secret': secret, 
-                            'success': success, 
-                            'failure': failure
-                        });
+                return iframe('patch', config.domain + '/' + config.version + path, {project: config.project,
+                    'userId': userId, 
+                    'secret': secret, 
+                    'success': success, 
+                    'failure': failure
+                });
             }
         };
 

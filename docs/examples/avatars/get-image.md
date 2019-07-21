@@ -5,7 +5,7 @@ sdk
     setKey('')
 ;
 
-let promise = sdk.auth.logoutBySession('[ID]');
+let promise = sdk.avatars.getImage('https://example.com');
 
 promise.then(function (response) {
     console.log(response);

@@ -132,7 +132,7 @@
                 globalParams.push({key: key, value: value});
             };
 
-            addGlobalHeader('x-sdk-version', 'appwrite:javascript:v1.0.11');
+            addGlobalHeader('x-sdk-version', 'appwrite:javascript:v1.0.12');
             addGlobalHeader('content-type', '');
 
             /**
@@ -2272,7 +2272,7 @@
                 let path = '/storage/files';
 
                 return http
-                    .post(path, {'content-type': 'application/json'},
+                    .post(path, {'content-type': 'multipart/form-data'},
                         {
                             'files': files, 
                             'read': read, 

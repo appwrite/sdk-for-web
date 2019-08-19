@@ -132,7 +132,7 @@
                 globalParams.push({key: key, value: value});
             };
 
-            addGlobalHeader('x-sdk-version', 'appwrite:javascript:v1.0.13');
+            addGlobalHeader('x-sdk-version', 'appwrite:javascript:v1.0.14');
             addGlobalHeader('content-type', '');
 
             /**
@@ -1365,6 +1365,24 @@
              * @return {Promise}             */
             getCountriesPhones: function() {
                 let path = '/locale/countries/phones';
+
+                return http
+                    .get(path, {'content-type': 'application/json'},
+                        {
+                        });
+            },
+
+            /**
+             * List of currencies
+             *
+             * List of all currencies, including currency symol, name, plural, and decimal
+             * digits for all major and minor currencies. You can use the locale header to
+             * get the data in supported language.
+             *
+             * @throws {Error}
+             * @return {Promise}             */
+            getCurrencies: function() {
+                let path = '/locale/currencies';
 
                 return http
                     .get(path, {'content-type': 'application/json'},

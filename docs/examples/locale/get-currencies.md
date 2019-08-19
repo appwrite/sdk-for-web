@@ -5,7 +5,7 @@ sdk
     setKey('')
 ;
 
-let promise = sdk.projects.updateWebhook('[PROJECT_ID]', '[WEBHOOK_ID]', '[NAME]', [], '[URL]', 1);
+let promise = sdk.locale.getCurrencies();
 
 promise.then(function (response) {
     console.log(response);

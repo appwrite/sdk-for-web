@@ -132,7 +132,7 @@
                 globalParams.push({key: key, value: value});
             };
 
-            addGlobalHeader('x-sdk-version', 'appwrite:javascript:v1.0.12');
+            addGlobalHeader('x-sdk-version', 'appwrite:javascript:v1.0.13');
             addGlobalHeader('content-type', '');
 
             /**
@@ -1341,7 +1341,8 @@
              * List EU Countries
              *
              * List of all countries that are currently members of the EU. You can use the
-             * locale header to get the data in supported language.
+             * locale header to get the data in supported language. UK brexit date is
+             * currently set to 2019-10-31 and will be updated if and when needed.
              *
              * @throws {Error}
              * @return {Promise}             */
@@ -1786,7 +1787,7 @@
              * @param {string} url
              * @throws {Error}
              * @return {Promise}             */
-            updatePlatform: function(projectId, platformId, name, key = '', store = '', url = '[]') {
+            updatePlatform: function(projectId, platformId, name, key = '', store = '', url = '') {
                 if(projectId === undefined) {
                     throw new Error('Missing required parameter: "projectId"');
                 }

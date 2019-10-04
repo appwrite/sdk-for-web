@@ -2,7 +2,7 @@
     window.Appwrite = function () {
 
         let config = {
-            endpoint: 'https://https://appwrite.io/v1',
+            endpoint: 'https://appwrite.io/v1',
             project: '',
             key: '',
             locale: '',

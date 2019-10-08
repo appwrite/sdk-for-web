@@ -6,8 +6,11 @@ sdk
 
 let promise = sdk.users.createUser('email@example.com', 'password');
 
-promise.then(function (response) {
+promise.then(function (response) 
+{
     console.log(response);
-}, function (error) {
+}, 
+function (error) 
+{
     console.log(error);
 });

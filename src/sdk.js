@@ -2,7 +2,7 @@
      
     'use strict';
 
-    window.Appwrite = function () {
+    var window.Appwrite = () => {
 
         let config = {
             endpoint: 'https://appwrite.io/v1',
@@ -49,7 +49,7 @@
          *
          * @return this
          */
-        let setKey = function (value)
+        let setKey = (value) =>
         {
             http.addGlobalHeader('X-Appwrite-Key', value);
 

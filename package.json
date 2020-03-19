@@ -7,7 +7,7 @@
   "main": "src/sdk.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/appwrite/sdk-for-js.git"
+    "url": "https://github.com/appwrite/sdk-for-js"
   },
   "devDependencies": {},
   "dependencies": {}

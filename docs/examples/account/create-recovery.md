@@ -4,7 +4,7 @@ sdk
     .setProject('5df5acd0d48c2') // Your project ID
 ;
 
-let promise = sdk.account.updateName('[NAME]');
+let promise = sdk.account.createRecovery('email@example.com', 'https://example.com');
 
 promise.then(function (response) {
     console.log(response); // Success

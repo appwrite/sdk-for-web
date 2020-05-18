@@ -7,9 +7,7 @@
         let config = {
             endpoint: 'https://appwrite.io/v1',
             project: '',
-            key: '',
             locale: '',
-            mode: '',
         };
 
         /**
@@ -41,24 +39,6 @@
         };
 
         /**
-         * Set Key
-         *
-         * Your secret API key
-         *
-         * @param value string
-         *
-         * @return this
-         */
-        let setKey = function (value)
-        {
-            http.addGlobalHeader('X-Appwrite-Key', value);
-
-            config.key = value;
-
-            return this;
-        };
-
-        /**
          * Set Locale
          *
          * @param value string
@@ -70,22 +50,6 @@
             http.addGlobalHeader('X-Appwrite-Locale', value);
 
             config.locale = value;
-
-            return this;
-        };
-
-        /**
-         * Set Mode
-         *
-         * @param value string
-         *
-         * @return this
-         */
-        let setMode = function (value)
-        {
-            http.addGlobalHeader('X-Appwrite-Mode', value);
-
-            config.mode = value;
 
             return this;
         };
@@ -494,7 +458,7 @@
                 }
 
                 if(oldPassword) {
-                    payload['old-password'] = oldPassword;
+                    payload['oldPassword'] = oldPassword;
                 }
 
                 return http
@@ -608,12 +572,12 @@
              *
              * @param {string} userId
              * @param {string} secret
-             * @param {string} passwordA
-             * @param {string} passwordB
+             * @param {string} password
+             * @param {string} passwordAgain
              * @throws {Error}
              * @return {Promise}             
              */
-            updateRecovery: function(userId, secret, passwordA, passwordB) {
+            updateRecovery: function(userId, secret, password, passwordAgain) {
                 if(userId === undefined) {
                     throw new Error('Missing required parameter: "userId"');
                 }
@@ -622,12 +586,12 @@
                     throw new Error('Missing required parameter: "secret"');
                 }
                 
-                if(passwordA === undefined) {
-                    throw new Error('Missing required parameter: "passwordA"');
+                if(password === undefined) {
+                    throw new Error('Missing required parameter: "password"');
                 }
                 
-                if(passwordB === undefined) {
-                    throw new Error('Missing required parameter: "passwordB"');
+                if(passwordAgain === undefined) {
+                    throw new Error('Missing required parameter: "passwordAgain"');
                 }
                 
                 let path = '/account/recovery';
@@ -642,12 +606,12 @@
                     payload['secret'] = secret;
                 }
 
-                if(passwordA) {
-                    payload['password-a'] = passwordA;
+                if(password) {
+                    payload['password'] = password;
                 }
 
-                if(passwordB) {
-                    payload['password-b'] = passwordB;
+                if(passwordAgain) {
+                    payload['passwordAgain'] = passwordAgain;
                 }
 
                 return http
@@ -748,7 +712,7 @@
              * @throws {Error}
              * @return {Promise}             
              */
-            createOAuth2Session: function(provider, success = 'https://localhost:2444/auth/oauth2/success', failure = 'https://localhost:2444/auth/oauth2/failure') {
+            createOAuth2Session: function(provider, success = 'https://appwrite.io/auth/oauth2/success', failure = 'https://appwrite.io/auth/oauth2/failure') {
                 if(provider === undefined) {
                     throw new Error('Missing required parameter: "provider"');
                 }
@@ -936,7 +900,7 @@
              * @param {number} height
              * @param {number} quality
              * @throws {Error}
-             * @return {Promise}             
+             * @return {string}             
              */
             getCreditCard: function(code, width = 100, height = 100, quality = 100) {
                 if(code === undefined) {
@@ -959,10 +923,11 @@
                     payload['quality'] = quality;
                 }
 
-                return http
-                    .get(path, {
-                        'content-type': 'application/json',
-                    }, payload);
+                payload['project'] = config.project;
+
+                let query = Object.keys(payload).map(key => key + '=' + encodeURIComponent(payload[key])).join('&');
+                
+                return config.endpoint + path + ((query) ? '?' + query : '');
             },
 
             /**
@@ -973,7 +938,7 @@
              *
              * @param {string} url
              * @throws {Error}
-             * @return {Promise}             
+             * @return {string}             
              */
             getFavicon: function(url) {
                 if(url === undefined) {
@@ -988,10 +953,11 @@
                     payload['url'] = url;
                 }
 
-                return http
-                    .get(path, {
-                        'content-type': 'application/json',
-                    }, payload);
+                payload['project'] = config.project;
+
+                let query = Object.keys(payload).map(key => key + '=' + encodeURIComponent(payload[key])).join('&');
+                
+                return config.endpoint + path + ((query) ? '?' + query : '');
             },
 
             /**
@@ -1006,7 +972,7 @@
              * @param {number} height
              * @param {number} quality
              * @throws {Error}
-             * @return {Promise}             
+             * @return {string}             
              */
             getFlag: function(code, width = 100, height = 100, quality = 100) {
                 if(code === undefined) {
@@ -1029,10 +995,11 @@
                     payload['quality'] = quality;
                 }
 
-                return http
-                    .get(path, {
-                        'content-type': 'application/json',
-                    }, payload);
+                payload['project'] = config.project;
+
+                let query = Object.keys(payload).map(key => key + '=' + encodeURIComponent(payload[key])).join('&');
+                
+                return config.endpoint + path + ((query) ? '?' + query : '');
             },
 
             /**
@@ -1047,7 +1014,7 @@
              * @param {number} width
              * @param {number} height
              * @throws {Error}
-             * @return {Promise}             
+             * @return {string}             
              */
             getImage: function(url, width = 400, height = 400) {
                 if(url === undefined) {
@@ -1070,10 +1037,11 @@
                     payload['height'] = height;
                 }
 
-                return http
-                    .get(path, {
-                        'content-type': 'application/json',
-                    }, payload);
+                payload['project'] = config.project;
+
+                let query = Object.keys(payload).map(key => key + '=' + encodeURIComponent(payload[key])).join('&');
+                
+                return config.endpoint + path + ((query) ? '?' + query : '');
             },
 
             /**
@@ -1087,7 +1055,7 @@
              * @param {number} margin
              * @param {number} download
              * @throws {Error}
-             * @return {Promise}             
+             * @return {string}             
              */
             getQR: function(text, size = 400, margin = 1, download = 0) {
                 if(text === undefined) {
@@ -1114,10 +1082,11 @@
                     payload['download'] = download;
                 }
 
-                return http
-                    .get(path, {
-                        'content-type': 'application/json',
-                    }, payload);
+                payload['project'] = config.project;
+
+                let query = Object.keys(payload).map(key => key + '=' + encodeURIComponent(payload[key])).join('&');
+                
+                return config.endpoint + path + ((query) ? '?' + query : '');
             }
         };
 
@@ -1132,7 +1101,7 @@
              * modes](/docs/admin).
              *
              * @param {string} collectionId
-             * @param {array} filters
+             * @param {string[]} filters
              * @param {number} offset
              * @param {number} limit
              * @param {string} orderField
@@ -1166,15 +1135,15 @@
                 }
 
                 if(orderField) {
-                    payload['order-field'] = orderField;
+                    payload['orderField'] = orderField;
                 }
 
                 if(orderType) {
-                    payload['order-type'] = orderType;
+                    payload['orderType'] = orderType;
                 }
 
                 if(orderCast) {
-                    payload['order-cast'] = orderCast;
+                    payload['orderCast'] = orderCast;
                 }
 
                 if(search) {
@@ -1202,8 +1171,8 @@
              *
              * @param {string} collectionId
              * @param {object} data
-             * @param {array} read
-             * @param {array} write
+             * @param {string[]} read
+             * @param {string[]} write
              * @param {string} parentDocument
              * @param {string} parentProperty
              * @param {string} parentPropertyType
@@ -1298,8 +1267,8 @@
              * @param {string} collectionId
              * @param {string} documentId
              * @param {object} data
-             * @param {array} read
-             * @param {array} write
+             * @param {string[]} read
+             * @param {string[]} write
              * @throws {Error}
              * @return {Promise}             
              */
@@ -1405,7 +1374,7 @@
             },
 
             /**
-             * List Countries
+             * List Continents
              *
              * List of all continents. You can use the locale header to get the data in a
              * supported language.
@@ -1557,8 +1526,8 @@
              * read and write arguments.
              *
              * @param {File} file
-             * @param {array} read
-             * @param {array} write
+             * @param {string[]} read
+             * @param {string[]} write
              * @throws {Error}
              * @return {Promise}             
              */
@@ -1629,8 +1598,8 @@
              * to update this resource.
              *
              * @param {string} fileId
-             * @param {array} read
-             * @param {array} write
+             * @param {string[]} read
+             * @param {string[]} write
              * @throws {Error}
              * @return {Promise}             
              */
@@ -1854,7 +1823,7 @@
              * project.
              *
              * @param {string} name
-             * @param {array} roles
+             * @param {string[]} roles
              * @throws {Error}
              * @return {Promise}             
              */
@@ -2009,7 +1978,7 @@
              *
              * @param {string} teamId
              * @param {string} email
-             * @param {array} roles
+             * @param {string[]} roles
              * @param {string} url
              * @param {string} name
              * @throws {Error}
@@ -2142,9 +2111,7 @@
         return {
             setEndpoint: setEndpoint,
             setProject: setProject,
-            setKey: setKey,
             setLocale: setLocale,
-            setMode: setMode,
             account: account,
             avatars: avatars,
             database: database,

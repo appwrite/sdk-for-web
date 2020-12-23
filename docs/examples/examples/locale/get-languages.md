@@ -5,7 +5,7 @@ sdk
     .setProject('5df5acd0d48c2') // Your project ID
 ;
 
-let promise = sdk.database.listDocuments('[COLLECTION_ID]');
+let promise = sdk.locale.getLanguages();
 
 promise.then(function (response) {
     console.log(response); // Success

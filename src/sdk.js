@@ -103,7 +103,7 @@
                 globalParams.push({key: key, value: value});
             };
 
-            addGlobalHeader('x-sdk-version', 'appwrite:javascript:1.1.0');
+            addGlobalHeader('x-sdk-version', 'appwrite:web:1.2.0');
             addGlobalHeader('content-type', '');
 
             /**
@@ -190,28 +190,27 @@
                     }
 
                     request.onload = function () {
+                        let data = request.response;
+                        let contentType = this.getResponseHeader('content-type') || '';
+                        contentType = contentType.substring(0, contentType.indexOf(';'));
+
+                        switch (contentType) {
+                            case 'application/json':
+                                data = JSON.parse(data);
+                                break;
+                        }
+
+                        let cookieFallback = this.getResponseHeader('X-Fallback-Cookies') || '';
+                        
+                        if(window.localStorage && cookieFallback) {
+                            window.console.warn('Appwrite is using localStorage for session management. Increase your security by adding a custom domain as your API endpoint.');
+                            window.localStorage.setItem('cookieFallback', cookieFallback);
+                        }
+
                         if (4 === request.readyState && 399 >= request.status) {
-                            let data = request.response;
-                            let contentType = this.getResponseHeader('content-type') || '';
-                            contentType = contentType.substring(0, contentType.indexOf(';'));
-
-                            switch (contentType) {
-                                case 'application/json':
-                                    data = JSON.parse(data);
-                                    break;
-                            }
-
-                            let cookieFallback = this.getResponseHeader('X-Fallback-Cookies') || '';
-                            
-                            if(window.localStorage && cookieFallback) {
-                                window.console.warn('Appwrite is using localStorage for session management. Increase your security by adding a custom domain as your API endpoint.');
-                                window.localStorage.setItem('cookieFallback', cookieFallback);
-                            }
-
                             resolve(data);
-
                         } else {
-                            reject(new Error(request.statusText));
+                            reject(data);
                         }
                     };
 
@@ -276,10 +275,10 @@
              *
              * Use this endpoint to allow a new user to register a new account in your
              * project. After the user registration completes successfully, you can use
-             * the [/account/verfication](/docs/account#createVerification) route to start
-             * verifying the user email address. To allow your new user to login to his
-             * new account, you need to create a new [account
-             * session](/docs/account#createSession).
+             * the [/account/verfication](/docs/client/account#createVerification) route
+             * to start verifying the user email address. To allow your new user to login
+             * to his new account, you need to create a new [account
+             * session](/docs/client/account#createSession).
              *
              * @param {string} email
              * @param {string} password
@@ -522,7 +521,7 @@
              * When the user clicks the confirmation link he is redirected back to your
              * app password reset URL with the secret key and email address values
              * attached to the URL query string. Use the query string params to submit a
-             * request to the [PUT /account/recovery](/docs/account#updateRecovery)
+             * request to the [PUT /account/recovery](/docs/client/account#updateRecovery)
              * endpoint to complete the process.
              *
              * @param {string} email
@@ -563,7 +562,7 @@
              * Use this endpoint to complete the user account password reset. Both the
              * **userId** and **secret** arguments will be passed as query parameters to
              * the redirect URL you have provided when sending your request to the [POST
-             * /account/recovery](/docs/account#createRecovery) endpoint.
+             * /account/recovery](/docs/client/account#createRecovery) endpoint.
              * 
              * Please note that in order to avoid a [Redirect
              * Attack](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md)
@@ -709,10 +708,11 @@
              * @param {string} provider
              * @param {string} success
              * @param {string} failure
+             * @param {string[]} scopes
              * @throws {Error}
              * @return {Promise}             
              */
-            createOAuth2Session: function(provider, success = 'https://appwrite.io/auth/oauth2/success', failure = 'https://appwrite.io/auth/oauth2/failure') {
+            createOAuth2Session: function(provider, success = 'https://appwrite.io/auth/oauth2/success', failure = 'https://appwrite.io/auth/oauth2/failure', scopes = []) {
                 if(provider === undefined) {
                     throw new Error('Missing required parameter: "provider"');
                 }
@@ -729,9 +729,28 @@
                     payload['failure'] = failure;
                 }
 
+                if(scopes) {
+                    payload['scopes'] = scopes;
+                }
+
                 payload['project'] = config.project;
 
-                let query = Object.keys(payload).map(key => key + '=' + encodeURIComponent(payload[key])).join('&');
+
+                let query = [];
+
+                for (let p in payload) {
+                    if(Array.isArray(payload[p])) {
+                        for (let index = 0; index < payload[p].length; index++) {
+                            let param = payload[p][index];
+                            query.push(encodeURIComponent(p + '[]') + "=" + encodeURIComponent(param));
+                        }
+                    }
+                    else {
+                        query.push(encodeURIComponent(p) + "=" + encodeURIComponent(payload[p]));
+                    }
+                }
+
+                query =  query.join("&");
                 
                 window.location = config.endpoint + path + ((query) ? '?' + query : '');
             },
@@ -768,16 +787,17 @@
              * Use this endpoint to send a verification message to your user email address
              * to confirm they are the valid owners of that address. Both the **userId**
              * and **secret** arguments will be passed as query parameters to the URL you
-             * have provider to be attached to the verification email. The provided URL
-             * should redirect the user back for your app and allow you to complete the
+             * have provided to be attached to the verification email. The provided URL
+             * should redirect the user back to your app and allow you to complete the
              * verification process by verifying both the **userId** and **secret**
              * parameters. Learn more about how to [complete the verification
-             * process](/docs/account#updateAccountVerification). 
+             * process](/docs/client/account#updateAccountVerification). 
              * 
              * Please note that in order to avoid a [Redirect
-             * Attack](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md)
+             * Attack](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md),
              * the only valid redirect URLs are the ones from domains you have set when
              * adding your platforms in the console interface.
+             * 
              *
              * @param {string} url
              * @throws {Error}
@@ -858,7 +878,7 @@
              * @param {number} height
              * @param {number} quality
              * @throws {Error}
-             * @return {Promise}             
+             * @return {string}             
              */
             getBrowser: function(code, width = 100, height = 100, quality = 100) {
                 if(code === undefined) {
@@ -881,10 +901,26 @@
                     payload['quality'] = quality;
                 }
 
-                return http
-                    .get(path, {
-                        'content-type': 'application/json',
-                    }, payload);
+                payload['project'] = config.project;
+
+
+                let query = [];
+
+                for (let p in payload) {
+                    if(Array.isArray(payload[p])) {
+                        for (let index = 0; index < payload[p].length; index++) {
+                            let param = payload[p][index];
+                            query.push(encodeURIComponent(p + '[]') + "=" + encodeURIComponent(param));
+                        }
+                    }
+                    else {
+                        query.push(encodeURIComponent(p) + "=" + encodeURIComponent(payload[p]));
+                    }
+                }
+
+                query =  query.join("&");
+                
+                return config.endpoint + path + ((query) ? '?' + query : '');
             },
 
             /**
@@ -925,7 +961,22 @@
 
                 payload['project'] = config.project;
 
-                let query = Object.keys(payload).map(key => key + '=' + encodeURIComponent(payload[key])).join('&');
+
+                let query = [];
+
+                for (let p in payload) {
+                    if(Array.isArray(payload[p])) {
+                        for (let index = 0; index < payload[p].length; index++) {
+                            let param = payload[p][index];
+                            query.push(encodeURIComponent(p + '[]') + "=" + encodeURIComponent(param));
+                        }
+                    }
+                    else {
+                        query.push(encodeURIComponent(p) + "=" + encodeURIComponent(payload[p]));
+                    }
+                }
+
+                query =  query.join("&");
                 
                 return config.endpoint + path + ((query) ? '?' + query : '');
             },
@@ -955,7 +1006,22 @@
 
                 payload['project'] = config.project;
 
-                let query = Object.keys(payload).map(key => key + '=' + encodeURIComponent(payload[key])).join('&');
+
+                let query = [];
+
+                for (let p in payload) {
+                    if(Array.isArray(payload[p])) {
+                        for (let index = 0; index < payload[p].length; index++) {
+                            let param = payload[p][index];
+                            query.push(encodeURIComponent(p + '[]') + "=" + encodeURIComponent(param));
+                        }
+                    }
+                    else {
+                        query.push(encodeURIComponent(p) + "=" + encodeURIComponent(payload[p]));
+                    }
+                }
+
+                query =  query.join("&");
                 
                 return config.endpoint + path + ((query) ? '?' + query : '');
             },
@@ -997,7 +1063,22 @@
 
                 payload['project'] = config.project;
 
-                let query = Object.keys(payload).map(key => key + '=' + encodeURIComponent(payload[key])).join('&');
+
+                let query = [];
+
+                for (let p in payload) {
+                    if(Array.isArray(payload[p])) {
+                        for (let index = 0; index < payload[p].length; index++) {
+                            let param = payload[p][index];
+                            query.push(encodeURIComponent(p + '[]') + "=" + encodeURIComponent(param));
+                        }
+                    }
+                    else {
+                        query.push(encodeURIComponent(p) + "=" + encodeURIComponent(payload[p]));
+                    }
+                }
+
+                query =  query.join("&");
                 
                 return config.endpoint + path + ((query) ? '?' + query : '');
             },
@@ -1039,7 +1120,91 @@
 
                 payload['project'] = config.project;
 
-                let query = Object.keys(payload).map(key => key + '=' + encodeURIComponent(payload[key])).join('&');
+
+                let query = [];
+
+                for (let p in payload) {
+                    if(Array.isArray(payload[p])) {
+                        for (let index = 0; index < payload[p].length; index++) {
+                            let param = payload[p][index];
+                            query.push(encodeURIComponent(p + '[]') + "=" + encodeURIComponent(param));
+                        }
+                    }
+                    else {
+                        query.push(encodeURIComponent(p) + "=" + encodeURIComponent(payload[p]));
+                    }
+                }
+
+                query =  query.join("&");
+                
+                return config.endpoint + path + ((query) ? '?' + query : '');
+            },
+
+            /**
+             * Get User Initials
+             *
+             * Use this endpoint to show your user initials avatar icon on your website or
+             * app. By default, this route will try to print your logged-in user name or
+             * email initials. You can also overwrite the user name if you pass the 'name'
+             * parameter. If no name is given and no user is logged, an empty avatar will
+             * be returned.
+             * 
+             * You can use the color and background params to change the avatar colors. By
+             * default, a random theme will be selected. The random theme will persist for
+             * the user's initials when reloading the same theme will always return for
+             * the same initials.
+             *
+             * @param {string} name
+             * @param {number} width
+             * @param {number} height
+             * @param {string} color
+             * @param {string} background
+             * @throws {Error}
+             * @return {string}             
+             */
+            getInitials: function(name = '', width = 500, height = 500, color = '', background = '') {
+                let path = '/avatars/initials';
+
+                let payload = {};
+
+                if(name) {
+                    payload['name'] = name;
+                }
+
+                if(width) {
+                    payload['width'] = width;
+                }
+
+                if(height) {
+                    payload['height'] = height;
+                }
+
+                if(color) {
+                    payload['color'] = color;
+                }
+
+                if(background) {
+                    payload['background'] = background;
+                }
+
+                payload['project'] = config.project;
+
+
+                let query = [];
+
+                for (let p in payload) {
+                    if(Array.isArray(payload[p])) {
+                        for (let index = 0; index < payload[p].length; index++) {
+                            let param = payload[p][index];
+                            query.push(encodeURIComponent(p + '[]') + "=" + encodeURIComponent(param));
+                        }
+                    }
+                    else {
+                        query.push(encodeURIComponent(p) + "=" + encodeURIComponent(payload[p]));
+                    }
+                }
+
+                query =  query.join("&");
                 
                 return config.endpoint + path + ((query) ? '?' + query : '');
             },
@@ -1053,11 +1218,11 @@
              * @param {string} text
              * @param {number} size
              * @param {number} margin
-             * @param {number} download
+             * @param {boolean} download
              * @throws {Error}
              * @return {string}             
              */
-            getQR: function(text, size = 400, margin = 1, download = 0) {
+            getQR: function(text, size = 400, margin = 1, download = false) {
                 if(text === undefined) {
                     throw new Error('Missing required parameter: "text"');
                 }
@@ -1084,7 +1249,22 @@
 
                 payload['project'] = config.project;
 
-                let query = Object.keys(payload).map(key => key + '=' + encodeURIComponent(payload[key])).join('&');
+
+                let query = [];
+
+                for (let p in payload) {
+                    if(Array.isArray(payload[p])) {
+                        for (let index = 0; index < payload[p].length; index++) {
+                            let param = payload[p][index];
+                            query.push(encodeURIComponent(p + '[]') + "=" + encodeURIComponent(param));
+                        }
+                    }
+                    else {
+                        query.push(encodeURIComponent(p) + "=" + encodeURIComponent(payload[p]));
+                    }
+                }
+
+                query =  query.join("&");
                 
                 return config.endpoint + path + ((query) ? '?' + query : '');
             }
@@ -1108,12 +1288,10 @@
              * @param {string} orderType
              * @param {string} orderCast
              * @param {string} search
-             * @param {number} first
-             * @param {number} last
              * @throws {Error}
              * @return {Promise}             
              */
-            listDocuments: function(collectionId, filters = [], offset = 0, limit = 50, orderField = '$id', orderType = 'ASC', orderCast = 'string', search = '', first = 0, last = 0) {
+            listDocuments: function(collectionId, filters = [], offset = 0, limit = 50, orderField = '$id', orderType = 'ASC', orderCast = 'string', search = '') {
                 if(collectionId === undefined) {
                     throw new Error('Missing required parameter: "collectionId"');
                 }
@@ -1150,14 +1328,6 @@
                     payload['search'] = search;
                 }
 
-                if(first) {
-                    payload['first'] = first;
-                }
-
-                if(last) {
-                    payload['last'] = last;
-                }
-
                 return http
                     .get(path, {
                         'content-type': 'application/json',
@@ -1167,7 +1337,10 @@
             /**
              * Create Document
              *
-             * Create a new Document.
+             * Create a new Document. Before using this route, you should create a new
+             * collection resource using either a [server
+             * integration](/docs/server/database?sdk=nodejs#createCollection) API or
+             * directly from your database console.
              *
              * @param {string} collectionId
              * @param {object} data
@@ -1456,15 +1629,35 @@
             /**
              * List Currencies
              *
-             * List of all currencies, including currency symol, name, plural, and decimal
-             * digits for all major and minor currencies. You can use the locale header to
-             * get the data in a supported language.
+             * List of all currencies, including currency symbol, name, plural, and
+             * decimal digits for all major and minor currencies. You can use the locale
+             * header to get the data in a supported language.
              *
              * @throws {Error}
              * @return {Promise}             
              */
             getCurrencies: function() {
                 let path = '/locale/currencies';
+
+                let payload = {};
+
+                return http
+                    .get(path, {
+                        'content-type': 'application/json',
+                    }, payload);
+            },
+
+            /**
+             * List Languages
+             *
+             * List of all languages classified by ISO 639-1 including 2-letter code, name
+             * in English, and name in the respective language.
+             *
+             * @throws {Error}
+             * @return {Promise}             
+             */
+            getLanguages: function() {
+                let path = '/locale/languages';
 
                 let payload = {};
 
@@ -1681,7 +1874,22 @@
 
                 payload['project'] = config.project;
 
-                let query = Object.keys(payload).map(key => key + '=' + encodeURIComponent(payload[key])).join('&');
+
+                let query = [];
+
+                for (let p in payload) {
+                    if(Array.isArray(payload[p])) {
+                        for (let index = 0; index < payload[p].length; index++) {
+                            let param = payload[p][index];
+                            query.push(encodeURIComponent(p + '[]') + "=" + encodeURIComponent(param));
+                        }
+                    }
+                    else {
+                        query.push(encodeURIComponent(p) + "=" + encodeURIComponent(payload[p]));
+                    }
+                }
+
+                query =  query.join("&");
                 
                 return config.endpoint + path + ((query) ? '?' + query : '');
             },
@@ -1734,7 +1942,22 @@
 
                 payload['project'] = config.project;
 
-                let query = Object.keys(payload).map(key => key + '=' + encodeURIComponent(payload[key])).join('&');
+
+                let query = [];
+
+                for (let p in payload) {
+                    if(Array.isArray(payload[p])) {
+                        for (let index = 0; index < payload[p].length; index++) {
+                            let param = payload[p][index];
+                            query.push(encodeURIComponent(p + '[]') + "=" + encodeURIComponent(param));
+                        }
+                    }
+                    else {
+                        query.push(encodeURIComponent(p) + "=" + encodeURIComponent(payload[p]));
+                    }
+                }
+
+                query =  query.join("&");
                 
                 return config.endpoint + path + ((query) ? '?' + query : '');
             },
@@ -1765,7 +1988,22 @@
 
                 payload['project'] = config.project;
 
-                let query = Object.keys(payload).map(key => key + '=' + encodeURIComponent(payload[key])).join('&');
+
+                let query = [];
+
+                for (let p in payload) {
+                    if(Array.isArray(payload[p])) {
+                        for (let index = 0; index < payload[p].length; index++) {
+                            let param = payload[p][index];
+                            query.push(encodeURIComponent(p + '[]') + "=" + encodeURIComponent(param));
+                        }
+                    }
+                    else {
+                        query.push(encodeURIComponent(p) + "=" + encodeURIComponent(payload[p]));
+                    }
+                }
+
+                query =  query.join("&");
                 
                 return config.endpoint + path + ((query) ? '?' + query : '');
             }
@@ -1941,10 +2179,14 @@
              * for this list of resources.
              *
              * @param {string} teamId
+             * @param {string} search
+             * @param {number} limit
+             * @param {number} offset
+             * @param {string} orderType
              * @throws {Error}
              * @return {Promise}             
              */
-            getMemberships: function(teamId) {
+            getMemberships: function(teamId, search = '', limit = 25, offset = 0, orderType = 'ASC') {
                 if(teamId === undefined) {
                     throw new Error('Missing required parameter: "teamId"');
                 }
@@ -1952,6 +2194,22 @@
                 let path = '/teams/{teamId}/memberships'.replace(new RegExp('{teamId}', 'g'), teamId);
 
                 let payload = {};
+
+                if(search) {
+                    payload['search'] = search;
+                }
+
+                if(limit) {
+                    payload['limit'] = limit;
+                }
+
+                if(offset) {
+                    payload['offset'] = offset;
+                }
+
+                if(orderType) {
+                    payload['orderType'] = orderType;
+                }
 
                 return http
                     .get(path, {
@@ -1968,8 +2226,8 @@
              * 
              * Use the 'URL' parameter to redirect the user from the invitation email back
              * to your app. When the user is redirected, use the [Update Team Membership
-             * Status](/docs/teams#updateMembershipStatus) endpoint to allow the user to
-             * accept the invitation to the team.
+             * Status](/docs/client/teams#updateMembershipStatus) endpoint to allow the
+             * user to accept the invitation to the team.
              * 
              * Please note that in order to avoid a [Redirect
              * Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md)

@@ -5,6 +5,6 @@ sdk
     .setProject('5df5acd0d48c2') // Your project ID
 ;
 
-let result = sdk.avatars.getBrowser('aa');
+let result = sdk.avatars.getInitials();
 
 console.log(result); // Resource URL

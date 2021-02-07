@@ -1,3 +1,4 @@
+```js
 let sdk = new Appwrite();
 
 sdk
@@ -8,3 +9,4 @@ sdk
 let result = sdk.storage.getFileView('[FILE_ID]');
 
 console.log(result); // Resource URL
+```

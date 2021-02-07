@@ -1,3 +1,4 @@
+```js
 let sdk = new Appwrite();
 
 sdk
@@ -12,3 +13,4 @@ promise.then(function (response) {
 }, function (error) {
     console.log(error); // Failure
 });
+```

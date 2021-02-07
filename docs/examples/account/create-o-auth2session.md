@@ -1,3 +1,4 @@
+```js
 let sdk = new Appwrite();
 
 sdk
@@ -7,4 +8,4 @@ sdk
 
 // Go to OAuth provider login page
 sdk.account.createOAuth2Session('amazon');
-
+```

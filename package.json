@@ -2,13 +2,13 @@
   "name": "appwrite",
   "homepage": "https://appwrite.io/support",
   "description": "Appwrite is an open-source self-hosted backend server that abstract and simplify complex and repetitive development tasks behind a very simple REST API",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "license": "BSD-3-Clause",
   "main": "src/sdk.js",
   "types": "types/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/appwrite/sdk-for-js"
+    "url": "https://github.com/appwrite/sdk-for-web"
   },
   "devDependencies": {
   "typescript": "^3.6.4"

@@ -103,9 +103,9 @@
                 globalParams.push({key: key, value: value});
             };
 
-            addGlobalHeader('x-sdk-version', 'appwrite:web:1.2.0');
+            addGlobalHeader('x-sdk-version', 'appwrite:web:2.0.0');
             addGlobalHeader('content-type', '');
-
+    
             /**
              * @param {string} method
              * @param {string} path string
@@ -275,10 +275,10 @@
              *
              * Use this endpoint to allow a new user to register a new account in your
              * project. After the user registration completes successfully, you can use
-             * the [/account/verfication](/docs/client/account#createVerification) route
-             * to start verifying the user email address. To allow your new user to login
-             * to his new account, you need to create a new [account
-             * session](/docs/client/account#createSession).
+             * the [/account/verfication](/docs/client/account#accountCreateVerification)
+             * route to start verifying the user email address. To allow the new user to
+             * login to their new account, you need to create a new [account
+             * session](/docs/client/account#accountCreateSession).
              *
              * @param {string} email
              * @param {string} password
@@ -521,8 +521,9 @@
              * When the user clicks the confirmation link he is redirected back to your
              * app password reset URL with the secret key and email address values
              * attached to the URL query string. Use the query string params to submit a
-             * request to the [PUT /account/recovery](/docs/client/account#updateRecovery)
-             * endpoint to complete the process.
+             * request to the [PUT
+             * /account/recovery](/docs/client/account#accountUpdateRecovery) endpoint to
+             * complete the process.
              *
              * @param {string} email
              * @param {string} url
@@ -562,7 +563,7 @@
              * Use this endpoint to complete the user account password reset. Both the
              * **userId** and **secret** arguments will be passed as query parameters to
              * the redirect URL you have provided when sending your request to the [POST
-             * /account/recovery](/docs/client/account#createRecovery) endpoint.
+             * /account/recovery](/docs/client/account#accountCreateRecovery) endpoint.
              * 
              * Please note that in order to avoid a [Redirect
              * Attack](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md)
@@ -642,7 +643,7 @@
             /**
              * Create Account Session
              *
-             * Allow the user to login into his account by providing a valid email and
+             * Allow the user to login into their account by providing a valid email and
              * password combination. This route will create a new session for the user.
              *
              * @param {string} email
@@ -700,7 +701,7 @@
             /**
              * Create Account Session with OAuth2
              *
-             * Allow the user to login to his account using the OAuth2 provider of his
+             * Allow the user to login to their account using the OAuth2 provider of their
              * choice. Each OAuth2 provider should be enabled from the Appwrite console
              * first. Use the success and failure arguments to provide a redirect URL's
              * back to your app when login is completed.
@@ -758,9 +759,9 @@
             /**
              * Delete Account Session
              *
-             * Use this endpoint to log out the currently logged in user from all his
-             * account sessions across all his different devices. When using the option id
-             * argument, only the session unique ID provider will be deleted.
+             * Use this endpoint to log out the currently logged in user from all their
+             * account sessions across all of their different devices. When using the
+             * option id argument, only the session unique ID provider will be deleted.
              *
              * @param {string} sessionId
              * @throws {Error}
@@ -791,7 +792,7 @@
              * should redirect the user back to your app and allow you to complete the
              * verification process by verifying both the **userId** and **secret**
              * parameters. Learn more about how to [complete the verification
-             * process](/docs/client/account#updateAccountVerification). 
+             * process](/docs/client/account#accountUpdateVerification). 
              * 
              * Please note that in order to avoid a [Redirect
              * Attack](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md),
@@ -926,10 +927,9 @@
             /**
              * Get Credit Card Icon
              *
-             * Need to display your users with your billing method or their payment
-             * methods? The credit card endpoint will return you the icon of the credit
-             * card provider you need. Use width, height and quality arguments to change
-             * the output settings.
+             * The credit card endpoint will return you the icon of the credit card
+             * provider you need. Use width, height and quality arguments to change the
+             * output settings.
              *
              * @param {string} code
              * @param {number} width
@@ -984,8 +984,9 @@
             /**
              * Get Favicon
              *
-             * Use this endpoint to fetch the favorite icon (AKA favicon) of a  any remote
+             * Use this endpoint to fetch the favorite icon (AKA favicon) of any remote
              * website URL.
+             * 
              *
              * @param {string} url
              * @throws {Error}
@@ -1277,13 +1278,13 @@
              *
              * Get a list of all the user documents. You can use the query params to
              * filter your results. On admin mode, this endpoint will return a list of all
-             * of the project documents. [Learn more about different API
+             * of the project's documents. [Learn more about different API
              * modes](/docs/admin).
              *
              * @param {string} collectionId
              * @param {string[]} filters
-             * @param {number} offset
              * @param {number} limit
+             * @param {number} offset
              * @param {string} orderField
              * @param {string} orderType
              * @param {string} orderCast
@@ -1291,7 +1292,7 @@
              * @throws {Error}
              * @return {Promise}             
              */
-            listDocuments: function(collectionId, filters = [], offset = 0, limit = 50, orderField = '$id', orderType = 'ASC', orderCast = 'string', search = '') {
+            listDocuments: function(collectionId, filters = [], limit = 25, offset = 0, orderField = '', orderType = 'ASC', orderCast = 'string', search = '') {
                 if(collectionId === undefined) {
                     throw new Error('Missing required parameter: "collectionId"');
                 }
@@ -1304,12 +1305,12 @@
                     payload['filters'] = filters;
                 }
 
-                if(offset) {
-                    payload['offset'] = offset;
-                }
-
                 if(limit) {
                     payload['limit'] = limit;
+                }
+
+                if(offset) {
+                    payload['offset'] = offset;
                 }
 
                 if(orderField) {
@@ -1339,7 +1340,7 @@
              *
              * Create a new Document. Before using this route, you should create a new
              * collection resource using either a [server
-             * integration](/docs/server/database?sdk=nodejs#createCollection) API or
+             * integration](/docs/server/database#databaseCreateCollection) API or
              * directly from your database console.
              *
              * @param {string} collectionId
@@ -1406,8 +1407,8 @@
             /**
              * Get Document
              *
-             * Get document by its unique ID. This endpoint response returns a JSON object
-             * with the document data.
+             * Get a document by its unique ID. This endpoint response returns a JSON
+             * object with the document data.
              *
              * @param {string} collectionId
              * @param {string} documentId
@@ -1436,6 +1437,8 @@
             /**
              * Update Document
              *
+             * Update a document by its unique ID. Using the patch method you can pass
+             * only specific fields that will get updated.
              *
              * @param {string} collectionId
              * @param {string} documentId
@@ -1491,8 +1494,8 @@
             /**
              * Delete Document
              *
-             * Delete document by its unique ID. This endpoint deletes only the parent
-             * documents, his attributes and relations to other documents. Child documents
+             * Delete a document by its unique ID. This endpoint deletes only the parent
+             * documents, its attributes and relations to other documents. Child documents
              * **will not** be deleted.
              *
              * @param {string} collectionId
@@ -1515,6 +1518,112 @@
 
                 return http
                     .delete(path, {
+                        'content-type': 'application/json',
+                    }, payload);
+            }
+        };
+
+        let functions = {
+
+            /**
+             * List Executions
+             *
+             * Get a list of all the current user function execution logs. You can use the
+             * query params to filter your results. On admin mode, this endpoint will
+             * return a list of all of the project's teams. [Learn more about different
+             * API modes](/docs/admin).
+             *
+             * @param {string} functionId
+             * @param {string} search
+             * @param {number} limit
+             * @param {number} offset
+             * @param {string} orderType
+             * @throws {Error}
+             * @return {Promise}             
+             */
+            listExecutions: function(functionId, search = '', limit = 25, offset = 0, orderType = 'ASC') {
+                if(functionId === undefined) {
+                    throw new Error('Missing required parameter: "functionId"');
+                }
+                
+                let path = '/functions/{functionId}/executions'.replace(new RegExp('{functionId}', 'g'), functionId);
+
+                let payload = {};
+
+                if(search) {
+                    payload['search'] = search;
+                }
+
+                if(limit) {
+                    payload['limit'] = limit;
+                }
+
+                if(offset) {
+                    payload['offset'] = offset;
+                }
+
+                if(orderType) {
+                    payload['orderType'] = orderType;
+                }
+
+                return http
+                    .get(path, {
+                        'content-type': 'application/json',
+                    }, payload);
+            },
+
+            /**
+             * Create Execution
+             *
+             * Trigger a function execution. The returned object will return you the
+             * current execution status. You can ping the `Get Execution` endpoint to get
+             * updates on the current execution status. Once this endpoint is called, your
+             * function execution process will start asynchronously.
+             *
+             * @param {string} functionId
+             * @throws {Error}
+             * @return {Promise}             
+             */
+            createExecution: function(functionId) {
+                if(functionId === undefined) {
+                    throw new Error('Missing required parameter: "functionId"');
+                }
+                
+                let path = '/functions/{functionId}/executions'.replace(new RegExp('{functionId}', 'g'), functionId);
+
+                let payload = {};
+
+                return http
+                    .post(path, {
+                        'content-type': 'application/json',
+                    }, payload);
+            },
+
+            /**
+             * Get Execution
+             *
+             * Get a function execution log by its unique ID.
+             *
+             * @param {string} functionId
+             * @param {string} executionId
+             * @throws {Error}
+             * @return {Promise}             
+             */
+            getExecution: function(functionId, executionId) {
+                if(functionId === undefined) {
+                    throw new Error('Missing required parameter: "functionId"');
+                }
+                
+                if(executionId === undefined) {
+                    throw new Error('Missing required parameter: "executionId"');
+                }
+                
+                let path = '/functions/{functionId}/executions/{executionId}'.replace(new RegExp('{functionId}', 'g'), functionId).replace(new RegExp('{executionId}', 'g'), executionId);
+
+                let payload = {};
+
+                return http
+                    .get(path, {
                         'content-type': 'application/json',
                     }, payload);
             }
@@ -1675,7 +1784,7 @@
              *
              * Get a list of all the user files. You can use the query params to filter
              * your results. On admin mode, this endpoint will return a list of all of the
-             * project files. [Learn more about different API modes](/docs/admin).
+             * project's files. [Learn more about different API modes](/docs/admin).
              *
              * @param {string} search
              * @param {number} limit
@@ -1762,7 +1871,7 @@
             /**
              * Get File
              *
-             * Get file by its unique ID. This endpoint response returns a JSON object
+             * Get a file by its unique ID. This endpoint response returns a JSON object
              * with the file metadata.
              *
              * @param {string} fileId
@@ -1787,8 +1896,8 @@
             /**
              * Update File
              *
-             * Update file by its unique ID. Only users with write permissions have access
-             * to update this resource.
+             * Update a file by its unique ID. Only users with write permissions have
+             * access to update this resource.
              *
              * @param {string} fileId
              * @param {string[]} read
@@ -1855,7 +1964,7 @@
             /**
              * Get File for Download
              *
-             * Get file content by its unique ID. The endpoint response return with a
+             * Get a file content by its unique ID. The endpoint response return with a
              * 'Content-Disposition: attachment' header that tells the browser to start
              * downloading the file to user downloads directory.
              *
@@ -1965,15 +2074,15 @@
             /**
              * Get File for View
              *
-             * Get file content by its unique ID. This endpoint is similar to the download
-             * method but returns with no  'Content-Disposition: attachment' header.
+             * Get a file content by its unique ID. This endpoint is similar to the
+             * download method but returns with no  'Content-Disposition: attachment'
+             * header.
              *
              * @param {string} fileId
-             * @param {string} as
              * @throws {Error}
              * @return {string}             
              */
-            getFileView: function(fileId, as = '') {
+            getFileView: function(fileId) {
                 if(fileId === undefined) {
                     throw new Error('Missing required parameter: "fileId"');
                 }
@@ -1981,10 +2090,6 @@
                 let path = '/storage/files/{fileId}/view'.replace(new RegExp('{fileId}', 'g'), fileId);
 
                 let payload = {};
-
-                if(as) {
-                    payload['as'] = as;
-                }
 
                 payload['project'] = config.project;
 
@@ -2016,7 +2121,8 @@
              *
              * Get a list of all the current user teams. You can use the query params to
              * filter your results. On admin mode, this endpoint will return a list of all
-             * of the project teams. [Learn more about different API modes](/docs/admin).
+             * of the project's teams. [Learn more about different API
+             * modes](/docs/admin).
              *
              * @param {string} search
              * @param {number} limit
@@ -2091,7 +2197,7 @@
             /**
              * Get Team
              *
-             * Get team by its unique ID. All team members have read access for this
+             * Get a team by its unique ID. All team members have read access for this
              * resource.
              *
              * @param {string} teamId
@@ -2116,7 +2222,7 @@
             /**
              * Update Team
              *
-             * Update team by its unique ID. Only team owners have write access for this
+             * Update a team by its unique ID. Only team owners have write access for this
              * resource.
              *
              * @param {string} teamId
@@ -2150,7 +2256,7 @@
             /**
              * Delete Team
              *
-             * Delete team by its unique ID. Only team owners have write access for this
+             * Delete a team by its unique ID. Only team owners have write access for this
              * resource.
              *
              * @param {string} teamId
@@ -2175,7 +2281,7 @@
             /**
              * Get Team Memberships
              *
-             * Get team members by the team unique ID. All team members have read access
+             * Get a team members by the team unique ID. All team members have read access
              * for this list of resources.
              *
              * @param {string} teamId
@@ -2226,8 +2332,8 @@
              * 
              * Use the 'URL' parameter to redirect the user from the invitation email back
              * to your app. When the user is redirected, use the [Update Team Membership
-             * Status](/docs/client/teams#updateMembershipStatus) endpoint to allow the
-             * user to accept the invitation to the team.
+             * Status](/docs/client/teams#teamsUpdateMembershipStatus) endpoint to allow
+             * the user to accept the invitation to the team.
              * 
              * Please note that in order to avoid a [Redirect
              * Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md)
@@ -2290,7 +2396,7 @@
              *
              * This endpoint allows a user to leave a team or for a team owner to delete
              * the membership of any other team member. You can also use this endpoint to
-             * delete a user membership even if he didn't accept it.
+             * delete a user membership even if it is not accepted.
              *
              * @param {string} teamId
              * @param {string} inviteId
@@ -2320,8 +2426,8 @@
              * Update Team Membership Status
              *
              * Use this endpoint to allow a user to accept an invitation to join a team
-             * after he is being redirected back to your app from the invitation email he
-             * was sent.
+             * after being redirected back to your app from the invitation email recieved
+             * by the user.
              *
              * @param {string} teamId
              * @param {string} inviteId
@@ -2373,6 +2479,7 @@
             account: account,
             avatars: avatars,
             database: database,
+            functions: functions,
             locale: locale,
             storage: storage,
             teams: teams

@@ -1,4 +1,4 @@
-# Appwrite Web SDK
+# ALPHA: Appwrite Web SDK - Realtime
 
 ![License](https://img.shields.io/github/license/appwrite/sdk-for-web.svg?style=flat-square)
 ![Version](https://img.shields.io/badge/api%20version-0.8.0-blue.svg?style=flat-square)
@@ -34,7 +34,7 @@ import { Appwrite } from "aw-test-realtime";
 To install with a CDN (content delivery network) add the following scripts to the bottom of your <body> tag, but before you use any Appwrite services:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/aw-test-realtime@0.0.5"></script>
+<script src="https://cdn.jsdelivr.net/npm/aw-test-realtime@0.0.6"></script>
 ```
 
 

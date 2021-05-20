@@ -5,7 +5,7 @@
 [![Twitter Account](https://img.shields.io/twitter/follow/appwrite_io?color=00acee&label=twitter&style=flat-square)](https://twitter.com/appwrite_io)
 [![Discord](https://img.shields.io/discord/564160730845151244?label=discord&style=flat-square)](https://appwrite.io/discord)
 
-**This SDK is compatible with Appwrite server version 0.8.x. For older versions, please check [previous releases](https://github.com/appwrite/sdk-for-web/releases).**
+**WORK IN PROGRESS - NOT READY FOR PRODUCTION**
 
 Appwrite is an open-source backend as a service server that abstract and simplify complex and repetitive development tasks behind a very simple to use REST API. Appwrite aims to help you develop your apps faster and in a more secure way.
                         Use the Web SDK to integrate your app with the Appwrite server to easily start interacting with all of Appwrite backend APIs and tools.
@@ -20,13 +20,13 @@ Appwrite is an open-source backend as a service server that abstract and simplif
 To install via [NPM](https://www.npmjs.com/):
 
 ```bash
-npm install appwrite --save
+npm install aw-test-realtime --save
 ```
 
 If you're using a bundler (like [Rollup](https://rollupjs.org/) or [webpack](https://webpack.js.org/)), you can import the Appwrite module when you need it:
 
 ```js
-import { Appwrite } from "appwrite";
+import { Appwrite } from "aw-test-realtime";
 ```
 
 ### CDN
@@ -34,7 +34,7 @@ import { Appwrite } from "appwrite";
 To install with a CDN (content delivery network) add the following scripts to the bottom of your <body> tag, but before you use any Appwrite services:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/appwrite@3.0.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/aw-test-realtime@0.0.5"></script>
 ```
 
 
@@ -55,7 +55,6 @@ const appwrite = new Appwrite();
 appwrite
     .setEndpoint('http://localhost/v1') // Your Appwrite Endpoint
     .setProject('455x34dfkj') // Your project ID
-    .setSelfSigned() // Use only on dev mode with a self-signed SSL cert
 ;
 ```
 
@@ -82,7 +81,6 @@ const appwrite = new Appwrite();
 appwrite
     .setEndpoint('http://localhost/v1') // Your Appwrite Endpoint
     .setProject('455x34dfkj')
-    .setSelfSigned() // Use only on dev mode with a self-signed SSL cert
 ;
 
 // Register User
@@ -101,24 +99,6 @@ You can use followng resources to learn more and get help
 - 📜 [Appwrite Docs](https://appwrite.io/docs)
 - 💬 [Discord Community](https://appwrite.io/discord)
 - 🚂 [Appwrite Flutter Playground](https://github.com/appwrite/playground-for-flutter)
-
-
-## Getting Started
-
-Initialise the Appwrite SDK in your code, and setup your API credentials:
-
-```js
-
-// Init your Web SDK
-var appwrite = new Appwrite();
-
-appwrite
-    .setEndpoint('http://localhost/v1') // Set only when using self-hosted solution
-    .setProject('455x34dfkj') // Your Appwrite Project UID
-;
-
-```
-
 
 ## Contribution
 

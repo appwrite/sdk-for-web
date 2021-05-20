@@ -6,6 +6,31 @@ type Headers = {
     [key: string]: string;
 }
 
+type RealtimeEvent = {
+    project: string;
+    permissions: string[];
+    data: string;
+}
+
+type RealtimeMessage = {
+    code?: number;
+    event: string;
+    channels: string[];
+    timestamp: number;
+    payload: unknown;
+}
+
+type RealtimeObject = {
+    socket?: WebSocket;
+    timeout?: number;
+    lastMessage?: RealtimeMessage;
+    channels: {
+        [key: string]: ((event: unknown) => void)[]
+    },
+    createSocket: () => void;
+    onMessage: (channel: string, callback: (payload: unknown) => void) => (event: unknown) => void;
+}
+
 const FormData = typeof window === 'undefined' ? require('form-data') : window.FormData; 
 const fetch = typeof window === 'undefined' ? require('cross-fetch') : window.fetch; 
 
@@ -24,6 +49,7 @@ class AppwriteException extends Error {
 class Appwrite {
     config = {
         endpoint: 'https://appwrite.io/v1',
+        endpointRealtime: '',
         project: '',
         jwt: '',
         locale: '',
@@ -44,6 +70,20 @@ class Appwrite {
      */
     setEndpoint(endpoint: string): this {
         this.config.endpoint = endpoint;
+        this.config.endpointRealtime = this.config.endpointRealtime || this.config.endpoint.replace("https://", "wss://").replace("http://", "ws://");
+
+        return this;
+    }
+
+    /**
+     * Set Realtime Endpoint
+     *
+     * @param {string} endpointRealtime
+     *
+     * @returns {this}
+     */
+    setEndpointRealtime(endpointRealtime: string): this {
+        this.config.endpointRealtime = endpointRealtime;
 
         return this;
     }
@@ -89,6 +129,102 @@ class Appwrite {
         this.headers['X-Appwrite-Locale'] = value;
         this.config.locale = value;
         return this;
+    }
+
+    private realtime: RealtimeObject = {
+        socket: undefined,
+        timeout: undefined,
+        channels: {},
+        lastMessage: undefined,
+        createSocket: () => {
+            const channels = new URLSearchParams();
+            channels.set('project', this.config.project);
+            for (const property in this.realtime.channels) {
+                channels.append('channels[]', property);
+            }
+            if (this.realtime.socket?.readyState === WebSocket.OPEN) {
+                this.realtime.socket.close();
+            }
+
+            this.realtime.socket = new WebSocket(this.config.endpointRealtime + '/realtime?' + channels.toString());
+
+            for (const channel in this.realtime.channels) {
+                this.realtime.channels[channel].forEach(callback => {
+                    this.realtime.socket?.addEventListener('message', callback);
+                });
+            }
+
+            this.realtime.socket.addEventListener('close', event => {
+                if (this.realtime?.lastMessage?.code === 1008) {
+                    return;
+                }
+                console.error('Realtime got disconnected. Reconnect will be attempted in 1 second.', event.reason);
+                setTimeout(() => {
+                    this.realtime.createSocket();
+                }, 1000);
+            })
+        },
+        onMessage: (channel, callback) =>
+            (event) => {
+                try {
+                    const data = JSON.parse((<RealtimeEvent>event).data);
+                    this.realtime.lastMessage = data;
+
+                    if (data.channels && data.channels.includes(channel)) {
+                        callback(data);
+                    } else if (data.code) {
+                        throw data;
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+    }
+
+    /**
+     * Subscribes to Appwrite events and passes you the payload in realtime.
+     * 
+     * @param {string|string[]} channels 
+     * Channel to subscribe - pass a single channel as a string or multiple with an array of strings.
+     * 
+     * Possible channels are:
+     * - account
+     * - collections
+     * - collections.[ID]
+     * - collections.[ID].documents
+     * - documents
+     * - documents.[ID]
+     * - files
+     * - files.[ID]
+     * @param {(payload: unknown) => void} callback Is called on every realtime update.
+     * @returns {() => void} Unsubscribes from events.
+     */
+    subscribe(channels: string | string[], callback: (payload: unknown) => void): () => void {
+        let channelArray = typeof channels === 'string' ? [channels] : channels;
+        let savedChannels: {
+            name: string;
+            index: number;
+        }[] = [];
+        channelArray.forEach((channel, index) => {
+            if (!(channel in this.realtime.channels)) {
+                this.realtime.channels[channel] = [];
+            }
+            savedChannels[index] = {
+                name: channel, 
+                index: (this.realtime.channels[channel].push(this.realtime.onMessage(channel, callback)) - 1)
+            };
+            clearTimeout(this.realtime.timeout);
+            this.realtime.timeout = window?.setTimeout(() => {
+                this.realtime.createSocket();
+            }, 1);
+        });
+
+        return () => {
+            savedChannels.forEach(channel => {
+                this.realtime.socket?.removeEventListener('message', this.realtime.channels[channel.name][channel.index]);
+                this.realtime.channels[channel.name].splice(channel.index, 1);
+            })
+        }
     }
 
     private async call(method: string, url: URL, headers: Headers = {}, params: Payload = {}): Promise<any> {

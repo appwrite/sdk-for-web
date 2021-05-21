@@ -34,7 +34,7 @@ import { Appwrite } from "appwrite";
 To install with a CDN (content delivery network) add the following scripts to the bottom of your <body> tag, but before you use any Appwrite services:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/appwrite@3.0.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/appwrite@3.0.0"></script>
 ```
 
 
@@ -101,23 +101,6 @@ You can use followng resources to learn more and get help
 - 📜 [Appwrite Docs](https://appwrite.io/docs)
 - 💬 [Discord Community](https://appwrite.io/discord)
 - 🚂 [Appwrite Flutter Playground](https://github.com/appwrite/playground-for-flutter)
-
-
-## Getting Started
-
-Initialise the Appwrite SDK in your code, and setup your API credentials:
-
-```js
-
-// Init your Web SDK
-var appwrite = new Appwrite();
-
-appwrite
-    .setEndpoint('http://localhost/v1') // Set only when using self-hosted solution
-    .setProject('455x34dfkj') // Your Appwrite Project UID
-;
-
-```
 
 
 ## Contribution

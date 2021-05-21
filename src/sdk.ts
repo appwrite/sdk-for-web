@@ -696,9 +696,9 @@ class Appwrite {
             payload['project'] = this.config.project;
 
 
-            const query = new URLSearchParams(payload);
+            const query = new URLSearchParams(this.flatten(payload));
             uri.search = query.toString();
-            if (window?.location) {
+            if (typeof window !== 'undefined' && window?.location) {
                 window.location.href = uri.toString();
             } else {
                 return uri;
@@ -851,10 +851,8 @@ class Appwrite {
             const uri = new URL(this.config.endpoint + path);
             payload['project'] = this.config.project;
 
-            payload['jwt'] = this.config.jwt;
 
-
-            const query = new URLSearchParams(payload);
+            const query = new URLSearchParams(this.flatten(payload));
             uri.search = query.toString();
             return uri;
         },
@@ -896,10 +894,8 @@ class Appwrite {
             const uri = new URL(this.config.endpoint + path);
             payload['project'] = this.config.project;
 
-            payload['jwt'] = this.config.jwt;
 
-
-            const query = new URLSearchParams(payload);
+            const query = new URLSearchParams(this.flatten(payload));
             uri.search = query.toString();
             return uri;
         },
@@ -930,10 +926,8 @@ class Appwrite {
             const uri = new URL(this.config.endpoint + path);
             payload['project'] = this.config.project;
 
-            payload['jwt'] = this.config.jwt;
 
-
-            const query = new URLSearchParams(payload);
+            const query = new URLSearchParams(this.flatten(payload));
             uri.search = query.toString();
             return uri;
         },
@@ -975,10 +969,8 @@ class Appwrite {
             const uri = new URL(this.config.endpoint + path);
             payload['project'] = this.config.project;
 
-            payload['jwt'] = this.config.jwt;
 
-
-            const query = new URLSearchParams(payload);
+            const query = new URLSearchParams(this.flatten(payload));
             uri.search = query.toString();
             return uri;
         },
@@ -1020,10 +1012,8 @@ class Appwrite {
             const uri = new URL(this.config.endpoint + path);
             payload['project'] = this.config.project;
 
-            payload['jwt'] = this.config.jwt;
 
-
-            const query = new URLSearchParams(payload);
+            const query = new URLSearchParams(this.flatten(payload));
             uri.search = query.toString();
             return uri;
         },
@@ -1077,10 +1067,8 @@ class Appwrite {
             const uri = new URL(this.config.endpoint + path);
             payload['project'] = this.config.project;
 
-            payload['jwt'] = this.config.jwt;
 
-
-            const query = new URLSearchParams(payload);
+            const query = new URLSearchParams(this.flatten(payload));
             uri.search = query.toString();
             return uri;
         },
@@ -1125,10 +1113,8 @@ class Appwrite {
             const uri = new URL(this.config.endpoint + path);
             payload['project'] = this.config.project;
 
-            payload['jwt'] = this.config.jwt;
 
-
-            const query = new URLSearchParams(payload);
+            const query = new URLSearchParams(this.flatten(payload));
             uri.search = query.toString();
             return uri;
         }
@@ -1663,13 +1649,13 @@ class Appwrite {
          * assigned to read and write access unless he has passed custom values for
          * read and write arguments.
          *
-         * @param {File} file
+         * @param {string} file
          * @param {string[]} read
          * @param {string[]} write
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        createFile: async <T extends unknown>(file: File, read: string[] = [], write: string[] = []): Promise<T> => {
+        createFile: async <T extends unknown>(file: string, read: string[] = [], write: string[] = []): Promise<T> => {
             if (file === undefined) {
                 throw new AppwriteException('Missing required parameter: "file"');
             }
@@ -1807,10 +1793,8 @@ class Appwrite {
             const uri = new URL(this.config.endpoint + path);
             payload['project'] = this.config.project;
 
-            payload['jwt'] = this.config.jwt;
 
-
-            const query = new URLSearchParams(payload);
+            const query = new URLSearchParams(this.flatten(payload));
             uri.search = query.toString();
             return uri;
         },
@@ -1888,10 +1872,8 @@ class Appwrite {
             const uri = new URL(this.config.endpoint + path);
             payload['project'] = this.config.project;
 
-            payload['jwt'] = this.config.jwt;
 
-
-            const query = new URLSearchParams(payload);
+            const query = new URLSearchParams(this.flatten(payload));
             uri.search = query.toString();
             return uri;
         },
@@ -1918,10 +1900,8 @@ class Appwrite {
             const uri = new URL(this.config.endpoint + path);
             payload['project'] = this.config.project;
 
-            payload['jwt'] = this.config.jwt;
 
-
-            const query = new URLSearchParams(payload);
+            const query = new URLSearchParams(this.flatten(payload));
             uri.search = query.toString();
             return uri;
         }

@@ -1649,13 +1649,13 @@ class Appwrite {
          * assigned to read and write access unless he has passed custom values for
          * read and write arguments.
          *
-         * @param {string} file
+         * @param {File} file
          * @param {string[]} read
          * @param {string[]} write
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        createFile: async <T extends unknown>(file: string, read: string[] = [], write: string[] = []): Promise<T> => {
+        createFile: async <T extends unknown>(file: File, read: string[] = [], write: string[] = []): Promise<T> => {
             if (file === undefined) {
                 throw new AppwriteException('Missing required parameter: "file"');
             }

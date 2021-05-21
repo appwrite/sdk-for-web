@@ -108,7 +108,9 @@ class Appwrite {
         }
 
         if (method === 'GET') {
-            url.search = new URLSearchParams(this.flatten(params)).toString();
+            for (const [key, value] of Object.entries(this.flatten(params))) {
+                url.searchParams.append(key, value);
+            }
         } else {
             switch (headers['content-type']) {
                 case 'application/json':
@@ -696,8 +698,9 @@ class Appwrite {
             payload['project'] = this.config.project;
 
 
-            const query = new URLSearchParams(this.flatten(payload));
-            uri.search = query.toString();
+            for (const [key, value] of Object.entries(this.flatten(payload))) {
+                uri.searchParams.append(key, value);
+            }
             if (typeof window !== 'undefined' && window?.location) {
                 window.location.href = uri.toString();
             } else {
@@ -852,8 +855,9 @@ class Appwrite {
             payload['project'] = this.config.project;
 
 
-            const query = new URLSearchParams(this.flatten(payload));
-            uri.search = query.toString();
+            for (const [key, value] of Object.entries(this.flatten(payload))) {
+                uri.searchParams.append(key, value);
+            }
             return uri;
         },
 
@@ -895,8 +899,9 @@ class Appwrite {
             payload['project'] = this.config.project;
 
 
-            const query = new URLSearchParams(this.flatten(payload));
-            uri.search = query.toString();
+            for (const [key, value] of Object.entries(this.flatten(payload))) {
+                uri.searchParams.append(key, value);
+            }
             return uri;
         },
 
@@ -927,8 +932,9 @@ class Appwrite {
             payload['project'] = this.config.project;
 
 
-            const query = new URLSearchParams(this.flatten(payload));
-            uri.search = query.toString();
+            for (const [key, value] of Object.entries(this.flatten(payload))) {
+                uri.searchParams.append(key, value);
+            }
             return uri;
         },
 
@@ -970,8 +976,9 @@ class Appwrite {
             payload['project'] = this.config.project;
 
 
-            const query = new URLSearchParams(this.flatten(payload));
-            uri.search = query.toString();
+            for (const [key, value] of Object.entries(this.flatten(payload))) {
+                uri.searchParams.append(key, value);
+            }
             return uri;
         },
 
@@ -1013,8 +1020,9 @@ class Appwrite {
             payload['project'] = this.config.project;
 
 
-            const query = new URLSearchParams(this.flatten(payload));
-            uri.search = query.toString();
+            for (const [key, value] of Object.entries(this.flatten(payload))) {
+                uri.searchParams.append(key, value);
+            }
             return uri;
         },
 
@@ -1068,8 +1076,9 @@ class Appwrite {
             payload['project'] = this.config.project;
 
 
-            const query = new URLSearchParams(this.flatten(payload));
-            uri.search = query.toString();
+            for (const [key, value] of Object.entries(this.flatten(payload))) {
+                uri.searchParams.append(key, value);
+            }
             return uri;
         },
 
@@ -1114,8 +1123,9 @@ class Appwrite {
             payload['project'] = this.config.project;
 
 
-            const query = new URLSearchParams(this.flatten(payload));
-            uri.search = query.toString();
+            for (const [key, value] of Object.entries(this.flatten(payload))) {
+                uri.searchParams.append(key, value);
+            }
             return uri;
         }
     };
@@ -1794,8 +1804,9 @@ class Appwrite {
             payload['project'] = this.config.project;
 
 
-            const query = new URLSearchParams(this.flatten(payload));
-            uri.search = query.toString();
+            for (const [key, value] of Object.entries(this.flatten(payload))) {
+                uri.searchParams.append(key, value);
+            }
             return uri;
         },
 
@@ -1873,8 +1884,9 @@ class Appwrite {
             payload['project'] = this.config.project;
 
 
-            const query = new URLSearchParams(this.flatten(payload));
-            uri.search = query.toString();
+            for (const [key, value] of Object.entries(this.flatten(payload))) {
+                uri.searchParams.append(key, value);
+            }
             return uri;
         },
 
@@ -1901,8 +1913,9 @@ class Appwrite {
             payload['project'] = this.config.project;
 
 
-            const query = new URLSearchParams(this.flatten(payload));
-            uri.search = query.toString();
+            for (const [key, value] of Object.entries(this.flatten(payload))) {
+                uri.searchParams.append(key, value);
+            }
             return uri;
         }
     };

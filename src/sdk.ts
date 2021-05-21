@@ -29,7 +29,7 @@ class Appwrite {
         locale: '',
     };
     headers: Headers = {
-        'x-sdk-version': 'appwrite:web:3.0.2',
+        'x-sdk-version': 'appwrite:web:3.0.3',
         'X-Appwrite-Response-Format': '0.8.0',
     };
 

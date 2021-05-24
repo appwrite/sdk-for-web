@@ -1,3 +1,6 @@
+import "isomorphic-form-data";
+import { fetch } from "cross-fetch";
+
 type Payload = {
     [key: string]: any;
 }
@@ -5,9 +8,6 @@ type Payload = {
 type Headers = {
     [key: string]: string;
 }
-
-const FormData = typeof window === 'undefined' ? require('form-data') : window.FormData; 
-const fetch = typeof window === 'undefined' ? require('cross-fetch') : window.fetch; 
 
 class AppwriteException extends Error {
     code: number;
@@ -29,7 +29,7 @@ class Appwrite {
         locale: '',
     };
     headers: Headers = {
-        'x-sdk-version': 'appwrite:web:3.0.3',
+        'x-sdk-version': 'appwrite:web:3.0.4',
         'X-Appwrite-Response-Format': '0.8.0',
     };
 

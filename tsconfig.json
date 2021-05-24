@@ -6,7 +6,7 @@
         "declaration": false,
         "esModuleInterop": true,
         "inlineSourceMap": false,
-        "lib": ["ES6", "DOM"],
+        "lib": ["ESNext", "DOM"],
         "listEmittedFiles": false,
         "listFiles": false,
         "moduleResolution": "node",

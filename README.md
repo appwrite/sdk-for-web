@@ -34,7 +34,7 @@ import { Appwrite } from "appwrite";
 To install with a CDN (content delivery network) add the following scripts to the bottom of your <body> tag, but before you use any Appwrite services:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/appwrite@3.0.4"></script>
+<script src="https://cdn.jsdelivr.net/npm/appwrite@3.0.5"></script>
 ```
 
 
@@ -50,11 +50,12 @@ Initialize your SDK code with your project ID which can be found in your project
 
 ```js
 // Init your Web SDK
-const sdk = new Appwrite();
+const appwrite = new Appwrite();
 
-sdk
+appwrite
     .setEndpoint('http://localhost/v1') // Your Appwrite Endpoint
     .setProject('455x34dfkj') // Your project ID
+    .setSelfSigned() // Use only on dev mode with a self-signed SSL cert
 ;
 ```
 
@@ -63,32 +64,35 @@ Once your SDK object is set, access any of the Appwrite services and choose any 
 
 ```js
 // Register User
-sdk.account.create('me@example.com', 'password', 'Jane Doe')
-    .then(function (response) {
-        console.log(response);
-    }, function (error) {
-        console.log(error);
-    });
+appwrite
+    .account.create('me@example.com', 'password', 'Jane Doe')
+        .then(function (response) {
+            console.log(response);
+        }, function (error) {
+            console.log(error);
+        });
 
 ```
 
 ### Full Example
 ```js
 // Init your Web SDK
-const sdk = new Appwrite();
+const appwrite = new Appwrite();
 
-sdk
+appwrite
     .setEndpoint('http://localhost/v1') // Your Appwrite Endpoint
     .setProject('455x34dfkj')
+    .setSelfSigned() // Use only on dev mode with a self-signed SSL cert
 ;
 
 // Register User
-sdk.account.create('me@example.com', 'password', 'Jane Doe')
-    .then(function (response) {
-        console.log(response);
-    }, function (error) {
-        console.log(error);
-    });
+appwrite
+    .account.create('me@example.com', 'password', 'Jane Doe')
+        .then(function (response) {
+            console.log(response);
+        }, function (error) {
+            console.log(error);
+        });
 ```
 
 ### Learn more

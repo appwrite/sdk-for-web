@@ -55,7 +55,6 @@ const appwrite = new Appwrite();
 appwrite
     .setEndpoint('http://localhost/v1') // Your Appwrite Endpoint
     .setProject('455x34dfkj') // Your project ID
-    .setSelfSigned() // Use only on dev mode with a self-signed SSL cert
 ;
 ```
 
@@ -82,7 +81,6 @@ const appwrite = new Appwrite();
 appwrite
     .setEndpoint('http://localhost/v1') // Your Appwrite Endpoint
     .setProject('455x34dfkj')
-    .setSelfSigned() // Use only on dev mode with a self-signed SSL cert
 ;
 
 // Register User

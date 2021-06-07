@@ -34,7 +34,7 @@ import { Appwrite } from "appwrite";
 To install with a CDN (content delivery network) add the following scripts to the bottom of your <body> tag, but before you use any Appwrite services:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/appwrite@3.0.5"></script>
+<script src="https://cdn.jsdelivr.net/npm/appwrite@3.1.0"></script>
 ```
 
 
@@ -50,9 +50,9 @@ Initialize your SDK code with your project ID which can be found in your project
 
 ```js
 // Init your Web SDK
-const appwrite = new Appwrite();
+const sdk = new Appwrite();
 
-appwrite
+sdk
     .setEndpoint('http://localhost/v1') // Your Appwrite Endpoint
     .setProject('455x34dfkj') // Your project ID
 ;
@@ -63,34 +63,32 @@ Once your SDK object is set, access any of the Appwrite services and choose any 
 
 ```js
 // Register User
-appwrite
-    .account.create('me@example.com', 'password', 'Jane Doe')
-        .then(function (response) {
-            console.log(response);
-        }, function (error) {
-            console.log(error);
-        });
+sdk.account.create('me@example.com', 'password', 'Jane Doe')
+    .then(function (response) {
+        console.log(response);
+    }, function (error) {
+        console.log(error);
+    });
 
 ```
 
 ### Full Example
 ```js
 // Init your Web SDK
-const appwrite = new Appwrite();
+const sdk = new Appwrite();
 
-appwrite
+sdk
     .setEndpoint('http://localhost/v1') // Your Appwrite Endpoint
     .setProject('455x34dfkj')
 ;
 
 // Register User
-appwrite
-    .account.create('me@example.com', 'password', 'Jane Doe')
-        .then(function (response) {
-            console.log(response);
-        }, function (error) {
-            console.log(error);
-        });
+sdk.account.create('me@example.com', 'password', 'Jane Doe')
+    .then(function (response) {
+        console.log(response);
+    }, function (error) {
+        console.log(error);
+    });
 ```
 
 ### Learn more

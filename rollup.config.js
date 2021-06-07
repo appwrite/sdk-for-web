@@ -20,8 +20,8 @@ export default {
         {
             format: "iife",
             file: pkg.jsdelivr,
-            name: "Appwrite",
-            esModule: false,
+            name: "window",
+            extend: true,
             globals: {
                 "cross-fetch": "window",
                 "FormData": "FormData",

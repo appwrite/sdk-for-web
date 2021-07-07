@@ -29,8 +29,8 @@ class Appwrite {
         locale: '',
     };
     headers: Headers = {
-        'x-sdk-version': 'appwrite:web:3.1.0',
-        'X-Appwrite-Response-Format': '0.8.0',
+        'x-sdk-version': 'appwrite:web:3.2.0',
+        'X-Appwrite-Response-Format': '0.9.0',
     };
 
     /**
@@ -316,7 +316,8 @@ class Appwrite {
          * Use this endpoint to create a JSON Web Token. You can use the resulting JWT
          * to authenticate on behalf of the current user when working with the
          * Appwrite server-side API and SDKs. The JWT secret is valid for 15 minutes
-         * from its creation and will be invalid if the user will logout.
+         * from its creation and will be invalid if the user will logout in that time
+         * frame.
          *
          * @throws {AppwriteException}
          * @returns {Promise}
@@ -642,9 +643,10 @@ class Appwrite {
          *
          * Use this endpoint to allow a new user to register an anonymous account in
          * your project. This route will also create a new session for the user. To
-         * allow the new user to convert an anonymous account to a normal account
-         * account, you need to update its [email and
-         * password](/docs/client/account#accountUpdateEmail).
+         * allow the new user to convert an anonymous account to a normal account, you
+         * need to update its [email and
+         * password](/docs/client/account#accountUpdateEmail) or create an [OAuth2
+         * session](/docs/client/account#accountCreateOAuth2Session).
          *
          * @throws {AppwriteException}
          * @returns {Promise}
@@ -706,6 +708,30 @@ class Appwrite {
             } else {
                 return uri;
             }
+        },
+
+        /**
+         * Get Session By ID
+         *
+         * Use this endpoint to get a logged in user's session using a Session ID.
+         * Inputting 'current' will return the current session being used.
+         *
+         * @param {string} sessionId
+         * @throws {AppwriteException}
+         * @returns {Promise}
+         */
+        getSession: async <T extends unknown>(sessionId: string): Promise<T> => {
+            if (typeof sessionId === 'undefined') {
+                throw new AppwriteException('Missing required parameter: "sessionId"');
+            }
+
+            let path = '/account/sessions/{sessionId}'.replace('{sessionId}', sessionId);
+            let payload: Payload = {};
+
+            const uri = new URL(this.config.endpoint + path);
+            return await this.call('get', uri, {
+                'content-type': 'application/json',
+            }, payload);
         },
 
         /**
@@ -1821,6 +1847,7 @@ class Appwrite {
          * @param {string} fileId
          * @param {number} width
          * @param {number} height
+         * @param {string} gravity
          * @param {number} quality
          * @param {number} borderWidth
          * @param {string} borderColor
@@ -1832,7 +1859,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {URL}
          */
-        getFilePreview: (fileId: string, width?: number, height?: number, quality?: number, borderWidth?: number, borderColor?: string, borderRadius?: number, opacity?: number, rotation?: number, background?: string, output?: string): URL => {
+        getFilePreview: (fileId: string, width?: number, height?: number, gravity?: string, quality?: number, borderWidth?: number, borderColor?: string, borderRadius?: number, opacity?: number, rotation?: number, background?: string, output?: string): URL => {
             if (typeof fileId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "fileId"');
             }
@@ -1846,6 +1873,10 @@ class Appwrite {
 
             if (typeof height !== 'undefined') {
                 payload['height'] = height;
+            }
+
+            if (typeof gravity !== 'undefined') {
+                payload['gravity'] = gravity;
             }
 
             if (typeof quality !== 'undefined') {

@@ -1,3 +1,6 @@
+import "isomorphic-form-data";
+import { fetch } from "cross-fetch";
+
 type Payload = {
     [key: string]: any;
 }
@@ -31,9 +34,6 @@ type RealtimeObject = {
     onMessage: (channel: string, callback: (payload: unknown) => void) => (event: unknown) => void;
 }
 
-const FormData = typeof window === 'undefined' ? require('form-data') : window.FormData; 
-const fetch = typeof window === 'undefined' ? require('cross-fetch') : window.fetch; 
-
 class AppwriteException extends Error {
     code: number;
     response: string;
@@ -55,14 +55,14 @@ class Appwrite {
         locale: '',
     };
     headers: Headers = {
-        'x-sdk-version': 'appwrite:web:3.0.0',
-        'X-Appwrite-Response-Format': '0.8.0',
+        'x-sdk-version': 'appwrite:web:3.2.0',
+        'X-Appwrite-Response-Format': '0.9.0',
     };
 
     /**
      * Set Endpoint
      *
-     * Your project ID
+     * Your project endpoint
      *
      * @param {string} endpoint
      *
@@ -244,7 +244,9 @@ class Appwrite {
         }
 
         if (method === 'GET') {
-            url.search = new URLSearchParams(this.flatten(params)).toString();
+            for (const [key, value] of Object.entries(this.flatten(params))) {
+                url.searchParams.append(key, value);
+            }
         } else {
             switch (headers['content-type']) {
                 case 'application/json':
@@ -351,12 +353,12 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        create: async <T extends unknown>(email: string, password: string, name: string = ''): Promise<T> => {
-            if (email === undefined) {
+        create: async <T extends unknown>(email: string, password: string, name?: string): Promise<T> => {
+            if (typeof email === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "email"');
             }
 
-            if (password === undefined) {
+            if (typeof password === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "password"');
             }
 
@@ -419,11 +421,11 @@ class Appwrite {
          * @returns {Promise}
          */
         updateEmail: async <T extends unknown>(email: string, password: string): Promise<T> => {
-            if (email === undefined) {
+            if (typeof email === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "email"');
             }
 
-            if (password === undefined) {
+            if (typeof password === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "password"');
             }
 
@@ -450,7 +452,8 @@ class Appwrite {
          * Use this endpoint to create a JSON Web Token. You can use the resulting JWT
          * to authenticate on behalf of the current user when working with the
          * Appwrite server-side API and SDKs. The JWT secret is valid for 15 minutes
-         * from its creation and will be invalid if the user will logout.
+         * from its creation and will be invalid if the user will logout in that time
+         * frame.
          *
          * @throws {AppwriteException}
          * @returns {Promise}
@@ -494,7 +497,7 @@ class Appwrite {
          * @returns {Promise}
          */
         updateName: async <T extends unknown>(name: string): Promise<T> => {
-            if (name === undefined) {
+            if (typeof name === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "name"');
             }
 
@@ -523,8 +526,8 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        updatePassword: async <T extends unknown>(password: string, oldPassword: string = ''): Promise<T> => {
-            if (password === undefined) {
+        updatePassword: async <T extends unknown>(password: string, oldPassword?: string): Promise<T> => {
+            if (typeof password === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "password"');
             }
 
@@ -574,7 +577,7 @@ class Appwrite {
          * @returns {Promise}
          */
         updatePrefs: async <T extends unknown>(prefs: object): Promise<T> => {
-            if (prefs === undefined) {
+            if (typeof prefs === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "prefs"');
             }
 
@@ -609,11 +612,11 @@ class Appwrite {
          * @returns {Promise}
          */
         createRecovery: async <T extends unknown>(email: string, url: string): Promise<T> => {
-            if (email === undefined) {
+            if (typeof email === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "email"');
             }
 
-            if (url === undefined) {
+            if (typeof url === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "url"');
             }
 
@@ -655,19 +658,19 @@ class Appwrite {
          * @returns {Promise}
          */
         updateRecovery: async <T extends unknown>(userId: string, secret: string, password: string, passwordAgain: string): Promise<T> => {
-            if (userId === undefined) {
+            if (typeof userId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "userId"');
             }
 
-            if (secret === undefined) {
+            if (typeof secret === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "secret"');
             }
 
-            if (password === undefined) {
+            if (typeof password === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "password"');
             }
 
-            if (passwordAgain === undefined) {
+            if (typeof passwordAgain === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "passwordAgain"');
             }
 
@@ -727,11 +730,11 @@ class Appwrite {
          * @returns {Promise}
          */
         createSession: async <T extends unknown>(email: string, password: string): Promise<T> => {
-            if (email === undefined) {
+            if (typeof email === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "email"');
             }
 
-            if (password === undefined) {
+            if (typeof password === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "password"');
             }
 
@@ -776,9 +779,10 @@ class Appwrite {
          *
          * Use this endpoint to allow a new user to register an anonymous account in
          * your project. This route will also create a new session for the user. To
-         * allow the new user to convert an anonymous account to a normal account
-         * account, you need to update its [email and
-         * password](/docs/client/account#accountUpdateEmail).
+         * allow the new user to convert an anonymous account to a normal account, you
+         * need to update its [email and
+         * password](/docs/client/account#accountUpdateEmail) or create an [OAuth2
+         * session](/docs/client/account#accountCreateOAuth2Session).
          *
          * @throws {AppwriteException}
          * @returns {Promise}
@@ -808,23 +812,23 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {void|string}
          */
-        createOAuth2Session: (provider: string, success: string = 'https://appwrite.io/auth/oauth2/success', failure: string = 'https://appwrite.io/auth/oauth2/failure', scopes: string[] = []): void | URL => {
-            if (provider === undefined) {
+        createOAuth2Session: (provider: string, success?: string, failure?: string, scopes?: string[]): void | URL => {
+            if (typeof provider === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "provider"');
             }
 
             let path = '/account/sessions/oauth2/{provider}'.replace('{provider}', provider);
             let payload: Payload = {};
 
-            if (success) {
+            if (typeof success !== 'undefined') {
                 payload['success'] = success;
             }
 
-            if (failure) {
+            if (typeof failure !== 'undefined') {
                 payload['failure'] = failure;
             }
 
-            if (scopes) {
+            if (typeof scopes !== 'undefined') {
                 payload['scopes'] = scopes;
             }
 
@@ -832,13 +836,38 @@ class Appwrite {
             payload['project'] = this.config.project;
 
 
-            const query = new URLSearchParams(payload);
-            uri.search = query.toString();
-            if (window?.location) {
+            for (const [key, value] of Object.entries(this.flatten(payload))) {
+                uri.searchParams.append(key, value);
+            }
+            if (typeof window !== 'undefined' && window?.location) {
                 window.location.href = uri.toString();
             } else {
                 return uri;
             }
+        },
+
+        /**
+         * Get Session By ID
+         *
+         * Use this endpoint to get a logged in user's session using a Session ID.
+         * Inputting 'current' will return the current session being used.
+         *
+         * @param {string} sessionId
+         * @throws {AppwriteException}
+         * @returns {Promise}
+         */
+        getSession: async <T extends unknown>(sessionId: string): Promise<T> => {
+            if (typeof sessionId === 'undefined') {
+                throw new AppwriteException('Missing required parameter: "sessionId"');
+            }
+
+            let path = '/account/sessions/{sessionId}'.replace('{sessionId}', sessionId);
+            let payload: Payload = {};
+
+            const uri = new URL(this.config.endpoint + path);
+            return await this.call('get', uri, {
+                'content-type': 'application/json',
+            }, payload);
         },
 
         /**
@@ -853,7 +882,7 @@ class Appwrite {
          * @returns {Promise}
          */
         deleteSession: async <T extends unknown>(sessionId: string): Promise<T> => {
-            if (sessionId === undefined) {
+            if (typeof sessionId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "sessionId"');
             }
 
@@ -890,7 +919,7 @@ class Appwrite {
          * @returns {Promise}
          */
         createVerification: async <T extends unknown>(url: string): Promise<T> => {
-            if (url === undefined) {
+            if (typeof url === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "url"');
             }
 
@@ -921,11 +950,11 @@ class Appwrite {
          * @returns {Promise}
          */
         updateVerification: async <T extends unknown>(userId: string, secret: string): Promise<T> => {
-            if (userId === undefined) {
+            if (typeof userId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "userId"');
             }
 
-            if (secret === undefined) {
+            if (typeof secret === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "secret"');
             }
 
@@ -964,34 +993,33 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {URL}
          */
-        getBrowser: (code: string, width: number = 100, height: number = 100, quality: number = 100): URL => {
-            if (code === undefined) {
+        getBrowser: (code: string, width?: number, height?: number, quality?: number): URL => {
+            if (typeof code === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "code"');
             }
 
             let path = '/avatars/browsers/{code}'.replace('{code}', code);
             let payload: Payload = {};
 
-            if (width) {
+            if (typeof width !== 'undefined') {
                 payload['width'] = width;
             }
 
-            if (height) {
+            if (typeof height !== 'undefined') {
                 payload['height'] = height;
             }
 
-            if (quality) {
+            if (typeof quality !== 'undefined') {
                 payload['quality'] = quality;
             }
 
             const uri = new URL(this.config.endpoint + path);
             payload['project'] = this.config.project;
 
-            payload['jwt'] = this.config.jwt;
 
-
-            const query = new URLSearchParams(payload);
-            uri.search = query.toString();
+            for (const [key, value] of Object.entries(this.flatten(payload))) {
+                uri.searchParams.append(key, value);
+            }
             return uri;
         },
 
@@ -1009,34 +1037,33 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {URL}
          */
-        getCreditCard: (code: string, width: number = 100, height: number = 100, quality: number = 100): URL => {
-            if (code === undefined) {
+        getCreditCard: (code: string, width?: number, height?: number, quality?: number): URL => {
+            if (typeof code === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "code"');
             }
 
             let path = '/avatars/credit-cards/{code}'.replace('{code}', code);
             let payload: Payload = {};
 
-            if (width) {
+            if (typeof width !== 'undefined') {
                 payload['width'] = width;
             }
 
-            if (height) {
+            if (typeof height !== 'undefined') {
                 payload['height'] = height;
             }
 
-            if (quality) {
+            if (typeof quality !== 'undefined') {
                 payload['quality'] = quality;
             }
 
             const uri = new URL(this.config.endpoint + path);
             payload['project'] = this.config.project;
 
-            payload['jwt'] = this.config.jwt;
 
-
-            const query = new URLSearchParams(payload);
-            uri.search = query.toString();
+            for (const [key, value] of Object.entries(this.flatten(payload))) {
+                uri.searchParams.append(key, value);
+            }
             return uri;
         },
 
@@ -1052,25 +1079,24 @@ class Appwrite {
          * @returns {URL}
          */
         getFavicon: (url: string): URL => {
-            if (url === undefined) {
+            if (typeof url === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "url"');
             }
 
             let path = '/avatars/favicon';
             let payload: Payload = {};
 
-            if (url) {
+            if (typeof url !== 'undefined') {
                 payload['url'] = url;
             }
 
             const uri = new URL(this.config.endpoint + path);
             payload['project'] = this.config.project;
 
-            payload['jwt'] = this.config.jwt;
 
-
-            const query = new URLSearchParams(payload);
-            uri.search = query.toString();
+            for (const [key, value] of Object.entries(this.flatten(payload))) {
+                uri.searchParams.append(key, value);
+            }
             return uri;
         },
 
@@ -1088,34 +1114,33 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {URL}
          */
-        getFlag: (code: string, width: number = 100, height: number = 100, quality: number = 100): URL => {
-            if (code === undefined) {
+        getFlag: (code: string, width?: number, height?: number, quality?: number): URL => {
+            if (typeof code === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "code"');
             }
 
             let path = '/avatars/flags/{code}'.replace('{code}', code);
             let payload: Payload = {};
 
-            if (width) {
+            if (typeof width !== 'undefined') {
                 payload['width'] = width;
             }
 
-            if (height) {
+            if (typeof height !== 'undefined') {
                 payload['height'] = height;
             }
 
-            if (quality) {
+            if (typeof quality !== 'undefined') {
                 payload['quality'] = quality;
             }
 
             const uri = new URL(this.config.endpoint + path);
             payload['project'] = this.config.project;
 
-            payload['jwt'] = this.config.jwt;
 
-
-            const query = new URLSearchParams(payload);
-            uri.search = query.toString();
+            for (const [key, value] of Object.entries(this.flatten(payload))) {
+                uri.searchParams.append(key, value);
+            }
             return uri;
         },
 
@@ -1133,34 +1158,33 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {URL}
          */
-        getImage: (url: string, width: number = 400, height: number = 400): URL => {
-            if (url === undefined) {
+        getImage: (url: string, width?: number, height?: number): URL => {
+            if (typeof url === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "url"');
             }
 
             let path = '/avatars/image';
             let payload: Payload = {};
 
-            if (url) {
+            if (typeof url !== 'undefined') {
                 payload['url'] = url;
             }
 
-            if (width) {
+            if (typeof width !== 'undefined') {
                 payload['width'] = width;
             }
 
-            if (height) {
+            if (typeof height !== 'undefined') {
                 payload['height'] = height;
             }
 
             const uri = new URL(this.config.endpoint + path);
             payload['project'] = this.config.project;
 
-            payload['jwt'] = this.config.jwt;
 
-
-            const query = new URLSearchParams(payload);
-            uri.search = query.toString();
+            for (const [key, value] of Object.entries(this.flatten(payload))) {
+                uri.searchParams.append(key, value);
+            }
             return uri;
         },
 
@@ -1186,38 +1210,37 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {URL}
          */
-        getInitials: (name: string = '', width: number = 500, height: number = 500, color: string = '', background: string = ''): URL => {
+        getInitials: (name?: string, width?: number, height?: number, color?: string, background?: string): URL => {
             let path = '/avatars/initials';
             let payload: Payload = {};
 
-            if (name) {
+            if (typeof name !== 'undefined') {
                 payload['name'] = name;
             }
 
-            if (width) {
+            if (typeof width !== 'undefined') {
                 payload['width'] = width;
             }
 
-            if (height) {
+            if (typeof height !== 'undefined') {
                 payload['height'] = height;
             }
 
-            if (color) {
+            if (typeof color !== 'undefined') {
                 payload['color'] = color;
             }
 
-            if (background) {
+            if (typeof background !== 'undefined') {
                 payload['background'] = background;
             }
 
             const uri = new URL(this.config.endpoint + path);
             payload['project'] = this.config.project;
 
-            payload['jwt'] = this.config.jwt;
 
-
-            const query = new URLSearchParams(payload);
-            uri.search = query.toString();
+            for (const [key, value] of Object.entries(this.flatten(payload))) {
+                uri.searchParams.append(key, value);
+            }
             return uri;
         },
 
@@ -1234,38 +1257,37 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {URL}
          */
-        getQR: (text: string, size: number = 400, margin: number = 1, download: boolean = false): URL => {
-            if (text === undefined) {
+        getQR: (text: string, size?: number, margin?: number, download?: boolean): URL => {
+            if (typeof text === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "text"');
             }
 
             let path = '/avatars/qr';
             let payload: Payload = {};
 
-            if (text) {
+            if (typeof text !== 'undefined') {
                 payload['text'] = text;
             }
 
-            if (size) {
+            if (typeof size !== 'undefined') {
                 payload['size'] = size;
             }
 
-            if (margin) {
+            if (typeof margin !== 'undefined') {
                 payload['margin'] = margin;
             }
 
-            if (download) {
+            if (typeof download !== 'undefined') {
                 payload['download'] = download;
             }
 
             const uri = new URL(this.config.endpoint + path);
             payload['project'] = this.config.project;
 
-            payload['jwt'] = this.config.jwt;
 
-
-            const query = new URLSearchParams(payload);
-            uri.search = query.toString();
+            for (const [key, value] of Object.entries(this.flatten(payload))) {
+                uri.searchParams.append(key, value);
+            }
             return uri;
         }
     };
@@ -1291,39 +1313,39 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        listDocuments: async <T extends unknown>(collectionId: string, filters: string[] = [], limit: number = 25, offset: number = 0, orderField: string = '', orderType: string = 'ASC', orderCast: string = 'string', search: string = ''): Promise<T> => {
-            if (collectionId === undefined) {
+        listDocuments: async <T extends unknown>(collectionId: string, filters?: string[], limit?: number, offset?: number, orderField?: string, orderType?: string, orderCast?: string, search?: string): Promise<T> => {
+            if (typeof collectionId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "collectionId"');
             }
 
             let path = '/database/collections/{collectionId}/documents'.replace('{collectionId}', collectionId);
             let payload: Payload = {};
 
-            if (filters) {
+            if (typeof filters !== 'undefined') {
                 payload['filters'] = filters;
             }
 
-            if (limit) {
+            if (typeof limit !== 'undefined') {
                 payload['limit'] = limit;
             }
 
-            if (offset) {
+            if (typeof offset !== 'undefined') {
                 payload['offset'] = offset;
             }
 
-            if (orderField) {
+            if (typeof orderField !== 'undefined') {
                 payload['orderField'] = orderField;
             }
 
-            if (orderType) {
+            if (typeof orderType !== 'undefined') {
                 payload['orderType'] = orderType;
             }
 
-            if (orderCast) {
+            if (typeof orderCast !== 'undefined') {
                 payload['orderCast'] = orderCast;
             }
 
-            if (search) {
+            if (typeof search !== 'undefined') {
                 payload['search'] = search;
             }
 
@@ -1351,12 +1373,12 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        createDocument: async <T extends unknown>(collectionId: string, data: object, read: string[] = [], write: string[] = [], parentDocument: string = '', parentProperty: string = '', parentPropertyType: string = 'assign'): Promise<T> => {
-            if (collectionId === undefined) {
+        createDocument: async <T extends unknown>(collectionId: string, data: object, read?: string[], write?: string[], parentDocument?: string, parentProperty?: string, parentPropertyType?: string): Promise<T> => {
+            if (typeof collectionId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "collectionId"');
             }
 
-            if (data === undefined) {
+            if (typeof data === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "data"');
             }
 
@@ -1405,11 +1427,11 @@ class Appwrite {
          * @returns {Promise}
          */
         getDocument: async <T extends unknown>(collectionId: string, documentId: string): Promise<T> => {
-            if (collectionId === undefined) {
+            if (typeof collectionId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "collectionId"');
             }
 
-            if (documentId === undefined) {
+            if (typeof documentId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "documentId"');
             }
 
@@ -1436,16 +1458,16 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        updateDocument: async <T extends unknown>(collectionId: string, documentId: string, data: object, read: string[] = [], write: string[] = []): Promise<T> => {
-            if (collectionId === undefined) {
+        updateDocument: async <T extends unknown>(collectionId: string, documentId: string, data: object, read?: string[], write?: string[]): Promise<T> => {
+            if (typeof collectionId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "collectionId"');
             }
 
-            if (documentId === undefined) {
+            if (typeof documentId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "documentId"');
             }
 
-            if (data === undefined) {
+            if (typeof data === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "data"');
             }
 
@@ -1483,11 +1505,11 @@ class Appwrite {
          * @returns {Promise}
          */
         deleteDocument: async <T extends unknown>(collectionId: string, documentId: string): Promise<T> => {
-            if (collectionId === undefined) {
+            if (typeof collectionId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "collectionId"');
             }
 
-            if (documentId === undefined) {
+            if (typeof documentId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "documentId"');
             }
 
@@ -1519,27 +1541,27 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        listExecutions: async <T extends unknown>(functionId: string, search: string = '', limit: number = 25, offset: number = 0, orderType: string = 'ASC'): Promise<T> => {
-            if (functionId === undefined) {
+        listExecutions: async <T extends unknown>(functionId: string, search?: string, limit?: number, offset?: number, orderType?: string): Promise<T> => {
+            if (typeof functionId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "functionId"');
             }
 
             let path = '/functions/{functionId}/executions'.replace('{functionId}', functionId);
             let payload: Payload = {};
 
-            if (search) {
+            if (typeof search !== 'undefined') {
                 payload['search'] = search;
             }
 
-            if (limit) {
+            if (typeof limit !== 'undefined') {
                 payload['limit'] = limit;
             }
 
-            if (offset) {
+            if (typeof offset !== 'undefined') {
                 payload['offset'] = offset;
             }
 
-            if (orderType) {
+            if (typeof orderType !== 'undefined') {
                 payload['orderType'] = orderType;
             }
 
@@ -1562,8 +1584,8 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        createExecution: async <T extends unknown>(functionId: string, data: string = ''): Promise<T> => {
-            if (functionId === undefined) {
+        createExecution: async <T extends unknown>(functionId: string, data?: string): Promise<T> => {
+            if (typeof functionId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "functionId"');
             }
 
@@ -1591,11 +1613,11 @@ class Appwrite {
          * @returns {Promise}
          */
         getExecution: async <T extends unknown>(functionId: string, executionId: string): Promise<T> => {
-            if (functionId === undefined) {
+            if (typeof functionId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "functionId"');
             }
 
-            if (executionId === undefined) {
+            if (typeof executionId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "executionId"');
             }
 
@@ -1766,23 +1788,23 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        listFiles: async <T extends unknown>(search: string = '', limit: number = 25, offset: number = 0, orderType: string = 'ASC'): Promise<T> => {
+        listFiles: async <T extends unknown>(search?: string, limit?: number, offset?: number, orderType?: string): Promise<T> => {
             let path = '/storage/files';
             let payload: Payload = {};
 
-            if (search) {
+            if (typeof search !== 'undefined') {
                 payload['search'] = search;
             }
 
-            if (limit) {
+            if (typeof limit !== 'undefined') {
                 payload['limit'] = limit;
             }
 
-            if (offset) {
+            if (typeof offset !== 'undefined') {
                 payload['offset'] = offset;
             }
 
-            if (orderType) {
+            if (typeof orderType !== 'undefined') {
                 payload['orderType'] = orderType;
             }
 
@@ -1805,8 +1827,8 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        createFile: async <T extends unknown>(file: File, read: string[] = [], write: string[] = []): Promise<T> => {
-            if (file === undefined) {
+        createFile: async <T extends unknown>(file: File, read?: string[], write?: string[]): Promise<T> => {
+            if (typeof file === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "file"');
             }
 
@@ -1842,7 +1864,7 @@ class Appwrite {
          * @returns {Promise}
          */
         getFile: async <T extends unknown>(fileId: string): Promise<T> => {
-            if (fileId === undefined) {
+            if (typeof fileId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "fileId"');
             }
 
@@ -1868,15 +1890,15 @@ class Appwrite {
          * @returns {Promise}
          */
         updateFile: async <T extends unknown>(fileId: string, read: string[], write: string[]): Promise<T> => {
-            if (fileId === undefined) {
+            if (typeof fileId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "fileId"');
             }
 
-            if (read === undefined) {
+            if (typeof read === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "read"');
             }
 
-            if (write === undefined) {
+            if (typeof write === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "write"');
             }
 
@@ -1908,7 +1930,7 @@ class Appwrite {
          * @returns {Promise}
          */
         deleteFile: async <T extends unknown>(fileId: string): Promise<T> => {
-            if (fileId === undefined) {
+            if (typeof fileId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "fileId"');
             }
 
@@ -1933,7 +1955,7 @@ class Appwrite {
          * @returns {URL}
          */
         getFileDownload: (fileId: string): URL => {
-            if (fileId === undefined) {
+            if (typeof fileId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "fileId"');
             }
 
@@ -1943,11 +1965,10 @@ class Appwrite {
             const uri = new URL(this.config.endpoint + path);
             payload['project'] = this.config.project;
 
-            payload['jwt'] = this.config.jwt;
 
-
-            const query = new URLSearchParams(payload);
-            uri.search = query.toString();
+            for (const [key, value] of Object.entries(this.flatten(payload))) {
+                uri.searchParams.append(key, value);
+            }
             return uri;
         },
 
@@ -1962,6 +1983,7 @@ class Appwrite {
          * @param {string} fileId
          * @param {number} width
          * @param {number} height
+         * @param {string} gravity
          * @param {number} quality
          * @param {number} borderWidth
          * @param {string} borderColor
@@ -1973,62 +1995,65 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {URL}
          */
-        getFilePreview: (fileId: string, width: number = 0, height: number = 0, quality: number = 100, borderWidth: number = 0, borderColor: string = '', borderRadius: number = 0, opacity: number = 1, rotation: number = 0, background: string = '', output: string = ''): URL => {
-            if (fileId === undefined) {
+        getFilePreview: (fileId: string, width?: number, height?: number, gravity?: string, quality?: number, borderWidth?: number, borderColor?: string, borderRadius?: number, opacity?: number, rotation?: number, background?: string, output?: string): URL => {
+            if (typeof fileId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "fileId"');
             }
 
             let path = '/storage/files/{fileId}/preview'.replace('{fileId}', fileId);
             let payload: Payload = {};
 
-            if (width) {
+            if (typeof width !== 'undefined') {
                 payload['width'] = width;
             }
 
-            if (height) {
+            if (typeof height !== 'undefined') {
                 payload['height'] = height;
             }
 
-            if (quality) {
+            if (typeof gravity !== 'undefined') {
+                payload['gravity'] = gravity;
+            }
+
+            if (typeof quality !== 'undefined') {
                 payload['quality'] = quality;
             }
 
-            if (borderWidth) {
+            if (typeof borderWidth !== 'undefined') {
                 payload['borderWidth'] = borderWidth;
             }
 
-            if (borderColor) {
+            if (typeof borderColor !== 'undefined') {
                 payload['borderColor'] = borderColor;
             }
 
-            if (borderRadius) {
+            if (typeof borderRadius !== 'undefined') {
                 payload['borderRadius'] = borderRadius;
             }
 
-            if (opacity) {
+            if (typeof opacity !== 'undefined') {
                 payload['opacity'] = opacity;
             }
 
-            if (rotation) {
+            if (typeof rotation !== 'undefined') {
                 payload['rotation'] = rotation;
             }
 
-            if (background) {
+            if (typeof background !== 'undefined') {
                 payload['background'] = background;
             }
 
-            if (output) {
+            if (typeof output !== 'undefined') {
                 payload['output'] = output;
             }
 
             const uri = new URL(this.config.endpoint + path);
             payload['project'] = this.config.project;
 
-            payload['jwt'] = this.config.jwt;
 
-
-            const query = new URLSearchParams(payload);
-            uri.search = query.toString();
+            for (const [key, value] of Object.entries(this.flatten(payload))) {
+                uri.searchParams.append(key, value);
+            }
             return uri;
         },
 
@@ -2044,7 +2069,7 @@ class Appwrite {
          * @returns {URL}
          */
         getFileView: (fileId: string): URL => {
-            if (fileId === undefined) {
+            if (typeof fileId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "fileId"');
             }
 
@@ -2054,11 +2079,10 @@ class Appwrite {
             const uri = new URL(this.config.endpoint + path);
             payload['project'] = this.config.project;
 
-            payload['jwt'] = this.config.jwt;
 
-
-            const query = new URLSearchParams(payload);
-            uri.search = query.toString();
+            for (const [key, value] of Object.entries(this.flatten(payload))) {
+                uri.searchParams.append(key, value);
+            }
             return uri;
         }
     };
@@ -2080,23 +2104,23 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        list: async <T extends unknown>(search: string = '', limit: number = 25, offset: number = 0, orderType: string = 'ASC'): Promise<T> => {
+        list: async <T extends unknown>(search?: string, limit?: number, offset?: number, orderType?: string): Promise<T> => {
             let path = '/teams';
             let payload: Payload = {};
 
-            if (search) {
+            if (typeof search !== 'undefined') {
                 payload['search'] = search;
             }
 
-            if (limit) {
+            if (typeof limit !== 'undefined') {
                 payload['limit'] = limit;
             }
 
-            if (offset) {
+            if (typeof offset !== 'undefined') {
                 payload['offset'] = offset;
             }
 
-            if (orderType) {
+            if (typeof orderType !== 'undefined') {
                 payload['orderType'] = orderType;
             }
 
@@ -2119,8 +2143,8 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        create: async <T extends unknown>(name: string, roles: string[] = ["owner"]): Promise<T> => {
-            if (name === undefined) {
+        create: async <T extends unknown>(name: string, roles?: string[]): Promise<T> => {
+            if (typeof name === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "name"');
             }
 
@@ -2152,7 +2176,7 @@ class Appwrite {
          * @returns {Promise}
          */
         get: async <T extends unknown>(teamId: string): Promise<T> => {
-            if (teamId === undefined) {
+            if (typeof teamId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "teamId"');
             }
 
@@ -2177,11 +2201,11 @@ class Appwrite {
          * @returns {Promise}
          */
         update: async <T extends unknown>(teamId: string, name: string): Promise<T> => {
-            if (teamId === undefined) {
+            if (typeof teamId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "teamId"');
             }
 
-            if (name === undefined) {
+            if (typeof name === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "name"');
             }
 
@@ -2209,7 +2233,7 @@ class Appwrite {
          * @returns {Promise}
          */
         delete: async <T extends unknown>(teamId: string): Promise<T> => {
-            if (teamId === undefined) {
+            if (typeof teamId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "teamId"');
             }
 
@@ -2236,27 +2260,27 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        getMemberships: async <T extends unknown>(teamId: string, search: string = '', limit: number = 25, offset: number = 0, orderType: string = 'ASC'): Promise<T> => {
-            if (teamId === undefined) {
+        getMemberships: async <T extends unknown>(teamId: string, search?: string, limit?: number, offset?: number, orderType?: string): Promise<T> => {
+            if (typeof teamId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "teamId"');
             }
 
             let path = '/teams/{teamId}/memberships'.replace('{teamId}', teamId);
             let payload: Payload = {};
 
-            if (search) {
+            if (typeof search !== 'undefined') {
                 payload['search'] = search;
             }
 
-            if (limit) {
+            if (typeof limit !== 'undefined') {
                 payload['limit'] = limit;
             }
 
-            if (offset) {
+            if (typeof offset !== 'undefined') {
                 payload['offset'] = offset;
             }
 
-            if (orderType) {
+            if (typeof orderType !== 'undefined') {
                 payload['orderType'] = orderType;
             }
 
@@ -2291,20 +2315,20 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        createMembership: async <T extends unknown>(teamId: string, email: string, roles: string[], url: string, name: string = ''): Promise<T> => {
-            if (teamId === undefined) {
+        createMembership: async <T extends unknown>(teamId: string, email: string, roles: string[], url: string, name?: string): Promise<T> => {
+            if (typeof teamId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "teamId"');
             }
 
-            if (email === undefined) {
+            if (typeof email === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "email"');
             }
 
-            if (roles === undefined) {
+            if (typeof roles === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "roles"');
             }
 
-            if (url === undefined) {
+            if (typeof url === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "url"');
             }
 
@@ -2344,15 +2368,15 @@ class Appwrite {
          * @returns {Promise}
          */
         updateMembershipRoles: async <T extends unknown>(teamId: string, membershipId: string, roles: string[]): Promise<T> => {
-            if (teamId === undefined) {
+            if (typeof teamId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "teamId"');
             }
 
-            if (membershipId === undefined) {
+            if (typeof membershipId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "membershipId"');
             }
 
-            if (roles === undefined) {
+            if (typeof roles === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "roles"');
             }
 
@@ -2382,11 +2406,11 @@ class Appwrite {
          * @returns {Promise}
          */
         deleteMembership: async <T extends unknown>(teamId: string, membershipId: string): Promise<T> => {
-            if (teamId === undefined) {
+            if (typeof teamId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "teamId"');
             }
 
-            if (membershipId === undefined) {
+            if (typeof membershipId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "membershipId"');
             }
 
@@ -2414,19 +2438,19 @@ class Appwrite {
          * @returns {Promise}
          */
         updateMembershipStatus: async <T extends unknown>(teamId: string, membershipId: string, userId: string, secret: string): Promise<T> => {
-            if (teamId === undefined) {
+            if (typeof teamId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "teamId"');
             }
 
-            if (membershipId === undefined) {
+            if (typeof membershipId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "membershipId"');
             }
 
-            if (userId === undefined) {
+            if (typeof userId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "userId"');
             }
 
-            if (secret === undefined) {
+            if (typeof secret === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "secret"');
             }
 

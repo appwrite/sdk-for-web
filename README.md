@@ -33,7 +33,7 @@ import { Appwrite } from "aw-test-realtime";
 To install with a CDN (content delivery network) add the following scripts to the bottom of your <body> tag, but before you use any Appwrite services:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/aw-test-realtime@0.0.6"></script>
+<script src="https://cdn.jsdelivr.net/npm/aw-test-realtime@0.0.7"></script>
 ```
 
 

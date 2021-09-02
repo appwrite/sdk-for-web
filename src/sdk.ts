@@ -9,6 +9,55 @@ type Headers = {
     [key: string]: string;
 }
 
+type RealtimeResponse = {
+    type: "error"|"event"|"connected"|"response";
+    data: RealtimeResponseAuthenticated|RealtimeResponseConnected|RealtimeResponseError|RealtimeResponseEvent<unknown>;
+}
+
+type RealtimeRequest = {
+    type: "authentication";
+    data: RealtimeRequestAuthenticate;
+}
+
+type RealtimeResponseEvent<T extends unknown> = {
+    event: string;
+    channels: string[];
+    timestamp: number;
+    payload: T;
+}
+
+type RealtimeResponseError = {
+    code: number;
+    message: string;
+}
+
+type RealtimeResponseConnected = {
+    channels: string[];
+    user?: object;
+}
+
+type RealtimeResponseAuthenticated = {
+    to: string;
+    success: boolean;
+    user: object;
+}
+
+type RealtimeRequestAuthenticate = {
+    session: string;
+}
+
+type Realtime = {
+    socket?: WebSocket;
+    timeout?: number;
+    lastMessage?: RealtimeResponse;
+    channels: {
+        [key: string]: ((event: MessageEvent) => void)[]
+    },
+    createSocket: () => void;
+    authenticate: (event: MessageEvent) => void;
+    onMessage: <T extends unknown>(channel: string, callback: (response: RealtimeResponseEvent<T>) => void) => (event: MessageEvent) => void;
+}
+
 class AppwriteException extends Error {
     code: number;
     response: string;
@@ -24,12 +73,13 @@ class AppwriteException extends Error {
 class Appwrite {
     config = {
         endpoint: 'https://appwrite.io/v1',
+        endpointRealtime: '',
         project: '',
         jwt: '',
         locale: '',
     };
     headers: Headers = {
-        'x-sdk-version': 'appwrite:web:3.2.0',
+        'x-sdk-version': 'appwrite:web:4.0.0',
         'X-Appwrite-Response-Format': '0.9.0',
     };
 
@@ -44,6 +94,20 @@ class Appwrite {
      */
     setEndpoint(endpoint: string): this {
         this.config.endpoint = endpoint;
+        this.config.endpointRealtime = this.config.endpointRealtime || this.config.endpoint.replace("https://", "wss://").replace("http://", "ws://");
+
+        return this;
+    }
+
+    /**
+     * Set Realtime Endpoint
+     *
+     * @param {string} endpointRealtime
+     *
+     * @returns {this}
+     */
+    setEndpointRealtime(endpointRealtime: string): this {
+        this.config.endpointRealtime = endpointRealtime;
 
         return this;
     }
@@ -89,6 +153,130 @@ class Appwrite {
         this.headers['X-Appwrite-Locale'] = value;
         this.config.locale = value;
         return this;
+    }
+
+
+    private realtime: Realtime = {
+        socket: undefined,
+        timeout: undefined,
+        channels: {},
+        lastMessage: undefined,
+        createSocket: () => {
+            const channels = new URLSearchParams();
+            channels.set('project', this.config.project);
+            for (const property in this.realtime.channels) {
+                channels.append('channels[]', property);
+            }
+            if (this.realtime.socket?.readyState === WebSocket.OPEN) {
+                this.realtime.socket.close();
+            }
+
+            this.realtime.socket = new WebSocket(this.config.endpointRealtime + '/realtime?' + channels.toString());
+            this.realtime.socket?.addEventListener('message', this.realtime.authenticate);
+
+            for (const channel in this.realtime.channels) {
+                this.realtime.channels[channel].forEach(callback => {
+                    this.realtime.socket?.addEventListener('message', callback);
+                });
+            }
+
+            this.realtime.socket.addEventListener('close', event => {
+                if (this.realtime?.lastMessage?.type === 'error' && (<RealtimeResponseError>this.realtime?.lastMessage.data).code === 1008) {
+                    return;
+                }
+                console.error('Realtime got disconnected. Reconnect will be attempted in 1 second.', event.reason);
+                setTimeout(() => {
+                    this.realtime.createSocket();
+                }, 1000);
+            })
+        },
+        authenticate: (event) => {
+            const message: RealtimeResponse = JSON.parse(event.data);
+            if (message.type === 'connected') {
+                const cookie = JSON.parse(window.localStorage.getItem('cookieFallback') ?? "{}");
+                const session = cookie?.[`a_session_${this.config.project}`];
+                const data = <RealtimeResponseConnected>message.data;
+
+                if (session && !data.user) {
+                    this.realtime.socket?.send(JSON.stringify(<RealtimeRequest>{
+                        type: "authentication",
+                        data: {
+                            session
+                        }
+                    }));
+                }
+            }
+        },
+        onMessage: <T extends unknown>(channel: string, callback: (response: RealtimeResponseEvent<T>) => void) =>
+            (event) => {
+                try {
+                    const message: RealtimeResponse = JSON.parse(event.data);
+                    this.realtime.lastMessage = message;
+                    if (message.type === 'event') {
+                        let data = <RealtimeResponseEvent<T>>message.data;
+                        if (data.channels && data.channels.includes(channel)) {
+                            callback(data);
+                        }
+                    } else if (message.type === 'error') {
+                        throw message.data;
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+    }
+
+    /**
+     * Subscribes to Appwrite events and passes you the payload in realtime.
+     * 
+     * @param {string|string[]} channels 
+     * Channel to subscribe - pass a single channel as a string or multiple with an array of strings.
+     * 
+     * Possible channels are:
+     * - account
+     * - collections
+     * - collections.[ID]
+     * - collections.[ID].documents
+     * - documents
+     * - documents.[ID]
+     * - files
+     * - files.[ID]
+     * - executions
+     * - executions.[ID]
+     * - functions.[ID]
+     * - teams
+     * - teams.[ID]
+     * - memberships
+     * - memberships.[ID]
+     * @param {(payload: RealtimeMessage) => void} callback Is called on every realtime update.
+     * @returns {() => void} Unsubscribes from events.
+     */
+    subscribe<T extends unknown>(channels: string | string[], callback: (payload: RealtimeResponseEvent<T>) => void): () => void {
+        let channelArray = typeof channels === 'string' ? [channels] : channels;
+        let savedChannels: {
+            name: string;
+            index: number;
+        }[] = [];
+        channelArray.forEach((channel, index) => {
+            if (!(channel in this.realtime.channels)) {
+                this.realtime.channels[channel] = [];
+            }
+            savedChannels[index] = {
+                name: channel,
+                index: (this.realtime.channels[channel].push(this.realtime.onMessage<T>(channel, callback)) - 1)
+            };
+            clearTimeout(this.realtime.timeout);
+            this.realtime.timeout = window?.setTimeout(() => {
+                this.realtime.createSocket();
+            }, 1);
+        });
+
+        return () => {
+            savedChannels.forEach(channel => {
+                this.realtime.socket?.removeEventListener('message', this.realtime.channels[channel.name][channel.index]);
+                this.realtime.channels[channel.name].splice(channel.index, 1);
+            })
+        }
     }
 
     private async call(method: string, url: URL, headers: Headers = {}, params: Payload = {}): Promise<any> {
@@ -159,7 +347,7 @@ class Appwrite {
 
             return data;
         } catch (e) {
-            throw new AppwriteException(e.message);
+            throw new AppwriteException((<Error>e).message);
         }
     }
 
@@ -502,7 +690,7 @@ class Appwrite {
         },
 
         /**
-         * Complete Password Recovery
+         * Create Password Recovery (confirmation)
          *
          * Use this endpoint to complete the user account password reset. Both the
          * **userId** and **secret** arguments will be passed as query parameters to
@@ -662,12 +850,107 @@ class Appwrite {
         },
 
         /**
+         * Create Magic URL session
+         *
+         * Sends the user an email with a secret key for creating a session. When the
+         * user clicks the link in the email, the user is redirected back to the URL
+         * you provided with the secret key and userId values attached to the URL
+         * query string. Use the query string parameters to submit a request to the
+         * [PUT
+         * /account/sessions/magic-url](/docs/client/account#accountUpdateMagicURLSession)
+         * endpoint to complete the login process. The link sent to the user's email
+         * address is valid for 1 hour. If you are on a mobile device you can leave
+         * the URL parameter empty, so that the login completion will be handled by
+         * your Appwrite instance by default.
+         *
+         * @param {string} email
+         * @param {string} url
+         * @throws {AppwriteException}
+         * @returns {Promise}
+         */
+        createMagicURLSession: async <T extends unknown>(email: string, url?: string): Promise<T> => {
+            if (typeof email === 'undefined') {
+                throw new AppwriteException('Missing required parameter: "email"');
+            }
+
+            let path = '/account/sessions/magic-url';
+            let payload: Payload = {};
+
+            if (typeof email !== 'undefined') {
+                payload['email'] = email;
+            }
+
+            if (typeof url !== 'undefined') {
+                payload['url'] = url;
+            }
+
+            const uri = new URL(this.config.endpoint + path);
+            return await this.call('post', uri, {
+                'content-type': 'application/json',
+            }, payload);
+        },
+
+        /**
+         * Create Magic URL session (confirmation)
+         *
+         * Use this endpoint to complete creating the session with the Magic URL. Both
+         * the **userId** and **secret** arguments will be passed as query parameters
+         * to the redirect URL you have provided when sending your request to the
+         * [POST
+         * /account/sessions/magic-url](/docs/client/account#accountCreateMagicURLSession)
+         * endpoint.
+         * 
+         * Please note that in order to avoid a [Redirect
+         * Attack](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md)
+         * the only valid redirect URLs are the ones from domains you have set when
+         * adding your platforms in the console interface.
+         *
+         * @param {string} userId
+         * @param {string} secret
+         * @throws {AppwriteException}
+         * @returns {Promise}
+         */
+        updateMagicURLSession: async <T extends unknown>(userId: string, secret: string): Promise<T> => {
+            if (typeof userId === 'undefined') {
+                throw new AppwriteException('Missing required parameter: "userId"');
+            }
+
+            if (typeof secret === 'undefined') {
+                throw new AppwriteException('Missing required parameter: "secret"');
+            }
+
+            let path = '/account/sessions/magic-url';
+            let payload: Payload = {};
+
+            if (typeof userId !== 'undefined') {
+                payload['userId'] = userId;
+            }
+
+            if (typeof secret !== 'undefined') {
+                payload['secret'] = secret;
+            }
+
+            const uri = new URL(this.config.endpoint + path);
+            return await this.call('put', uri, {
+                'content-type': 'application/json',
+            }, payload);
+        },
+
+        /**
          * Create Account Session with OAuth2
          *
          * Allow the user to login to their account using the OAuth2 provider of their
          * choice. Each OAuth2 provider should be enabled from the Appwrite console
          * first. Use the success and failure arguments to provide a redirect URL's
          * back to your app when login is completed.
+         * 
+         * If there is already an active session, the new session will be attached to
+         * the logged-in account. If there are no active sessions, the server will
+         * attempt to look for a user with the same email address as the email
+         * received from the OAuth2 provider and attach the new session to the
+         * existing user. If no matching user is found - the server will create a new
+         * user..
+         * 
          *
          * @param {string} provider
          * @param {string} success
@@ -801,7 +1084,7 @@ class Appwrite {
         },
 
         /**
-         * Complete Email Verification
+         * Create Email Verification (confirmation)
          *
          * Use this endpoint to complete the user email verification process. Use both
          * the **userId** and **secret** parameters that were attached to your app URL
@@ -2157,14 +2440,17 @@ class Appwrite {
         /**
          * Create Team Membership
          *
-         * Use this endpoint to invite a new member to join your team. An email with a
-         * link to join the team will be sent to the new member email address if the
-         * member doesn't exist in the project it will be created automatically.
+         * Use this endpoint to invite a new member to join your team. If initiated
+         * from Client SDK, an email with a link to join the team will be sent to the
+         * new member's email address if the member doesn't exist in the project it
+         * will be created automatically. If initiated from server side SDKs, new
+         * member will automatically be added to the team.
          * 
          * Use the 'URL' parameter to redirect the user from the invitation email back
          * to your app. When the user is redirected, use the [Update Team Membership
          * Status](/docs/client/teams#teamsUpdateMembershipStatus) endpoint to allow
-         * the user to accept the invitation to the team.
+         * the user to accept the invitation to the team.  While calling from side
+         * SDKs the redirect url can be empty string.
          * 
          * Please note that in order to avoid a [Redirect
          * Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md)

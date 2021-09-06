@@ -79,7 +79,7 @@ class Appwrite {
         locale: '',
     };
     headers: Headers = {
-        'x-sdk-version': 'appwrite:web:4.0.0',
+        'x-sdk-version': 'appwrite:web:4.0.1',
         'X-Appwrite-Response-Format': '0.10.0',
     };
 
@@ -192,7 +192,7 @@ class Appwrite {
         },
         authenticate: (event) => {
             const message: RealtimeResponse = JSON.parse(event.data);
-            if (message.type === 'connected') {
+            if (message.type === 'connected' && this.realtime.socket?.readyState === WebSocket.OPEN) {
                 const cookie = JSON.parse(window.localStorage.getItem('cookieFallback') ?? "{}");
                 const session = cookie?.[`a_session_${this.config.project}`];
                 const data = <RealtimeResponseConnected>message.data;
@@ -347,6 +347,9 @@ class Appwrite {
 
             return data;
         } catch (e) {
+            if (e instanceof AppwriteException) {
+                throw e;
+            }
             throw new AppwriteException((<Error>e).message);
         }
     }

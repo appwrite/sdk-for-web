@@ -1,0 +1,2289 @@
+'use strict';
+
+require('isomorphic-form-data');
+var crossFetch = require('cross-fetch');
+
+/*! *****************************************************************************
+Copyright (c) Microsoft Corporation.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+***************************************************************************** */
+
+function __awaiter(thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+}
+
+class AppwriteException extends Error {
+    constructor(message, code = 0, response = '') {
+        super(message);
+        this.name = 'AppwriteException';
+        this.message = message;
+        this.code = code;
+        this.response = response;
+    }
+}
+class Appwrite {
+    constructor() {
+        this.config = {
+            endpoint: 'https://appwrite.io/v1',
+            endpointRealtime: '',
+            project: '',
+            jwt: '',
+            locale: '',
+        };
+        this.headers = {
+            'x-sdk-version': 'appwrite:web:4.0.2',
+            'X-Appwrite-Response-Format': '0.10.0',
+        };
+        this.realtime = {
+            socket: undefined,
+            timeout: undefined,
+            url: '',
+            channels: new Set(),
+            subscriptions: new Map(),
+            subscriptionsCounter: 0,
+            reconnect: true,
+            reconnectAttempts: 0,
+            lastMessage: undefined,
+            connect: () => {
+                clearTimeout(this.realtime.timeout);
+                this.realtime.timeout = window === null || window === void 0 ? void 0 : window.setTimeout(() => {
+                    this.realtime.createSocket();
+                }, 50);
+            },
+            getTimeout: () => {
+                switch (true) {
+                    case this.realtime.reconnectAttempts < 5:
+                        return 1000;
+                    case this.realtime.reconnectAttempts < 15:
+                        return 5000;
+                    case this.realtime.reconnectAttempts < 100:
+                        return 10000;
+                    default:
+                        return 60000;
+                }
+            },
+            createSocket: () => {
+                var _a, _b;
+                if (this.realtime.channels.size < 1)
+                    return;
+                const channels = new URLSearchParams();
+                channels.set('project', this.config.project);
+                this.realtime.channels.forEach(channel => {
+                    channels.append('channels[]', channel);
+                });
+                const url = this.config.endpointRealtime + '/realtime?' + channels.toString();
+                if (url !== this.realtime.url || // Check if URL is present
+                    !this.realtime.socket || // Check if WebSocket has not been created
+                    ((_a = this.realtime.socket) === null || _a === void 0 ? void 0 : _a.readyState) > WebSocket.OPEN // Check if WebSocket is CLOSING (3) or CLOSED (4)
+                ) {
+                    if (this.realtime.socket &&
+                        ((_b = this.realtime.socket) === null || _b === void 0 ? void 0 : _b.readyState) < WebSocket.CLOSING // Close WebSocket if it is CONNECTING (0) or OPEN (1)
+                    ) {
+                        this.realtime.reconnect = false;
+                        this.realtime.socket.close();
+                    }
+                    this.realtime.url = url;
+                    this.realtime.socket = new WebSocket(url);
+                    this.realtime.socket.addEventListener('message', this.realtime.onMessage);
+                    this.realtime.socket.addEventListener('open', _event => {
+                        this.realtime.reconnectAttempts = 0;
+                    });
+                    this.realtime.socket.addEventListener('close', event => {
+                        var _a, _b, _c;
+                        if (!this.realtime.reconnect ||
+                            (((_b = (_a = this.realtime) === null || _a === void 0 ? void 0 : _a.lastMessage) === null || _b === void 0 ? void 0 : _b.type) === 'error' && // Check if last message was of type error
+                                ((_c = this.realtime) === null || _c === void 0 ? void 0 : _c.lastMessage.data).code === 1008 // Check for policy violation 1008
+                            )) {
+                            this.realtime.reconnect = true;
+                            return;
+                        }
+                        const timeout = this.realtime.getTimeout();
+                        console.error(`Realtime got disconnected. Reconnect will be attempted in ${timeout / 1000} seconds.`, event.reason);
+                        setTimeout(() => {
+                            this.realtime.reconnectAttempts++;
+                            this.realtime.createSocket();
+                        }, timeout);
+                    });
+                }
+            },
+            onMessage: (event) => {
+                var _a, _b;
+                try {
+                    const message = JSON.parse(event.data);
+                    this.realtime.lastMessage = message;
+                    switch (message.type) {
+                        case 'connected':
+                            const cookie = JSON.parse((_a = window.localStorage.getItem('cookieFallback')) !== null && _a !== void 0 ? _a : '{}');
+                            const session = cookie === null || cookie === void 0 ? void 0 : cookie[`a_session_${this.config.project}`];
+                            const messageData = message.data;
+                            if (session && !messageData.user) {
+                                (_b = this.realtime.socket) === null || _b === void 0 ? void 0 : _b.send(JSON.stringify({
+                                    type: 'authentication',
+                                    data: {
+                                        session
+                                    }
+                                }));
+                            }
+                            break;
+                        case 'event':
+                            let data = message.data;
+                            if (data === null || data === void 0 ? void 0 : data.channels) {
+                                const isSubscribed = data.channels.some(channel => this.realtime.channels.has(channel));
+                                if (!isSubscribed)
+                                    return;
+                                this.realtime.subscriptions.forEach(subscription => {
+                                    if (data.channels.some(channel => subscription.channels.includes(channel))) {
+                                        setTimeout(() => subscription.callback(data));
+                                    }
+                                });
+                            }
+                            break;
+                        case 'error':
+                            throw message.data;
+                        default:
+                            break;
+                    }
+                }
+                catch (e) {
+                    console.error(e);
+                }
+            },
+            cleanUp: channels => {
+                this.realtime.channels.forEach(channel => {
+                    if (channels.includes(channel)) {
+                        let found = Array.from(this.realtime.subscriptions).some(([_key, subscription]) => {
+                            return subscription.channels.includes(channel);
+                        });
+                        if (!found) {
+                            this.realtime.channels.delete(channel);
+                        }
+                    }
+                });
+            }
+        };
+        this.account = {
+            /**
+             * Get Account
+             *
+             * Get currently logged in user data as JSON object.
+             *
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            get: () => __awaiter(this, void 0, void 0, function* () {
+                let path = '/account';
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('get', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Create Account
+             *
+             * Use this endpoint to allow a new user to register a new account in your
+             * project. After the user registration completes successfully, you can use
+             * the [/account/verfication](/docs/client/account#accountCreateVerification)
+             * route to start verifying the user email address. To allow the new user to
+             * login to their new account, you need to create a new [account
+             * session](/docs/client/account#accountCreateSession).
+             *
+             * @param {string} email
+             * @param {string} password
+             * @param {string} name
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            create: (email, password, name) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof email === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "email"');
+                }
+                if (typeof password === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "password"');
+                }
+                let path = '/account';
+                let payload = {};
+                if (typeof email !== 'undefined') {
+                    payload['email'] = email;
+                }
+                if (typeof password !== 'undefined') {
+                    payload['password'] = password;
+                }
+                if (typeof name !== 'undefined') {
+                    payload['name'] = name;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('post', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Delete Account
+             *
+             * Delete a currently logged in user account. Behind the scene, the user
+             * record is not deleted but permanently blocked from any access. This is done
+             * to avoid deleted accounts being overtaken by new users with the same email
+             * address. Any user-related resources like documents or storage files should
+             * be deleted separately.
+             *
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            delete: () => __awaiter(this, void 0, void 0, function* () {
+                let path = '/account';
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('delete', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Update Account Email
+             *
+             * Update currently logged in user account email address. After changing user
+             * address, user confirmation status is being reset and a new confirmation
+             * mail is sent. For security measures, user password is required to complete
+             * this request.
+             * This endpoint can also be used to convert an anonymous account to a normal
+             * one, by passing an email address and a new password.
+             *
+             * @param {string} email
+             * @param {string} password
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            updateEmail: (email, password) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof email === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "email"');
+                }
+                if (typeof password === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "password"');
+                }
+                let path = '/account/email';
+                let payload = {};
+                if (typeof email !== 'undefined') {
+                    payload['email'] = email;
+                }
+                if (typeof password !== 'undefined') {
+                    payload['password'] = password;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('patch', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Create Account JWT
+             *
+             * Use this endpoint to create a JSON Web Token. You can use the resulting JWT
+             * to authenticate on behalf of the current user when working with the
+             * Appwrite server-side API and SDKs. The JWT secret is valid for 15 minutes
+             * from its creation and will be invalid if the user will logout in that time
+             * frame.
+             *
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            createJWT: () => __awaiter(this, void 0, void 0, function* () {
+                let path = '/account/jwt';
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('post', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Get Account Logs
+             *
+             * Get currently logged in user list of latest security activity logs. Each
+             * log returns user IP address, location and date and time of log.
+             *
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            getLogs: () => __awaiter(this, void 0, void 0, function* () {
+                let path = '/account/logs';
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('get', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Update Account Name
+             *
+             * Update currently logged in user account name.
+             *
+             * @param {string} name
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            updateName: (name) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof name === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "name"');
+                }
+                let path = '/account/name';
+                let payload = {};
+                if (typeof name !== 'undefined') {
+                    payload['name'] = name;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('patch', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Update Account Password
+             *
+             * Update currently logged in user password. For validation, user is required
+             * to pass in the new password, and the old password. For users created with
+             * OAuth and Team Invites, oldPassword is optional.
+             *
+             * @param {string} password
+             * @param {string} oldPassword
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            updatePassword: (password, oldPassword) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof password === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "password"');
+                }
+                let path = '/account/password';
+                let payload = {};
+                if (typeof password !== 'undefined') {
+                    payload['password'] = password;
+                }
+                if (typeof oldPassword !== 'undefined') {
+                    payload['oldPassword'] = oldPassword;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('patch', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Get Account Preferences
+             *
+             * Get currently logged in user preferences as a key-value object.
+             *
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            getPrefs: () => __awaiter(this, void 0, void 0, function* () {
+                let path = '/account/prefs';
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('get', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Update Account Preferences
+             *
+             * Update currently logged in user account preferences. You can pass only the
+             * specific settings you wish to update.
+             *
+             * @param {object} prefs
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            updatePrefs: (prefs) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof prefs === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "prefs"');
+                }
+                let path = '/account/prefs';
+                let payload = {};
+                if (typeof prefs !== 'undefined') {
+                    payload['prefs'] = prefs;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('patch', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Create Password Recovery
+             *
+             * Sends the user an email with a temporary secret key for password reset.
+             * When the user clicks the confirmation link he is redirected back to your
+             * app password reset URL with the secret key and email address values
+             * attached to the URL query string. Use the query string params to submit a
+             * request to the [PUT
+             * /account/recovery](/docs/client/account#accountUpdateRecovery) endpoint to
+             * complete the process. The verification link sent to the user's email
+             * address is valid for 1 hour.
+             *
+             * @param {string} email
+             * @param {string} url
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            createRecovery: (email, url) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof email === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "email"');
+                }
+                if (typeof url === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "url"');
+                }
+                let path = '/account/recovery';
+                let payload = {};
+                if (typeof email !== 'undefined') {
+                    payload['email'] = email;
+                }
+                if (typeof url !== 'undefined') {
+                    payload['url'] = url;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('post', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Create Password Recovery (confirmation)
+             *
+             * Use this endpoint to complete the user account password reset. Both the
+             * **userId** and **secret** arguments will be passed as query parameters to
+             * the redirect URL you have provided when sending your request to the [POST
+             * /account/recovery](/docs/client/account#accountCreateRecovery) endpoint.
+             *
+             * Please note that in order to avoid a [Redirect
+             * Attack](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md)
+             * the only valid redirect URLs are the ones from domains you have set when
+             * adding your platforms in the console interface.
+             *
+             * @param {string} userId
+             * @param {string} secret
+             * @param {string} password
+             * @param {string} passwordAgain
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            updateRecovery: (userId, secret, password, passwordAgain) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof userId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "userId"');
+                }
+                if (typeof secret === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "secret"');
+                }
+                if (typeof password === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "password"');
+                }
+                if (typeof passwordAgain === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "passwordAgain"');
+                }
+                let path = '/account/recovery';
+                let payload = {};
+                if (typeof userId !== 'undefined') {
+                    payload['userId'] = userId;
+                }
+                if (typeof secret !== 'undefined') {
+                    payload['secret'] = secret;
+                }
+                if (typeof password !== 'undefined') {
+                    payload['password'] = password;
+                }
+                if (typeof passwordAgain !== 'undefined') {
+                    payload['passwordAgain'] = passwordAgain;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('put', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Get Account Sessions
+             *
+             * Get currently logged in user list of active sessions across different
+             * devices.
+             *
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            getSessions: () => __awaiter(this, void 0, void 0, function* () {
+                let path = '/account/sessions';
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('get', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Create Account Session
+             *
+             * Allow the user to login into their account by providing a valid email and
+             * password combination. This route will create a new session for the user.
+             *
+             * @param {string} email
+             * @param {string} password
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            createSession: (email, password) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof email === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "email"');
+                }
+                if (typeof password === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "password"');
+                }
+                let path = '/account/sessions';
+                let payload = {};
+                if (typeof email !== 'undefined') {
+                    payload['email'] = email;
+                }
+                if (typeof password !== 'undefined') {
+                    payload['password'] = password;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('post', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Delete All Account Sessions
+             *
+             * Delete all sessions from the user account and remove any sessions cookies
+             * from the end client.
+             *
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            deleteSessions: () => __awaiter(this, void 0, void 0, function* () {
+                let path = '/account/sessions';
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('delete', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Create Anonymous Session
+             *
+             * Use this endpoint to allow a new user to register an anonymous account in
+             * your project. This route will also create a new session for the user. To
+             * allow the new user to convert an anonymous account to a normal account, you
+             * need to update its [email and
+             * password](/docs/client/account#accountUpdateEmail) or create an [OAuth2
+             * session](/docs/client/account#accountCreateOAuth2Session).
+             *
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            createAnonymousSession: () => __awaiter(this, void 0, void 0, function* () {
+                let path = '/account/sessions/anonymous';
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('post', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Create Magic URL session
+             *
+             * Sends the user an email with a secret key for creating a session. When the
+             * user clicks the link in the email, the user is redirected back to the URL
+             * you provided with the secret key and userId values attached to the URL
+             * query string. Use the query string parameters to submit a request to the
+             * [PUT
+             * /account/sessions/magic-url](/docs/client/account#accountUpdateMagicURLSession)
+             * endpoint to complete the login process. The link sent to the user's email
+             * address is valid for 1 hour. If you are on a mobile device you can leave
+             * the URL parameter empty, so that the login completion will be handled by
+             * your Appwrite instance by default.
+             *
+             * @param {string} email
+             * @param {string} url
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            createMagicURLSession: (email, url) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof email === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "email"');
+                }
+                let path = '/account/sessions/magic-url';
+                let payload = {};
+                if (typeof email !== 'undefined') {
+                    payload['email'] = email;
+                }
+                if (typeof url !== 'undefined') {
+                    payload['url'] = url;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('post', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Create Magic URL session (confirmation)
+             *
+             * Use this endpoint to complete creating the session with the Magic URL. Both
+             * the **userId** and **secret** arguments will be passed as query parameters
+             * to the redirect URL you have provided when sending your request to the
+             * [POST
+             * /account/sessions/magic-url](/docs/client/account#accountCreateMagicURLSession)
+             * endpoint.
+             *
+             * Please note that in order to avoid a [Redirect
+             * Attack](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md)
+             * the only valid redirect URLs are the ones from domains you have set when
+             * adding your platforms in the console interface.
+             *
+             * @param {string} userId
+             * @param {string} secret
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            updateMagicURLSession: (userId, secret) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof userId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "userId"');
+                }
+                if (typeof secret === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "secret"');
+                }
+                let path = '/account/sessions/magic-url';
+                let payload = {};
+                if (typeof userId !== 'undefined') {
+                    payload['userId'] = userId;
+                }
+                if (typeof secret !== 'undefined') {
+                    payload['secret'] = secret;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('put', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Create Account Session with OAuth2
+             *
+             * Allow the user to login to their account using the OAuth2 provider of their
+             * choice. Each OAuth2 provider should be enabled from the Appwrite console
+             * first. Use the success and failure arguments to provide a redirect URL's
+             * back to your app when login is completed.
+             *
+             * If there is already an active session, the new session will be attached to
+             * the logged-in account. If there are no active sessions, the server will
+             * attempt to look for a user with the same email address as the email
+             * received from the OAuth2 provider and attach the new session to the
+             * existing user. If no matching user is found - the server will create a new
+             * user..
+             *
+             *
+             * @param {string} provider
+             * @param {string} success
+             * @param {string} failure
+             * @param {string[]} scopes
+             * @throws {AppwriteException}
+             * @returns {void|string}
+             */
+            createOAuth2Session: (provider, success, failure, scopes) => {
+                if (typeof provider === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "provider"');
+                }
+                let path = '/account/sessions/oauth2/{provider}'.replace('{provider}', provider);
+                let payload = {};
+                if (typeof success !== 'undefined') {
+                    payload['success'] = success;
+                }
+                if (typeof failure !== 'undefined') {
+                    payload['failure'] = failure;
+                }
+                if (typeof scopes !== 'undefined') {
+                    payload['scopes'] = scopes;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                payload['project'] = this.config.project;
+                for (const [key, value] of Object.entries(this.flatten(payload))) {
+                    uri.searchParams.append(key, value);
+                }
+                if (typeof window !== 'undefined' && (window === null || window === void 0 ? void 0 : window.location)) {
+                    window.location.href = uri.toString();
+                }
+                else {
+                    return uri;
+                }
+            },
+            /**
+             * Get Session By ID
+             *
+             * Use this endpoint to get a logged in user's session using a Session ID.
+             * Inputting 'current' will return the current session being used.
+             *
+             * @param {string} sessionId
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            getSession: (sessionId) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof sessionId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "sessionId"');
+                }
+                let path = '/account/sessions/{sessionId}'.replace('{sessionId}', sessionId);
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('get', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Delete Account Session
+             *
+             * Use this endpoint to log out the currently logged in user from all their
+             * account sessions across all of their different devices. When using the
+             * option id argument, only the session unique ID provider will be deleted.
+             *
+             * @param {string} sessionId
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            deleteSession: (sessionId) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof sessionId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "sessionId"');
+                }
+                let path = '/account/sessions/{sessionId}'.replace('{sessionId}', sessionId);
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('delete', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Create Email Verification
+             *
+             * Use this endpoint to send a verification message to your user email address
+             * to confirm they are the valid owners of that address. Both the **userId**
+             * and **secret** arguments will be passed as query parameters to the URL you
+             * have provided to be attached to the verification email. The provided URL
+             * should redirect the user back to your app and allow you to complete the
+             * verification process by verifying both the **userId** and **secret**
+             * parameters. Learn more about how to [complete the verification
+             * process](/docs/client/account#accountUpdateVerification). The verification
+             * link sent to the user's email address is valid for 7 days.
+             *
+             * Please note that in order to avoid a [Redirect
+             * Attack](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md),
+             * the only valid redirect URLs are the ones from domains you have set when
+             * adding your platforms in the console interface.
+             *
+             *
+             * @param {string} url
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            createVerification: (url) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof url === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "url"');
+                }
+                let path = '/account/verification';
+                let payload = {};
+                if (typeof url !== 'undefined') {
+                    payload['url'] = url;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('post', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Create Email Verification (confirmation)
+             *
+             * Use this endpoint to complete the user email verification process. Use both
+             * the **userId** and **secret** parameters that were attached to your app URL
+             * to verify the user email ownership. If confirmed this route will return a
+             * 200 status code.
+             *
+             * @param {string} userId
+             * @param {string} secret
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            updateVerification: (userId, secret) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof userId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "userId"');
+                }
+                if (typeof secret === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "secret"');
+                }
+                let path = '/account/verification';
+                let payload = {};
+                if (typeof userId !== 'undefined') {
+                    payload['userId'] = userId;
+                }
+                if (typeof secret !== 'undefined') {
+                    payload['secret'] = secret;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('put', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            })
+        };
+        this.avatars = {
+            /**
+             * Get Browser Icon
+             *
+             * You can use this endpoint to show different browser icons to your users.
+             * The code argument receives the browser code as it appears in your user
+             * /account/sessions endpoint. Use width, height and quality arguments to
+             * change the output settings.
+             *
+             * @param {string} code
+             * @param {number} width
+             * @param {number} height
+             * @param {number} quality
+             * @throws {AppwriteException}
+             * @returns {URL}
+             */
+            getBrowser: (code, width, height, quality) => {
+                if (typeof code === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "code"');
+                }
+                let path = '/avatars/browsers/{code}'.replace('{code}', code);
+                let payload = {};
+                if (typeof width !== 'undefined') {
+                    payload['width'] = width;
+                }
+                if (typeof height !== 'undefined') {
+                    payload['height'] = height;
+                }
+                if (typeof quality !== 'undefined') {
+                    payload['quality'] = quality;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                payload['project'] = this.config.project;
+                for (const [key, value] of Object.entries(this.flatten(payload))) {
+                    uri.searchParams.append(key, value);
+                }
+                return uri;
+            },
+            /**
+             * Get Credit Card Icon
+             *
+             * The credit card endpoint will return you the icon of the credit card
+             * provider you need. Use width, height and quality arguments to change the
+             * output settings.
+             *
+             * @param {string} code
+             * @param {number} width
+             * @param {number} height
+             * @param {number} quality
+             * @throws {AppwriteException}
+             * @returns {URL}
+             */
+            getCreditCard: (code, width, height, quality) => {
+                if (typeof code === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "code"');
+                }
+                let path = '/avatars/credit-cards/{code}'.replace('{code}', code);
+                let payload = {};
+                if (typeof width !== 'undefined') {
+                    payload['width'] = width;
+                }
+                if (typeof height !== 'undefined') {
+                    payload['height'] = height;
+                }
+                if (typeof quality !== 'undefined') {
+                    payload['quality'] = quality;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                payload['project'] = this.config.project;
+                for (const [key, value] of Object.entries(this.flatten(payload))) {
+                    uri.searchParams.append(key, value);
+                }
+                return uri;
+            },
+            /**
+             * Get Favicon
+             *
+             * Use this endpoint to fetch the favorite icon (AKA favicon) of any remote
+             * website URL.
+             *
+             *
+             * @param {string} url
+             * @throws {AppwriteException}
+             * @returns {URL}
+             */
+            getFavicon: (url) => {
+                if (typeof url === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "url"');
+                }
+                let path = '/avatars/favicon';
+                let payload = {};
+                if (typeof url !== 'undefined') {
+                    payload['url'] = url;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                payload['project'] = this.config.project;
+                for (const [key, value] of Object.entries(this.flatten(payload))) {
+                    uri.searchParams.append(key, value);
+                }
+                return uri;
+            },
+            /**
+             * Get Country Flag
+             *
+             * You can use this endpoint to show different country flags icons to your
+             * users. The code argument receives the 2 letter country code. Use width,
+             * height and quality arguments to change the output settings.
+             *
+             * @param {string} code
+             * @param {number} width
+             * @param {number} height
+             * @param {number} quality
+             * @throws {AppwriteException}
+             * @returns {URL}
+             */
+            getFlag: (code, width, height, quality) => {
+                if (typeof code === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "code"');
+                }
+                let path = '/avatars/flags/{code}'.replace('{code}', code);
+                let payload = {};
+                if (typeof width !== 'undefined') {
+                    payload['width'] = width;
+                }
+                if (typeof height !== 'undefined') {
+                    payload['height'] = height;
+                }
+                if (typeof quality !== 'undefined') {
+                    payload['quality'] = quality;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                payload['project'] = this.config.project;
+                for (const [key, value] of Object.entries(this.flatten(payload))) {
+                    uri.searchParams.append(key, value);
+                }
+                return uri;
+            },
+            /**
+             * Get Image from URL
+             *
+             * Use this endpoint to fetch a remote image URL and crop it to any image size
+             * you want. This endpoint is very useful if you need to crop and display
+             * remote images in your app or in case you want to make sure a 3rd party
+             * image is properly served using a TLS protocol.
+             *
+             * @param {string} url
+             * @param {number} width
+             * @param {number} height
+             * @throws {AppwriteException}
+             * @returns {URL}
+             */
+            getImage: (url, width, height) => {
+                if (typeof url === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "url"');
+                }
+                let path = '/avatars/image';
+                let payload = {};
+                if (typeof url !== 'undefined') {
+                    payload['url'] = url;
+                }
+                if (typeof width !== 'undefined') {
+                    payload['width'] = width;
+                }
+                if (typeof height !== 'undefined') {
+                    payload['height'] = height;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                payload['project'] = this.config.project;
+                for (const [key, value] of Object.entries(this.flatten(payload))) {
+                    uri.searchParams.append(key, value);
+                }
+                return uri;
+            },
+            /**
+             * Get User Initials
+             *
+             * Use this endpoint to show your user initials avatar icon on your website or
+             * app. By default, this route will try to print your logged-in user name or
+             * email initials. You can also overwrite the user name if you pass the 'name'
+             * parameter. If no name is given and no user is logged, an empty avatar will
+             * be returned.
+             *
+             * You can use the color and background params to change the avatar colors. By
+             * default, a random theme will be selected. The random theme will persist for
+             * the user's initials when reloading the same theme will always return for
+             * the same initials.
+             *
+             * @param {string} name
+             * @param {number} width
+             * @param {number} height
+             * @param {string} color
+             * @param {string} background
+             * @throws {AppwriteException}
+             * @returns {URL}
+             */
+            getInitials: (name, width, height, color, background) => {
+                let path = '/avatars/initials';
+                let payload = {};
+                if (typeof name !== 'undefined') {
+                    payload['name'] = name;
+                }
+                if (typeof width !== 'undefined') {
+                    payload['width'] = width;
+                }
+                if (typeof height !== 'undefined') {
+                    payload['height'] = height;
+                }
+                if (typeof color !== 'undefined') {
+                    payload['color'] = color;
+                }
+                if (typeof background !== 'undefined') {
+                    payload['background'] = background;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                payload['project'] = this.config.project;
+                for (const [key, value] of Object.entries(this.flatten(payload))) {
+                    uri.searchParams.append(key, value);
+                }
+                return uri;
+            },
+            /**
+             * Get QR Code
+             *
+             * Converts a given plain text to a QR code image. You can use the query
+             * parameters to change the size and style of the resulting image.
+             *
+             * @param {string} text
+             * @param {number} size
+             * @param {number} margin
+             * @param {boolean} download
+             * @throws {AppwriteException}
+             * @returns {URL}
+             */
+            getQR: (text, size, margin, download) => {
+                if (typeof text === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "text"');
+                }
+                let path = '/avatars/qr';
+                let payload = {};
+                if (typeof text !== 'undefined') {
+                    payload['text'] = text;
+                }
+                if (typeof size !== 'undefined') {
+                    payload['size'] = size;
+                }
+                if (typeof margin !== 'undefined') {
+                    payload['margin'] = margin;
+                }
+                if (typeof download !== 'undefined') {
+                    payload['download'] = download;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                payload['project'] = this.config.project;
+                for (const [key, value] of Object.entries(this.flatten(payload))) {
+                    uri.searchParams.append(key, value);
+                }
+                return uri;
+            }
+        };
+        this.database = {
+            /**
+             * List Documents
+             *
+             * Get a list of all the user documents. You can use the query params to
+             * filter your results. On admin mode, this endpoint will return a list of all
+             * of the project's documents. [Learn more about different API
+             * modes](/docs/admin).
+             *
+             * @param {string} collectionId
+             * @param {string[]} filters
+             * @param {number} limit
+             * @param {number} offset
+             * @param {string} orderField
+             * @param {string} orderType
+             * @param {string} orderCast
+             * @param {string} search
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            listDocuments: (collectionId, filters, limit, offset, orderField, orderType, orderCast, search) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof collectionId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "collectionId"');
+                }
+                let path = '/database/collections/{collectionId}/documents'.replace('{collectionId}', collectionId);
+                let payload = {};
+                if (typeof filters !== 'undefined') {
+                    payload['filters'] = filters;
+                }
+                if (typeof limit !== 'undefined') {
+                    payload['limit'] = limit;
+                }
+                if (typeof offset !== 'undefined') {
+                    payload['offset'] = offset;
+                }
+                if (typeof orderField !== 'undefined') {
+                    payload['orderField'] = orderField;
+                }
+                if (typeof orderType !== 'undefined') {
+                    payload['orderType'] = orderType;
+                }
+                if (typeof orderCast !== 'undefined') {
+                    payload['orderCast'] = orderCast;
+                }
+                if (typeof search !== 'undefined') {
+                    payload['search'] = search;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('get', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Create Document
+             *
+             * Create a new Document. Before using this route, you should create a new
+             * collection resource using either a [server
+             * integration](/docs/server/database#databaseCreateCollection) API or
+             * directly from your database console.
+             *
+             * @param {string} collectionId
+             * @param {object} data
+             * @param {string[]} read
+             * @param {string[]} write
+             * @param {string} parentDocument
+             * @param {string} parentProperty
+             * @param {string} parentPropertyType
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            createDocument: (collectionId, data, read, write, parentDocument, parentProperty, parentPropertyType) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof collectionId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "collectionId"');
+                }
+                if (typeof data === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "data"');
+                }
+                let path = '/database/collections/{collectionId}/documents'.replace('{collectionId}', collectionId);
+                let payload = {};
+                if (typeof data !== 'undefined') {
+                    payload['data'] = data;
+                }
+                if (typeof read !== 'undefined') {
+                    payload['read'] = read;
+                }
+                if (typeof write !== 'undefined') {
+                    payload['write'] = write;
+                }
+                if (typeof parentDocument !== 'undefined') {
+                    payload['parentDocument'] = parentDocument;
+                }
+                if (typeof parentProperty !== 'undefined') {
+                    payload['parentProperty'] = parentProperty;
+                }
+                if (typeof parentPropertyType !== 'undefined') {
+                    payload['parentPropertyType'] = parentPropertyType;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('post', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Get Document
+             *
+             * Get a document by its unique ID. This endpoint response returns a JSON
+             * object with the document data.
+             *
+             * @param {string} collectionId
+             * @param {string} documentId
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            getDocument: (collectionId, documentId) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof collectionId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "collectionId"');
+                }
+                if (typeof documentId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "documentId"');
+                }
+                let path = '/database/collections/{collectionId}/documents/{documentId}'.replace('{collectionId}', collectionId).replace('{documentId}', documentId);
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('get', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Update Document
+             *
+             * Update a document by its unique ID. Using the patch method you can pass
+             * only specific fields that will get updated.
+             *
+             * @param {string} collectionId
+             * @param {string} documentId
+             * @param {object} data
+             * @param {string[]} read
+             * @param {string[]} write
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            updateDocument: (collectionId, documentId, data, read, write) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof collectionId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "collectionId"');
+                }
+                if (typeof documentId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "documentId"');
+                }
+                if (typeof data === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "data"');
+                }
+                let path = '/database/collections/{collectionId}/documents/{documentId}'.replace('{collectionId}', collectionId).replace('{documentId}', documentId);
+                let payload = {};
+                if (typeof data !== 'undefined') {
+                    payload['data'] = data;
+                }
+                if (typeof read !== 'undefined') {
+                    payload['read'] = read;
+                }
+                if (typeof write !== 'undefined') {
+                    payload['write'] = write;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('patch', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Delete Document
+             *
+             * Delete a document by its unique ID. This endpoint deletes only the parent
+             * documents, its attributes and relations to other documents. Child documents
+             * **will not** be deleted.
+             *
+             * @param {string} collectionId
+             * @param {string} documentId
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            deleteDocument: (collectionId, documentId) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof collectionId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "collectionId"');
+                }
+                if (typeof documentId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "documentId"');
+                }
+                let path = '/database/collections/{collectionId}/documents/{documentId}'.replace('{collectionId}', collectionId).replace('{documentId}', documentId);
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('delete', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            })
+        };
+        this.functions = {
+            /**
+             * List Executions
+             *
+             * Get a list of all the current user function execution logs. You can use the
+             * query params to filter your results. On admin mode, this endpoint will
+             * return a list of all of the project's executions. [Learn more about
+             * different API modes](/docs/admin).
+             *
+             * @param {string} functionId
+             * @param {string} search
+             * @param {number} limit
+             * @param {number} offset
+             * @param {string} orderType
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            listExecutions: (functionId, search, limit, offset, orderType) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof functionId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "functionId"');
+                }
+                let path = '/functions/{functionId}/executions'.replace('{functionId}', functionId);
+                let payload = {};
+                if (typeof search !== 'undefined') {
+                    payload['search'] = search;
+                }
+                if (typeof limit !== 'undefined') {
+                    payload['limit'] = limit;
+                }
+                if (typeof offset !== 'undefined') {
+                    payload['offset'] = offset;
+                }
+                if (typeof orderType !== 'undefined') {
+                    payload['orderType'] = orderType;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('get', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Create Execution
+             *
+             * Trigger a function execution. The returned object will return you the
+             * current execution status. You can ping the `Get Execution` endpoint to get
+             * updates on the current execution status. Once this endpoint is called, your
+             * function execution process will start asynchronously.
+             *
+             * @param {string} functionId
+             * @param {string} data
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            createExecution: (functionId, data) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof functionId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "functionId"');
+                }
+                let path = '/functions/{functionId}/executions'.replace('{functionId}', functionId);
+                let payload = {};
+                if (typeof data !== 'undefined') {
+                    payload['data'] = data;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('post', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Get Execution
+             *
+             * Get a function execution log by its unique ID.
+             *
+             * @param {string} functionId
+             * @param {string} executionId
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            getExecution: (functionId, executionId) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof functionId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "functionId"');
+                }
+                if (typeof executionId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "executionId"');
+                }
+                let path = '/functions/{functionId}/executions/{executionId}'.replace('{functionId}', functionId).replace('{executionId}', executionId);
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('get', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            })
+        };
+        this.locale = {
+            /**
+             * Get User Locale
+             *
+             * Get the current user location based on IP. Returns an object with user
+             * country code, country name, continent name, continent code, ip address and
+             * suggested currency. You can use the locale header to get the data in a
+             * supported language.
+             *
+             * ([IP Geolocation by DB-IP](https://db-ip.com))
+             *
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            get: () => __awaiter(this, void 0, void 0, function* () {
+                let path = '/locale';
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('get', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * List Continents
+             *
+             * List of all continents. You can use the locale header to get the data in a
+             * supported language.
+             *
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            getContinents: () => __awaiter(this, void 0, void 0, function* () {
+                let path = '/locale/continents';
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('get', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * List Countries
+             *
+             * List of all countries. You can use the locale header to get the data in a
+             * supported language.
+             *
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            getCountries: () => __awaiter(this, void 0, void 0, function* () {
+                let path = '/locale/countries';
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('get', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * List EU Countries
+             *
+             * List of all countries that are currently members of the EU. You can use the
+             * locale header to get the data in a supported language.
+             *
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            getCountriesEU: () => __awaiter(this, void 0, void 0, function* () {
+                let path = '/locale/countries/eu';
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('get', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * List Countries Phone Codes
+             *
+             * List of all countries phone codes. You can use the locale header to get the
+             * data in a supported language.
+             *
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            getCountriesPhones: () => __awaiter(this, void 0, void 0, function* () {
+                let path = '/locale/countries/phones';
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('get', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * List Currencies
+             *
+             * List of all currencies, including currency symbol, name, plural, and
+             * decimal digits for all major and minor currencies. You can use the locale
+             * header to get the data in a supported language.
+             *
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            getCurrencies: () => __awaiter(this, void 0, void 0, function* () {
+                let path = '/locale/currencies';
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('get', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * List Languages
+             *
+             * List of all languages classified by ISO 639-1 including 2-letter code, name
+             * in English, and name in the respective language.
+             *
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            getLanguages: () => __awaiter(this, void 0, void 0, function* () {
+                let path = '/locale/languages';
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('get', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            })
+        };
+        this.storage = {
+            /**
+             * List Files
+             *
+             * Get a list of all the user files. You can use the query params to filter
+             * your results. On admin mode, this endpoint will return a list of all of the
+             * project's files. [Learn more about different API modes](/docs/admin).
+             *
+             * @param {string} search
+             * @param {number} limit
+             * @param {number} offset
+             * @param {string} orderType
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            listFiles: (search, limit, offset, orderType) => __awaiter(this, void 0, void 0, function* () {
+                let path = '/storage/files';
+                let payload = {};
+                if (typeof search !== 'undefined') {
+                    payload['search'] = search;
+                }
+                if (typeof limit !== 'undefined') {
+                    payload['limit'] = limit;
+                }
+                if (typeof offset !== 'undefined') {
+                    payload['offset'] = offset;
+                }
+                if (typeof orderType !== 'undefined') {
+                    payload['orderType'] = orderType;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('get', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Create File
+             *
+             * Create a new file. The user who creates the file will automatically be
+             * assigned to read and write access unless he has passed custom values for
+             * read and write arguments.
+             *
+             * @param {File} file
+             * @param {string[]} read
+             * @param {string[]} write
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            createFile: (file, read, write) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof file === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "file"');
+                }
+                let path = '/storage/files';
+                let payload = {};
+                if (typeof file !== 'undefined') {
+                    payload['file'] = file;
+                }
+                if (typeof read !== 'undefined') {
+                    payload['read'] = read;
+                }
+                if (typeof write !== 'undefined') {
+                    payload['write'] = write;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('post', uri, {
+                    'content-type': 'multipart/form-data',
+                }, payload);
+            }),
+            /**
+             * Get File
+             *
+             * Get a file by its unique ID. This endpoint response returns a JSON object
+             * with the file metadata.
+             *
+             * @param {string} fileId
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            getFile: (fileId) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof fileId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "fileId"');
+                }
+                let path = '/storage/files/{fileId}'.replace('{fileId}', fileId);
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('get', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Update File
+             *
+             * Update a file by its unique ID. Only users with write permissions have
+             * access to update this resource.
+             *
+             * @param {string} fileId
+             * @param {string[]} read
+             * @param {string[]} write
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            updateFile: (fileId, read, write) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof fileId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "fileId"');
+                }
+                if (typeof read === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "read"');
+                }
+                if (typeof write === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "write"');
+                }
+                let path = '/storage/files/{fileId}'.replace('{fileId}', fileId);
+                let payload = {};
+                if (typeof read !== 'undefined') {
+                    payload['read'] = read;
+                }
+                if (typeof write !== 'undefined') {
+                    payload['write'] = write;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('put', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Delete File
+             *
+             * Delete a file by its unique ID. Only users with write permissions have
+             * access to delete this resource.
+             *
+             * @param {string} fileId
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            deleteFile: (fileId) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof fileId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "fileId"');
+                }
+                let path = '/storage/files/{fileId}'.replace('{fileId}', fileId);
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('delete', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Get File for Download
+             *
+             * Get a file content by its unique ID. The endpoint response return with a
+             * 'Content-Disposition: attachment' header that tells the browser to start
+             * downloading the file to user downloads directory.
+             *
+             * @param {string} fileId
+             * @throws {AppwriteException}
+             * @returns {URL}
+             */
+            getFileDownload: (fileId) => {
+                if (typeof fileId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "fileId"');
+                }
+                let path = '/storage/files/{fileId}/download'.replace('{fileId}', fileId);
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                payload['project'] = this.config.project;
+                for (const [key, value] of Object.entries(this.flatten(payload))) {
+                    uri.searchParams.append(key, value);
+                }
+                return uri;
+            },
+            /**
+             * Get File Preview
+             *
+             * Get a file preview image. Currently, this method supports preview for image
+             * files (jpg, png, and gif), other supported formats, like pdf, docs, slides,
+             * and spreadsheets, will return the file icon image. You can also pass query
+             * string arguments for cutting and resizing your preview image.
+             *
+             * @param {string} fileId
+             * @param {number} width
+             * @param {number} height
+             * @param {string} gravity
+             * @param {number} quality
+             * @param {number} borderWidth
+             * @param {string} borderColor
+             * @param {number} borderRadius
+             * @param {number} opacity
+             * @param {number} rotation
+             * @param {string} background
+             * @param {string} output
+             * @throws {AppwriteException}
+             * @returns {URL}
+             */
+            getFilePreview: (fileId, width, height, gravity, quality, borderWidth, borderColor, borderRadius, opacity, rotation, background, output) => {
+                if (typeof fileId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "fileId"');
+                }
+                let path = '/storage/files/{fileId}/preview'.replace('{fileId}', fileId);
+                let payload = {};
+                if (typeof width !== 'undefined') {
+                    payload['width'] = width;
+                }
+                if (typeof height !== 'undefined') {
+                    payload['height'] = height;
+                }
+                if (typeof gravity !== 'undefined') {
+                    payload['gravity'] = gravity;
+                }
+                if (typeof quality !== 'undefined') {
+                    payload['quality'] = quality;
+                }
+                if (typeof borderWidth !== 'undefined') {
+                    payload['borderWidth'] = borderWidth;
+                }
+                if (typeof borderColor !== 'undefined') {
+                    payload['borderColor'] = borderColor;
+                }
+                if (typeof borderRadius !== 'undefined') {
+                    payload['borderRadius'] = borderRadius;
+                }
+                if (typeof opacity !== 'undefined') {
+                    payload['opacity'] = opacity;
+                }
+                if (typeof rotation !== 'undefined') {
+                    payload['rotation'] = rotation;
+                }
+                if (typeof background !== 'undefined') {
+                    payload['background'] = background;
+                }
+                if (typeof output !== 'undefined') {
+                    payload['output'] = output;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                payload['project'] = this.config.project;
+                for (const [key, value] of Object.entries(this.flatten(payload))) {
+                    uri.searchParams.append(key, value);
+                }
+                return uri;
+            },
+            /**
+             * Get File for View
+             *
+             * Get a file content by its unique ID. This endpoint is similar to the
+             * download method but returns with no  'Content-Disposition: attachment'
+             * header.
+             *
+             * @param {string} fileId
+             * @throws {AppwriteException}
+             * @returns {URL}
+             */
+            getFileView: (fileId) => {
+                if (typeof fileId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "fileId"');
+                }
+                let path = '/storage/files/{fileId}/view'.replace('{fileId}', fileId);
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                payload['project'] = this.config.project;
+                for (const [key, value] of Object.entries(this.flatten(payload))) {
+                    uri.searchParams.append(key, value);
+                }
+                return uri;
+            }
+        };
+        this.teams = {
+            /**
+             * List Teams
+             *
+             * Get a list of all the current user teams. You can use the query params to
+             * filter your results. On admin mode, this endpoint will return a list of all
+             * of the project's teams. [Learn more about different API
+             * modes](/docs/admin).
+             *
+             * @param {string} search
+             * @param {number} limit
+             * @param {number} offset
+             * @param {string} orderType
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            list: (search, limit, offset, orderType) => __awaiter(this, void 0, void 0, function* () {
+                let path = '/teams';
+                let payload = {};
+                if (typeof search !== 'undefined') {
+                    payload['search'] = search;
+                }
+                if (typeof limit !== 'undefined') {
+                    payload['limit'] = limit;
+                }
+                if (typeof offset !== 'undefined') {
+                    payload['offset'] = offset;
+                }
+                if (typeof orderType !== 'undefined') {
+                    payload['orderType'] = orderType;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('get', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Create Team
+             *
+             * Create a new team. The user who creates the team will automatically be
+             * assigned as the owner of the team. The team owner can invite new members,
+             * who will be able add new owners and update or delete the team from your
+             * project.
+             *
+             * @param {string} name
+             * @param {string[]} roles
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            create: (name, roles) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof name === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "name"');
+                }
+                let path = '/teams';
+                let payload = {};
+                if (typeof name !== 'undefined') {
+                    payload['name'] = name;
+                }
+                if (typeof roles !== 'undefined') {
+                    payload['roles'] = roles;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('post', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Get Team
+             *
+             * Get a team by its unique ID. All team members have read access for this
+             * resource.
+             *
+             * @param {string} teamId
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            get: (teamId) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof teamId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "teamId"');
+                }
+                let path = '/teams/{teamId}'.replace('{teamId}', teamId);
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('get', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Update Team
+             *
+             * Update a team by its unique ID. Only team owners have write access for this
+             * resource.
+             *
+             * @param {string} teamId
+             * @param {string} name
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            update: (teamId, name) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof teamId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "teamId"');
+                }
+                if (typeof name === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "name"');
+                }
+                let path = '/teams/{teamId}'.replace('{teamId}', teamId);
+                let payload = {};
+                if (typeof name !== 'undefined') {
+                    payload['name'] = name;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('put', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Delete Team
+             *
+             * Delete a team by its unique ID. Only team owners have write access for this
+             * resource.
+             *
+             * @param {string} teamId
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            delete: (teamId) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof teamId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "teamId"');
+                }
+                let path = '/teams/{teamId}'.replace('{teamId}', teamId);
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('delete', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Get Team Memberships
+             *
+             * Get a team members by the team unique ID. All team members have read access
+             * for this list of resources.
+             *
+             * @param {string} teamId
+             * @param {string} search
+             * @param {number} limit
+             * @param {number} offset
+             * @param {string} orderType
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            getMemberships: (teamId, search, limit, offset, orderType) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof teamId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "teamId"');
+                }
+                let path = '/teams/{teamId}/memberships'.replace('{teamId}', teamId);
+                let payload = {};
+                if (typeof search !== 'undefined') {
+                    payload['search'] = search;
+                }
+                if (typeof limit !== 'undefined') {
+                    payload['limit'] = limit;
+                }
+                if (typeof offset !== 'undefined') {
+                    payload['offset'] = offset;
+                }
+                if (typeof orderType !== 'undefined') {
+                    payload['orderType'] = orderType;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('get', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Create Team Membership
+             *
+             * Use this endpoint to invite a new member to join your team. If initiated
+             * from Client SDK, an email with a link to join the team will be sent to the
+             * new member's email address if the member doesn't exist in the project it
+             * will be created automatically. If initiated from server side SDKs, new
+             * member will automatically be added to the team.
+             *
+             * Use the 'URL' parameter to redirect the user from the invitation email back
+             * to your app. When the user is redirected, use the [Update Team Membership
+             * Status](/docs/client/teams#teamsUpdateMembershipStatus) endpoint to allow
+             * the user to accept the invitation to the team.  While calling from side
+             * SDKs the redirect url can be empty string.
+             *
+             * Please note that in order to avoid a [Redirect
+             * Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md)
+             * the only valid redirect URL's are the once from domains you have set when
+             * added your platforms in the console interface.
+             *
+             * @param {string} teamId
+             * @param {string} email
+             * @param {string[]} roles
+             * @param {string} url
+             * @param {string} name
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            createMembership: (teamId, email, roles, url, name) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof teamId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "teamId"');
+                }
+                if (typeof email === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "email"');
+                }
+                if (typeof roles === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "roles"');
+                }
+                if (typeof url === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "url"');
+                }
+                let path = '/teams/{teamId}/memberships'.replace('{teamId}', teamId);
+                let payload = {};
+                if (typeof email !== 'undefined') {
+                    payload['email'] = email;
+                }
+                if (typeof name !== 'undefined') {
+                    payload['name'] = name;
+                }
+                if (typeof roles !== 'undefined') {
+                    payload['roles'] = roles;
+                }
+                if (typeof url !== 'undefined') {
+                    payload['url'] = url;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('post', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Update Membership Roles
+             *
+             *
+             * @param {string} teamId
+             * @param {string} membershipId
+             * @param {string[]} roles
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            updateMembershipRoles: (teamId, membershipId, roles) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof teamId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "teamId"');
+                }
+                if (typeof membershipId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "membershipId"');
+                }
+                if (typeof roles === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "roles"');
+                }
+                let path = '/teams/{teamId}/memberships/{membershipId}'.replace('{teamId}', teamId).replace('{membershipId}', membershipId);
+                let payload = {};
+                if (typeof roles !== 'undefined') {
+                    payload['roles'] = roles;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('patch', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Delete Team Membership
+             *
+             * This endpoint allows a user to leave a team or for a team owner to delete
+             * the membership of any other team member. You can also use this endpoint to
+             * delete a user membership even if it is not accepted.
+             *
+             * @param {string} teamId
+             * @param {string} membershipId
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            deleteMembership: (teamId, membershipId) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof teamId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "teamId"');
+                }
+                if (typeof membershipId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "membershipId"');
+                }
+                let path = '/teams/{teamId}/memberships/{membershipId}'.replace('{teamId}', teamId).replace('{membershipId}', membershipId);
+                let payload = {};
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('delete', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            }),
+            /**
+             * Update Team Membership Status
+             *
+             * Use this endpoint to allow a user to accept an invitation to join a team
+             * after being redirected back to your app from the invitation email recieved
+             * by the user.
+             *
+             * @param {string} teamId
+             * @param {string} membershipId
+             * @param {string} userId
+             * @param {string} secret
+             * @throws {AppwriteException}
+             * @returns {Promise}
+             */
+            updateMembershipStatus: (teamId, membershipId, userId, secret) => __awaiter(this, void 0, void 0, function* () {
+                if (typeof teamId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "teamId"');
+                }
+                if (typeof membershipId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "membershipId"');
+                }
+                if (typeof userId === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "userId"');
+                }
+                if (typeof secret === 'undefined') {
+                    throw new AppwriteException('Missing required parameter: "secret"');
+                }
+                let path = '/teams/{teamId}/memberships/{membershipId}/status'.replace('{teamId}', teamId).replace('{membershipId}', membershipId);
+                let payload = {};
+                if (typeof userId !== 'undefined') {
+                    payload['userId'] = userId;
+                }
+                if (typeof secret !== 'undefined') {
+                    payload['secret'] = secret;
+                }
+                const uri = new URL(this.config.endpoint + path);
+                return yield this.call('patch', uri, {
+                    'content-type': 'application/json',
+                }, payload);
+            })
+        };
+    }
+    /**
+     * Set Endpoint
+     *
+     * Your project endpoint
+     *
+     * @param {string} endpoint
+     *
+     * @returns {this}
+     */
+    setEndpoint(endpoint) {
+        this.config.endpoint = endpoint;
+        this.config.endpointRealtime = this.config.endpointRealtime || this.config.endpoint.replace('https://', 'wss://').replace('http://', 'ws://');
+        return this;
+    }
+    /**
+     * Set Realtime Endpoint
+     *
+     * @param {string} endpointRealtime
+     *
+     * @returns {this}
+     */
+    setEndpointRealtime(endpointRealtime) {
+        this.config.endpointRealtime = endpointRealtime;
+        return this;
+    }
+    /**
+     * Set Project
+     *
+     * Your project ID
+     *
+     * @param value string
+     *
+     * @return {this}
+     */
+    setProject(value) {
+        this.headers['X-Appwrite-Project'] = value;
+        this.config.project = value;
+        return this;
+    }
+    /**
+     * Set JWT
+     *
+     * Your secret JSON Web Token
+     *
+     * @param value string
+     *
+     * @return {this}
+     */
+    setJWT(value) {
+        this.headers['X-Appwrite-JWT'] = value;
+        this.config.jwt = value;
+        return this;
+    }
+    /**
+     * Set Locale
+     *
+     * @param value string
+     *
+     * @return {this}
+     */
+    setLocale(value) {
+        this.headers['X-Appwrite-Locale'] = value;
+        this.config.locale = value;
+        return this;
+    }
+    /**
+     * Subscribes to Appwrite events and passes you the payload in realtime.
+     *
+     * @param {string|string[]} channels
+     * Channel to subscribe - pass a single channel as a string or multiple with an array of strings.
+     *
+     * Possible channels are:
+     * - account
+     * - collections
+     * - collections.[ID]
+     * - collections.[ID].documents
+     * - documents
+     * - documents.[ID]
+     * - files
+     * - files.[ID]
+     * - executions
+     * - executions.[ID]
+     * - functions.[ID]
+     * - teams
+     * - teams.[ID]
+     * - memberships
+     * - memberships.[ID]
+     * @param {(payload: RealtimeMessage) => void} callback Is called on every realtime update.
+     * @returns {() => void} Unsubscribes from events.
+     */
+    subscribe(channels, callback) {
+        let channelArray = typeof channels === 'string' ? [channels] : channels;
+        channelArray.forEach(channel => this.realtime.channels.add(channel));
+        const counter = this.realtime.subscriptionsCounter++;
+        this.realtime.subscriptions.set(counter, {
+            channels: channelArray,
+            callback
+        });
+        this.realtime.connect();
+        return () => {
+            this.realtime.subscriptions.delete(counter);
+            this.realtime.cleanUp(channelArray);
+            this.realtime.connect();
+        };
+    }
+    call(method, url, headers = {}, params = {}) {
+        var _a, _b;
+        return __awaiter(this, void 0, void 0, function* () {
+            method = method.toUpperCase();
+            headers = Object.assign(Object.assign({}, headers), this.headers);
+            let options = {
+                method,
+                headers,
+                credentials: 'include'
+            };
+            if (typeof window !== 'undefined' && window.localStorage) {
+                headers['X-Fallback-Cookies'] = (_a = window.localStorage.getItem('cookieFallback')) !== null && _a !== void 0 ? _a : '';
+            }
+            if (method === 'GET') {
+                for (const [key, value] of Object.entries(this.flatten(params))) {
+                    url.searchParams.append(key, value);
+                }
+            }
+            else {
+                switch (headers['content-type']) {
+                    case 'application/json':
+                        options.body = JSON.stringify(params);
+                        break;
+                    case 'multipart/form-data':
+                        let formData = new FormData();
+                        for (const key in params) {
+                            if (Array.isArray(params[key])) {
+                                formData.append(key + '[]', params[key].join(','));
+                            }
+                            else {
+                                formData.append(key, params[key]);
+                            }
+                        }
+                        options.body = formData;
+                        delete headers['content-type'];
+                        break;
+                }
+            }
+            try {
+                let data = null;
+                const response = yield crossFetch.fetch(url.toString(), options);
+                if ((_b = response.headers.get('content-type')) === null || _b === void 0 ? void 0 : _b.includes('application/json')) {
+                    data = yield response.json();
+                }
+                else {
+                    data = {
+                        message: yield response.text()
+                    };
+                }
+                if (400 <= response.status) {
+                    throw new AppwriteException(data === null || data === void 0 ? void 0 : data.message, response.status, data);
+                }
+                const cookieFallback = response.headers.get('X-Fallback-Cookies');
+                if (typeof window !== 'undefined' && window.localStorage && cookieFallback) {
+                    window.console.warn('Appwrite is using localStorage for session management. Increase your security by adding a custom domain as your API endpoint.');
+                    window.localStorage.setItem('cookieFallback', cookieFallback);
+                }
+                return data;
+            }
+            catch (e) {
+                if (e instanceof AppwriteException) {
+                    throw e;
+                }
+                throw new AppwriteException(e.message);
+            }
+        });
+    }
+    flatten(data, prefix = '') {
+        let output = {};
+        for (const key in data) {
+            let value = data[key];
+            let finalKey = prefix ? `${prefix}[${key}]` : key;
+            if (Array.isArray(value)) {
+                output = Object.assign(output, this.flatten(value, finalKey));
+            }
+            else {
+                output[finalKey] = value;
+            }
+        }
+        return output;
+    }
+}
+
+exports.Appwrite = Appwrite;
+//# sourceMappingURL=sdk.js.map

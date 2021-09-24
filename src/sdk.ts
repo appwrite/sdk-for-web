@@ -87,7 +87,7 @@ class Appwrite {
         locale: '',
     };
     headers: Headers = {
-        'x-sdk-version': 'appwrite:web:4.0.2',
+        'x-sdk-version': 'appwrite:web:4.0.3',
         'X-Appwrite-Response-Format': '0.10.0',
     };
 
@@ -374,7 +374,9 @@ class Appwrite {
 
                     for (const key in params) {
                         if (Array.isArray(params[key])) {
-                            formData.append(key + '[]', params[key].join(','));
+                            params[key].forEach((value: any) => {
+                                formData.append(key + '[]', value);
+                            })
                         } else {
                             formData.append(key, params[key]);
                         }

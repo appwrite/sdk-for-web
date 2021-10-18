@@ -2558,16 +2558,16 @@ class Appwrite {
                 payload['email'] = email;
             }
 
-            if (typeof name !== 'undefined') {
-                payload['name'] = name;
-            }
-
             if (typeof roles !== 'undefined') {
                 payload['roles'] = roles;
             }
 
             if (typeof url !== 'undefined') {
                 payload['url'] = url;
+            }
+
+            if (typeof name !== 'undefined') {
+                payload['name'] = name;
             }
 
             const uri = new URL(this.config.endpoint + path);

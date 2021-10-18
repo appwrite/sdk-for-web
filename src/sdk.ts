@@ -88,7 +88,7 @@ class Appwrite {
     };
     headers: Headers = {
         'x-sdk-version': 'appwrite:web:4.0.4',
-        'X-Appwrite-Response-Format': '0.10.0',
+        'X-Appwrite-Response-Format': '0.11.0',
     };
 
     /**

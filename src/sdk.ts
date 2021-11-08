@@ -1,6 +1,695 @@
 import 'isomorphic-form-data';
 import { fetch } from 'cross-fetch';
 
+namespace Models {
+    /**
+     * Documents List
+     */
+    export type DocumentList<Document extends Models.Document> = {
+        /**
+         * Total number of items available on the server.
+         */
+        sum: number;
+        /**
+         * List of documents.
+         */
+        documents: Document[];
+    }
+    /**
+     * Sessions List
+     */
+    export type SessionList<> = {
+        /**
+         * Total number of items available on the server.
+         */
+        sum: number;
+        /**
+         * List of sessions.
+         */
+        sessions: Session[];
+    }
+    /**
+     * Logs List
+     */
+    export type LogList<> = {
+        /**
+         * List of logs.
+         */
+        logs: Log[];
+    }
+    /**
+     * Files List
+     */
+    export type FileList<> = {
+        /**
+         * Total number of items available on the server.
+         */
+        sum: number;
+        /**
+         * List of files.
+         */
+        files: File[];
+    }
+    /**
+     * Teams List
+     */
+    export type TeamList<> = {
+        /**
+         * Total number of items available on the server.
+         */
+        sum: number;
+        /**
+         * List of teams.
+         */
+        teams: Team[];
+    }
+    /**
+     * Memberships List
+     */
+    export type MembershipList<> = {
+        /**
+         * Total number of items available on the server.
+         */
+        sum: number;
+        /**
+         * List of memberships.
+         */
+        memberships: Membership[];
+    }
+    /**
+     * Executions List
+     */
+    export type ExecutionList<> = {
+        /**
+         * Total number of items available on the server.
+         */
+        sum: number;
+        /**
+         * List of executions.
+         */
+        executions: Execution[];
+    }
+    /**
+     * Countries List
+     */
+    export type CountryList<> = {
+        /**
+         * Total number of items available on the server.
+         */
+        sum: number;
+        /**
+         * List of countries.
+         */
+        countries: Country[];
+    }
+    /**
+     * Continents List
+     */
+    export type ContinentList<> = {
+        /**
+         * Total number of items available on the server.
+         */
+        sum: number;
+        /**
+         * List of continents.
+         */
+        continents: Continent[];
+    }
+    /**
+     * Languages List
+     */
+    export type LanguageList<> = {
+        /**
+         * Total number of items available on the server.
+         */
+        sum: number;
+        /**
+         * List of languages.
+         */
+        languages: Language[];
+    }
+    /**
+     * Currencies List
+     */
+    export type CurrencyList<> = {
+        /**
+         * Total number of items available on the server.
+         */
+        sum: number;
+        /**
+         * List of currencies.
+         */
+        currencies: Currency[];
+    }
+    /**
+     * Phones List
+     */
+    export type PhoneList<> = {
+        /**
+         * Total number of items available on the server.
+         */
+        sum: number;
+        /**
+         * List of phones.
+         */
+        phones: Phone[];
+    }
+    /**
+     * Permissions
+     */
+    export type Permissions<> = {
+        /**
+         * Read permissions.
+         */
+        read: string[];
+        /**
+         * Write permissions.
+         */
+        write: string[];
+    }
+    /**
+     * Document
+     */
+    export type Document<> = {
+        /**
+         * Document ID.
+         */
+        $id: string;
+        /**
+         * Collection ID.
+         */
+        $collection: string;
+        /**
+         * Document permissions.
+         */
+        $permissions: Permissions;
+    }
+    /**
+     * Log
+     */
+    export type Log<> = {
+        /**
+         * Event name.
+         */
+        event: string;
+        /**
+         * IP session in use when the session was created.
+         */
+        ip: string;
+        /**
+         * Log creation time in Unix timestamp.
+         */
+        time: number;
+        /**
+         * Operating system code name. View list of [available options](https://github.com/appwrite/appwrite/blob/master/docs/lists/os.json).
+         */
+        osCode: string;
+        /**
+         * Operating system name.
+         */
+        osName: string;
+        /**
+         * Operating system version.
+         */
+        osVersion: string;
+        /**
+         * Client type.
+         */
+        clientType: string;
+        /**
+         * Client code name. View list of [available options](https://github.com/appwrite/appwrite/blob/master/docs/lists/clients.json).
+         */
+        clientCode: string;
+        /**
+         * Client name.
+         */
+        clientName: string;
+        /**
+         * Client version.
+         */
+        clientVersion: string;
+        /**
+         * Client engine name.
+         */
+        clientEngine: string;
+        /**
+         * Client engine name.
+         */
+        clientEngineVersion: string;
+        /**
+         * Device name.
+         */
+        deviceName: string;
+        /**
+         * Device brand name.
+         */
+        deviceBrand: string;
+        /**
+         * Device model name.
+         */
+        deviceModel: string;
+        /**
+         * Country two-character ISO 3166-1 alpha code.
+         */
+        countryCode: string;
+        /**
+         * Country name.
+         */
+        countryName: string;
+    }
+    /**
+     * User
+     */
+    export type User<Preferences extends Models.Preferences> = {
+        /**
+         * User ID.
+         */
+        $id: string;
+        /**
+         * User name.
+         */
+        name: string;
+        /**
+         * User registration date in Unix timestamp.
+         */
+        registration: number;
+        /**
+         * User status. 0 for Unactivated, 1 for active and 2 is blocked.
+         */
+        status: number;
+        /**
+         * Unix timestamp of the most recent password update
+         */
+        passwordUpdate: number;
+        /**
+         * User email address.
+         */
+        email: string;
+        /**
+         * Email verification status.
+         */
+        emailVerification: boolean;
+        /**
+         * User preferences as a key-value object
+         */
+        prefs: Preferences;
+    }
+    /**
+     * Preferences
+     */
+    export type Preferences<> = {
+    }
+    /**
+     * Session
+     */
+    export type Session<> = {
+        /**
+         * Session ID.
+         */
+        $id: string;
+        /**
+         * User ID.
+         */
+        userId: string;
+        /**
+         * Session expiration date in Unix timestamp.
+         */
+        expire: number;
+        /**
+         * Session Provider.
+         */
+        provider: string;
+        /**
+         * Session Provider User ID.
+         */
+        providerUid: string;
+        /**
+         * Session Provider Token.
+         */
+        providerToken: string;
+        /**
+         * IP in use when the session was created.
+         */
+        ip: string;
+        /**
+         * Operating system code name. View list of [available options](https://github.com/appwrite/appwrite/blob/master/docs/lists/os.json).
+         */
+        osCode: string;
+        /**
+         * Operating system name.
+         */
+        osName: string;
+        /**
+         * Operating system version.
+         */
+        osVersion: string;
+        /**
+         * Client type.
+         */
+        clientType: string;
+        /**
+         * Client code name. View list of [available options](https://github.com/appwrite/appwrite/blob/master/docs/lists/clients.json).
+         */
+        clientCode: string;
+        /**
+         * Client name.
+         */
+        clientName: string;
+        /**
+         * Client version.
+         */
+        clientVersion: string;
+        /**
+         * Client engine name.
+         */
+        clientEngine: string;
+        /**
+         * Client engine name.
+         */
+        clientEngineVersion: string;
+        /**
+         * Device name.
+         */
+        deviceName: string;
+        /**
+         * Device brand name.
+         */
+        deviceBrand: string;
+        /**
+         * Device model name.
+         */
+        deviceModel: string;
+        /**
+         * Country two-character ISO 3166-1 alpha code.
+         */
+        countryCode: string;
+        /**
+         * Country name.
+         */
+        countryName: string;
+        /**
+         * Returns true if this the current user session.
+         */
+        current: boolean;
+    }
+    /**
+     * Token
+     */
+    export type Token<> = {
+        /**
+         * Token ID.
+         */
+        $id: string;
+        /**
+         * User ID.
+         */
+        userId: string;
+        /**
+         * Token secret key. This will return an empty string unless the response is returned using an API key or as part of a webhook payload.
+         */
+        secret: string;
+        /**
+         * Token expiration date in Unix timestamp.
+         */
+        expire: number;
+    }
+    /**
+     * JWT
+     */
+    export type Jwt<> = {
+        /**
+         * JWT encoded string.
+         */
+        jwt: string;
+    }
+    /**
+     * Locale
+     */
+    export type Locale<> = {
+        /**
+         * User IP address.
+         */
+        ip: string;
+        /**
+         * Country code in [ISO 3166-1](http://en.wikipedia.org/wiki/ISO_3166-1) two-character format
+         */
+        countryCode: string;
+        /**
+         * Country name. This field support localization.
+         */
+        country: string;
+        /**
+         * Continent code. A two character continent code &quot;AF&quot; for Africa, &quot;AN&quot; for Antarctica, &quot;AS&quot; for Asia, &quot;EU&quot; for Europe, &quot;NA&quot; for North America, &quot;OC&quot; for Oceania, and &quot;SA&quot; for South America.
+         */
+        continentCode: string;
+        /**
+         * Continent name. This field support localization.
+         */
+        continent: string;
+        /**
+         * True if country is part of the Europian Union.
+         */
+        eu: boolean;
+        /**
+         * Currency code in [ISO 4217-1](http://en.wikipedia.org/wiki/ISO_4217) three-character format
+         */
+        currency: string;
+    }
+    /**
+     * File
+     */
+    export type File<> = {
+        /**
+         * File ID.
+         */
+        $id: string;
+        /**
+         * File permissions.
+         */
+        $permissions: Permissions;
+        /**
+         * File name.
+         */
+        name: string;
+        /**
+         * File creation date in Unix timestamp.
+         */
+        dateCreated: number;
+        /**
+         * File MD5 signature.
+         */
+        signature: string;
+        /**
+         * File mime type.
+         */
+        mimeType: string;
+        /**
+         * File original size in bytes.
+         */
+        sizeOriginal: number;
+    }
+    /**
+     * Team
+     */
+    export type Team<> = {
+        /**
+         * Team ID.
+         */
+        $id: string;
+        /**
+         * Team name.
+         */
+        name: string;
+        /**
+         * Team creation date in Unix timestamp.
+         */
+        dateCreated: number;
+        /**
+         * Total sum of team members.
+         */
+        sum: number;
+    }
+    /**
+     * Membership
+     */
+    export type Membership<> = {
+        /**
+         * Membership ID.
+         */
+        $id: string;
+        /**
+         * User ID.
+         */
+        userId: string;
+        /**
+         * Team ID.
+         */
+        teamId: string;
+        /**
+         * User name.
+         */
+        name: string;
+        /**
+         * User email address.
+         */
+        email: string;
+        /**
+         * Date, the user has been invited to join the team in Unix timestamp.
+         */
+        invited: number;
+        /**
+         * Date, the user has accepted the invitation to join the team in Unix timestamp.
+         */
+        joined: number;
+        /**
+         * User confirmation status, true if the user has joined the team or false otherwise.
+         */
+        confirm: boolean;
+        /**
+         * User list of roles
+         */
+        roles: string[];
+    }
+    /**
+     * Execution
+     */
+    export type Execution<> = {
+        /**
+         * Execution ID.
+         */
+        $id: string;
+        /**
+         * Execution permissions.
+         */
+        $permissions: Permissions;
+        /**
+         * Function ID.
+         */
+        functionId: string;
+        /**
+         * The execution creation date in Unix timestamp.
+         */
+        dateCreated: number;
+        /**
+         * The trigger that caused the function to execute. Possible values can be: `http`, `schedule`, or `event`.
+         */
+        trigger: string;
+        /**
+         * The status of the function execution. Possible values can be: `waiting`, `processing`, `completed`, or `failed`.
+         */
+        status: string;
+        /**
+         * The script exit code.
+         */
+        exitCode: number;
+        /**
+         * The script stdout output string. Logs the last 4,000 characters of the execution stdout output.
+         */
+        stdout: string;
+        /**
+         * The script stderr output string. Logs the last 4,000 characters of the execution stderr output
+         */
+        stderr: string;
+        /**
+         * The script execution time in seconds.
+         */
+        time: number;
+    }
+    /**
+     * Country
+     */
+    export type Country<> = {
+        /**
+         * Country name.
+         */
+        name: string;
+        /**
+         * Country two-character ISO 3166-1 alpha code.
+         */
+        code: string;
+    }
+    /**
+     * Continent
+     */
+    export type Continent<> = {
+        /**
+         * Continent name.
+         */
+        name: string;
+        /**
+         * Continent two letter code.
+         */
+        code: string;
+    }
+    /**
+     * Language
+     */
+    export type Language<> = {
+        /**
+         * Language name.
+         */
+        name: string;
+        /**
+         * Language two-character ISO 639-1 codes.
+         */
+        code: string;
+        /**
+         * Language native name.
+         */
+        nativeName: string;
+    }
+    /**
+     * Currency
+     */
+    export type Currency<> = {
+        /**
+         * Currency symbol.
+         */
+        symbol: string;
+        /**
+         * Currency name.
+         */
+        name: string;
+        /**
+         * Currency native symbol.
+         */
+        symbolNative: string;
+        /**
+         * Number of decimal digits.
+         */
+        decimalDigits: number;
+        /**
+         * Currency digit rounding.
+         */
+        rounding: number;
+        /**
+         * Currency code in [ISO 4217-1](http://en.wikipedia.org/wiki/ISO_4217) three-character format.
+         */
+        code: string;
+        /**
+         * Currency plural name
+         */
+        namePlural: string;
+    }
+    /**
+     * Phone
+     */
+    export type Phone<> = {
+        /**
+         * Phone code.
+         */
+        code: string;
+        /**
+         * Country two-character ISO 3166-1 alpha code.
+         */
+        countryCode: string;
+        /**
+         * Country name.
+         */
+        countryName: string;
+    }
+}
+
 type Payload = {
     [key: string]: any;
 }
@@ -87,7 +776,7 @@ class Appwrite {
         locale: '',
     };
     headers: Headers = {
-        'x-sdk-version': 'appwrite:web:4.0.4',
+        'x-sdk-version': 'appwrite:web:5.0.0',
         'X-Appwrite-Response-Format': '0.11.0',
     };
 
@@ -448,7 +1137,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        get: async <T extends unknown>(): Promise<T> => {
+        get: async <Preferences extends Models.Preferences>(): Promise<Models.User<Preferences>> => {
             let path = '/account';
             let payload: Payload = {};
 
@@ -474,7 +1163,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        create: async <T extends unknown>(email: string, password: string, name?: string): Promise<T> => {
+        create: async <Preferences extends Models.Preferences>(email: string, password: string, name?: string): Promise<Models.User<Preferences>> => {
             if (typeof email === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "email"');
             }
@@ -516,7 +1205,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        delete: async <T extends unknown>(): Promise<T> => {
+        delete: async (): Promise<{}> => {
             let path = '/account';
             let payload: Payload = {};
 
@@ -541,7 +1230,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        updateEmail: async <T extends unknown>(email: string, password: string): Promise<T> => {
+        updateEmail: async <Preferences extends Models.Preferences>(email: string, password: string): Promise<Models.User<Preferences>> => {
             if (typeof email === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "email"');
             }
@@ -579,7 +1268,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        createJWT: async <T extends unknown>(): Promise<T> => {
+        createJWT: async (): Promise<Models.Jwt> => {
             let path = '/account/jwt';
             let payload: Payload = {};
 
@@ -598,7 +1287,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        getLogs: async <T extends unknown>(): Promise<T> => {
+        getLogs: async (): Promise<Models.LogList> => {
             let path = '/account/logs';
             let payload: Payload = {};
 
@@ -617,7 +1306,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        updateName: async <T extends unknown>(name: string): Promise<T> => {
+        updateName: async <Preferences extends Models.Preferences>(name: string): Promise<Models.User<Preferences>> => {
             if (typeof name === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "name"');
             }
@@ -647,7 +1336,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        updatePassword: async <T extends unknown>(password: string, oldPassword?: string): Promise<T> => {
+        updatePassword: async <Preferences extends Models.Preferences>(password: string, oldPassword?: string): Promise<Models.User<Preferences>> => {
             if (typeof password === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "password"');
             }
@@ -677,7 +1366,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        getPrefs: async <T extends unknown>(): Promise<T> => {
+        getPrefs: async <Preferences extends Models.Preferences>(): Promise<Preferences> => {
             let path = '/account/prefs';
             let payload: Payload = {};
 
@@ -697,7 +1386,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        updatePrefs: async <T extends unknown>(prefs: object): Promise<T> => {
+        updatePrefs: async <Preferences extends Models.Preferences>(prefs: object): Promise<Models.User<Preferences>> => {
             if (typeof prefs === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "prefs"');
             }
@@ -732,7 +1421,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        createRecovery: async <T extends unknown>(email: string, url: string): Promise<T> => {
+        createRecovery: async (email: string, url: string): Promise<Models.Token> => {
             if (typeof email === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "email"');
             }
@@ -778,7 +1467,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        updateRecovery: async <T extends unknown>(userId: string, secret: string, password: string, passwordAgain: string): Promise<T> => {
+        updateRecovery: async (userId: string, secret: string, password: string, passwordAgain: string): Promise<Models.Token> => {
             if (typeof userId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "userId"');
             }
@@ -829,7 +1518,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        getSessions: async <T extends unknown>(): Promise<T> => {
+        getSessions: async (): Promise<Models.SessionList> => {
             let path = '/account/sessions';
             let payload: Payload = {};
 
@@ -850,7 +1539,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        createSession: async <T extends unknown>(email: string, password: string): Promise<T> => {
+        createSession: async (email: string, password: string): Promise<Models.Session> => {
             if (typeof email === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "email"');
             }
@@ -885,7 +1574,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        deleteSessions: async <T extends unknown>(): Promise<T> => {
+        deleteSessions: async (): Promise<{}> => {
             let path = '/account/sessions';
             let payload: Payload = {};
 
@@ -908,7 +1597,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        createAnonymousSession: async <T extends unknown>(): Promise<T> => {
+        createAnonymousSession: async (): Promise<Models.Session> => {
             let path = '/account/sessions/anonymous';
             let payload: Payload = {};
 
@@ -937,7 +1626,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        createMagicURLSession: async <T extends unknown>(email: string, url?: string): Promise<T> => {
+        createMagicURLSession: async (email: string, url?: string): Promise<Models.Token> => {
             if (typeof email === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "email"');
             }
@@ -979,7 +1668,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        updateMagicURLSession: async <T extends unknown>(userId: string, secret: string): Promise<T> => {
+        updateMagicURLSession: async (userId: string, secret: string): Promise<Models.Session> => {
             if (typeof userId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "userId"');
             }
@@ -1072,7 +1761,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        getSession: async <T extends unknown>(sessionId: string): Promise<T> => {
+        getSession: async (sessionId: string): Promise<Models.Session> => {
             if (typeof sessionId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "sessionId"');
             }
@@ -1097,7 +1786,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        deleteSession: async <T extends unknown>(sessionId: string): Promise<T> => {
+        deleteSession: async (sessionId: string): Promise<{}> => {
             if (typeof sessionId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "sessionId"');
             }
@@ -1134,7 +1823,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        createVerification: async <T extends unknown>(url: string): Promise<T> => {
+        createVerification: async (url: string): Promise<Models.Token> => {
             if (typeof url === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "url"');
             }
@@ -1165,7 +1854,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        updateVerification: async <T extends unknown>(userId: string, secret: string): Promise<T> => {
+        updateVerification: async (userId: string, secret: string): Promise<Models.Token> => {
             if (typeof userId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "userId"');
             }
@@ -1529,7 +2218,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        listDocuments: async <T extends unknown>(collectionId: string, filters?: string[], limit?: number, offset?: number, orderField?: string, orderType?: string, orderCast?: string, search?: string): Promise<T> => {
+        listDocuments: async <Document extends Models.Document>(collectionId: string, filters?: string[], limit?: number, offset?: number, orderField?: string, orderType?: string, orderCast?: string, search?: string): Promise<Models.DocumentList<Document>> => {
             if (typeof collectionId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "collectionId"');
             }
@@ -1589,7 +2278,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        createDocument: async <T extends unknown>(collectionId: string, data: object, read?: string[], write?: string[], parentDocument?: string, parentProperty?: string, parentPropertyType?: string): Promise<T> => {
+        createDocument: async <Document extends Models.Document>(collectionId: string, data: object, read?: string[], write?: string[], parentDocument?: string, parentProperty?: string, parentPropertyType?: string): Promise<Document> => {
             if (typeof collectionId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "collectionId"');
             }
@@ -1642,7 +2331,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        getDocument: async <T extends unknown>(collectionId: string, documentId: string): Promise<T> => {
+        getDocument: async <Document extends Models.Document>(collectionId: string, documentId: string): Promise<Document> => {
             if (typeof collectionId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "collectionId"');
             }
@@ -1674,7 +2363,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        updateDocument: async <T extends unknown>(collectionId: string, documentId: string, data: object, read?: string[], write?: string[]): Promise<T> => {
+        updateDocument: async <Document extends Models.Document>(collectionId: string, documentId: string, data: object, read?: string[], write?: string[]): Promise<Document> => {
             if (typeof collectionId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "collectionId"');
             }
@@ -1720,7 +2409,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        deleteDocument: async <T extends unknown>(collectionId: string, documentId: string): Promise<T> => {
+        deleteDocument: async (collectionId: string, documentId: string): Promise<{}> => {
             if (typeof collectionId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "collectionId"');
             }
@@ -1757,7 +2446,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        listExecutions: async <T extends unknown>(functionId: string, search?: string, limit?: number, offset?: number, orderType?: string): Promise<T> => {
+        listExecutions: async (functionId: string, search?: string, limit?: number, offset?: number, orderType?: string): Promise<Models.ExecutionList> => {
             if (typeof functionId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "functionId"');
             }
@@ -1800,7 +2489,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        createExecution: async <T extends unknown>(functionId: string, data?: string): Promise<T> => {
+        createExecution: async (functionId: string, data?: string): Promise<Models.Execution> => {
             if (typeof functionId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "functionId"');
             }
@@ -1828,7 +2517,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        getExecution: async <T extends unknown>(functionId: string, executionId: string): Promise<T> => {
+        getExecution: async (functionId: string, executionId: string): Promise<Models.Execution> => {
             if (typeof functionId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "functionId"');
             }
@@ -1862,7 +2551,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        get: async <T extends unknown>(): Promise<T> => {
+        get: async (): Promise<Models.Locale> => {
             let path = '/locale';
             let payload: Payload = {};
 
@@ -1881,7 +2570,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        getContinents: async <T extends unknown>(): Promise<T> => {
+        getContinents: async (): Promise<Models.ContinentList> => {
             let path = '/locale/continents';
             let payload: Payload = {};
 
@@ -1900,7 +2589,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        getCountries: async <T extends unknown>(): Promise<T> => {
+        getCountries: async (): Promise<Models.CountryList> => {
             let path = '/locale/countries';
             let payload: Payload = {};
 
@@ -1919,7 +2608,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        getCountriesEU: async <T extends unknown>(): Promise<T> => {
+        getCountriesEU: async (): Promise<Models.CountryList> => {
             let path = '/locale/countries/eu';
             let payload: Payload = {};
 
@@ -1938,7 +2627,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        getCountriesPhones: async <T extends unknown>(): Promise<T> => {
+        getCountriesPhones: async (): Promise<Models.PhoneList> => {
             let path = '/locale/countries/phones';
             let payload: Payload = {};
 
@@ -1958,7 +2647,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        getCurrencies: async <T extends unknown>(): Promise<T> => {
+        getCurrencies: async (): Promise<Models.CurrencyList> => {
             let path = '/locale/currencies';
             let payload: Payload = {};
 
@@ -1977,7 +2666,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        getLanguages: async <T extends unknown>(): Promise<T> => {
+        getLanguages: async (): Promise<Models.LanguageList> => {
             let path = '/locale/languages';
             let payload: Payload = {};
 
@@ -2004,7 +2693,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        listFiles: async <T extends unknown>(search?: string, limit?: number, offset?: number, orderType?: string): Promise<T> => {
+        listFiles: async (search?: string, limit?: number, offset?: number, orderType?: string): Promise<Models.FileList> => {
             let path = '/storage/files';
             let payload: Payload = {};
 
@@ -2043,7 +2732,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        createFile: async <T extends unknown>(file: File, read?: string[], write?: string[]): Promise<T> => {
+        createFile: async (file: File, read?: string[], write?: string[]): Promise<Models.File> => {
             if (typeof file === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "file"');
             }
@@ -2079,7 +2768,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        getFile: async <T extends unknown>(fileId: string): Promise<T> => {
+        getFile: async (fileId: string): Promise<Models.File> => {
             if (typeof fileId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "fileId"');
             }
@@ -2105,7 +2794,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        updateFile: async <T extends unknown>(fileId: string, read: string[], write: string[]): Promise<T> => {
+        updateFile: async (fileId: string, read: string[], write: string[]): Promise<Models.File> => {
             if (typeof fileId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "fileId"');
             }
@@ -2145,7 +2834,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        deleteFile: async <T extends unknown>(fileId: string): Promise<T> => {
+        deleteFile: async (fileId: string): Promise<{}> => {
             if (typeof fileId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "fileId"');
             }
@@ -2320,7 +3009,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        list: async <T extends unknown>(search?: string, limit?: number, offset?: number, orderType?: string): Promise<T> => {
+        list: async (search?: string, limit?: number, offset?: number, orderType?: string): Promise<Models.TeamList> => {
             let path = '/teams';
             let payload: Payload = {};
 
@@ -2359,7 +3048,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        create: async <T extends unknown>(name: string, roles?: string[]): Promise<T> => {
+        create: async (name: string, roles?: string[]): Promise<Models.Team> => {
             if (typeof name === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "name"');
             }
@@ -2391,7 +3080,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        get: async <T extends unknown>(teamId: string): Promise<T> => {
+        get: async (teamId: string): Promise<Models.Team> => {
             if (typeof teamId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "teamId"');
             }
@@ -2416,7 +3105,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        update: async <T extends unknown>(teamId: string, name: string): Promise<T> => {
+        update: async (teamId: string, name: string): Promise<Models.Team> => {
             if (typeof teamId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "teamId"');
             }
@@ -2448,7 +3137,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        delete: async <T extends unknown>(teamId: string): Promise<T> => {
+        delete: async (teamId: string): Promise<{}> => {
             if (typeof teamId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "teamId"');
             }
@@ -2476,7 +3165,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        getMemberships: async <T extends unknown>(teamId: string, search?: string, limit?: number, offset?: number, orderType?: string): Promise<T> => {
+        getMemberships: async (teamId: string, search?: string, limit?: number, offset?: number, orderType?: string): Promise<Models.MembershipList> => {
             if (typeof teamId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "teamId"');
             }
@@ -2534,7 +3223,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        createMembership: async <T extends unknown>(teamId: string, email: string, roles: string[], url: string, name?: string): Promise<T> => {
+        createMembership: async (teamId: string, email: string, roles: string[], url: string, name?: string): Promise<Models.Membership> => {
             if (typeof teamId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "teamId"');
             }
@@ -2586,7 +3275,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        updateMembershipRoles: async <T extends unknown>(teamId: string, membershipId: string, roles: string[]): Promise<T> => {
+        updateMembershipRoles: async (teamId: string, membershipId: string, roles: string[]): Promise<Models.Membership> => {
             if (typeof teamId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "teamId"');
             }
@@ -2624,7 +3313,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        deleteMembership: async <T extends unknown>(teamId: string, membershipId: string): Promise<T> => {
+        deleteMembership: async (teamId: string, membershipId: string): Promise<{}> => {
             if (typeof teamId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "teamId"');
             }
@@ -2656,7 +3345,7 @@ class Appwrite {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        updateMembershipStatus: async <T extends unknown>(teamId: string, membershipId: string, userId: string, secret: string): Promise<T> => {
+        updateMembershipStatus: async (teamId: string, membershipId: string, userId: string, secret: string): Promise<Models.Membership> => {
             if (typeof teamId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "teamId"');
             }
@@ -2694,4 +3383,4 @@ class Appwrite {
 };
 
 export { Appwrite }
-export type { AppwriteException }
+export type { AppwriteException, Models }

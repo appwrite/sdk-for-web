@@ -3,7 +3,7 @@
 ![License](https://img.shields.io/github/license/appwrite/sdk-for-web.svg?style=flat-square)
 ![Version](https://img.shields.io/badge/api%20version-0.11.0-blue.svg?style=flat-square)
 [![Build Status](https://img.shields.io/travis/com/appwrite/sdk-generator?style=flat-square)](https://travis-ci.com/appwrite/sdk-generator)
-[![Twitter Account](https://img.shields.io/twitter/follow/appwrite_io?color=00acee&label=twitter&style=flat-square)](https://twitter.com/appwrite_io)
+[![Twitter Account](https://img.shields.io/twitter/follow/appwrite?color=00acee&label=twitter&style=flat-square)](https://twitter.com/appwrite)
 [![Discord](https://img.shields.io/discord/564160730845151244?label=discord&style=flat-square)](https://appwrite.io/discord)
 
 **This SDK is compatible with Appwrite server version 0.11.x. For older versions, please check [previous releases](https://github.com/appwrite/sdk-for-web/releases).**

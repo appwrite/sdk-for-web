@@ -708,7 +708,7 @@ type RealtimeRequest = {
     data: RealtimeRequestAuthenticate;
 }
 
-type RealtimeResponseEvent<T extends unknown> = {
+export type RealtimeResponseEvent<T extends unknown> = {
     event: string;
     channels: string[];
     timestamp: number;

@@ -791,7 +791,7 @@ class Appwrite {
         locale: '',
     };
     headers: Headers = {
-        'x-sdk-version': 'appwrite:web:5.0.0',
+        'x-sdk-version': 'appwrite:web:6.0.0',
         'X-Appwrite-Response-Format': '0.12.0',
     };
 

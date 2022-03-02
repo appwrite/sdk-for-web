@@ -5,6 +5,6 @@ sdk
     .setProject('5df5acd0d48c2') // Your project ID
 ;
 
-let result = sdk.storage.getFilePreview('[FILE_ID]');
+let result = sdk.storage.getFilePreview('[BUCKET_ID]', '[FILE_ID]');
 
 console.log(result); // Resource URL

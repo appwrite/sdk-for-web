@@ -5,7 +5,7 @@ sdk
     .setProject('5df5acd0d48c2') // Your project ID
 ;
 
-let promise = sdk.storage.listFiles();
+let promise = sdk.storage.listFiles('[BUCKET_ID]');
 
 promise.then(function (response) {
     console.log(response); // Success

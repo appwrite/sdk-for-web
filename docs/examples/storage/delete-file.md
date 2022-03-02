@@ -5,7 +5,7 @@ sdk
     .setProject('5df5acd0d48c2') // Your project ID
 ;
 
-let promise = sdk.storage.deleteFile('[FILE_ID]');
+let promise = sdk.storage.deleteFile('[BUCKET_ID]', '[FILE_ID]');
 
 promise.then(function (response) {
     console.log(response); // Success

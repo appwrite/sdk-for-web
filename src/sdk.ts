@@ -2981,8 +2981,8 @@ class Appwrite {
                 if (onProgress) {
                     onProgress({
                         $id: response.$id,
-                        progress: Math.min((counter + 1) * Appwrite.CHUNK_SIZE, size) / size * 100,
-                        sizeUploaded: end+1,
+                        progress: Math.min((counter + 1) * Appwrite.CHUNK_SIZE - 1, size) / size * 100,
+                        sizeUploaded: end,
                         chunksTotal: response.chunksTotal,
                         chunksUploaded: response.chunksUploaded
                     });

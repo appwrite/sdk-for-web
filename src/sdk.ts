@@ -748,7 +748,7 @@ type RealtimeRequest = {
 }
 
 export type RealtimeResponseEvent<T extends unknown> = {
-    event: string;
+    events: string[];
     channels: string[];
     timestamp: number;
     payload: T;

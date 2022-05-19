@@ -827,7 +827,7 @@ class Appwrite {
         locale: '',
     };
     headers: Headers = {
-        'x-sdk-version': 'appwrite:web:8.0.0',
+        'x-sdk-version': 'appwrite:web:8.0.1',
         'X-Appwrite-Response-Format': '0.14.0',
     };
 
@@ -2967,6 +2967,11 @@ class Appwrite {
             }
 
             const uri = new URL(this.config.endpoint + path);
+
+            if(!(file instanceof File)) {
+                throw new AppwriteException('Parameter "file" has to be a File.');
+            }
+
             const size = file.size;
 
             if (size <= Appwrite.CHUNK_SIZE) {

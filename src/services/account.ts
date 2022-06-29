@@ -240,10 +240,11 @@ export class Account extends Service {
         /**
          * Update Account Phone
          *
-         * Update currently logged in user account phone number. After changing phone
-         * number, the user confirmation status will get reset. A new confirmation SMS
-         * is not sent automatically however you can use the phone confirmation
-         * endpoint again to send the confirmation SMS.
+         * Update the currently logged in user's phone number. After updating the
+         * phone number, the phone verification status will be reset. A confirmation
+         * SMS is not sent automatically, however you can use the [POST
+         * /account/verification/phone](/docs/client/account#accountCreatePhoneVerification)
+         * endpoint to send a confirmation SMS.
          *
          * @param {string} number
          * @param {string} password
@@ -682,8 +683,8 @@ export class Account extends Service {
         /**
          * Create Phone session
          *
-         * Sends the user a SMS with a secret key for creating a session. Use the
-         * returned user ID and the secret to submit a request to the [PUT
+         * Sends the user an SMS with a secret key for creating a session. Use the
+         * returned user ID and secret and submit a request to the [PUT
          * /account/sessions/phone](/docs/client/account#accountUpdatePhoneSession)
          * endpoint to complete the login process. The secret sent to the user's phone
          * is valid for 15 minutes.
@@ -722,17 +723,11 @@ export class Account extends Service {
         /**
          * Create Phone session (confirmation)
          *
-         * Use this endpoint to complete creating the session with the Magic URL. Both
-         * the **userId** and **secret** arguments will be passed as query parameters
-         * to the redirect URL you have provided when sending your request to the
-         * [POST
-         * /account/sessions/magic-url](/docs/client/account#accountCreateMagicURLSession)
-         * endpoint.
-         * 
-         * Please note that in order to avoid a [Redirect
-         * Attack](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md)
-         * the only valid redirect URLs are the ones from domains you have set when
-         * adding your platforms in the console interface.
+         * Use this endpoint to complete creating a session with SMS. Use the
+         * **userId** from the
+         * [createPhoneSession](/docs/client/account#accountCreatePhoneSession)
+         * endpoint and the **secret** received via SMS to successfully update and
+         * confirm the phone session.
          *
          * @param {string} userId
          * @param {string} secret
@@ -943,13 +938,12 @@ export class Account extends Service {
         /**
          * Create Phone Verification
          *
-         * Use this endpoint to send a verification message to your user's phone
-         * number to confirm they are the valid owners of that address. The provided
-         * secret should allow you to complete the verification process by verifying
-         * both the **userId** and **secret** parameters. Learn more about how to
-         * [complete the verification
+         * Use this endpoint to send a verification SMS to the currently logged in
+         * user. This endpoint is meant for use after updating a user's phone number
+         * using the [accountUpdatePhone](/docs/client/account#accountUpdatePhone)
+         * endpoint. Learn more about how to [complete the verification
          * process](/docs/client/account#accountUpdatePhoneVerification). The
-         * verification link sent to the user's phone number is valid for 15 minutes.
+         * verification code sent to the user's phone number is valid for 15 minutes.
          *
          * @throws {AppwriteException}
          * @returns {Promise}

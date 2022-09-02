@@ -99,8 +99,11 @@ class Client {
         locale: '',
     };
     headers: Headers = {
-        'x-sdk-version': 'appwrite:web:9.0.1',
-        'X-Appwrite-Response-Format': '0.15.0',
+        'x-sdk-name': 'Web',
+        'x-sdk-platform': 'client',
+        'x-sdk-language': 'web',
+        'x-sdk-version': '9.1.0-RC1',
+        'X-Appwrite-Response-Format': '1.0.0-RC1',
     };
 
     /**

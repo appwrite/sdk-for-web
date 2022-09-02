@@ -1,13 +1,14 @@
 import { Service } from '../service';
 import { AppwriteException, Client } from '../client';
 import type { Models } from '../models';
-import type { UploadProgress } from '../client';
-
-type Payload = {
-    [key: string]: any;
-}
+import type { UploadProgress, Payload } from '../client';
 
 export class Account extends Service {
+
+     constructor(client: Client)
+     {
+        super(client);
+     }
 
         /**
          * Get Account
@@ -17,7 +18,7 @@ export class Account extends Service {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async get<Preferences extends Models.Preferences>(): Promise<Models.User<Preferences>> {
+        async get<Preferences extends Models.Preferences>(): Promise<Models.Account<Preferences>> {
             let path = '/account';
             let payload: Payload = {};
 
@@ -44,7 +45,7 @@ export class Account extends Service {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async create<Preferences extends Models.Preferences>(userId: string, email: string, password: string, name?: string): Promise<Models.User<Preferences>> {
+        async create<Preferences extends Models.Preferences>(userId: string, email: string, password: string, name?: string): Promise<Models.Account<Preferences>> {
             if (typeof userId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "userId"');
             }
@@ -99,7 +100,7 @@ export class Account extends Service {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async updateEmail<Preferences extends Models.Preferences>(email: string, password: string): Promise<Models.User<Preferences>> {
+        async updateEmail<Preferences extends Models.Preferences>(email: string, password: string): Promise<Models.Account<Preferences>> {
             if (typeof email === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "email"');
             }
@@ -153,21 +154,16 @@ export class Account extends Service {
          * Get currently logged in user list of latest security activity logs. Each
          * log returns user IP address, location and date and time of log.
          *
-         * @param {number} limit
-         * @param {number} offset
+         * @param {string[]} queries
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async getLogs(limit?: number, offset?: number): Promise<Models.LogList> {
+        async getLogs(queries?: string[]): Promise<Models.LogList> {
             let path = '/account/logs';
             let payload: Payload = {};
 
-            if (typeof limit !== 'undefined') {
-                payload['limit'] = limit;
-            }
-
-            if (typeof offset !== 'undefined') {
-                payload['offset'] = offset;
+            if (typeof queries !== 'undefined') {
+                payload['queries'] = queries;
             }
 
             const uri = new URL(this.client.config.endpoint + path);
@@ -185,7 +181,7 @@ export class Account extends Service {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async updateName<Preferences extends Models.Preferences>(name: string): Promise<Models.User<Preferences>> {
+        async updateName<Preferences extends Models.Preferences>(name: string): Promise<Models.Account<Preferences>> {
             if (typeof name === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "name"');
             }
@@ -215,7 +211,7 @@ export class Account extends Service {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async updatePassword<Preferences extends Models.Preferences>(password: string, oldPassword?: string): Promise<Models.User<Preferences>> {
+        async updatePassword<Preferences extends Models.Preferences>(password: string, oldPassword?: string): Promise<Models.Account<Preferences>> {
             if (typeof password === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "password"');
             }
@@ -246,14 +242,14 @@ export class Account extends Service {
          * /account/verification/phone](/docs/client/account#accountCreatePhoneVerification)
          * endpoint to send a confirmation SMS.
          *
-         * @param {string} number
+         * @param {string} phone
          * @param {string} password
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async updatePhone<Preferences extends Models.Preferences>(number: string, password: string): Promise<Models.User<Preferences>> {
-            if (typeof number === 'undefined') {
-                throw new AppwriteException('Missing required parameter: "number"');
+        async updatePhone<Preferences extends Models.Preferences>(phone: string, password: string): Promise<Models.Account<Preferences>> {
+            if (typeof phone === 'undefined') {
+                throw new AppwriteException('Missing required parameter: "phone"');
             }
 
             if (typeof password === 'undefined') {
@@ -263,8 +259,8 @@ export class Account extends Service {
             let path = '/account/phone';
             let payload: Payload = {};
 
-            if (typeof number !== 'undefined') {
-                payload['number'] = number;
+            if (typeof phone !== 'undefined') {
+                payload['phone'] = phone;
             }
 
             if (typeof password !== 'undefined') {
@@ -302,11 +298,11 @@ export class Account extends Service {
          * stored as is, and replaces any previous value. The maximum allowed prefs
          * size is 64kB and throws error if exceeded.
          *
-         * @param {Partial<Preferences>} prefs
+         * @param {object} prefs
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async updatePrefs<Preferences extends Models.Preferences>(prefs: Partial<Preferences>): Promise<Models.User<Preferences>> {
+        async updatePrefs<Preferences extends Models.Preferences>(prefs: object): Promise<Models.Account<Preferences>> {
             if (typeof prefs === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "prefs"');
             }
@@ -530,9 +526,10 @@ export class Account extends Service {
         /**
          * Create Magic URL session
          *
-         * Sends the user an email with a secret key for creating a session. When the
-         * user clicks the link in the email, the user is redirected back to the URL
-         * you provided with the secret key and userId values attached to the URL
+         * Sends the user an email with a secret key for creating a session. If the
+         * provided user ID has not be registered, a new user will be created. When
+         * the user clicks the link in the email, the user is redirected back to the
+         * URL you provided with the secret key and userId values attached to the URL
          * query string. Use the query string parameters to submit a request to the
          * [PUT
          * /account/sessions/magic-url](/docs/client/account#accountUpdateMagicURLSession)
@@ -683,24 +680,25 @@ export class Account extends Service {
         /**
          * Create Phone session
          *
-         * Sends the user an SMS with a secret key for creating a session. Use the
+         * Sends the user an SMS with a secret key for creating a session. If the
+         * provided user ID has not be registered, a new user will be created. Use the
          * returned user ID and secret and submit a request to the [PUT
          * /account/sessions/phone](/docs/client/account#accountUpdatePhoneSession)
          * endpoint to complete the login process. The secret sent to the user's phone
          * is valid for 15 minutes.
          *
          * @param {string} userId
-         * @param {string} number
+         * @param {string} phone
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async createPhoneSession(userId: string, number: string): Promise<Models.Token> {
+        async createPhoneSession(userId: string, phone: string): Promise<Models.Token> {
             if (typeof userId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "userId"');
             }
 
-            if (typeof number === 'undefined') {
-                throw new AppwriteException('Missing required parameter: "number"');
+            if (typeof phone === 'undefined') {
+                throw new AppwriteException('Missing required parameter: "phone"');
             }
 
             let path = '/account/sessions/phone';
@@ -710,8 +708,8 @@ export class Account extends Service {
                 payload['userId'] = userId;
             }
 
-            if (typeof number !== 'undefined') {
-                payload['number'] = number;
+            if (typeof phone !== 'undefined') {
+                payload['phone'] = phone;
             }
 
             const uri = new URL(this.client.config.endpoint + path);
@@ -721,7 +719,7 @@ export class Account extends Service {
         }
 
         /**
-         * Create Phone session (confirmation)
+         * Create Phone Session (confirmation)
          *
          * Use this endpoint to complete creating a session with SMS. Use the
          * **userId** from the
@@ -845,7 +843,7 @@ export class Account extends Service {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async updateStatus<Preferences extends Models.Preferences>(): Promise<Models.User<Preferences>> {
+        async updateStatus<Preferences extends Models.Preferences>(): Promise<Models.Account<Preferences>> {
             let path = '/account/status';
             let payload: Payload = {};
 

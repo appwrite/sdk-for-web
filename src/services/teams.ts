@@ -1,13 +1,14 @@
 import { Service } from '../service';
 import { AppwriteException, Client } from '../client';
 import type { Models } from '../models';
-import type { UploadProgress } from '../client';
-
-type Payload = {
-    [key: string]: any;
-}
+import type { UploadProgress, Payload } from '../client';
 
 export class Teams extends Service {
+
+     constructor(client: Client)
+     {
+        super(client);
+     }
 
         /**
          * List Teams
@@ -18,41 +19,21 @@ export class Teams extends Service {
          * In admin mode, this endpoint returns a list of all the teams in the current
          * project. [Learn more about different API modes](/docs/admin).
          *
+         * @param {string[]} queries
          * @param {string} search
-         * @param {number} limit
-         * @param {number} offset
-         * @param {string} cursor
-         * @param {string} cursorDirection
-         * @param {string} orderType
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async list(search?: string, limit?: number, offset?: number, cursor?: string, cursorDirection?: string, orderType?: string): Promise<Models.TeamList> {
+        async list(queries?: string[], search?: string): Promise<Models.TeamList> {
             let path = '/teams';
             let payload: Payload = {};
 
+            if (typeof queries !== 'undefined') {
+                payload['queries'] = queries;
+            }
+
             if (typeof search !== 'undefined') {
                 payload['search'] = search;
-            }
-
-            if (typeof limit !== 'undefined') {
-                payload['limit'] = limit;
-            }
-
-            if (typeof offset !== 'undefined') {
-                payload['offset'] = offset;
-            }
-
-            if (typeof cursor !== 'undefined') {
-                payload['cursor'] = cursor;
-            }
-
-            if (typeof cursorDirection !== 'undefined') {
-                payload['cursorDirection'] = cursorDirection;
-            }
-
-            if (typeof orderType !== 'undefined') {
-                payload['orderType'] = orderType;
             }
 
             const uri = new URL(this.client.config.endpoint + path);
@@ -191,16 +172,12 @@ export class Teams extends Service {
          * members have read access to this endpoint.
          *
          * @param {string} teamId
+         * @param {string[]} queries
          * @param {string} search
-         * @param {number} limit
-         * @param {number} offset
-         * @param {string} cursor
-         * @param {string} cursorDirection
-         * @param {string} orderType
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async getMemberships(teamId: string, search?: string, limit?: number, offset?: number, cursor?: string, cursorDirection?: string, orderType?: string): Promise<Models.MembershipList> {
+        async getMemberships(teamId: string, queries?: string[], search?: string): Promise<Models.MembershipList> {
             if (typeof teamId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "teamId"');
             }
@@ -208,28 +185,12 @@ export class Teams extends Service {
             let path = '/teams/{teamId}/memberships'.replace('{teamId}', teamId);
             let payload: Payload = {};
 
+            if (typeof queries !== 'undefined') {
+                payload['queries'] = queries;
+            }
+
             if (typeof search !== 'undefined') {
                 payload['search'] = search;
-            }
-
-            if (typeof limit !== 'undefined') {
-                payload['limit'] = limit;
-            }
-
-            if (typeof offset !== 'undefined') {
-                payload['offset'] = offset;
-            }
-
-            if (typeof cursor !== 'undefined') {
-                payload['cursor'] = cursor;
-            }
-
-            if (typeof cursorDirection !== 'undefined') {
-                payload['cursorDirection'] = cursorDirection;
-            }
-
-            if (typeof orderType !== 'undefined') {
-                payload['orderType'] = orderType;
             }
 
             const uri = new URL(this.client.config.endpoint + path);

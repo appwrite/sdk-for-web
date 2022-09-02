@@ -1,13 +1,14 @@
 import { Service } from '../service';
 import { AppwriteException, Client } from '../client';
 import type { Models } from '../models';
-import type { UploadProgress } from '../client';
-
-type Payload = {
-    [key: string]: any;
-}
+import type { UploadProgress, Payload } from '../client';
 
 export class Locale extends Service {
+
+     constructor(client: Client)
+     {
+        super(client);
+     }
 
         /**
          * Get User Locale

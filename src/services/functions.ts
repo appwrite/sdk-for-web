@@ -1,13 +1,14 @@
 import { Service } from '../service';
 import { AppwriteException, Client } from '../client';
 import type { Models } from '../models';
-import type { UploadProgress } from '../client';
-
-type Payload = {
-    [key: string]: any;
-}
+import type { UploadProgress, Payload } from '../client';
 
 export class Functions extends Service {
+
+     constructor(client: Client)
+     {
+        super(client);
+     }
 
         /**
          * Retry Build
@@ -50,15 +51,12 @@ export class Functions extends Service {
          * different API modes](/docs/admin).
          *
          * @param {string} functionId
-         * @param {number} limit
-         * @param {number} offset
+         * @param {string[]} queries
          * @param {string} search
-         * @param {string} cursor
-         * @param {string} cursorDirection
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async listExecutions(functionId: string, limit?: number, offset?: number, search?: string, cursor?: string, cursorDirection?: string): Promise<Models.ExecutionList> {
+        async listExecutions(functionId: string, queries?: string[], search?: string): Promise<Models.ExecutionList> {
             if (typeof functionId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "functionId"');
             }
@@ -66,24 +64,12 @@ export class Functions extends Service {
             let path = '/functions/{functionId}/executions'.replace('{functionId}', functionId);
             let payload: Payload = {};
 
-            if (typeof limit !== 'undefined') {
-                payload['limit'] = limit;
-            }
-
-            if (typeof offset !== 'undefined') {
-                payload['offset'] = offset;
+            if (typeof queries !== 'undefined') {
+                payload['queries'] = queries;
             }
 
             if (typeof search !== 'undefined') {
                 payload['search'] = search;
-            }
-
-            if (typeof cursor !== 'undefined') {
-                payload['cursor'] = cursor;
-            }
-
-            if (typeof cursorDirection !== 'undefined') {
-                payload['cursorDirection'] = cursorDirection;
             }
 
             const uri = new URL(this.client.config.endpoint + path);

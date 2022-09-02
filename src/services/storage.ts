@@ -1,13 +1,14 @@
 import { Service } from '../service';
 import { AppwriteException, Client } from '../client';
 import type { Models } from '../models';
-import type { UploadProgress } from '../client';
-
-type Payload = {
-    [key: string]: any;
-}
+import type { UploadProgress, Payload } from '../client';
 
 export class Storage extends Service {
+
+     constructor(client: Client)
+     {
+        super(client);
+     }
 
         /**
          * List Files
@@ -17,16 +18,12 @@ export class Storage extends Service {
          * project's files. [Learn more about different API modes](/docs/admin).
          *
          * @param {string} bucketId
+         * @param {string[]} queries
          * @param {string} search
-         * @param {number} limit
-         * @param {number} offset
-         * @param {string} cursor
-         * @param {string} cursorDirection
-         * @param {string} orderType
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async listFiles(bucketId: string, search?: string, limit?: number, offset?: number, cursor?: string, cursorDirection?: string, orderType?: string): Promise<Models.FileList> {
+        async listFiles(bucketId: string, queries?: string[], search?: string): Promise<Models.FileList> {
             if (typeof bucketId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "bucketId"');
             }
@@ -34,28 +31,12 @@ export class Storage extends Service {
             let path = '/storage/buckets/{bucketId}/files'.replace('{bucketId}', bucketId);
             let payload: Payload = {};
 
+            if (typeof queries !== 'undefined') {
+                payload['queries'] = queries;
+            }
+
             if (typeof search !== 'undefined') {
                 payload['search'] = search;
-            }
-
-            if (typeof limit !== 'undefined') {
-                payload['limit'] = limit;
-            }
-
-            if (typeof offset !== 'undefined') {
-                payload['offset'] = offset;
-            }
-
-            if (typeof cursor !== 'undefined') {
-                payload['cursor'] = cursor;
-            }
-
-            if (typeof cursorDirection !== 'undefined') {
-                payload['cursorDirection'] = cursorDirection;
-            }
-
-            if (typeof orderType !== 'undefined') {
-                payload['orderType'] = orderType;
             }
 
             const uri = new URL(this.client.config.endpoint + path);
@@ -69,8 +50,8 @@ export class Storage extends Service {
          *
          * Create a new file. Before using this route, you should create a new bucket
          * resource using either a [server
-         * integration](/docs/server/database#storageCreateBucket) API or directly
-         * from your Appwrite console.
+         * integration](/docs/server/storage#storageCreateBucket) API or directly from
+         * your Appwrite console.
          * 
          * Larger files should be uploaded using multiple requests with the
          * [content-range](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Range)
@@ -89,12 +70,11 @@ export class Storage extends Service {
          * @param {string} bucketId
          * @param {string} fileId
          * @param {File} file
-         * @param {string[]} read
-         * @param {string[]} write
+         * @param {string[]} permissions
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async createFile(bucketId: string, fileId: string, file: File, read?: string[], write?: string[], onProgress = (progress: UploadProgress) => {}): Promise<Models.File> {
+        async createFile(bucketId: string, fileId: string, file: File, permissions?: string[], onProgress = (progress: UploadProgress) => {}): Promise<Models.File> {
             if (typeof bucketId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "bucketId"');
             }
@@ -118,12 +98,8 @@ export class Storage extends Service {
                 payload['file'] = file;
             }
 
-            if (typeof read !== 'undefined') {
-                payload['read'] = read;
-            }
-
-            if (typeof write !== 'undefined') {
-                payload['write'] = write;
+            if (typeof permissions !== 'undefined') {
+                payload['permissions'] = permissions;
             }
 
             const uri = new URL(this.client.config.endpoint + path);
@@ -227,12 +203,11 @@ export class Storage extends Service {
          *
          * @param {string} bucketId
          * @param {string} fileId
-         * @param {string[]} read
-         * @param {string[]} write
+         * @param {string[]} permissions
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async updateFile(bucketId: string, fileId: string, read?: string[], write?: string[]): Promise<Models.File> {
+        async updateFile(bucketId: string, fileId: string, permissions?: string[]): Promise<Models.File> {
             if (typeof bucketId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "bucketId"');
             }
@@ -244,12 +219,8 @@ export class Storage extends Service {
             let path = '/storage/buckets/{bucketId}/files/{fileId}'.replace('{bucketId}', bucketId).replace('{fileId}', fileId);
             let payload: Payload = {};
 
-            if (typeof read !== 'undefined') {
-                payload['read'] = read;
-            }
-
-            if (typeof write !== 'undefined') {
-                payload['write'] = write;
+            if (typeof permissions !== 'undefined') {
+                payload['permissions'] = permissions;
             }
 
             const uri = new URL(this.client.config.endpoint + path);

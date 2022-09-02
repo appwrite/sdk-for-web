@@ -168,21 +168,17 @@ export namespace Models {
          */
         $collection: string;
         /**
-         * Document creation date in Unix timestamp.
+         * Document creation date in Datetime
          */
-        $createdAt: number;
+        $createdAt: string;
         /**
-         * Document update date in Unix timestamp.
+         * Document update date in Datetime
          */
-        $updatedAt: number;
+        $updatedAt: string;
         /**
-         * Document read permissions.
+         * Document permissions. [Learn more about permissions](/docs/permissions).
          */
-        $read: string[];
-        /**
-         * Document write permissions.
-         */
-        $write: string[];
+        $permissions: string[];
         [key: string]: any;
     }
     /**
@@ -214,9 +210,9 @@ export namespace Models {
          */
         ip: string;
         /**
-         * Log creation time in Unix timestamp.
+         * Log creation date in Datetime.
          */
-        time: number;
+        time: string;
         /**
          * Operating system code name. View list of [available options](https://github.com/appwrite/appwrite/blob/master/docs/lists/os.json).
          */
@@ -275,37 +271,37 @@ export namespace Models {
         countryName: string;
     }
     /**
-     * User
+     * Account
      */
-    export type User<Preferences extends Models.Preferences> = {
+    export type Account<Preferences extends Models.Preferences> = {
         /**
          * User ID.
          */
         $id: string;
         /**
-         * User creation date in Unix timestamp.
+         * User creation date in Datetime.
          */
-        $createdAt: number;
+        $createdAt: string;
         /**
-         * User update date in Unix timestamp.
+         * User update date in Datetime.
          */
-        $updatedAt: number;
+        $updatedAt: string;
         /**
          * User name.
          */
         name: string;
         /**
-         * User registration date in Unix timestamp.
+         * User registration date in Datetime.
          */
-        registration: number;
+        registration: string;
         /**
          * User status. Pass `true` for enabled and `false` for disabled.
          */
         status: boolean;
         /**
-         * Unix timestamp of the most recent password update
+         * Datetime of the most recent password update
          */
-        passwordUpdate: number;
+        passwordUpdate: string;
         /**
          * User email address.
          */
@@ -342,17 +338,17 @@ export namespace Models {
          */
         $id: string;
         /**
-         * Session creation date in Unix timestamp.
+         * Session creation date in Datetime
          */
-        $createdAt: number;
+        $createdAt: string;
         /**
          * User ID.
          */
         userId: string;
         /**
-         * Session expiration date in Unix timestamp.
+         * Session expiration date in Datetime
          */
-        expire: number;
+        expire: string;
         /**
          * Session Provider.
          */
@@ -366,9 +362,9 @@ export namespace Models {
          */
         providerAccessToken: string;
         /**
-         * Date, the Unix timestamp of when the access token expires.
+         * The date of when the access token expires in Datetime format.
          */
-        providerAccessTokenExpiry: number;
+        providerAccessTokenExpiry: string;
         /**
          * Session Provider Refresh Token.
          */
@@ -447,9 +443,9 @@ export namespace Models {
          */
         $id: string;
         /**
-         * Token creation date in Unix timestamp.
+         * Token creation date in Datetime
          */
-        $createdAt: number;
+        $createdAt: string;
         /**
          * User ID.
          */
@@ -459,9 +455,9 @@ export namespace Models {
          */
         secret: string;
         /**
-         * Token expiration date in Unix timestamp.
+         * Token expiration date in Datetime.
          */
-        expire: number;
+        expire: string;
     }
     /**
      * JWT
@@ -518,21 +514,17 @@ export namespace Models {
          */
         bucketId: string;
         /**
-         * File creation date in Unix timestamp.
+         * File creation date in Datetime
          */
-        $createdAt: number;
+        $createdAt: string;
         /**
-         * File update date in Unix timestamp.
+         * File update date in Datetime
          */
-        $updatedAt: number;
+        $updatedAt: string;
         /**
-         * File read permissions.
+         * File permissions. [Learn more about permissions](/docs/permissions).
          */
-        $read: string[];
-        /**
-         * File write permissions.
-         */
-        $write: string[];
+        $permissions: string[];
         /**
          * File name.
          */
@@ -567,13 +559,13 @@ export namespace Models {
          */
         $id: string;
         /**
-         * Team creation date in Unix timestamp.
+         * Team creation date in Datetime
          */
-        $createdAt: number;
+        $createdAt: string;
         /**
-         * Team update date in Unix timestamp.
+         * Team update date in Datetime
          */
-        $updatedAt: number;
+        $updatedAt: string;
         /**
          * Team name.
          */
@@ -592,13 +584,13 @@ export namespace Models {
          */
         $id: string;
         /**
-         * Membership creation date in Unix timestamp.
+         * Membership creation date in Datetime
          */
-        $createdAt: number;
+        $createdAt: string;
         /**
-         * Membership update date in Unix timestamp.
+         * Membership update date in Datetime
          */
-        $updatedAt: number;
+        $updatedAt: string;
         /**
          * User ID.
          */
@@ -620,13 +612,13 @@ export namespace Models {
          */
         teamName: string;
         /**
-         * Date, the user has been invited to join the team in Unix timestamp.
+         * Date, the user has been invited to join the team in Datetime
          */
-        invited: number;
+        invited: string;
         /**
-         * Date, the user has accepted the invitation to join the team in Unix timestamp.
+         * Date, the user has accepted the invitation to join the team in Datetime
          */
-        joined: number;
+        joined: string;
         /**
          * User confirmation status, true if the user has joined the team or false otherwise.
          */
@@ -645,17 +637,17 @@ export namespace Models {
          */
         $id: string;
         /**
-         * Execution creation date in Unix timestamp.
+         * Execution creation date in Datetime
          */
-        $createdAt: number;
+        $createdAt: string;
         /**
-         * Execution update date in Unix timestamp.
+         * Execution upate date in Datetime
          */
-        $updatedAt: number;
+        $updatedAt: string;
         /**
-         * Execution read permissions.
+         * Execution roles.
          */
-        $read: string[];
+        $permissions: string[];
         /**
          * Function ID.
          */
@@ -677,7 +669,11 @@ export namespace Models {
          */
         response: string;
         /**
-         * The script stderr output string. Logs the last 4,000 characters of the execution stderr output
+         * The script stdout output string. Logs the last 4,000 characters of the execution stdout output. This will return an empty string unless the response is returned using an API key or as part of a webhook payload.
+         */
+        stdout: string;
+        /**
+         * The script stderr output string. Logs the last 4,000 characters of the execution stderr output. This will return an empty string unless the response is returned using an API key or as part of a webhook payload.
          */
         stderr: string;
         /**

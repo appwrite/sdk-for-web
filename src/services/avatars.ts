@@ -267,12 +267,11 @@ export class Avatars extends Service {
          * @param {string} name
          * @param {number} width
          * @param {number} height
-         * @param {string} color
          * @param {string} background
          * @throws {AppwriteException}
          * @returns {URL}
          */
-        getInitials(name?: string, width?: number, height?: number, color?: string, background?: string): URL {
+        getInitials(name?: string, width?: number, height?: number, background?: string): URL {
             let path = '/avatars/initials';
             let payload: Payload = {};
 
@@ -286,10 +285,6 @@ export class Avatars extends Service {
 
             if (typeof height !== 'undefined') {
                 payload['height'] = height;
-            }
-
-            if (typeof color !== 'undefined') {
-                payload['color'] = color;
             }
 
             if (typeof background !== 'undefined') {

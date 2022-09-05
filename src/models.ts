@@ -168,11 +168,11 @@ export namespace Models {
          */
         $collection: string;
         /**
-         * Document creation date in Datetime
+         * Document creation date in ISO 8601 format.
          */
         $createdAt: string;
         /**
-         * Document update date in Datetime
+         * Document update date in ISO 8601 format.
          */
         $updatedAt: string;
         /**
@@ -210,7 +210,7 @@ export namespace Models {
          */
         ip: string;
         /**
-         * Log creation date in Datetime.
+         * Log creation date in ISO 8601 format.
          */
         time: string;
         /**
@@ -279,11 +279,11 @@ export namespace Models {
          */
         $id: string;
         /**
-         * User creation date in Datetime.
+         * User creation date in ISO 8601 format.
          */
         $createdAt: string;
         /**
-         * User update date in Datetime.
+         * User update date in ISO 8601 format.
          */
         $updatedAt: string;
         /**
@@ -291,7 +291,7 @@ export namespace Models {
          */
         name: string;
         /**
-         * User registration date in Datetime.
+         * User registration date in ISO 8601 format.
          */
         registration: string;
         /**
@@ -299,7 +299,7 @@ export namespace Models {
          */
         status: boolean;
         /**
-         * Datetime of the most recent password update
+         * Password update time in ISO 8601 format.
          */
         passwordUpdate: string;
         /**
@@ -338,7 +338,7 @@ export namespace Models {
          */
         $id: string;
         /**
-         * Session creation date in Datetime
+         * Session creation date in ISO 8601 format.
          */
         $createdAt: string;
         /**
@@ -346,7 +346,7 @@ export namespace Models {
          */
         userId: string;
         /**
-         * Session expiration date in Datetime
+         * Session expiration date in ISO 8601 format.
          */
         expire: string;
         /**
@@ -362,7 +362,7 @@ export namespace Models {
          */
         providerAccessToken: string;
         /**
-         * The date of when the access token expires in Datetime format.
+         * The date of when the access token expires in ISO 8601 format.
          */
         providerAccessTokenExpiry: string;
         /**
@@ -443,7 +443,7 @@ export namespace Models {
          */
         $id: string;
         /**
-         * Token creation date in Datetime
+         * Token creation date in ISO 8601 format.
          */
         $createdAt: string;
         /**
@@ -455,7 +455,7 @@ export namespace Models {
          */
         secret: string;
         /**
-         * Token expiration date in Datetime.
+         * Token expiration date in ISO 8601 format.
          */
         expire: string;
     }
@@ -514,11 +514,11 @@ export namespace Models {
          */
         bucketId: string;
         /**
-         * File creation date in Datetime
+         * File creation date in ISO 8601 format.
          */
         $createdAt: string;
         /**
-         * File update date in Datetime
+         * File update date in ISO 8601 format.
          */
         $updatedAt: string;
         /**
@@ -559,11 +559,11 @@ export namespace Models {
          */
         $id: string;
         /**
-         * Team creation date in Datetime
+         * Team creation date in ISO 8601 format.
          */
         $createdAt: string;
         /**
-         * Team update date in Datetime
+         * Team update date in ISO 8601 format.
          */
         $updatedAt: string;
         /**
@@ -584,11 +584,11 @@ export namespace Models {
          */
         $id: string;
         /**
-         * Membership creation date in Datetime
+         * Membership creation date in ISO 8601 format.
          */
         $createdAt: string;
         /**
-         * Membership update date in Datetime
+         * Membership update date in ISO 8601 format.
          */
         $updatedAt: string;
         /**
@@ -612,11 +612,11 @@ export namespace Models {
          */
         teamName: string;
         /**
-         * Date, the user has been invited to join the team in Datetime
+         * Date, the user has been invited to join the team in ISO 8601 format.
          */
         invited: string;
         /**
-         * Date, the user has accepted the invitation to join the team in Datetime
+         * Date, the user has accepted the invitation to join the team in ISO 8601 format.
          */
         joined: string;
         /**
@@ -637,11 +637,11 @@ export namespace Models {
          */
         $id: string;
         /**
-         * Execution creation date in Datetime
+         * Execution creation date in ISO 8601 format.
          */
         $createdAt: string;
         /**
-         * Execution upate date in Datetime
+         * Execution upate date in ISO 8601 format.
          */
         $updatedAt: string;
         /**

@@ -1,12 +1,12 @@
 language: node_js
 node_js:
-  - "18.8.0"
+  - "14.16"
 
 jobs:
   include:
     - stage: NPM RC Release
       if: tag == *-RC*
-      node_js: "18.8.0"
+      node_js: "14.16"
       script:
         - npm install
         - npm run build
@@ -18,7 +18,7 @@ jobs:
         tag: next
     - stage: NPM Release
       if: tag != *-RC*
-      node_js: "18.8.0"
+      node_js: "14.16"
       script:
         - npm install
         - npm run build

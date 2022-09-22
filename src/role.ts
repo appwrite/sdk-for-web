@@ -31,8 +31,4 @@ export class Role {
     public static member(id: string): string {
         return `member:${id}`
     }
-    
-    public static status(status: string): string {
-        return `status:${status}`
-    }
 }

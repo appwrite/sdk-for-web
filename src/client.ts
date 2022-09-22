@@ -95,14 +95,16 @@ class Client {
         endpoint: 'https://HOSTNAME/v1',
         endpointRealtime: '',
         project: '',
+        key: '',
         jwt: '',
         locale: '',
+        mode: '',
     };
     headers: Headers = {
-        'x-sdk-name': 'Web',
-        'x-sdk-platform': 'client',
+        'x-sdk-name': 'Console',
+        'x-sdk-platform': 'console',
         'x-sdk-language': 'web',
-        'x-sdk-version': '10.0.0',
+        'x-sdk-version': '7.1.0',
         'X-Appwrite-Response-Format': '1.0.0',
     };
 
@@ -151,6 +153,21 @@ class Client {
     }
 
     /**
+     * Set Key
+     *
+     * Your secret API key
+     *
+     * @param value string
+     *
+     * @return {this}
+     */
+    setKey(value: string): this {
+        this.headers['X-Appwrite-Key'] = value;
+        this.config.key = value;
+        return this;
+    }
+
+    /**
      * Set JWT
      *
      * Your secret JSON Web Token
@@ -175,6 +192,19 @@ class Client {
     setLocale(value: string): this {
         this.headers['X-Appwrite-Locale'] = value;
         this.config.locale = value;
+        return this;
+    }
+
+    /**
+     * Set Mode
+     *
+     * @param value string
+     *
+     * @return {this}
+     */
+    setMode(value: string): this {
+        this.headers['X-Appwrite-Mode'] = value;
+        this.config.mode = value;
         return this;
     }
 

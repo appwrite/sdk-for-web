@@ -166,6 +166,34 @@ export class Teams extends Service {
         }
 
         /**
+         * List Team Logs
+         *
+         * Get the team activity logs list by its unique ID.
+         *
+         * @param {string} teamId
+         * @param {string[]} queries
+         * @throws {AppwriteException}
+         * @returns {Promise}
+         */
+        async listLogs(teamId: string, queries?: string[]): Promise<Models.LogList> {
+            if (typeof teamId === 'undefined') {
+                throw new AppwriteException('Missing required parameter: "teamId"');
+            }
+
+            let path = '/teams/{teamId}/logs'.replace('{teamId}', teamId);
+            let payload: Payload = {};
+
+            if (typeof queries !== 'undefined') {
+                payload['queries'] = queries;
+            }
+
+            const uri = new URL(this.client.config.endpoint + path);
+            return await this.client.call('get', uri, {
+                'content-type': 'application/json',
+            }, payload);
+        }
+
+        /**
          * List Team Memberships
          *
          * Use this endpoint to list a team's members using the team's ID. All team

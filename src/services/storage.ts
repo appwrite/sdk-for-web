@@ -11,6 +11,230 @@ export class Storage extends Service {
      }
 
         /**
+         * List buckets
+         *
+         * Get a list of all the storage buckets. You can use the query params to
+         * filter your results.
+         *
+         * @param {string[]} queries
+         * @param {string} search
+         * @throws {AppwriteException}
+         * @returns {Promise}
+         */
+        async listBuckets(queries?: string[], search?: string): Promise<Models.BucketList> {
+            let path = '/storage/buckets';
+            let payload: Payload = {};
+
+            if (typeof queries !== 'undefined') {
+                payload['queries'] = queries;
+            }
+
+            if (typeof search !== 'undefined') {
+                payload['search'] = search;
+            }
+
+            const uri = new URL(this.client.config.endpoint + path);
+            return await this.client.call('get', uri, {
+                'content-type': 'application/json',
+            }, payload);
+        }
+
+        /**
+         * Create bucket
+         *
+         * Create a new storage bucket.
+         *
+         * @param {string} bucketId
+         * @param {string} name
+         * @param {string[]} permissions
+         * @param {boolean} fileSecurity
+         * @param {boolean} enabled
+         * @param {number} maximumFileSize
+         * @param {string[]} allowedFileExtensions
+         * @param {string} compression
+         * @param {boolean} encryption
+         * @param {boolean} antivirus
+         * @throws {AppwriteException}
+         * @returns {Promise}
+         */
+        async createBucket(bucketId: string, name: string, permissions?: string[], fileSecurity?: boolean, enabled?: boolean, maximumFileSize?: number, allowedFileExtensions?: string[], compression?: string, encryption?: boolean, antivirus?: boolean): Promise<Models.Bucket> {
+            if (typeof bucketId === 'undefined') {
+                throw new AppwriteException('Missing required parameter: "bucketId"');
+            }
+
+            if (typeof name === 'undefined') {
+                throw new AppwriteException('Missing required parameter: "name"');
+            }
+
+            let path = '/storage/buckets';
+            let payload: Payload = {};
+
+            if (typeof bucketId !== 'undefined') {
+                payload['bucketId'] = bucketId;
+            }
+
+            if (typeof name !== 'undefined') {
+                payload['name'] = name;
+            }
+
+            if (typeof permissions !== 'undefined') {
+                payload['permissions'] = permissions;
+            }
+
+            if (typeof fileSecurity !== 'undefined') {
+                payload['fileSecurity'] = fileSecurity;
+            }
+
+            if (typeof enabled !== 'undefined') {
+                payload['enabled'] = enabled;
+            }
+
+            if (typeof maximumFileSize !== 'undefined') {
+                payload['maximumFileSize'] = maximumFileSize;
+            }
+
+            if (typeof allowedFileExtensions !== 'undefined') {
+                payload['allowedFileExtensions'] = allowedFileExtensions;
+            }
+
+            if (typeof compression !== 'undefined') {
+                payload['compression'] = compression;
+            }
+
+            if (typeof encryption !== 'undefined') {
+                payload['encryption'] = encryption;
+            }
+
+            if (typeof antivirus !== 'undefined') {
+                payload['antivirus'] = antivirus;
+            }
+
+            const uri = new URL(this.client.config.endpoint + path);
+            return await this.client.call('post', uri, {
+                'content-type': 'application/json',
+            }, payload);
+        }
+
+        /**
+         * Get Bucket
+         *
+         * Get a storage bucket by its unique ID. This endpoint response returns a
+         * JSON object with the storage bucket metadata.
+         *
+         * @param {string} bucketId
+         * @throws {AppwriteException}
+         * @returns {Promise}
+         */
+        async getBucket(bucketId: string): Promise<Models.Bucket> {
+            if (typeof bucketId === 'undefined') {
+                throw new AppwriteException('Missing required parameter: "bucketId"');
+            }
+
+            let path = '/storage/buckets/{bucketId}'.replace('{bucketId}', bucketId);
+            let payload: Payload = {};
+
+            const uri = new URL(this.client.config.endpoint + path);
+            return await this.client.call('get', uri, {
+                'content-type': 'application/json',
+            }, payload);
+        }
+
+        /**
+         * Update Bucket
+         *
+         * Update a storage bucket by its unique ID.
+         *
+         * @param {string} bucketId
+         * @param {string} name
+         * @param {string[]} permissions
+         * @param {boolean} fileSecurity
+         * @param {boolean} enabled
+         * @param {number} maximumFileSize
+         * @param {string[]} allowedFileExtensions
+         * @param {string} compression
+         * @param {boolean} encryption
+         * @param {boolean} antivirus
+         * @throws {AppwriteException}
+         * @returns {Promise}
+         */
+        async updateBucket(bucketId: string, name: string, permissions?: string[], fileSecurity?: boolean, enabled?: boolean, maximumFileSize?: number, allowedFileExtensions?: string[], compression?: string, encryption?: boolean, antivirus?: boolean): Promise<Models.Bucket> {
+            if (typeof bucketId === 'undefined') {
+                throw new AppwriteException('Missing required parameter: "bucketId"');
+            }
+
+            if (typeof name === 'undefined') {
+                throw new AppwriteException('Missing required parameter: "name"');
+            }
+
+            let path = '/storage/buckets/{bucketId}'.replace('{bucketId}', bucketId);
+            let payload: Payload = {};
+
+            if (typeof name !== 'undefined') {
+                payload['name'] = name;
+            }
+
+            if (typeof permissions !== 'undefined') {
+                payload['permissions'] = permissions;
+            }
+
+            if (typeof fileSecurity !== 'undefined') {
+                payload['fileSecurity'] = fileSecurity;
+            }
+
+            if (typeof enabled !== 'undefined') {
+                payload['enabled'] = enabled;
+            }
+
+            if (typeof maximumFileSize !== 'undefined') {
+                payload['maximumFileSize'] = maximumFileSize;
+            }
+
+            if (typeof allowedFileExtensions !== 'undefined') {
+                payload['allowedFileExtensions'] = allowedFileExtensions;
+            }
+
+            if (typeof compression !== 'undefined') {
+                payload['compression'] = compression;
+            }
+
+            if (typeof encryption !== 'undefined') {
+                payload['encryption'] = encryption;
+            }
+
+            if (typeof antivirus !== 'undefined') {
+                payload['antivirus'] = antivirus;
+            }
+
+            const uri = new URL(this.client.config.endpoint + path);
+            return await this.client.call('put', uri, {
+                'content-type': 'application/json',
+            }, payload);
+        }
+
+        /**
+         * Delete Bucket
+         *
+         * Delete a storage bucket by its unique ID.
+         *
+         * @param {string} bucketId
+         * @throws {AppwriteException}
+         * @returns {Promise}
+         */
+        async deleteBucket(bucketId: string): Promise<{}> {
+            if (typeof bucketId === 'undefined') {
+                throw new AppwriteException('Missing required parameter: "bucketId"');
+            }
+
+            let path = '/storage/buckets/{bucketId}'.replace('{bucketId}', bucketId);
+            let payload: Payload = {};
+
+            const uri = new URL(this.client.config.endpoint + path);
+            return await this.client.call('delete', uri, {
+                'content-type': 'application/json',
+            }, payload);
+        }
+
+        /**
          * List Files
          *
          * Get a list of all the user files. You can use the query params to filter
@@ -415,5 +639,54 @@ export class Storage extends Service {
                 uri.searchParams.append(key, value);
             }
             return uri;
+        }
+
+        /**
+         * Get usage stats for storage
+         *
+         *
+         * @param {string} range
+         * @throws {AppwriteException}
+         * @returns {Promise}
+         */
+        async getUsage(range?: string): Promise<Models.UsageStorage> {
+            let path = '/storage/usage';
+            let payload: Payload = {};
+
+            if (typeof range !== 'undefined') {
+                payload['range'] = range;
+            }
+
+            const uri = new URL(this.client.config.endpoint + path);
+            return await this.client.call('get', uri, {
+                'content-type': 'application/json',
+            }, payload);
+        }
+
+        /**
+         * Get usage stats for a storage bucket
+         *
+         *
+         * @param {string} bucketId
+         * @param {string} range
+         * @throws {AppwriteException}
+         * @returns {Promise}
+         */
+        async getBucketUsage(bucketId: string, range?: string): Promise<Models.UsageBuckets> {
+            if (typeof bucketId === 'undefined') {
+                throw new AppwriteException('Missing required parameter: "bucketId"');
+            }
+
+            let path = '/storage/{bucketId}/usage'.replace('{bucketId}', bucketId);
+            let payload: Payload = {};
+
+            if (typeof range !== 'undefined') {
+                payload['range'] = range;
+            }
+
+            const uri = new URL(this.client.config.endpoint + path);
+            return await this.client.call('get', uri, {
+                'content-type': 'application/json',
+            }, payload);
         }
 };

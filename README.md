@@ -28,7 +28,7 @@ If you're using a bundler (like [Rollup](https://rollupjs.org/) or [webpack](htt
 import { Client, Account } from "appwrite";
 ```
 
-### CDN
+
 
 To install with a CDN (content delivery network) add the following scripts to the bottom of your <body> tag, but before you use any Appwrite services:
 
@@ -69,7 +69,7 @@ account.create(ID.unique(), 'me@example.com', 'password', 'Jane Doe')
         console.log(response);
     }, function (error) {
         console.log(error);
-    });
+    })
 
 ```
 

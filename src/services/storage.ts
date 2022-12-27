@@ -14,8 +14,7 @@ export class Storage extends Service {
          * List Files
          *
          * Get a list of all the user files. You can use the query params to filter
-         * your results. On admin mode, this endpoint will return a list of all of the
-         * project's files. [Learn more about different API modes](/docs/admin).
+         * your results.
          *
          * @param {string} bucketId
          * @param {string[]} queries

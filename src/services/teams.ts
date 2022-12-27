@@ -15,9 +15,6 @@ export class Teams extends Service {
          *
          * Get a list of all the teams in which the current user is a member. You can
          * use the parameters to filter your results.
-         * 
-         * In admin mode, this endpoint returns a list of all the teams in the current
-         * project. [Learn more about different API modes](/docs/admin).
          *
          * @param {string[]} queries
          * @param {string} search
@@ -279,7 +276,7 @@ export class Teams extends Service {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async getMembership(teamId: string, membershipId: string): Promise<Models.MembershipList> {
+        async getMembership(teamId: string, membershipId: string): Promise<Models.Membership> {
             if (typeof teamId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "teamId"');
             }

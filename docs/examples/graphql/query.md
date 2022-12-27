@@ -1,15 +1,15 @@
-import { Client, Locale } from "appwrite";
+import { Client, Graphql } from "appwrite";
 
 const client = new Client();
 
-const locale = new Locale(client);
+const graphql = new Graphql(client);
 
 client
     .setEndpoint('https://[HOSTNAME_OR_IP]/v1') // Your API Endpoint
     .setProject('5df5acd0d48c2') // Your project ID
 ;
 
-const promise = locale.getCurrencies();
+const promise = graphql.query({});
 
 promise.then(function (response) {
     console.log(response); // Success

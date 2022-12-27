@@ -3,6 +3,7 @@ export { Account } from './services/account';
 export { Avatars } from './services/avatars';
 export { Databases } from './services/databases';
 export { Functions } from './services/functions';
+export { Graphql } from './services/graphql';
 export { Locale } from './services/locale';
 export { Storage } from './services/storage';
 export { Teams } from './services/teams';

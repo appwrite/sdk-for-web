@@ -107,10 +107,11 @@ export class Databases extends Service {
          * @param {string} databaseId
          * @param {string} collectionId
          * @param {string} documentId
+         * @param {string[]} queries
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async getDocument<Document extends Models.Document>(databaseId: string, collectionId: string, documentId: string): Promise<Document> {
+        async getDocument<Document extends Models.Document>(databaseId: string, collectionId: string, documentId: string, queries?: string[]): Promise<Document> {
             if (typeof databaseId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "databaseId"');
             }
@@ -125,6 +126,10 @@ export class Databases extends Service {
 
             let path = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{documentId}', documentId);
             let payload: Payload = {};
+
+            if (typeof queries !== 'undefined') {
+                payload['queries'] = queries;
+            }
 
             const uri = new URL(this.client.config.endpoint + path);
             return await this.client.call('get', uri, {

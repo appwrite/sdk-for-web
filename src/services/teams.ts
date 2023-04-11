@@ -21,7 +21,7 @@ export class Teams extends Service {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async list(queries?: string[], search?: string): Promise<Models.TeamList> {
+        async list<Preferences extends Models.Preferences>(queries?: string[], search?: string): Promise<Models.TeamList<Preferences>> {
             let path = '/teams';
             let payload: Payload = {};
 
@@ -52,7 +52,7 @@ export class Teams extends Service {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async create(teamId: string, name: string, roles?: string[]): Promise<Models.Team> {
+        async create<Preferences extends Models.Preferences>(teamId: string, name: string, roles?: string[]): Promise<Models.Team<Preferences>> {
             if (typeof teamId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "teamId"');
             }
@@ -91,7 +91,7 @@ export class Teams extends Service {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async get(teamId: string): Promise<Models.Team> {
+        async get<Preferences extends Models.Preferences>(teamId: string): Promise<Models.Team<Preferences>> {
             if (typeof teamId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "teamId"');
             }
@@ -106,17 +106,16 @@ export class Teams extends Service {
         }
 
         /**
-         * Update Team
+         * Update Name
          *
-         * Update a team using its ID. Only members with the owner role can update the
-         * team.
+         * Update the team's name by its unique ID.
          *
          * @param {string} teamId
          * @param {string} name
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async update(teamId: string, name: string): Promise<Models.Team> {
+        async updateName<Preferences extends Models.Preferences>(teamId: string, name: string): Promise<Models.Team<Preferences>> {
             if (typeof teamId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "teamId"');
             }
@@ -199,37 +198,41 @@ export class Teams extends Service {
         /**
          * Create Team Membership
          *
-         * Invite a new member to join your team. If initiated from the client SDK, an
-         * email with a link to join the team will be sent to the member's email
-         * address and an account will be created for them should they not be signed
-         * up already. If initiated from server-side SDKs, the new member will
-         * automatically be added to the team.
+         * Invite a new member to join your team. Provide an ID for existing users, or
+         * invite unregistered users using an email or phone number. If initiated from
+         * a Client SDK, Appwrite will send an email or sms with a link to join the
+         * team to the invited user, and an account will be created for them if one
+         * doesn't exist. If initiated from a Server SDK, the new member will be added
+         * automatically to the team.
          * 
-         * Use the 'url' parameter to redirect the user from the invitation email back
-         * to your app. When the user is redirected, use the [Update Team Membership
+         * You only need to provide one of a user ID, email, or phone number. Appwrite
+         * will prioritize accepting the user ID > email > phone number if you provide
+         * more than one of these parameters.
+         * 
+         * Use the `url` parameter to redirect the user from the invitation email to
+         * your app. After the user is redirected, use the [Update Team Membership
          * Status](/docs/client/teams#teamsUpdateMembershipStatus) endpoint to allow
          * the user to accept the invitation to the team. 
          * 
          * Please note that to avoid a [Redirect
          * Attack](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md)
-         * the only valid redirect URL's are the once from domains you have set when
-         * adding your platforms in the console interface.
+         * Appwrite will accept the only redirect URLs under the domains you have
+         * added as a platform on the Appwrite Console.
+         * 
          *
          * @param {string} teamId
-         * @param {string} email
          * @param {string[]} roles
          * @param {string} url
+         * @param {string} email
+         * @param {string} userId
+         * @param {string} phone
          * @param {string} name
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async createMembership(teamId: string, email: string, roles: string[], url: string, name?: string): Promise<Models.Membership> {
+        async createMembership(teamId: string, roles: string[], url: string, email?: string, userId?: string, phone?: string, name?: string): Promise<Models.Membership> {
             if (typeof teamId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "teamId"');
-            }
-
-            if (typeof email === 'undefined') {
-                throw new AppwriteException('Missing required parameter: "email"');
             }
 
             if (typeof roles === 'undefined') {
@@ -245,6 +248,14 @@ export class Teams extends Service {
 
             if (typeof email !== 'undefined') {
                 payload['email'] = email;
+            }
+
+            if (typeof userId !== 'undefined') {
+                payload['userId'] = userId;
+            }
+
+            if (typeof phone !== 'undefined') {
+                payload['phone'] = phone;
             }
 
             if (typeof roles !== 'undefined') {
@@ -411,6 +422,65 @@ export class Teams extends Service {
 
             const uri = new URL(this.client.config.endpoint + path);
             return await this.client.call('patch', uri, {
+                'content-type': 'application/json',
+            }, payload);
+        }
+
+        /**
+         * Get Team Preferences
+         *
+         * Get the team's shared preferences by its unique ID. If a preference doesn't
+         * need to be shared by all team members, prefer storing them in [user
+         * preferences](/docs/client/account#accountGetPrefs).
+         *
+         * @param {string} teamId
+         * @throws {AppwriteException}
+         * @returns {Promise}
+         */
+        async getPrefs<Preferences extends Models.Preferences>(teamId: string): Promise<Preferences> {
+            if (typeof teamId === 'undefined') {
+                throw new AppwriteException('Missing required parameter: "teamId"');
+            }
+
+            let path = '/teams/{teamId}/prefs'.replace('{teamId}', teamId);
+            let payload: Payload = {};
+
+            const uri = new URL(this.client.config.endpoint + path);
+            return await this.client.call('get', uri, {
+                'content-type': 'application/json',
+            }, payload);
+        }
+
+        /**
+         * Update Preferences
+         *
+         * Update the team's preferences by its unique ID. The object you pass is
+         * stored as is and replaces any previous value. The maximum allowed prefs
+         * size is 64kB and throws an error if exceeded.
+         *
+         * @param {string} teamId
+         * @param {object} prefs
+         * @throws {AppwriteException}
+         * @returns {Promise}
+         */
+        async updatePrefs<Preferences extends Models.Preferences>(teamId: string, prefs: object): Promise<Preferences> {
+            if (typeof teamId === 'undefined') {
+                throw new AppwriteException('Missing required parameter: "teamId"');
+            }
+
+            if (typeof prefs === 'undefined') {
+                throw new AppwriteException('Missing required parameter: "prefs"');
+            }
+
+            let path = '/teams/{teamId}/prefs'.replace('{teamId}', teamId);
+            let payload: Payload = {};
+
+            if (typeof prefs !== 'undefined') {
+                payload['prefs'] = prefs;
+            }
+
+            const uri = new URL(this.client.config.endpoint + path);
+            return await this.client.call('put', uri, {
                 'content-type': 'application/json',
             }, payload);
         }

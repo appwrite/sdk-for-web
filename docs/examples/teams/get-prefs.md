@@ -9,7 +9,7 @@ client
     .setProject('5df5acd0d48c2') // Your project ID
 ;
 
-const promise = teams.update('[TEAM_ID]', '[NAME]');
+const promise = teams.getPrefs('[TEAM_ID]');
 
 promise.then(function (response) {
     console.log(response); // Success

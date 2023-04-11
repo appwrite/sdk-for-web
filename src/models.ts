@@ -54,7 +54,7 @@ export namespace Models {
     /**
      * Teams List
      */
-    export type TeamList = {
+    export type TeamList<Preferences extends Models.Preferences> = {
         /**
          * Total number of teams documents that matched your query.
          */
@@ -62,7 +62,7 @@ export namespace Models {
         /**
          * List of teams.
          */
-        teams: Team[];
+        teams: Team<Preferences>[];
     }
     /**
      * Memberships List
@@ -275,9 +275,9 @@ export namespace Models {
         countryName: string;
     }
     /**
-     * Account
+     * User
      */
-    export type Account<Preferences extends Models.Preferences> = {
+    export type User<Preferences extends Models.Preferences> = {
         /**
          * User ID.
          */
@@ -294,6 +294,18 @@ export namespace Models {
          * User name.
          */
         name: string;
+        /**
+         * Hashed user password.
+         */
+        password?: string;
+        /**
+         * Password hashing algorithm.
+         */
+        hash?: string;
+        /**
+         * Password hashing algorithm configuration.
+         */
+        hashOptions?: object;
         /**
          * User registration date in ISO 8601 format.
          */
@@ -326,6 +338,109 @@ export namespace Models {
          * User preferences as a key-value object
          */
         prefs: Preferences;
+    }
+    /**
+     * AlgoMD5
+     */
+    export type AlgoMd5 = {
+        /**
+         * Algo type.
+         */
+        type: string;
+    }
+    /**
+     * AlgoSHA
+     */
+    export type AlgoSha = {
+        /**
+         * Algo type.
+         */
+        type: string;
+    }
+    /**
+     * AlgoPHPass
+     */
+    export type AlgoPhpass = {
+        /**
+         * Algo type.
+         */
+        type: string;
+    }
+    /**
+     * AlgoBcrypt
+     */
+    export type AlgoBcrypt = {
+        /**
+         * Algo type.
+         */
+        type: string;
+    }
+    /**
+     * AlgoScrypt
+     */
+    export type AlgoScrypt = {
+        /**
+         * Algo type.
+         */
+        type: string;
+        /**
+         * CPU complexity of computed hash.
+         */
+        costCpu: number;
+        /**
+         * Memory complexity of computed hash.
+         */
+        costMemory: number;
+        /**
+         * Parallelization of computed hash.
+         */
+        costParallel: number;
+        /**
+         * Length used to compute hash.
+         */
+        length: number;
+    }
+    /**
+     * AlgoScryptModified
+     */
+    export type AlgoScryptModified = {
+        /**
+         * Algo type.
+         */
+        type: string;
+        /**
+         * Salt used to compute hash.
+         */
+        salt: string;
+        /**
+         * Separator used to compute hash.
+         */
+        saltSeparator: string;
+        /**
+         * Key used to compute hash.
+         */
+        signerKey: string;
+    }
+    /**
+     * AlgoArgon2
+     */
+    export type AlgoArgon2 = {
+        /**
+         * Algo type.
+         */
+        type: string;
+        /**
+         * Memory used to compute hash.
+         */
+        memoryCost: number;
+        /**
+         * Amount of time consumed to compute hash
+         */
+        timeCost: number;
+        /**
+         * Number of threads used to compute hash.
+         */
+        threads: number;
     }
     /**
      * Preferences
@@ -497,7 +612,7 @@ export namespace Models {
          */
         continent: string;
         /**
-         * True if country is part of the Europian Union.
+         * True if country is part of the European Union.
          */
         eu: boolean;
         /**
@@ -557,7 +672,7 @@ export namespace Models {
     /**
      * Team
      */
-    export type Team = {
+    export type Team<Preferences extends Models.Preferences> = {
         /**
          * Team ID.
          */
@@ -578,6 +693,10 @@ export namespace Models {
          * Total number of team members.
          */
         total: number;
+        /**
+         * Team preferences as a key-value object
+         */
+        prefs: Preferences;
     }
     /**
      * Membership

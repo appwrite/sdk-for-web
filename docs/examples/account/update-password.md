@@ -9,7 +9,7 @@ client
     .setProject('5df5acd0d48c2') // Your project ID
 ;
 
-const promise = account.updatePassword('password');
+const promise = account.updatePassword('');
 
 promise.then(function (response) {
     console.log(response); // Success

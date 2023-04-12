@@ -9,7 +9,7 @@ client
     .setProject('5df5acd0d48c2') // Your project ID
 ;
 
-const promise = teams.createMembership('[TEAM_ID]', 'email@example.com', [], 'https://example.com');
+const promise = teams.createMembership('[TEAM_ID]', [], 'https://example.com');
 
 promise.then(function (response) {
     console.log(response); // Success

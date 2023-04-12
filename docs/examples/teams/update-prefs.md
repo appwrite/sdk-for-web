@@ -1,15 +1,15 @@
-import { Client, Account } from "appwrite";
+import { Client, Teams } from "appwrite";
 
 const client = new Client();
 
-const account = new Account(client);
+const teams = new Teams(client);
 
 client
     .setEndpoint('https://[HOSTNAME_OR_IP]/v1') // Your API Endpoint
     .setProject('5df5acd0d48c2') // Your project ID
 ;
 
-const promise = account.create('[USER_ID]', 'email@example.com', '');
+const promise = teams.updatePrefs('[TEAM_ID]', {});
 
 promise.then(function (response) {
     console.log(response); // Success

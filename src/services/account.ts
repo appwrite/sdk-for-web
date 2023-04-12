@@ -18,7 +18,7 @@ export class Account extends Service {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async get<Preferences extends Models.Preferences>(): Promise<Models.Account<Preferences>> {
+        async get<Preferences extends Models.Preferences>(): Promise<Models.User<Preferences>> {
             let path = '/account';
             let payload: Payload = {};
 
@@ -45,7 +45,7 @@ export class Account extends Service {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async create<Preferences extends Models.Preferences>(userId: string, email: string, password: string, name?: string): Promise<Models.Account<Preferences>> {
+        async create<Preferences extends Models.Preferences>(userId: string, email: string, password: string, name?: string): Promise<Models.User<Preferences>> {
             if (typeof userId === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "userId"');
             }
@@ -100,7 +100,7 @@ export class Account extends Service {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async updateEmail<Preferences extends Models.Preferences>(email: string, password: string): Promise<Models.Account<Preferences>> {
+        async updateEmail<Preferences extends Models.Preferences>(email: string, password: string): Promise<Models.User<Preferences>> {
             if (typeof email === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "email"');
             }
@@ -181,7 +181,7 @@ export class Account extends Service {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async updateName<Preferences extends Models.Preferences>(name: string): Promise<Models.Account<Preferences>> {
+        async updateName<Preferences extends Models.Preferences>(name: string): Promise<Models.User<Preferences>> {
             if (typeof name === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "name"');
             }
@@ -211,7 +211,7 @@ export class Account extends Service {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async updatePassword<Preferences extends Models.Preferences>(password: string, oldPassword?: string): Promise<Models.Account<Preferences>> {
+        async updatePassword<Preferences extends Models.Preferences>(password: string, oldPassword?: string): Promise<Models.User<Preferences>> {
             if (typeof password === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "password"');
             }
@@ -247,7 +247,7 @@ export class Account extends Service {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async updatePhone<Preferences extends Models.Preferences>(phone: string, password: string): Promise<Models.Account<Preferences>> {
+        async updatePhone<Preferences extends Models.Preferences>(phone: string, password: string): Promise<Models.User<Preferences>> {
             if (typeof phone === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "phone"');
             }
@@ -298,11 +298,11 @@ export class Account extends Service {
          * stored as is, and replaces any previous value. The maximum allowed prefs
          * size is 64kB and throws error if exceeded.
          *
-         * @param {object} prefs
+         * @param {Partial<Preferences>} prefs
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async updatePrefs<Preferences extends Models.Preferences>(prefs: object): Promise<Models.Account<Preferences>> {
+        async updatePrefs<Preferences extends Models.Preferences>(prefs: Partial<Preferences>): Promise<Models.User<Preferences>> {
             if (typeof prefs === 'undefined') {
                 throw new AppwriteException('Missing required parameter: "prefs"');
             }
@@ -493,7 +493,7 @@ export class Account extends Service {
          * password combination. This route will create a new session for the user.
          * 
          * A user is limited to 10 active sessions at a time by default. [Learn more
-         * about session limits](/docs/authentication#limits).
+         * about session limits](/docs/authentication-security#limits).
          *
          * @param {string} email
          * @param {string} password
@@ -542,7 +542,7 @@ export class Account extends Service {
          * your Appwrite instance by default.
          * 
          * A user is limited to 10 active sessions at a time by default. [Learn more
-         * about session limits](/docs/authentication#limits).
+         * about session limits](/docs/authentication-security#limits).
          *
          * @param {string} userId
          * @param {string} email
@@ -642,7 +642,7 @@ export class Account extends Service {
          * user.
          * 
          * A user is limited to 10 active sessions at a time by default. [Learn more
-         * about session limits](/docs/authentication#limits).
+         * about session limits](/docs/authentication-security#limits).
          * 
          *
          * @param {string} provider
@@ -697,7 +697,7 @@ export class Account extends Service {
          * is valid for 15 minutes.
          * 
          * A user is limited to 10 active sessions at a time by default. [Learn more
-         * about session limits](/docs/authentication#limits).
+         * about session limits](/docs/authentication-security#limits).
          *
          * @param {string} userId
          * @param {string} phone
@@ -855,7 +855,7 @@ export class Account extends Service {
          * @throws {AppwriteException}
          * @returns {Promise}
          */
-        async updateStatus<Preferences extends Models.Preferences>(): Promise<Models.Account<Preferences>> {
+        async updateStatus<Preferences extends Models.Preferences>(): Promise<Models.User<Preferences>> {
             let path = '/account/status';
             let payload: Payload = {};
 

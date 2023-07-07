@@ -28,5 +28,5 @@ body:
     attributes:
       label: "🏢 Have you read the Code of Conduct?"
       options:
-        - label: "I have read the [Code of Conduct](https://github.com/appwrite/appwrite/blob/HEAD/CODE_OF_CONDUCT.md)"
+        - label: "I have read the [Code of Conduct](https://github.com/appwrite/.github/blob/main/CODE_OF_CONDUCT.md)"
           required: true

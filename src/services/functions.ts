@@ -27,8 +27,8 @@ export class Functions extends Service {
             throw new AppwriteException('Missing required parameter: "functionId"');
         }
 
-        let path = '/functions/{functionId}/executions'.replace('{functionId}', functionId);
-        let payload: Payload = {};
+        const apiPath = '/functions/{functionId}/executions'.replace('{functionId}', functionId);
+        const payload: Payload = {};
 
         if (typeof queries !== 'undefined') {
             payload['queries'] = queries;
@@ -38,7 +38,7 @@ export class Functions extends Service {
             payload['search'] = search;
         }
 
-        const uri = new URL(this.client.config.endpoint + path);
+        const uri = new URL(this.client.config.endpoint + apiPath);
         return await this.client.call('get', uri, {
             'content-type': 'application/json',
         }, payload);
@@ -53,28 +53,43 @@ export class Functions extends Service {
      * function execution process will start asynchronously.
      *
      * @param {string} functionId
-     * @param {string} data
+     * @param {string} body
      * @param {boolean} async
+     * @param {string} xpath
+     * @param {string} method
+     * @param {object} headers
      * @throws {AppwriteException}
      * @returns {Promise}
     */
-    async createExecution(functionId: string, data?: string, async?: boolean): Promise<Models.Execution> {
+    async createExecution(functionId: string, body?: string, async?: boolean, xpath?: string, method?: string, headers?: object): Promise<Models.Execution> {
         if (typeof functionId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "functionId"');
         }
 
-        let path = '/functions/{functionId}/executions'.replace('{functionId}', functionId);
-        let payload: Payload = {};
+        const apiPath = '/functions/{functionId}/executions'.replace('{functionId}', functionId);
+        const payload: Payload = {};
 
-        if (typeof data !== 'undefined') {
-            payload['data'] = data;
+        if (typeof body !== 'undefined') {
+            payload['body'] = body;
         }
 
         if (typeof async !== 'undefined') {
             payload['async'] = async;
         }
 
-        const uri = new URL(this.client.config.endpoint + path);
+        if (typeof xpath !== 'undefined') {
+            payload['path'] = xpath;
+        }
+
+        if (typeof method !== 'undefined') {
+            payload['method'] = method;
+        }
+
+        if (typeof headers !== 'undefined') {
+            payload['headers'] = headers;
+        }
+
+        const uri = new URL(this.client.config.endpoint + apiPath);
         return await this.client.call('post', uri, {
             'content-type': 'application/json',
         }, payload);
@@ -99,10 +114,10 @@ export class Functions extends Service {
             throw new AppwriteException('Missing required parameter: "executionId"');
         }
 
-        let path = '/functions/{functionId}/executions/{executionId}'.replace('{functionId}', functionId).replace('{executionId}', executionId);
-        let payload: Payload = {};
+        const apiPath = '/functions/{functionId}/executions/{executionId}'.replace('{functionId}', functionId).replace('{executionId}', executionId);
+        const payload: Payload = {};
 
-        const uri = new URL(this.client.config.endpoint + path);
+        const uri = new URL(this.client.config.endpoint + apiPath);
         return await this.client.call('get', uri, {
             'content-type': 'application/json',
         }, payload);

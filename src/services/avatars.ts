@@ -35,8 +35,8 @@ export class Avatars extends Service {
             throw new AppwriteException('Missing required parameter: "code"');
         }
 
-        let path = '/avatars/browsers/{code}'.replace('{code}', code);
-        let payload: Payload = {};
+        const apiPath = '/avatars/browsers/{code}'.replace('{code}', code);
+        const payload: Payload = {};
 
         if (typeof width !== 'undefined') {
             payload['width'] = width;
@@ -50,7 +50,7 @@ export class Avatars extends Service {
             payload['quality'] = quality;
         }
 
-        const uri = new URL(this.client.config.endpoint + path);
+        const uri = new URL(this.client.config.endpoint + apiPath);
         payload['project'] = this.client.config.project;
 
 
@@ -85,8 +85,8 @@ export class Avatars extends Service {
             throw new AppwriteException('Missing required parameter: "code"');
         }
 
-        let path = '/avatars/credit-cards/{code}'.replace('{code}', code);
-        let payload: Payload = {};
+        const apiPath = '/avatars/credit-cards/{code}'.replace('{code}', code);
+        const payload: Payload = {};
 
         if (typeof width !== 'undefined') {
             payload['width'] = width;
@@ -100,7 +100,7 @@ export class Avatars extends Service {
             payload['quality'] = quality;
         }
 
-        const uri = new URL(this.client.config.endpoint + path);
+        const uri = new URL(this.client.config.endpoint + apiPath);
         payload['project'] = this.client.config.project;
 
 
@@ -126,14 +126,14 @@ export class Avatars extends Service {
             throw new AppwriteException('Missing required parameter: "url"');
         }
 
-        let path = '/avatars/favicon';
-        let payload: Payload = {};
+        const apiPath = '/avatars/favicon';
+        const payload: Payload = {};
 
         if (typeof url !== 'undefined') {
             payload['url'] = url;
         }
 
-        const uri = new URL(this.client.config.endpoint + path);
+        const uri = new URL(this.client.config.endpoint + apiPath);
         payload['project'] = this.client.config.project;
 
 
@@ -169,8 +169,8 @@ export class Avatars extends Service {
             throw new AppwriteException('Missing required parameter: "code"');
         }
 
-        let path = '/avatars/flags/{code}'.replace('{code}', code);
-        let payload: Payload = {};
+        const apiPath = '/avatars/flags/{code}'.replace('{code}', code);
+        const payload: Payload = {};
 
         if (typeof width !== 'undefined') {
             payload['width'] = width;
@@ -184,7 +184,7 @@ export class Avatars extends Service {
             payload['quality'] = quality;
         }
 
-        const uri = new URL(this.client.config.endpoint + path);
+        const uri = new URL(this.client.config.endpoint + apiPath);
         payload['project'] = this.client.config.project;
 
 
@@ -219,8 +219,8 @@ export class Avatars extends Service {
             throw new AppwriteException('Missing required parameter: "url"');
         }
 
-        let path = '/avatars/image';
-        let payload: Payload = {};
+        const apiPath = '/avatars/image';
+        const payload: Payload = {};
 
         if (typeof url !== 'undefined') {
             payload['url'] = url;
@@ -234,7 +234,7 @@ export class Avatars extends Service {
             payload['height'] = height;
         }
 
-        const uri = new URL(this.client.config.endpoint + path);
+        const uri = new URL(this.client.config.endpoint + apiPath);
         payload['project'] = this.client.config.project;
 
 
@@ -272,8 +272,8 @@ export class Avatars extends Service {
      * @returns {URL}
     */
     getInitials(name?: string, width?: number, height?: number, background?: string): URL {
-        let path = '/avatars/initials';
-        let payload: Payload = {};
+        const apiPath = '/avatars/initials';
+        const payload: Payload = {};
 
         if (typeof name !== 'undefined') {
             payload['name'] = name;
@@ -291,7 +291,7 @@ export class Avatars extends Service {
             payload['background'] = background;
         }
 
-        const uri = new URL(this.client.config.endpoint + path);
+        const uri = new URL(this.client.config.endpoint + apiPath);
         payload['project'] = this.client.config.project;
 
 
@@ -320,8 +320,8 @@ export class Avatars extends Service {
             throw new AppwriteException('Missing required parameter: "text"');
         }
 
-        let path = '/avatars/qr';
-        let payload: Payload = {};
+        const apiPath = '/avatars/qr';
+        const payload: Payload = {};
 
         if (typeof text !== 'undefined') {
             payload['text'] = text;
@@ -339,7 +339,7 @@ export class Avatars extends Service {
             payload['download'] = download;
         }
 
-        const uri = new URL(this.client.config.endpoint + path);
+        const uri = new URL(this.client.config.endpoint + apiPath);
         payload['project'] = this.client.config.project;
 
 

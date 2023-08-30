@@ -9,7 +9,7 @@ client
     .setProject('5df5acd0d48c2') // Your project ID
 ;
 
-const promise = teams.updateMembershipRoles('[TEAM_ID]', '[MEMBERSHIP_ID]', []);
+const promise = teams.updateMembership('[TEAM_ID]', '[MEMBERSHIP_ID]', []);
 
 promise.then(function (response) {
     console.log(response); // Success

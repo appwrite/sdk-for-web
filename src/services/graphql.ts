@@ -24,14 +24,14 @@ export class Graphql extends Service {
             throw new AppwriteException('Missing required parameter: "query"');
         }
 
-        let path = '/graphql';
-        let payload: Payload = {};
+        const apiPath = '/graphql';
+        const payload: Payload = {};
 
         if (typeof query !== 'undefined') {
             payload['query'] = query;
         }
 
-        const uri = new URL(this.client.config.endpoint + path);
+        const uri = new URL(this.client.config.endpoint + apiPath);
         return await this.client.call('post', uri, {
             'x-sdk-graphql': 'true',
             'content-type': 'application/json',
@@ -52,14 +52,14 @@ export class Graphql extends Service {
             throw new AppwriteException('Missing required parameter: "query"');
         }
 
-        let path = '/graphql/mutation';
-        let payload: Payload = {};
+        const apiPath = '/graphql/mutation';
+        const payload: Payload = {};
 
         if (typeof query !== 'undefined') {
             payload['query'] = query;
         }
 
-        const uri = new URL(this.client.config.endpoint + path);
+        const uri = new URL(this.client.config.endpoint + apiPath);
         return await this.client.call('post', uri, {
             'x-sdk-graphql': 'true',
             'content-type': 'application/json',

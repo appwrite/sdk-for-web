@@ -91,32 +91,6 @@ export namespace Models {
         memberships: Membership[];
     }
     /**
-     * Provider Repositories List
-     */
-    export type ProviderRepositoryList = {
-        /**
-         * Total number of providerRepositories documents that matched your query.
-         */
-        total: number;
-        /**
-         * List of providerRepositories.
-         */
-        providerRepositories: ProviderRepository[];
-    }
-    /**
-     * Branches List
-     */
-    export type BranchList = {
-        /**
-         * Total number of branches documents that matched your query.
-         */
-        total: number;
-        /**
-         * List of branches.
-         */
-        branches: Branch[];
-    }
-    /**
      * Executions List
      */
     export type ExecutionList = {
@@ -206,19 +180,6 @@ export namespace Models {
          * List of localeCodes.
          */
         localeCodes: LocaleCode[];
-    }
-    /**
-     * Migrations Firebase Projects List
-     */
-    export type FirebaseProjectList = {
-        /**
-         * Total number of projects documents that matched your query.
-         */
-        total: number;
-        /**
-         * List of projects.
-         */
-        projects: FirebaseProject[];
     }
     /**
      * Document
@@ -883,57 +844,6 @@ export namespace Models {
         roles: string[];
     }
     /**
-     * ProviderRepository
-     */
-    export type ProviderRepository = {
-        /**
-         * VCS (Version Control System) repository ID.
-         */
-        id: string;
-        /**
-         * VCS (Version Control System) repository name.
-         */
-        name: string;
-        /**
-         * VCS (Version Control System) organization name
-         */
-        organization: string;
-        /**
-         * VCS (Version Control System) provider name.
-         */
-        provider: string;
-        /**
-         * Is VCS (Version Control System) repository private?
-         */
-        private: boolean;
-        /**
-         * Auto-detected runtime suggestion. Empty if getting response of getRuntime().
-         */
-        runtime: string;
-        /**
-         * Last commit date in ISO 8601 format.
-         */
-        pushedAt: string;
-    }
-    /**
-     * Detection
-     */
-    export type Detection = {
-        /**
-         * Runtime
-         */
-        runtime: string;
-    }
-    /**
-     * Branch
-     */
-    export type Branch = {
-        /**
-         * Branch Name.
-         */
-        name: string;
-    }
-    /**
      * Execution
      */
     export type Execution = {
@@ -1107,18 +1017,5 @@ export namespace Models {
          * Header value.
          */
         value: string;
-    }
-    /**
-     * MigrationFirebaseProject
-     */
-    export type FirebaseProject = {
-        /**
-         * Project ID.
-         */
-        projectId: string;
-        /**
-         * Project display name.
-         */
-        displayName: string;
     }
 }

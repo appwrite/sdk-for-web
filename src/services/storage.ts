@@ -111,57 +111,47 @@ export class Storage extends Service {
 
         if (size <= Service.CHUNK_SIZE) {
             return await this.client.call('post', uri, {
-
                 'content-type': 'multipart/form-data',
             }, payload);
         }
-        let id = undefined;
-        let response = undefined;
 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'multipart/form-data',
         }
 
-        let counter = 0;
-        const totalCounters = Math.ceil(size / Service.CHUNK_SIZE);
+        let offset = 0;
+        let response = undefined;
         if(fileId != 'unique()') {
             try {
                 response = await this.client.call('GET', new URL(this.client.config.endpoint + apiPath + '/' + fileId), apiHeaders);
-                counter = response.chunksUploaded;
+                offset = response.chunksUploaded * Service.CHUNK_SIZE;
             } catch(e) {
             }
         }
 
-        for (counter; counter < totalCounters; counter++) {
-            const start = (counter * Service.CHUNK_SIZE);
-            const end = Math.min((((counter * Service.CHUNK_SIZE) + Service.CHUNK_SIZE) - 1), size);
+        while (offset < size) {
+            let end = Math.min(offset + Service.CHUNK_SIZE - 1, size - 1);
 
-            apiHeaders['content-range'] = 'bytes ' + start + '-' + end + '/' + size
-
-            if (id) {
-                apiHeaders['x-appwrite-id'] = id;
+            apiHeaders['content-range'] = 'bytes ' + offset + '-' + end + '/' + size;
+            if (response && response.$id) {
+                apiHeaders['x-appwrite-id'] = response.$id;
             }
 
-            const stream = file.slice(start, end + 1);
-            payload['file'] = new File([stream], file.name);
-
+            const chunk = file.slice(offset, end + 1);
+            payload['file'] = new File([chunk], file.name);
             response = await this.client.call('post', uri, apiHeaders, payload);
-
-            if (!id) {
-                id = response['$id'];
-            }
 
             if (onProgress) {
                 onProgress({
                     $id: response.$id,
-                    progress: Math.min((counter + 1) * Service.CHUNK_SIZE, size) / size * 100,
-                    sizeUploaded: end,
+                    progress: (offset / size) * 100,
+                    sizeUploaded: offset,
                     chunksTotal: response.chunksTotal,
                     chunksUploaded: response.chunksUploaded
                 });
             }
+            offset += Service.CHUNK_SIZE;
         }
-
         return response;
     }
 

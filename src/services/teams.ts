@@ -222,25 +222,21 @@ export class Teams extends Service {
      *
      * @param {string} teamId
      * @param {string[]} roles
-     * @param {string} url
      * @param {string} email
      * @param {string} userId
      * @param {string} phone
+     * @param {string} url
      * @param {string} name
      * @throws {AppwriteException}
      * @returns {Promise}
     */
-    async createMembership(teamId: string, roles: string[], url: string, email?: string, userId?: string, phone?: string, name?: string): Promise<Models.Membership> {
+    async createMembership(teamId: string, roles: string[], email?: string, userId?: string, phone?: string, url?: string, name?: string): Promise<Models.Membership> {
         if (typeof teamId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
 
         if (typeof roles === 'undefined') {
             throw new AppwriteException('Missing required parameter: "roles"');
-        }
-
-        if (typeof url === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "url"');
         }
 
         const apiPath = '/teams/{teamId}/memberships'.replace('{teamId}', teamId);

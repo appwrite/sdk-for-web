@@ -75,6 +75,8 @@ account.create(ID.unique(), 'me@example.com', 'password', 'Jane Doe')
 
 ### Full Example
 ```js
+import { Client, Account, ID } from "appwrite";
+
 // Init your Web SDK
 const client = new Client();
 

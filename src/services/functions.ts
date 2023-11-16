@@ -11,7 +11,7 @@ export class Functions extends Service {
      }
 
     /**
-     * List Executions
+     * List executions
      *
      * Get a list of all the current user function execution logs. You can use the
      * query params to filter your results.
@@ -45,7 +45,7 @@ export class Functions extends Service {
     }
 
     /**
-     * Create Execution
+     * Create execution
      *
      * Trigger a function execution. The returned object will return you the
      * current execution status. You can ping the `Get Execution` endpoint to get
@@ -96,7 +96,7 @@ export class Functions extends Service {
     }
 
     /**
-     * Get Execution
+     * Get execution
      *
      * Get a function execution log by its unique ID.
      *

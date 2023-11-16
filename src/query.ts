@@ -28,7 +28,7 @@ export class Query {
     `isNotNull("${attribute}")`;
 
   static between = (attribute: string, start: string|number, end: string|number): string =>
-    `between("${attribute}", [${Query.parseValues(start)},${Query.parseValues(end)}])`;
+    `between("${attribute}", ${Query.parseValues(start)}, ${Query.parseValues(end)})`;
 
   static startsWith = (attribute: string, value: string): string =>
     Query.addQuery(attribute, "startsWith", value);

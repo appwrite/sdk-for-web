@@ -206,7 +206,7 @@ export namespace Models {
          */
         $updatedAt: string;
         /**
-         * Document permissions. [Learn more about permissions](/docs/permissions).
+         * Document permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).
          */
         $permissions: string[];
         [key: string]: any;
@@ -733,7 +733,7 @@ export namespace Models {
          */
         $updatedAt: string;
         /**
-         * File permissions. [Learn more about permissions](/docs/permissions).
+         * File permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).
          */
         $permissions: string[];
         /**

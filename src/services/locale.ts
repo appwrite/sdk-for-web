@@ -11,7 +11,7 @@ export class Locale extends Service {
      }
 
     /**
-     * Get User Locale
+     * Get user locale
      *
      * Get the current user location based on IP. Returns an object with user
      * country code, country name, continent name, continent code, ip address and
@@ -53,7 +53,7 @@ export class Locale extends Service {
     }
 
     /**
-     * List Continents
+     * List continents
      *
      * List of all continents. You can use the locale header to get the data in a
      * supported language.
@@ -72,7 +72,7 @@ export class Locale extends Service {
     }
 
     /**
-     * List Countries
+     * List countries
      *
      * List of all countries. You can use the locale header to get the data in a
      * supported language.
@@ -91,7 +91,7 @@ export class Locale extends Service {
     }
 
     /**
-     * List EU Countries
+     * List EU countries
      *
      * List of all countries that are currently members of the EU. You can use the
      * locale header to get the data in a supported language.
@@ -110,7 +110,7 @@ export class Locale extends Service {
     }
 
     /**
-     * List Countries Phone Codes
+     * List countries phone codes
      *
      * List of all countries phone codes. You can use the locale header to get the
      * data in a supported language.
@@ -129,7 +129,7 @@ export class Locale extends Service {
     }
 
     /**
-     * List Currencies
+     * List currencies
      *
      * List of all currencies, including currency symbol, name, plural, and
      * decimal digits for all major and minor currencies. You can use the locale
@@ -149,7 +149,7 @@ export class Locale extends Service {
     }
 
     /**
-     * List Languages
+     * List languages
      *
      * List of all languages classified by ISO 639-1 including 2-letter code, name
      * in English, and name in the respective language.

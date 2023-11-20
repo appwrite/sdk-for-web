@@ -11,7 +11,7 @@ export class Graphql extends Service {
      }
 
     /**
-     * GraphQL Endpoint
+     * GraphQL endpoint
      *
      * Execute a GraphQL mutation.
      *
@@ -39,7 +39,7 @@ export class Graphql extends Service {
     }
 
     /**
-     * GraphQL Endpoint
+     * GraphQL endpoint
      *
      * Execute a GraphQL mutation.
      *

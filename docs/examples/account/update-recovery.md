@@ -1,4 +1,4 @@
-import { Client, Account } from "appwrite";
+import { Client,  Account } from "appwrite";
 
 const client = new Client();
 
@@ -9,7 +9,7 @@ client
     .setProject('5df5acd0d48c2') // Your project ID
 ;
 
-const promise = account.updateRecovery('[USER_ID]', '[SECRET]', 'password', 'password');
+const promise = account.updateRecovery('[USER_ID]', '[SECRET]', '');
 
 promise.then(function (response) {
     console.log(response); // Success

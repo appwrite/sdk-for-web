@@ -97,12 +97,13 @@ class Client {
         project: '',
         jwt: '',
         locale: '',
+        session: '',
     };
     headers: Headers = {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '13.0.1',
+        'x-sdk-version': '14.0.0-rc.1',
         'X-Appwrite-Response-Format': '1.4.0',
     };
 
@@ -175,6 +176,21 @@ class Client {
     setLocale(value: string): this {
         this.headers['X-Appwrite-Locale'] = value;
         this.config.locale = value;
+        return this;
+    }
+
+    /**
+     * Set Session
+     *
+     * The user session to authenticate with
+     *
+     * @param value string
+     *
+     * @return {this}
+     */
+    setSession(value: string): this {
+        this.headers['X-Appwrite-Session'] = value;
+        this.config.session = value;
         return this;
     }
 

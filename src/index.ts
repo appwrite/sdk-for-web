@@ -8,7 +8,6 @@ export { Locale } from './services/locale';
 export { Messaging } from './services/messaging';
 export { Storage } from './services/storage';
 export { Teams } from './services/teams';
-export { Users } from './services/users';
 export type { Models, Payload, RealtimeResponseEvent, UploadProgress } from './client';
 export type { QueryTypes, QueryTypesList } from './query';
 export { Permission } from './permission';

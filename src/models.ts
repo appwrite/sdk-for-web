@@ -601,7 +601,7 @@ export namespace Models {
         /**
          * Returns a list of active session factors.
          */
-        factors: number;
+        factors: string[];
         /**
          * Secret used to authenticate the user. Only included if the request was made with an API key
          */

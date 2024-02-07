@@ -93,9 +93,9 @@ export class Query {
   static contains = (attribute: string, value: string | string[]): string =>
     new Query("contains", attribute, value).toString();
 
-  static or = (...queries: string[]) =>
+  static or = (queries: string[]) =>
     new Query("or", undefined, queries.map((query) => JSON.parse(query))).toString();
 
-  static and = (...queries: string[]) =>
+  static and = (queries: string[]) =>
     new Query("and", undefined, queries.map((query) => JSON.parse(query))).toString();
 }

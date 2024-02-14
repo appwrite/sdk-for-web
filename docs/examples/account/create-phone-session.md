@@ -1,15 +1,15 @@
-import { Client,  Messaging } from "appwrite";
+import { Client, Account } from "appwrite";
 
 const client = new Client();
 
-const messaging = new Messaging(client);
+const account = new Account(client);
 
 client
     .setEndpoint('https://cloud.appwrite.io/v1') // Your API Endpoint
     .setProject('5df5acd0d48c2') // Your project ID
 ;
 
-const promise = messaging.createSubscriber('[TOPIC_ID]', '[SUBSCRIBER_ID]', '[TARGET_ID]');
+const promise = account.createPhoneSession('[USER_ID]', '+12065550100');
 
 promise.then(function (response) {
     console.log(response); // Success

@@ -1,4 +1,4 @@
-import { Client, Browser, Avatars } from "appwrite";
+import { Client, Avatars } from "appwrite";
 
 const client = new Client();
 
@@ -9,6 +9,6 @@ client
     .setProject('5df5acd0d48c2') // Your project ID
 ;
 
-const result = avatars.getBrowser(Browser.AvantBrowser);
+const result = avatars.getBrowser('aa');
 
 console.log(result); // Resource URL

@@ -1,4 +1,4 @@
-import { Client,  Graphql } from "appwrite";
+import { Client, Graphql } from "appwrite";
 
 const client = new Client();
 

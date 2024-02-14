@@ -1,4 +1,4 @@
-import { Client, CreditCard, Avatars } from "appwrite";
+import { Client, Avatars } from "appwrite";
 
 const client = new Client();
 
@@ -9,6 +9,6 @@ client
     .setProject('5df5acd0d48c2') // Your project ID
 ;
 
-const result = avatars.getCreditCard(CreditCard.AmericanExpress);
+const result = avatars.getCreditCard('amex');
 
 console.log(result); // Resource URL

@@ -1,4 +1,4 @@
-import { Client, OAuthProvider, Account } from "appwrite";
+import { Client, Account } from "appwrite";
 
 const client = new Client();
 
@@ -10,5 +10,5 @@ client
 ;
 
 // Go to OAuth provider login page
-account.createOAuth2Session(OAuthProvider.Amazon);
+account.createOAuth2Session('amazon');
 

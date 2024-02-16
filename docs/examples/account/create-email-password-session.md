@@ -1,4 +1,4 @@
-import { Client, Account } from "appwrite";
+import { Client,  Account } from "appwrite";
 
 const client = new Client();
 
@@ -9,7 +9,7 @@ client
     .setProject('5df5acd0d48c2') // Your project ID
 ;
 
-const promise = account.createMagicURLSession('[USER_ID]', 'email@example.com');
+const promise = account.createEmailPasswordSession('email@example.com', 'password');
 
 promise.then(function (response) {
     console.log(response); // Success

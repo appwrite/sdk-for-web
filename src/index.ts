@@ -13,7 +13,7 @@ export type { QueryTypes, QueryTypesList } from './query';
 export { Permission } from './permission';
 export { Role } from './role';
 export { ID } from './id';
-export { Factor } from './enums/factor';
+export { AuthenticationFactor } from './enums/authentication-factor';
 export { AuthenticatorType } from './enums/authenticator-type';
 export { OAuthProvider } from './enums/o-auth-provider';
 export { Browser } from './enums/browser';

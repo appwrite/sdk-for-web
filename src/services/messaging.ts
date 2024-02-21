@@ -12,8 +12,9 @@ export class Messaging extends Service {
      }
 
     /**
-     * Create a subscriber.
+     * Create a subscriber
      *
+     * Create a new subscriber.
      *
      * @param {string} topicId
      * @param {string} subscriberId
@@ -52,8 +53,9 @@ export class Messaging extends Service {
     }
 
     /**
-     * Delete a subscriber.
+     * Delete a subscriber
      *
+     * Delete a subscriber by its unique ID.
      *
      * @param {string} topicId
      * @param {string} subscriberId

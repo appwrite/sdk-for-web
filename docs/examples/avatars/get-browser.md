@@ -1,16 +1,14 @@
-import { Client, Avatars, Browser } from "appwrite";
+import { Client, Browser, Avatars } from "appwrite";
 
-const client = new Client()
-    .setEndpoint('https://cloud.appwrite.io/v1') // Your API Endpoint
-    .setProject('5df5acd0d48c2'); // Your project ID
+const client = new Client();
 
 const avatars = new Avatars(client);
 
-const result = avatars.getBrowser(
-    Browser.AvantBrowser, // code
-    0, // width (optional)
-    0, // height (optional)
-    0 // quality (optional)
-);
+client
+    .setEndpoint('https://cloud.appwrite.io/v1') // Your API Endpoint
+    .setProject('5df5acd0d48c2') // Your project ID
+;
 
-console.log(result);
+const result = avatars.getBrowser(Browser.AvantBrowser);
+
+console.log(result); // Resource URL

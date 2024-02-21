@@ -3,7 +3,7 @@ import { AppwriteException, Client } from '../client';
 import type { Models } from '../models';
 import type { UploadProgress, Payload } from '../client';
 import { Query } from '../query';
-import { AuthenticationFactor } from '../enums/authentication-factor';
+import { Factor } from '../enums/factor';
 import { AuthenticatorType } from '../enums/authenticator-type';
 import { OAuthProvider } from '../enums/o-auth-provider';
 
@@ -253,11 +253,11 @@ export class Account extends Service {
      * Create 2FA Challenge
      *
      *
-     * @param {AuthenticationFactor} factor
+     * @param {Factor} factor
      * @throws {AppwriteException}
      * @returns {Promise}
     */
-    async create2FAChallenge(factor: AuthenticationFactor): Promise<Models.MfaChallenge> {
+    async createChallenge(factor: Factor): Promise<Models.MfaChallenge> {
         if (typeof factor === 'undefined') {
             throw new AppwriteException('Missing required parameter: "factor"');
         }

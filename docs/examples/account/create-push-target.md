@@ -1,15 +1,18 @@
-import { Client, Account } from "appwrite";
+import { Client,  Account } from "appwrite";
 
-const client = new Client()
-    .setEndpoint('https://cloud.appwrite.io/v1') // Your API Endpoint
-    .setProject('5df5acd0d48c2'); // Your project ID
+const client = new Client();
 
 const account = new Account(client);
 
-const result = await account.createPushTarget(
-    '[TARGET_ID]', // targetId
-    '[IDENTIFIER]', // identifier
-    '[PROVIDER_ID]' // providerId (optional)
-);
+client
+    .setEndpoint('https://cloud.appwrite.io/v1') // Your API Endpoint
+    .setProject('5df5acd0d48c2') // Your project ID
+;
 
-console.log(response);
+const promise = account.createPushTarget('[TARGET_ID]', '[IDENTIFIER]');
+
+promise.then(function (response) {
+    console.log(response); // Success
+}, function (error) {
+    console.log(error); // Failure
+});

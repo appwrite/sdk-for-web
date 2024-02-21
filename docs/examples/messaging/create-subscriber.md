@@ -1,15 +1,18 @@
-import { Client, Messaging } from "appwrite";
+import { Client,  Messaging } from "appwrite";
 
-const client = new Client()
-    .setEndpoint('https://cloud.appwrite.io/v1') // Your API Endpoint
-    .setProject('5df5acd0d48c2'); // Your project ID
+const client = new Client();
 
 const messaging = new Messaging(client);
 
-const result = await messaging.createSubscriber(
-    '[TOPIC_ID]', // topicId
-    '[SUBSCRIBER_ID]', // subscriberId
-    '[TARGET_ID]' // targetId
-);
+client
+    .setEndpoint('https://cloud.appwrite.io/v1') // Your API Endpoint
+    .setProject('5df5acd0d48c2') // Your project ID
+;
 
-console.log(response);
+const promise = messaging.createSubscriber('[TOPIC_ID]', '[SUBSCRIBER_ID]', '[TARGET_ID]');
+
+promise.then(function (response) {
+    console.log(response); // Success
+}, function (error) {
+    console.log(error); // Failure
+});

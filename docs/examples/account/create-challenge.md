@@ -1,15 +1,15 @@
-import { Client,  Teams } from "appwrite";
+import { Client, , Account } from "appwrite";
 
 const client = new Client();
 
-const teams = new Teams(client);
+const account = new Account(client);
 
 client
     .setEndpoint('https://cloud.appwrite.io/v1') // Your API Endpoint
     .setProject('5df5acd0d48c2') // Your project ID
 ;
 
-const promise = teams.updateMembership('[TEAM_ID]', '[MEMBERSHIP_ID]', []);
+const promise = account.createChallenge(.Totp);
 
 promise.then(function (response) {
     console.log(response); // Success

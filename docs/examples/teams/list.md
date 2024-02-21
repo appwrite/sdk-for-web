@@ -1,14 +1,18 @@
-import { Client, Teams } from "appwrite";
+import { Client,  Teams } from "appwrite";
 
-const client = new Client()
-    .setEndpoint('https://cloud.appwrite.io/v1') // Your API Endpoint
-    .setProject('5df5acd0d48c2'); // Your project ID
+const client = new Client();
 
 const teams = new Teams(client);
 
-const result = await teams.list(
-    [], // queries (optional)
-    '[SEARCH]' // search (optional)
-);
+client
+    .setEndpoint('https://cloud.appwrite.io/v1') // Your API Endpoint
+    .setProject('5df5acd0d48c2') // Your project ID
+;
 
-console.log(response);
+const promise = teams.list();
+
+promise.then(function (response) {
+    console.log(response); // Success
+}, function (error) {
+    console.log(error); // Failure
+});

@@ -6,7 +6,7 @@ const client = new Client()
 
 const account = new Account(client);
 
-account.createOAuth2Session(
+account.createOAuth2Token(
     OAuthProvider.Amazon, // provider
     'https://example.com', // success (optional)
     'https://example.com', // failure (optional)

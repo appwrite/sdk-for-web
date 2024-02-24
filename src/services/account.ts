@@ -2,7 +2,6 @@ import { Service } from '../service';
 import { AppwriteException, Client } from '../client';
 import type { Models } from '../models';
 import type { UploadProgress, Payload } from '../client';
-import { Query } from '../query';
 import { AuthenticationFactor } from '../enums/authentication-factor';
 import { AuthenticatorType } from '../enums/authenticator-type';
 import { OAuthProvider } from '../enums/o-auth-provider';
@@ -820,12 +819,11 @@ export class Account extends Service {
      * @param {OAuthProvider} provider
      * @param {string} success
      * @param {string} failure
-     * @param {boolean} token
      * @param {string[]} scopes
      * @throws {AppwriteException}
      * @returns {void|string}
     */
-    createOAuth2Session(provider: OAuthProvider, success?: string, failure?: string, token?: boolean, scopes?: string[]): void | URL {
+    createOAuth2Session(provider: OAuthProvider, success?: string, failure?: string, scopes?: string[]): void | URL {
         if (typeof provider === 'undefined') {
             throw new AppwriteException('Missing required parameter: "provider"');
         }
@@ -839,10 +837,6 @@ export class Account extends Service {
 
         if (typeof failure !== 'undefined') {
             payload['failure'] = failure;
-        }
-
-        if (typeof token !== 'undefined') {
-            payload['token'] = token;
         }
 
         if (typeof scopes !== 'undefined') {
@@ -1198,6 +1192,65 @@ export class Account extends Service {
         return await this.client.call('post', uri, {
             'content-type': 'application/json',
         }, payload);
+    }
+
+    /**
+     * Create OAuth2 token
+     *
+     * Allow the user to login to their account using the OAuth2 provider of their
+     * choice. Each OAuth2 provider should be enabled from the Appwrite console
+     * first. Use the success and failure arguments to provide a redirect URL's
+     * back to your app when login is completed. 
+     * 
+     * If authentication succeeds, `userId` and `secret` of a token will be
+     * appended to the success URL as query parameters. These can be used to
+     * create a new session using the [Create
+     * session](https://appwrite.io/docs/references/cloud/client-web/account#createSession)
+     * endpoint.
+     * 
+     * A user is limited to 10 active sessions at a time by default. [Learn more
+     * about session
+     * limits](https://appwrite.io/docs/authentication-security#limits).
+     *
+     * @param {OAuthProvider} provider
+     * @param {string} success
+     * @param {string} failure
+     * @param {string[]} scopes
+     * @throws {AppwriteException}
+     * @returns {void|string}
+    */
+    createOAuth2Token(provider: OAuthProvider, success?: string, failure?: string, scopes?: string[]): void | URL {
+        if (typeof provider === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "provider"');
+        }
+
+        const apiPath = '/account/tokens/oauth2/{provider}'.replace('{provider}', provider);
+        const payload: Payload = {};
+
+        if (typeof success !== 'undefined') {
+            payload['success'] = success;
+        }
+
+        if (typeof failure !== 'undefined') {
+            payload['failure'] = failure;
+        }
+
+        if (typeof scopes !== 'undefined') {
+            payload['scopes'] = scopes;
+        }
+
+        const uri = new URL(this.client.config.endpoint + apiPath);
+        payload['project'] = this.client.config.project;
+
+
+        for (const [key, value] of Object.entries(Service.flatten(payload))) {
+            uri.searchParams.append(key, value);
+        }
+        if (typeof window !== 'undefined' && window?.location) {
+            window.location.href = uri.toString();
+        } else {
+            return uri;
+        }
     }
 
     /**

@@ -2,7 +2,6 @@ import { Service } from '../service';
 import { AppwriteException, Client } from '../client';
 import type { Models } from '../models';
 import type { UploadProgress, Payload } from '../client';
-import { Query } from '../query';
 import { Browser } from '../enums/browser';
 import { CreditCard } from '../enums/credit-card';
 import { Flag } from '../enums/flag';

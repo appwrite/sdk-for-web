@@ -1,6 +1,5 @@
 import { Client } from './client';
 import type { Payload } from './client';
-import { Query } from './query';
 
 export class Service {
     static CHUNK_SIZE = 5*1024*1024; // 5MB
@@ -18,8 +17,6 @@ export class Service {
             let finalKey = prefix ? prefix + '[' + key +']' : key;
             if (Array.isArray(value)) {
                 output = { ...output, ...Service.flatten(value, finalKey) };
-            } else if (value instanceof Query) {
-                output[finalKey] = JSON.stringify(value);
             } else {
                 output[finalKey] = value;
             }

@@ -225,6 +225,7 @@ export class Account extends Service {
     /**
      * Update MFA
      *
+     * Enable or disable MFA on an account.
      *
      * @param {boolean} mfa
      * @throws {AppwriteException}
@@ -277,6 +278,7 @@ export class Account extends Service {
     /**
      * Create MFA Challenge (confirmation)
      *
+     * Complete the MFA challenge by providing the one-time password.
      *
      * @param {string} challengeId
      * @param {string} otp
@@ -312,6 +314,7 @@ export class Account extends Service {
     /**
      * List Factors
      *
+     * List the factors available on the account to be used as a MFA challange.
      *
      * @throws {AppwriteException}
      * @returns {Promise}
@@ -329,6 +332,10 @@ export class Account extends Service {
     /**
      * Add Authenticator
      *
+     * Add an authenticator app to be used as an MFA factor. Verify the
+     * authenticator using the [verify
+     * authenticator](/docs/references/cloud/client-web/account#verifyAuthenticator)
+     * method.
      *
      * @param {AuthenticatorType} type
      * @throws {AppwriteException}
@@ -351,6 +358,9 @@ export class Account extends Service {
     /**
      * Verify Authenticator
      *
+     * Verify an authenticator app after adding it using the [add
+     * authenticator](/docs/references/cloud/client-web/account#addAuthenticator)
+     * method.
      *
      * @param {AuthenticatorType} type
      * @param {string} otp
@@ -382,6 +392,7 @@ export class Account extends Service {
     /**
      * Delete Authenticator
      *
+     * Delete an authenticator for a user by ID.
      *
      * @param {AuthenticatorType} type
      * @param {string} otp
@@ -759,7 +770,7 @@ export class Account extends Service {
     }
 
     /**
-     * Create session (deprecated)
+     * Update magic URL session
      *
      * Use this endpoint to create a session from token. Provide the **userId**
      * and **secret** parameters from the successful response of authentication
@@ -858,6 +869,44 @@ export class Account extends Service {
     }
 
     /**
+     * Update phone session
+     *
+     * Use this endpoint to create a session from token. Provide the **userId**
+     * and **secret** parameters from the successful response of authentication
+     * flows initiated by token creation. For example, magic URL and phone login.
+     *
+     * @param {string} userId
+     * @param {string} secret
+     * @throws {AppwriteException}
+     * @returns {Promise}
+    */
+    async updatePhoneSession(userId: string, secret: string): Promise<Models.Session> {
+        if (typeof userId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "userId"');
+        }
+
+        if (typeof secret === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "secret"');
+        }
+
+        const apiPath = '/account/sessions/phone';
+        const payload: Payload = {};
+
+        if (typeof userId !== 'undefined') {
+            payload['userId'] = userId;
+        }
+
+        if (typeof secret !== 'undefined') {
+            payload['secret'] = secret;
+        }
+
+        const uri = new URL(this.client.config.endpoint + apiPath);
+        return await this.client.call('put', uri, {
+            'content-type': 'application/json',
+        }, payload);
+    }
+
+    /**
      * Create session
      *
      * Use this endpoint to create a session from token. Provide the **userId**
@@ -920,7 +969,7 @@ export class Account extends Service {
     }
 
     /**
-     * Update (or renew) a session
+     * Update (or renew) session
      *
      * Extend session's expiry to increase it's lifespan. Extending a session is
      * useful when session length is short such as 5 minutes.
@@ -991,7 +1040,7 @@ export class Account extends Service {
     }
 
     /**
-     * Create a push target
+     * Create push target
      *
      *
      * @param {string} targetId
@@ -1031,7 +1080,7 @@ export class Account extends Service {
     }
 
     /**
-     * Update a push target
+     * Update push target
      *
      *
      * @param {string} targetId
@@ -1062,7 +1111,7 @@ export class Account extends Service {
     }
 
     /**
-     * Delete a push target
+     * Delete push target
      *
      *
      * @param {string} targetId

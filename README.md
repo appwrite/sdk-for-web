@@ -33,7 +33,7 @@ import { Client, Account } from "appwrite";
 To install with a CDN (content delivery network) add the following scripts to the bottom of your <body> tag, but before you use any Appwrite services:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.0-rc.6"></script>
+<script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.0-rc.7"></script>
 ```
 
 

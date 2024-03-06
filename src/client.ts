@@ -265,8 +265,11 @@ class Client {
                 this.realtime.lastMessage = message;
                 switch (message.type) {
                     case 'connected':
-                        const cookie = JSON.parse(window.localStorage.getItem('cookieFallback') ?? '{}');
-                        const session = cookie?.[`a_session_${this.config.project}`];
+                        let session;
+                        if(window.localStorage) {
+                            const cookie = JSON.parse(window.localStorage.getItem('cookieFallback') ?? '{}');
+                            session = cookie?.[`a_session_${this.config.project}`];
+                        }
                         const messageData = <RealtimeResponseConnected>message.data;
 
                         if (session && !messageData.user) {

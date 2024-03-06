@@ -34,7 +34,8 @@
   },
   "dependencies": {
     "cross-fetch": "3.1.5",
-    "isomorphic-form-data": "2.0.0"
+    "isomorphic-form-data": "2.0.0",
+    "react-native": "^0.73.5"
   },
   "jsdelivr": "dist/iife/sdk.js",
   "unpkg": "dist/iife/sdk.js"

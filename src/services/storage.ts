@@ -2,6 +2,7 @@ import { Service } from '../service';
 import { AppwriteException, Client } from '../client';
 import type { Models } from '../models';
 import type { UploadProgress, Payload } from '../client';
+import fs from 'react-native-fs'
 
 export class Storage extends Service {
 
@@ -68,12 +69,12 @@ export class Storage extends Service {
      *
      * @param {string} bucketId
      * @param {string} fileId
-     * @param {File} file
+     * @param {any} file
      * @param {string[]} permissions
      * @throws {AppwriteException}
      * @returns {Promise}
     */
-    async createFile(bucketId: string, fileId: string, file: File, permissions?: string[], onProgress = (progress: UploadProgress) => {}): Promise<Models.File> {
+    async createFile(bucketId: string, fileId: string, file: any, permissions?: string[], onProgress = (progress: UploadProgress) => {}): Promise<Models.File> {
         if (typeof bucketId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "bucketId"');
         }
@@ -102,10 +103,6 @@ export class Storage extends Service {
         }
 
         const uri = new URL(this.client.config.endpoint + apiPath);
-
-        if(!(file instanceof File)) {
-            throw new AppwriteException('Parameter "file" has to be a File.');
-        }
 
         const size = file.size;
 
@@ -137,8 +134,9 @@ export class Storage extends Service {
                 apiHeaders['x-appwrite-id'] = response.$id;
             }
 
-            const chunk = file.slice(offset, end + 1);
-            payload['file'] = new File([chunk], file.name);
+            let chunk = await fs.read(file.uri, Service.CHUNK_SIZE, offset, 'base64');
+
+            payload['file'] = {uri: `data:${file.type};base64,${chunk}`, name: file.name, type: file.type};
             response = await this.client.call('post', uri, apiHeaders, payload);
 
             if (onProgress) {

@@ -1,16 +1,16 @@
 # Appwrite Web SDK
 
 ![License](https://img.shields.io/github/license/appwrite/sdk-for-web.svg?style=flat-square)
-![Version](https://img.shields.io/badge/api%20version-1.4.12-blue.svg?style=flat-square)
+![Version](https://img.shields.io/badge/api%20version-1.5.0-blue.svg?style=flat-square)
 [![Build Status](https://img.shields.io/travis/com/appwrite/sdk-generator?style=flat-square)](https://travis-ci.com/appwrite/sdk-generator)
 [![Twitter Account](https://img.shields.io/twitter/follow/appwrite?color=00acee&label=twitter&style=flat-square)](https://twitter.com/appwrite)
 [![Discord](https://img.shields.io/discord/564160730845151244?label=discord&style=flat-square)](https://appwrite.io/discord)
 
-**This SDK is compatible with Appwrite server version 1.4.x. For older versions, please check [previous releases](https://github.com/appwrite/sdk-for-web/releases).**
+**This SDK is compatible with Appwrite server version 1.5.x. For older versions, please check [previous releases](https://github.com/appwrite/sdk-for-web/releases).**
 
 Appwrite is an open-source backend as a service server that abstract and simplify complex and repetitive development tasks behind a very simple to use REST API. Appwrite aims to help you develop your apps faster and in a more secure way. Use the Web SDK to integrate your app with the Appwrite server to easily start interacting with all of Appwrite backend APIs and tools. For full API documentation and tutorials go to [https://appwrite.io/docs](https://appwrite.io/docs)
 
-![Appwrite](https://appwrite.io/images/github.png)
+![Appwrite](https://github.com/appwrite/appwrite/raw/main/public/images/github.png)
 
 ## Installation
 
@@ -33,7 +33,7 @@ import { Client, Account } from "appwrite";
 To install with a CDN (content delivery network) add the following scripts to the bottom of your <body> tag, but before you use any Appwrite services:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.0"></script>
 ```
 
 
@@ -64,7 +64,7 @@ Once your SDK object is set, access any of the Appwrite services and choose any 
 const account = new Account(client);
 
 // Register User
-account.create(ID.unique(), 'me@example.com', 'password', 'Jane Doe')
+account.create(ID.unique(), "email@example.com", "password", "Walter O'Brien")
     .then(function (response) {
         console.log(response);
     }, function (error) {
@@ -86,7 +86,7 @@ client
 const account = new Account(client);
 
 // Register User
-account.create(ID.unique(), 'me@example.com', 'password', 'Jane Doe')
+account.create(ID.unique(), "email@example.com", "password", "Walter O'Brien")
     .then(function (response) {
         console.log(response);
     }, function (error) {

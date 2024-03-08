@@ -2,6 +2,9 @@ import { Service } from '../service';
 import { AppwriteException, Client } from '../client';
 import type { Models } from '../models';
 import type { UploadProgress, Payload } from '../client';
+import { Browser } from '../enums/browser';
+import { CreditCard } from '../enums/credit-card';
+import { Flag } from '../enums/flag';
 
 export class Avatars extends Service {
 
@@ -24,14 +27,14 @@ export class Avatars extends Service {
      * image at source quality. If dimensions are not specified, the default size
      * of image returned is 100x100px.
      *
-     * @param {string} code
+     * @param {Browser} code
      * @param {number} width
      * @param {number} height
      * @param {number} quality
      * @throws {AppwriteException}
      * @returns {URL}
     */
-    getBrowser(code: string, width?: number, height?: number, quality?: number): URL {
+    getBrowser(code: Browser, width?: number, height?: number, quality?: number): URL {
         if (typeof code === 'undefined') {
             throw new AppwriteException('Missing required parameter: "code"');
         }
@@ -74,14 +77,14 @@ export class Avatars extends Service {
      * of image returned is 100x100px.
      * 
      *
-     * @param {string} code
+     * @param {CreditCard} code
      * @param {number} width
      * @param {number} height
      * @param {number} quality
      * @throws {AppwriteException}
      * @returns {URL}
     */
-    getCreditCard(code: string, width?: number, height?: number, quality?: number): URL {
+    getCreditCard(code: CreditCard, width?: number, height?: number, quality?: number): URL {
         if (typeof code === 'undefined') {
             throw new AppwriteException('Missing required parameter: "code"');
         }
@@ -158,14 +161,14 @@ export class Avatars extends Service {
      * of image returned is 100x100px.
      * 
      *
-     * @param {string} code
+     * @param {Flag} code
      * @param {number} width
      * @param {number} height
      * @param {number} quality
      * @throws {AppwriteException}
      * @returns {URL}
     */
-    getFlag(code: string, width?: number, height?: number, quality?: number): URL {
+    getFlag(code: Flag, width?: number, height?: number, quality?: number): URL {
         if (typeof code === 'undefined') {
             throw new AppwriteException('Missing required parameter: "code"');
         }

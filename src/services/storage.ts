@@ -2,6 +2,8 @@ import { Service } from '../service';
 import { AppwriteException, Client } from '../client';
 import type { Models } from '../models';
 import type { UploadProgress, Payload } from '../client';
+import { ImageGravity } from '../enums/image-gravity';
+import { ImageFormat } from '../enums/image-format';
 
 export class Storage extends Service {
 
@@ -299,7 +301,7 @@ export class Storage extends Service {
      * @param {string} fileId
      * @param {number} width
      * @param {number} height
-     * @param {string} gravity
+     * @param {ImageGravity} gravity
      * @param {number} quality
      * @param {number} borderWidth
      * @param {string} borderColor
@@ -307,11 +309,11 @@ export class Storage extends Service {
      * @param {number} opacity
      * @param {number} rotation
      * @param {string} background
-     * @param {string} output
+     * @param {ImageFormat} output
      * @throws {AppwriteException}
      * @returns {URL}
     */
-    getFilePreview(bucketId: string, fileId: string, width?: number, height?: number, gravity?: string, quality?: number, borderWidth?: number, borderColor?: string, borderRadius?: number, opacity?: number, rotation?: number, background?: string, output?: string): URL {
+    getFilePreview(bucketId: string, fileId: string, width?: number, height?: number, gravity?: ImageGravity, quality?: number, borderWidth?: number, borderColor?: string, borderRadius?: number, opacity?: number, rotation?: number, background?: string, output?: ImageFormat): URL {
         if (typeof bucketId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "bucketId"');
         }

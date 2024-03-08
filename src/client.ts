@@ -92,18 +92,19 @@ class AppwriteException extends Error {
 
 class Client {
     config = {
-        endpoint: 'https://HOSTNAME/v1',
+        endpoint: 'https://cloud.appwrite.io/v1',
         endpointRealtime: '',
         project: '',
         jwt: '',
         locale: '',
+        session: '',
     };
     headers: Headers = {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '13.0.2',
-        'X-Appwrite-Response-Format': '1.4.0',
+        'x-sdk-version': '14.0.0',
+        'X-Appwrite-Response-Format': '1.5.0',
     };
 
     /**
@@ -175,6 +176,21 @@ class Client {
     setLocale(value: string): this {
         this.headers['X-Appwrite-Locale'] = value;
         this.config.locale = value;
+        return this;
+    }
+
+    /**
+     * Set Session
+     *
+     * The user session to authenticate with
+     *
+     * @param value string
+     *
+     * @return {this}
+     */
+    setSession(value: string): this {
+        this.headers['X-Appwrite-Session'] = value;
+        this.config.session = value;
         return this;
     }
 

@@ -57,6 +57,8 @@ client
 ;
 ```
 
+If you use CDN, you need to replace `new Client()` by `new Appwrite()`.
+
 ### Make Your First Request
 Once your SDK object is set, access any of the Appwrite services and choose any request to send. Full documentation for any service method you would like to use can be found in your SDK documentation or in the [API References](https://appwrite.io/docs) section.
 

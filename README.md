@@ -10,7 +10,7 @@
 
 Appwrite is an open-source backend as a service server that abstract and simplify complex and repetitive development tasks behind a very simple to use REST API. Appwrite aims to help you develop your apps faster and in a more secure way. Use the Web SDK to integrate your app with the Appwrite server to easily start interacting with all of Appwrite backend APIs and tools. For full API documentation and tutorials go to [https://appwrite.io/docs](https://appwrite.io/docs)
 
-![Appwrite](https://appwrite.io/images/github.png)
+![Appwrite](https://github.com/appwrite/appwrite/raw/main/public/images/github.png)
 
 ## Installation
 
@@ -33,7 +33,7 @@ import { Client, Account } from "appwrite";
 To install with a CDN (content delivery network) add the following scripts to the bottom of your <body> tag, but before you use any Appwrite services:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.0-rc.7"></script>
+<script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.0"></script>
 ```
 
 

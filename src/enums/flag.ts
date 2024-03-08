@@ -32,7 +32,7 @@ export enum Flag {
     Switzerland = 'ch',
     Chile = 'cl',
     China = 'cn',
-    CTeDIvoire = 'ci',
+    CoteDIvoire = 'ci',
     Cameroon = 'cm',
     DemocraticRepublicOfTheCongo = 'cd',
     RepublicOfTheCongo = 'cg',

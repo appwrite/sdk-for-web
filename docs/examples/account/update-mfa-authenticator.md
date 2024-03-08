@@ -1,4 +1,4 @@
-import { Client, Account } from "appwrite";
+import { Client, Account, AuthenticatorType } from "appwrite";
 
 const client = new Client()
     .setEndpoint('https://cloud.appwrite.io/v1') // Your API Endpoint
@@ -6,6 +6,9 @@ const client = new Client()
 
 const account = new Account(client);
 
-const result = await account.listFactors();
+const result = await account.updateMfaAuthenticator(
+    AuthenticatorType.Totp, // type
+    '<OTP>' // otp
+);
 
 console.log(response);

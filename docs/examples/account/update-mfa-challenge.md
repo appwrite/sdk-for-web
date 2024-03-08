@@ -1,4 +1,4 @@
-import { Client, Account, AuthenticatorType } from "appwrite";
+import { Client, Account } from "appwrite";
 
 const client = new Client()
     .setEndpoint('https://cloud.appwrite.io/v1') // Your API Endpoint
@@ -6,8 +6,8 @@ const client = new Client()
 
 const account = new Account(client);
 
-const result = await account.deleteAuthenticator(
-    AuthenticatorType.Totp, // type
+const result = await account.updateMfaChallenge(
+    '<CHALLENGE_ID>', // challengeId
     '<OTP>' // otp
 );
 

@@ -6,9 +6,6 @@ const client = new Client()
 
 const account = new Account(client);
 
-const result = await account.updateChallenge(
-    '<CHALLENGE_ID>', // challengeId
-    '<OTP>' // otp
-);
+const result = await account.listMfaFactors();
 
 console.log(response);

@@ -2,8 +2,8 @@ import { Service } from '../service';
 import { AppwriteException, Client } from '../client';
 import type { Models } from '../models';
 import type { UploadProgress, Payload } from '../client';
-import { AuthenticationFactor } from '../enums/authentication-factor';
 import { AuthenticatorType } from '../enums/authenticator-type';
+import { AuthenticationFactor } from '../enums/authentication-factor';
 import { OAuthProvider } from '../enums/o-auth-provider';
 
 export class Account extends Service {
@@ -250,14 +250,109 @@ export class Account extends Service {
     }
 
     /**
+     * Add Authenticator
+     *
+     * Add an authenticator app to be used as an MFA factor. Verify the
+     * authenticator using the [verify
+     * authenticator](/docs/references/cloud/client-web/account#verifyAuthenticator)
+     * method.
+     *
+     * @param {AuthenticatorType} type
+     * @throws {AppwriteException}
+     * @returns {Promise}
+    */
+    async createMfaAuthenticator(type: AuthenticatorType): Promise<Models.MfaType> {
+        if (typeof type === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "type"');
+        }
+
+        const apiPath = '/account/mfa/authenticators/{type}'.replace('{type}', type);
+        const payload: Payload = {};
+
+        const uri = new URL(this.client.config.endpoint + apiPath);
+        return await this.client.call('post', uri, {
+            'content-type': 'application/json',
+        }, payload);
+    }
+
+    /**
+     * Verify Authenticator
+     *
+     * Verify an authenticator app after adding it using the [add
+     * authenticator](/docs/references/cloud/client-web/account#addAuthenticator)
+     * method.
+     *
+     * @param {AuthenticatorType} type
+     * @param {string} otp
+     * @throws {AppwriteException}
+     * @returns {Promise}
+    */
+    async updateMfaAuthenticator<Preferences extends Models.Preferences>(type: AuthenticatorType, otp: string): Promise<Models.User<Preferences>> {
+        if (typeof type === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "type"');
+        }
+
+        if (typeof otp === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "otp"');
+        }
+
+        const apiPath = '/account/mfa/authenticators/{type}'.replace('{type}', type);
+        const payload: Payload = {};
+
+        if (typeof otp !== 'undefined') {
+            payload['otp'] = otp;
+        }
+
+        const uri = new URL(this.client.config.endpoint + apiPath);
+        return await this.client.call('put', uri, {
+            'content-type': 'application/json',
+        }, payload);
+    }
+
+    /**
+     * Delete Authenticator
+     *
+     * Delete an authenticator for a user by ID.
+     *
+     * @param {AuthenticatorType} type
+     * @param {string} otp
+     * @throws {AppwriteException}
+     * @returns {Promise}
+    */
+    async deleteMfaAuthenticator<Preferences extends Models.Preferences>(type: AuthenticatorType, otp: string): Promise<Models.User<Preferences>> {
+        if (typeof type === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "type"');
+        }
+
+        if (typeof otp === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "otp"');
+        }
+
+        const apiPath = '/account/mfa/authenticators/{type}'.replace('{type}', type);
+        const payload: Payload = {};
+
+        if (typeof otp !== 'undefined') {
+            payload['otp'] = otp;
+        }
+
+        const uri = new URL(this.client.config.endpoint + apiPath);
+        return await this.client.call('delete', uri, {
+            'content-type': 'application/json',
+        }, payload);
+    }
+
+    /**
      * Create 2FA Challenge
      *
+     * Begin the process of MFA verification after sign-in. Finish the flow with
+     * [updateMfaChallenge](/docs/references/cloud/client-web/account#updateMfaChallenge)
+     * method.
      *
      * @param {AuthenticationFactor} factor
      * @throws {AppwriteException}
      * @returns {Promise}
     */
-    async createChallenge(factor: AuthenticationFactor): Promise<Models.MfaChallenge> {
+    async createMfaChallenge(factor: AuthenticationFactor): Promise<Models.MfaChallenge> {
         if (typeof factor === 'undefined') {
             throw new AppwriteException('Missing required parameter: "factor"');
         }
@@ -278,14 +373,18 @@ export class Account extends Service {
     /**
      * Create MFA Challenge (confirmation)
      *
-     * Complete the MFA challenge by providing the one-time password.
+     * Complete the MFA challenge by providing the one-time password. Finish the
+     * process of MFA verification by providing the one-time password. To begin
+     * the flow, use
+     * [createMfaChallenge](/docs/references/cloud/client-web/account#createMfaChallenge)
+     * method.
      *
      * @param {string} challengeId
      * @param {string} otp
      * @throws {AppwriteException}
      * @returns {Promise}
     */
-    async updateChallenge(challengeId: string, otp: string): Promise<{}> {
+    async updateMfaChallenge(challengeId: string, otp: string): Promise<{}> {
         if (typeof challengeId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "challengeId"');
         }
@@ -319,7 +418,7 @@ export class Account extends Service {
      * @throws {AppwriteException}
      * @returns {Promise}
     */
-    async listFactors(): Promise<Models.MfaFactors> {
+    async listMfaFactors(): Promise<Models.MfaFactors> {
         const apiPath = '/account/mfa/factors';
         const payload: Payload = {};
 
@@ -330,23 +429,40 @@ export class Account extends Service {
     }
 
     /**
-     * Add Authenticator
+     * Get MFA Recovery Codes
      *
-     * Add an authenticator app to be used as an MFA factor. Verify the
-     * authenticator using the [verify
-     * authenticator](/docs/references/cloud/client-web/account#verifyAuthenticator)
-     * method.
+     * Get recovery codes that can be used as backup for MFA flow. Before getting
+     * codes, they must be generated using
+     * [createMfaRecoveryCodes](/docs/references/cloud/client-web/account#createMfaRecoveryCodes)
+     * method. An OTP challenge is required to read recovery codes.
      *
-     * @param {AuthenticatorType} type
      * @throws {AppwriteException}
      * @returns {Promise}
     */
-    async addAuthenticator(type: AuthenticatorType): Promise<Models.MfaType> {
-        if (typeof type === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "type"');
-        }
+    async getMfaRecoveryCodes(): Promise<Models.MfaRecoveryCodes> {
+        const apiPath = '/account/mfa/recovery-codes';
+        const payload: Payload = {};
 
-        const apiPath = '/account/mfa/{type}'.replace('{type}', type);
+        const uri = new URL(this.client.config.endpoint + apiPath);
+        return await this.client.call('get', uri, {
+            'content-type': 'application/json',
+        }, payload);
+    }
+
+    /**
+     * Create MFA Recovery Codes
+     *
+     * Generate recovery codes as backup for MFA flow. It's recommended to
+     * generate and show then immediately after user successfully adds their
+     * authehticator. Recovery codes can be used as a MFA verification type in
+     * [createMfaChallenge](/docs/references/cloud/client-web/account#createMfaChallenge)
+     * method.
+     *
+     * @throws {AppwriteException}
+     * @returns {Promise}
+    */
+    async createMfaRecoveryCodes(): Promise<Models.MfaRecoveryCodes> {
+        const apiPath = '/account/mfa/recovery-codes';
         const payload: Payload = {};
 
         const uri = new URL(this.client.config.endpoint + apiPath);
@@ -356,67 +472,22 @@ export class Account extends Service {
     }
 
     /**
-     * Verify Authenticator
+     * Regenerate MFA Recovery Codes
      *
-     * Verify an authenticator app after adding it using the [add
-     * authenticator](/docs/references/cloud/client-web/account#addAuthenticator)
-     * method.
+     * Regenerate recovery codes that can be used as backup for MFA flow. Before
+     * regenerating codes, they must be first generated using
+     * [createMfaRecoveryCodes](/docs/references/cloud/client-web/account#createMfaRecoveryCodes)
+     * method. An OTP challenge is required to regenreate recovery codes.
      *
-     * @param {AuthenticatorType} type
-     * @param {string} otp
      * @throws {AppwriteException}
      * @returns {Promise}
     */
-    async verifyAuthenticator<Preferences extends Models.Preferences>(type: AuthenticatorType, otp: string): Promise<Models.User<Preferences>> {
-        if (typeof type === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "type"');
-        }
-
-        if (typeof otp === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "otp"');
-        }
-
-        const apiPath = '/account/mfa/{type}'.replace('{type}', type);
+    async updateMfaRecoveryCodes(): Promise<Models.MfaRecoveryCodes> {
+        const apiPath = '/account/mfa/recovery-codes';
         const payload: Payload = {};
 
-        if (typeof otp !== 'undefined') {
-            payload['otp'] = otp;
-        }
-
         const uri = new URL(this.client.config.endpoint + apiPath);
-        return await this.client.call('put', uri, {
-            'content-type': 'application/json',
-        }, payload);
-    }
-
-    /**
-     * Delete Authenticator
-     *
-     * Delete an authenticator for a user by ID.
-     *
-     * @param {AuthenticatorType} type
-     * @param {string} otp
-     * @throws {AppwriteException}
-     * @returns {Promise}
-    */
-    async deleteAuthenticator<Preferences extends Models.Preferences>(type: AuthenticatorType, otp: string): Promise<Models.User<Preferences>> {
-        if (typeof type === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "type"');
-        }
-
-        if (typeof otp === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "otp"');
-        }
-
-        const apiPath = '/account/mfa/{type}'.replace('{type}', type);
-        const payload: Payload = {};
-
-        if (typeof otp !== 'undefined') {
-            payload['otp'] = otp;
-        }
-
-        const uri = new URL(this.client.config.endpoint + apiPath);
-        return await this.client.call('delete', uri, {
+        return await this.client.call('patch', uri, {
             'content-type': 'application/json',
         }, payload);
     }
@@ -969,10 +1040,11 @@ export class Account extends Service {
     }
 
     /**
-     * Update (or renew) session
+     * Update session
      *
-     * Extend session's expiry to increase it's lifespan. Extending a session is
-     * useful when session length is short such as 5 minutes.
+     * Use this endpoint to extend a session's length. Extending a session is
+     * useful when session expiry is short. If the session was created using an
+     * OAuth provider, this endpoint refreshes the access token from the provider.
      *
      * @param {string} sessionId
      * @throws {AppwriteException}

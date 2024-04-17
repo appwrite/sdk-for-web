@@ -5,7 +5,7 @@ node_js:
 jobs:
   include:
     - stage: NPM RC Release
-      if: tag == *-rc*
+      if: tag =~ /-(rc|RC)/
       node_js: "14.16"
       script:
         - npm install
@@ -17,7 +17,7 @@ jobs:
         api_key: $NPM_API_KEY
         tag: next
     - stage: NPM Release
-      if: tag != *-rc*
+      if: not tag =~ /-(rc|RC)/
       node_js: "14.16"
       script:
         - npm install

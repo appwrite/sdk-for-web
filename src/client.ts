@@ -103,7 +103,7 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '14.0.0',
+        'x-sdk-version': '14.0.1',
         'X-Appwrite-Response-Format': '1.5.0',
     };
 
@@ -224,7 +224,11 @@ class Client {
             }
         },
         createSocket: () => {
-            if (this.realtime.channels.size < 1) return;
+            if (this.realtime.channels.size < 1) {
+                this.realtime.reconnect = false;
+                this.realtime.socket?.close();
+                return;
+            }
 
             const channels = new URLSearchParams();
             channels.set('project', this.config.project);

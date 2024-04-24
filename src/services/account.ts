@@ -319,7 +319,7 @@ export class Account extends Service {
      * @throws {AppwriteException}
      * @returns {Promise}
     */
-    async deleteMfaAuthenticator<Preferences extends Models.Preferences>(type: AuthenticatorType, otp: string): Promise<Models.User<Preferences>> {
+    async deleteMfaAuthenticator(type: AuthenticatorType, otp: string): Promise<{}> {
         if (typeof type === 'undefined') {
             throw new AppwriteException('Missing required parameter: "type"');
         }

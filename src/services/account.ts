@@ -254,7 +254,7 @@ export class Account extends Service {
      *
      * Add an authenticator app to be used as an MFA factor. Verify the
      * authenticator using the [verify
-     * authenticator](/docs/references/cloud/client-web/account#verifyAuthenticator)
+     * authenticator](/docs/references/cloud/client-web/account#updateMfaAuthenticator)
      * method.
      *
      * @param {AuthenticatorType} type
@@ -279,8 +279,8 @@ export class Account extends Service {
      * Verify Authenticator
      *
      * Verify an authenticator app after adding it using the [add
-     * authenticator](/docs/references/cloud/client-web/account#addAuthenticator)
-     * method.
+     * authenticator](/docs/references/cloud/client-web/account#createMfaAuthenticator)
+     * method. add 
      *
      * @param {AuthenticatorType} type
      * @param {string} otp
@@ -319,7 +319,7 @@ export class Account extends Service {
      * @throws {AppwriteException}
      * @returns {Promise}
     */
-    async deleteMfaAuthenticator<Preferences extends Models.Preferences>(type: AuthenticatorType, otp: string): Promise<Models.User<Preferences>> {
+    async deleteMfaAuthenticator(type: AuthenticatorType, otp: string): Promise<{}> {
         if (typeof type === 'undefined') {
             throw new AppwriteException('Missing required parameter: "type"');
         }

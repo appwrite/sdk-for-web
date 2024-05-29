@@ -1,5 +1,3 @@
-import 'isomorphic-form-data';
-import { fetch } from 'cross-fetch';
 import { Models } from './models';
 import { Service } from './service';
 
@@ -103,7 +101,7 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '14.0.1',
+        'x-sdk-version': '15.0.0',
         'X-Appwrite-Response-Format': '1.5.0',
     };
 
@@ -391,7 +389,10 @@ class Client {
         };
 
         if (typeof window !== 'undefined' && window.localStorage) {
-            headers['X-Fallback-Cookies'] = window.localStorage.getItem('cookieFallback') ?? '';
+            const cookieFallback = window.localStorage.getItem('cookieFallback');
+            if (cookieFallback) {
+                headers['X-Fallback-Cookies'] = cookieFallback;
+            }
         }
 
         if (method === 'GET') {

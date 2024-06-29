@@ -388,10 +388,13 @@ class Client {
             credentials: 'include'
         };
 
+        let LocalStoragePresent = false
+
         if (typeof window !== 'undefined' && window.localStorage) {
             const cookieFallback = window.localStorage.getItem('cookieFallback');
             if (cookieFallback) {
                 headers['X-Fallback-Cookies'] = cookieFallback;
+                LocalStoragePresent = true
             }
         }
 
@@ -425,6 +428,9 @@ class Client {
         }
 
         try {
+            if(!LocalStoragePresent) {
+                throw new AppwriteException('Appwrite is using localStorage for session management. Increase your security by adding a custom domain as your API endpoint.');
+            }
             let data = null;
             const response = await fetch(url.toString(), options);
 

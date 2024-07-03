@@ -1,3 +1,10 @@
+/**
+ * Appwrite Web SDK
+ *
+ * This SDK is compatible with Appwrite server version 1.5.x. 
+ * For older versions, please check
+ * [previous releases](https://github.com/appwrite/sdk-for-web/releases).
+ */
 export { Client, Query, AppwriteException } from './client';
 export { Account } from './services/account';
 export { Avatars } from './services/avatars';

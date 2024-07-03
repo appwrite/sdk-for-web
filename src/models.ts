@@ -1,3 +1,6 @@
+/**
+ * Appwrite Models
+ */
 export namespace Models {
     /**
      * Documents List

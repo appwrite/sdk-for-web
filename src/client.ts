@@ -1,83 +1,275 @@
 import { Models } from './models';
 import { Service } from './service';
 
+/**
+ * Payload type representing a key-value pair with string keys and any values.
+ */
 type Payload = {
     [key: string]: any;
 }
 
+/**
+ * Headers type representing a key-value pair with string keys and string values.
+ */
 type Headers = {
     [key: string]: string;
 }
 
+/**
+ * Realtime response structure with different types.
+ */
 type RealtimeResponse = {
+    /**
+     * Type of the response: 'error', 'event', 'connected', or 'response'.
+     */
     type: 'error' | 'event' | 'connected' | 'response';
+
+    /**
+     * Data associated with the response based on the response type.
+     */
     data: RealtimeResponseAuthenticated | RealtimeResponseConnected | RealtimeResponseError | RealtimeResponseEvent<unknown>;
 }
 
+/**
+ * Realtime request structure for authentication.
+ */
 type RealtimeRequest = {
+    /**
+     * Type of the request: 'authentication'.
+     */
     type: 'authentication';
+
+    /**
+     * Data required for authentication.
+     */
     data: RealtimeRequestAuthenticate;
 }
 
+/**
+ * Realtime event response structure with generic payload type.
+ */
 export type RealtimeResponseEvent<T extends unknown> = {
+    /**
+     * List of event names associated with the response.
+     */
     events: string[];
+
+    /**
+     * List of channel names associated with the response.
+     */
     channels: string[];
+
+    /**
+     * Timestamp indicating the time of the event.
+     */
     timestamp: number;
+
+    /**
+     * Payload containing event-specific data.
+     */
     payload: T;
 }
 
+/**
+ * Realtime response structure for errors.
+ */
 type RealtimeResponseError = {
+    /**
+     * Numeric error code indicating the type of error.
+     */
     code: number;
+
+    /**
+     * Error message describing the encountered error.
+     */
     message: string;
 }
 
+/**
+ * Realtime response structure for a successful connection.
+ */
 type RealtimeResponseConnected = {
+    /**
+     * List of channels the user is connected to.
+     */
     channels: string[];
+
+    /**
+     * User object representing the connected user (optional).
+     */
     user?: object;
 }
 
+/**
+ * Realtime response structure for authenticated connections.
+ */
 type RealtimeResponseAuthenticated = {
+    /**
+     * Destination channel for the response.
+     */
     to: string;
+
+    /**
+     * Boolean indicating the success of the authentication process.
+     */
     success: boolean;
+
+    /**
+     * User object representing the authenticated user.
+     */
     user: object;
 }
 
+/**
+ * Realtime request structure for authentication.
+ */
 type RealtimeRequestAuthenticate = {
+    /**
+     * Session identifier for authentication.
+     */
     session: string;
 }
 
+/**
+ * Realtime interface representing the structure of a realtime communication object.
+ */
 type Realtime = {
+    /**
+     * WebSocket instance for realtime communication.
+     */
     socket?: WebSocket;
+
+    /**
+     * Timeout duration for communication operations.
+     */
     timeout?: number;
+
+    /**
+     * URL for establishing the WebSocket connection.
+     */
     url?: string;
+
+    /**
+     * Last received message from the realtime server.
+     */
     lastMessage?: RealtimeResponse;
+
+    /**
+     * Set of channel names the client is subscribed to.
+     */
     channels: Set<string>;
+
+    /**
+     * Map of subscriptions containing channel names and corresponding callback functions.
+     */
     subscriptions: Map<number, {
         channels: string[];
         callback: (payload: RealtimeResponseEvent<any>) => void
     }>;
+
+    /**
+     * Counter for managing subscriptions.
+     */
     subscriptionsCounter: number;
+
+    /**
+     * Boolean indicating whether automatic reconnection is enabled.
+     */
     reconnect: boolean;
+
+    /**
+     * Number of reconnection attempts made.
+     */
     reconnectAttempts: number;
+
+    /**
+     * Function to get the timeout duration for communication operations.
+     */
     getTimeout: () => number;
+
+    /**
+     * Function to establish a WebSocket connection.
+     */
     connect: () => void;
+
+    /**
+     * Function to create a new WebSocket instance.
+     */
     createSocket: () => void;
+
+    /**
+     * Function to clean up resources associated with specified channels.
+     *
+     * @param {string[]} channels - List of channel names to clean up.
+     */
     cleanUp: (channels: string[]) => void;
+
+    /**
+     * Function to handle incoming messages from the WebSocket connection.
+     *
+     * @param {MessageEvent} event - Event containing the received message.
+     */
     onMessage: (event: MessageEvent) => void;
 }
 
+/**
+ * Type representing upload progress information.
+ */
 export type UploadProgress = {
+    /**
+     * Identifier for the upload progress.
+     */
     $id: string;
+
+    /**
+     * Current progress of the upload (in percentage).
+     */
     progress: number;
+
+    /**
+     * Total size uploaded (in bytes) during the upload process.
+     */
     sizeUploaded: number;
+
+    /**
+     * Total number of chunks that need to be uploaded.
+     */
     chunksTotal: number;
+
+    /**
+     * Number of chunks that have been successfully uploaded.
+     */
     chunksUploaded: number;
 }
 
+/**
+ * Exception thrown by the  package
+ */
 class AppwriteException extends Error {
+    /**
+     * The error code associated with the exception.
+     */
     code: number;
+
+    /**
+     * The response string associated with the exception.
+     */
     response: string;
+
+    /**
+     * Error type.
+     * See [Error Types](https://appwrite.io/docs/response-codes#errorTypes) for more information.
+     */
     type: string;
+
+    /**
+     * Initializes a Appwrite Exception.
+     *
+     * @param {string} message - The error message.
+     * @param {number} code - The error code. Default is 0.
+     * @param {string} type - The error type. Default is an empty string.
+     * @param {string} response - The response string. Default is an empty string.
+     */
     constructor(message: string, code: number = 0, type: string = '', response: string = '') {
         super(message);
         this.name = 'AppwriteException';
@@ -88,7 +280,13 @@ class AppwriteException extends Error {
     }
 }
 
+/**
+ * Client that handles requests to Appwrite
+ */
 class Client {
+    /**
+     * Holds configuration such as project.
+     */
     config = {
         endpoint: 'https://cloud.appwrite.io/v1',
         endpointRealtime: '',
@@ -97,6 +295,10 @@ class Client {
         locale: '',
         session: '',
     };
+
+    /**
+     * Custom headers for API requests.
+     */
     headers: Headers = {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
@@ -376,6 +578,19 @@ class Client {
         }
     }
 
+    /**
+     * Call API endpoint with the specified method, URL, headers, and parameters.
+     *
+     * @param {string} method - HTTP method (e.g., 'GET', 'POST', 'PUT', 'DELETE').
+     * @param {URL} url - The URL of the API endpoint.
+     * @param {Headers} headers - Custom headers for the API request.
+     * @param {Payload} params - Request parameters.
+     * @returns {Promise<any>} - A promise that resolves with the response data.
+     * 
+     * @typedef {Object} Payload - Request payload data.
+     * @property {string} key - The key.
+     * @property {string} value - The value.
+     */
     async call(method: string, url: URL, headers: Headers = {}, params: Payload = {}): Promise<any> {
         method = method.toUpperCase();
 
@@ -427,6 +642,11 @@ class Client {
         try {
             let data = null;
             const response = await fetch(url.toString(), options);
+
+            const warnings = response.headers.get('x-appwrite-warning');
+            if (warnings) {
+                warnings.split(';').forEach((warning: string) => console.warn('Warning: ' + warning));
+            }
 
             if (response.headers.get('content-type')?.includes('application/json')) {
                 data = await response.json();

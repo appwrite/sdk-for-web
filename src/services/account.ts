@@ -250,7 +250,7 @@ export class Account extends Service {
     }
 
     /**
-     * Add Authenticator
+     * Create Authenticator
      *
      * Add an authenticator app to be used as an MFA factor. Verify the
      * authenticator using the [verify
@@ -315,25 +315,16 @@ export class Account extends Service {
      * Delete an authenticator for a user by ID.
      *
      * @param {AuthenticatorType} type
-     * @param {string} otp
      * @throws {AppwriteException}
      * @returns {Promise}
     */
-    async deleteMfaAuthenticator(type: AuthenticatorType, otp: string): Promise<{}> {
+    async deleteMfaAuthenticator(type: AuthenticatorType): Promise<{}> {
         if (typeof type === 'undefined') {
             throw new AppwriteException('Missing required parameter: "type"');
         }
 
-        if (typeof otp === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "otp"');
-        }
-
         const apiPath = '/account/mfa/authenticators/{type}'.replace('{type}', type);
         const payload: Payload = {};
-
-        if (typeof otp !== 'undefined') {
-            payload['otp'] = otp;
-        }
 
         const uri = new URL(this.client.config.endpoint + apiPath);
         return await this.client.call('delete', uri, {
@@ -342,7 +333,7 @@ export class Account extends Service {
     }
 
     /**
-     * Create 2FA Challenge
+     * Create MFA Challenge
      *
      * Begin the process of MFA verification after sign-in. Finish the flow with
      * [updateMfaChallenge](/docs/references/cloud/client-web/account#updateMfaChallenge)
@@ -1525,7 +1516,7 @@ export class Account extends Service {
     }
 
     /**
-     * Create phone verification (confirmation)
+     * Update phone verification (confirmation)
      *
      * Use this endpoint to complete the user phone verification process. Use the
      * **userId** and **secret** that were sent to your user's phone number to

@@ -1,14 +1,12 @@
-import { Service } from '../service';
-import { AppwriteException, Client } from '../client';
+import { AppwriteException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
-import type { UploadProgress, Payload } from '../client';
 
-export class Graphql extends Service {
+export class Graphql {
+    client: Client;
 
-     constructor(client: Client)
-     {
-        super(client);
-     }
+    constructor(client: Client) {
+        this.client = client;
+    }
 
     /**
      * GraphQL endpoint
@@ -17,27 +15,31 @@ export class Graphql extends Service {
      *
      * @param {object} query
      * @throws {AppwriteException}
-     * @returns {Promise}
-    */
+     * @returns {Promise<{}>}
+     */
     async query(query: object): Promise<{}> {
         if (typeof query === 'undefined') {
             throw new AppwriteException('Missing required parameter: "query"');
         }
-
         const apiPath = '/graphql';
         const payload: Payload = {};
-
         if (typeof query !== 'undefined') {
             payload['query'] = query;
         }
-
         const uri = new URL(this.client.config.endpoint + apiPath);
-        return await this.client.call('post', uri, {
+
+        const apiHeaders: { [header: string]: string } = {
             'x-sdk-graphql': 'true',
             'content-type': 'application/json',
-        }, payload);
-    }
+        }
 
+        return await this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            payload
+        );
+    }
     /**
      * GraphQL endpoint
      *
@@ -45,24 +47,29 @@ export class Graphql extends Service {
      *
      * @param {object} query
      * @throws {AppwriteException}
-     * @returns {Promise}
-    */
+     * @returns {Promise<{}>}
+     */
     async mutation(query: object): Promise<{}> {
         if (typeof query === 'undefined') {
             throw new AppwriteException('Missing required parameter: "query"');
         }
-
         const apiPath = '/graphql/mutation';
         const payload: Payload = {};
-
         if (typeof query !== 'undefined') {
             payload['query'] = query;
         }
-
         const uri = new URL(this.client.config.endpoint + apiPath);
-        return await this.client.call('post', uri, {
+
+        const apiHeaders: { [header: string]: string } = {
             'x-sdk-graphql': 'true',
             'content-type': 'application/json',
-        }, payload);
+        }
+
+        return await this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            payload
+        );
     }
-};
+}

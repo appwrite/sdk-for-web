@@ -1,5 +1,4 @@
 import { Models } from './models';
-import { Service } from './service';
 
 /**
  * Payload type representing a key-value pair with string keys and any values.
@@ -48,7 +47,7 @@ type RealtimeRequest = {
 /**
  * Realtime event response structure with generic payload type.
  */
-export type RealtimeResponseEvent<T extends unknown> = {
+type RealtimeResponseEvent<T extends unknown> = {
     /**
      * List of event names associated with the response.
      */
@@ -215,7 +214,7 @@ type Realtime = {
 /**
  * Type representing upload progress information.
  */
-export type UploadProgress = {
+type UploadProgress = {
     /**
      * Identifier for the upload progress.
      */
@@ -284,6 +283,8 @@ class AppwriteException extends Error {
  * Client that handles requests to Appwrite
  */
 class Client {
+    static CHUNK_SIZE = 1024 * 1024 * 5;
+
     /**
      * Holds configuration such as project.
      */
@@ -295,7 +296,6 @@ class Client {
         locale: '',
         session: '',
     };
-
     /**
      * Custom headers for API requests.
      */
@@ -303,7 +303,7 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '16.0.0-rc.2',
+        'x-sdk-version': '16.0.0-rc.3',
         'X-Appwrite-Response-Format': '1.6.0',
     };
 
@@ -350,7 +350,6 @@ class Client {
         this.config.project = value;
         return this;
     }
-
     /**
      * Set JWT
      *
@@ -365,7 +364,6 @@ class Client {
         this.config.jwt = value;
         return this;
     }
-
     /**
      * Set Locale
      *
@@ -378,7 +376,6 @@ class Client {
         this.config.locale = value;
         return this;
     }
-
     /**
      * Set Session
      *
@@ -393,7 +390,6 @@ class Client {
         this.config.session = value;
         return this;
     }
-
 
     private realtime: Realtime = {
         socket: undefined,
@@ -578,40 +574,18 @@ class Client {
         }
     }
 
-    /**
-     * Call API endpoint with the specified method, URL, headers, and parameters.
-     *
-     * @param {string} method - HTTP method (e.g., 'GET', 'POST', 'PUT', 'DELETE').
-     * @param {URL} url - The URL of the API endpoint.
-     * @param {Headers} headers - Custom headers for the API request.
-     * @param {Payload} params - Request parameters.
-     * @returns {Promise<any>} - A promise that resolves with the response data.
-     * 
-     * @typedef {Object} Payload - Request payload data.
-     * @property {string} key - The key.
-     * @property {string} value - The value.
-     */
-    async call(method: string, url: URL, headers: Headers = {}, params: Payload = {}): Promise<any> {
+    prepareRequest(method: string, url: URL, headers: Headers = {}, params: Payload = {}): { uri: string, options: RequestInit } {
         method = method.toUpperCase();
-
 
         headers = Object.assign({}, this.headers, headers);
 
         let options: RequestInit = {
             method,
             headers,
-            credentials: 'include'
         };
 
-        if (typeof window !== 'undefined' && window.localStorage) {
-            const cookieFallback = window.localStorage.getItem('cookieFallback');
-            if (cookieFallback) {
-                headers['X-Fallback-Cookies'] = cookieFallback;
-            }
-        }
-
         if (method === 'GET') {
-            for (const [key, value] of Object.entries(Service.flatten(params))) {
+            for (const [key, value] of Object.entries(Client.flatten(params))) {
                 url.searchParams.append(key, value);
             }
         } else {
@@ -621,15 +595,17 @@ class Client {
                     break;
 
                 case 'multipart/form-data':
-                    let formData = new FormData();
+                    const formData = new FormData();
 
-                    for (const key in params) {
-                        if (Array.isArray(params[key])) {
-                            params[key].forEach((value: any) => {
-                                formData.append(key + '[]', value);
-                            })
+                    for (const [key, value] of Object.entries(params)) {
+                        if (value instanceof File) {
+                            formData.append(key, value, value.name);
+                        } else if (Array.isArray(value)) {
+                            for (const nestedValue of value) {
+                                formData.append(`${key}[]`, nestedValue);
+                            }
                         } else {
-                            formData.append(key, params[key]);
+                            formData.append(key, value);
                         }
                     }
 
@@ -639,45 +615,121 @@ class Client {
             }
         }
 
-        try {
-            let data = null;
-            const response = await fetch(url.toString(), options);
+        return { uri: url.toString(), options };
+    }
 
-            const warnings = response.headers.get('x-appwrite-warning');
-            if (warnings) {
-                warnings.split(';').forEach((warning: string) => console.warn('Warning: ' + warning));
-            }
+    async chunkedUpload(method: string, url: URL, headers: Headers = {}, originalPayload: Payload = {}, onProgress: (progress: UploadProgress) => void) {
+        const file = Object.values(originalPayload).find((value) => value instanceof File);
 
-            if (response.headers.get('content-type')?.includes('application/json')) {
-                data = await response.json();
-            } else {
-                data = {
-                    message: await response.text()
-                };
-            }
-
-            if (400 <= response.status) {
-                throw new AppwriteException(data?.message, response.status, data?.type, data);
-            }
-
-            const cookieFallback = response.headers.get('X-Fallback-Cookies');
-
-            if (typeof window !== 'undefined' && window.localStorage && cookieFallback) {
-                window.console.warn('Appwrite is using localStorage for session management. Increase your security by adding a custom domain as your API endpoint.');
-                window.localStorage.setItem('cookieFallback', cookieFallback);
-            }
-
-            return data;
-        } catch (e) {
-            if (e instanceof AppwriteException) {
-                throw e;
-            }
-            throw new AppwriteException((<Error>e).message);
+        if (file.size <= Client.CHUNK_SIZE) {
+            return await this.call(method, url, headers, originalPayload);
         }
+
+        let start = 0;
+        let response = null;
+
+        while (start < file.size) {
+            let end = start + Client.CHUNK_SIZE; // Prepare end for the next chunk
+            if (end >= file.size) {
+                end = file.size; // Adjust for the last chunk to include the last byte
+            }
+
+            headers['content-range'] = `bytes ${start}-${end-1}/${file.size}`;
+            const chunk = file.slice(start, end);
+
+            let payload = { ...originalPayload, file: new File([chunk], file.name)};
+
+            response = await this.call(method, url, headers, payload);
+
+            if (onProgress && typeof onProgress === 'function') {
+                onProgress({
+                    $id: response.$id,
+                    progress: Math.round((end / file.size) * 100),
+                    sizeUploaded: end,
+                    chunksTotal: Math.ceil(file.size / Client.CHUNK_SIZE),
+                    chunksUploaded: Math.ceil(end / Client.CHUNK_SIZE)
+                });
+            }
+
+            if (response && response.$id) {
+                headers['x-appwrite-id'] = response.$id;
+            }
+
+            start = end;
+        }
+
+        return response;
+    }
+
+    async redirect(method: string, url: URL, headers: Headers = {}, params: Payload = {}): Promise<string> {
+        const { uri, options } = this.prepareRequest(method, url, headers, params);
+        
+        const response = await fetch(uri, {
+            ...options,
+            redirect: 'manual'
+        });
+
+        if (response.status !== 301 && response.status !== 302) {
+            throw new AppwriteException('Invalid redirect', response.status);
+        }
+
+        return response.headers.get('location') || '';
+    }
+
+    async call(method: string, url: URL, headers: Headers = {}, params: Payload = {}, responseType = 'json'): Promise<any> {
+        const { uri, options } = this.prepareRequest(method, url, headers, params);
+
+        let data: any = null;
+
+        const response = await fetch(uri, options);
+
+        const warnings = response.headers.get('x-appwrite-warning');
+        if (warnings) {
+            warnings.split(';').forEach((warning: string) => console.warn('Warning: ' + warning));
+        }
+
+        if (response.headers.get('content-type')?.includes('application/json')) {
+            data = await response.json();
+        } else if (responseType === 'arrayBuffer') {
+            data = await response.arrayBuffer();
+        } else {
+            data = {
+                message: await response.text()
+            };
+        }
+
+        if (400 <= response.status) {
+            throw new AppwriteException(data?.message, response.status, data?.type, data);
+        }
+
+        const cookieFallback = response.headers.get('X-Fallback-Cookies');
+
+        if (typeof window !== 'undefined' && window.localStorage && cookieFallback) {
+            window.console.warn('Appwrite is using localStorage for session management. Increase your security by adding a custom domain as your API endpoint.');
+            window.localStorage.setItem('cookieFallback', cookieFallback);
+        }
+
+        return data;
+    }
+
+    static flatten(data: Payload, prefix = ''): Payload {
+        let output: Payload = {};
+
+        for (const [key, value] of Object.entries(data)) {
+            let finalKey = prefix ? prefix + '[' + key +']' : key;
+            if (Array.isArray(value)) {
+                output = { ...output, ...Client.flatten(value, finalKey) };
+            } else {
+                output[finalKey] = value;
+            }
+        }
+
+        return output;
     }
 }
 
 export { Client, AppwriteException };
 export { Query } from './query';
-export type { Models, Payload };
+export type { Models, Payload, UploadProgress };
+export type { RealtimeResponseEvent };
 export type { QueryTypes, QueryTypesList } from './query';

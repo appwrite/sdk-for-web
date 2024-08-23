@@ -303,7 +303,7 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '16.0.0-rc.4',
+        'x-sdk-version': '16.0.0-rc.5',
         'X-Appwrite-Response-Format': '1.6.0',
     };
 
@@ -578,6 +578,13 @@ class Client {
         method = method.toUpperCase();
 
         headers = Object.assign({}, this.headers, headers);
+
+        if (typeof window !== 'undefined' && window.localStorage) {
+            const cookieFallback = window.localStorage.getItem('cookieFallback');
+            if (cookieFallback) {
+                headers['X-Fallback-Cookies'] = cookieFallback;
+            }
+        }
 
         let options: RequestInit = {
             method,

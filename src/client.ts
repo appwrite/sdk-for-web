@@ -532,10 +532,10 @@ class Client {
 
     /**
      * Subscribes to Appwrite events and passes you the payload in realtime.
-     * 
-     * @param {string|string[]} channels 
+     *
+     * @param {string|string[]} channels
      * Channel to subscribe - pass a single channel as a string or multiple with an array of strings.
-     * 
+     *
      * Possible channels are:
      * - account
      * - collections
@@ -666,21 +666,6 @@ class Client {
         }
 
         return response;
-    }
-
-    async redirect(method: string, url: URL, headers: Headers = {}, params: Payload = {}): Promise<string> {
-        const { uri, options } = this.prepareRequest(method, url, headers, params);
-        
-        const response = await fetch(uri, {
-            ...options,
-            redirect: 'manual'
-        });
-
-        if (response.status !== 301 && response.status !== 302) {
-            throw new AppwriteException('Invalid redirect', response.status);
-        }
-
-        return response.headers.get('location') || '';
     }
 
     async call(method: string, url: URL, headers: Headers = {}, params: Payload = {}, responseType = 'json'): Promise<any> {

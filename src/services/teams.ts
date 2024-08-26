@@ -1,3 +1,4 @@
+import { Service } from '../service';
 import { AppwriteException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 
@@ -32,6 +33,7 @@ export class Teams {
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'get',
@@ -75,6 +77,7 @@ export class Teams {
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'post',
             uri,
@@ -102,6 +105,7 @@ export class Teams {
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'get',
@@ -138,6 +142,7 @@ export class Teams {
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'put',
             uri,
@@ -165,6 +170,7 @@ export class Teams {
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'delete',
@@ -201,6 +207,7 @@ export class Teams {
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'get',
@@ -264,6 +271,7 @@ Please note that to avoid a [Redirect Attack](https://github.com/OWASP/CheatShee
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'post',
             uri,
@@ -295,6 +303,7 @@ Please note that to avoid a [Redirect Attack](https://github.com/OWASP/CheatShee
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'get',
@@ -336,6 +345,7 @@ Please note that to avoid a [Redirect Attack](https://github.com/OWASP/CheatShee
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'patch',
             uri,
@@ -367,6 +377,7 @@ Please note that to avoid a [Redirect Attack](https://github.com/OWASP/CheatShee
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'delete',
@@ -417,6 +428,7 @@ If the request is successful, a session for the user is automatically created.
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'patch',
             uri,
@@ -444,6 +456,7 @@ If the request is successful, a session for the user is automatically created.
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'get',
@@ -479,6 +492,7 @@ If the request is successful, a session for the user is automatically created.
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'put',

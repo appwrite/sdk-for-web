@@ -1,3 +1,4 @@
+import { Service } from '../service';
 import { AppwriteException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 import { Browser } from '../enums/browser';
@@ -47,6 +48,11 @@ When one dimension is specified and the other is 0, the image is scaled with pre
         }
 
         payload['project'] = this.client.config.project;
+        for (const [key, value] of Object.entries(Service.flatten(payload))) {
+            uri.searchParams.append(key, value);
+        }
+
+        payload['project'] = this.client.config.project;
 
         for (const [key, value] of Object.entries(Client.flatten(payload))) {
             uri.searchParams.append(key, value);
@@ -91,6 +97,11 @@ When one dimension is specified and the other is 0, the image is scaled with pre
         }
 
         payload['project'] = this.client.config.project;
+        for (const [key, value] of Object.entries(Service.flatten(payload))) {
+            uri.searchParams.append(key, value);
+        }
+
+        payload['project'] = this.client.config.project;
 
         for (const [key, value] of Object.entries(Client.flatten(payload))) {
             uri.searchParams.append(key, value);
@@ -122,6 +133,11 @@ This endpoint does not follow HTTP redirects.
 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
+        }
+
+        payload['project'] = this.client.config.project;
+        for (const [key, value] of Object.entries(Service.flatten(payload))) {
+            uri.searchParams.append(key, value);
         }
 
         payload['project'] = this.client.config.project;
@@ -169,6 +185,11 @@ When one dimension is specified and the other is 0, the image is scaled with pre
         }
 
         payload['project'] = this.client.config.project;
+        for (const [key, value] of Object.entries(Service.flatten(payload))) {
+            uri.searchParams.append(key, value);
+        }
+
+        payload['project'] = this.client.config.project;
 
         for (const [key, value] of Object.entries(Client.flatten(payload))) {
             uri.searchParams.append(key, value);
@@ -210,6 +231,11 @@ This endpoint does not follow HTTP redirects.
 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
+        }
+
+        payload['project'] = this.client.config.project;
+        for (const [key, value] of Object.entries(Service.flatten(payload))) {
+            uri.searchParams.append(key, value);
         }
 
         payload['project'] = this.client.config.project;
@@ -259,6 +285,11 @@ When one dimension is specified and the other is 0, the image is scaled with pre
         }
 
         payload['project'] = this.client.config.project;
+        for (const [key, value] of Object.entries(Service.flatten(payload))) {
+            uri.searchParams.append(key, value);
+        }
+
+        payload['project'] = this.client.config.project;
 
         for (const [key, value] of Object.entries(Client.flatten(payload))) {
             uri.searchParams.append(key, value);
@@ -301,6 +332,11 @@ When one dimension is specified and the other is 0, the image is scaled with pre
 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
+        }
+
+        payload['project'] = this.client.config.project;
+        for (const [key, value] of Object.entries(Service.flatten(payload))) {
+            uri.searchParams.append(key, value);
         }
 
         payload['project'] = this.client.config.project;

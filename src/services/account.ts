@@ -1,3 +1,4 @@
+import { Service } from '../service';
 import { AppwriteException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 import { AuthenticatorType } from '../enums/authenticator-type';
@@ -27,6 +28,7 @@ export class Account {
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'get',
@@ -77,6 +79,7 @@ export class Account {
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'post',
             uri,
@@ -117,6 +120,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'patch',
             uri,
@@ -144,6 +148,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'get',
@@ -173,6 +178,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'delete',
             uri,
@@ -196,6 +202,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'post',
@@ -224,6 +231,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'get',
@@ -256,6 +264,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'patch',
             uri,
@@ -283,6 +292,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'post',
@@ -319,6 +329,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'put',
             uri,
@@ -346,6 +357,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'delete',
@@ -377,6 +389,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'post',
@@ -416,6 +429,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'put',
             uri,
@@ -439,6 +453,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'get',
@@ -464,6 +479,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'get',
             uri,
@@ -488,6 +504,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'post',
             uri,
@@ -511,6 +528,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'patch',
@@ -542,6 +560,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'patch',
@@ -577,6 +596,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'patch',
@@ -616,6 +636,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'patch',
             uri,
@@ -639,6 +660,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'get',
@@ -670,6 +692,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'patch',
@@ -708,6 +731,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'post',
@@ -756,6 +780,7 @@ Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'put',
             uri,
@@ -779,6 +804,7 @@ Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'get',
@@ -804,6 +830,7 @@ Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'delete',
             uri,
@@ -827,6 +854,7 @@ Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'post',
@@ -868,6 +896,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'post',
             uri,
@@ -905,6 +934,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'put',
@@ -951,16 +981,17 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
             'content-type': 'application/json',
         }
 
-        const location = await this.client.redirect(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
-        if (typeof window !== 'undefined') {
-            window.location.href = location;
+        payload['project'] = this.client.config.project;
+        for (const [key, value] of Object.entries(Service.flatten(payload))) {
+            uri.searchParams.append(key, value);
         }
-        return location.toString();
+
+        if (typeof window !== 'undefined' && window?.location) {
+            window.location.href = uri.toString();
+            return;
+        } else {
+            return uri.toString();
+        }
     }
     /**
      * Update phone session
@@ -992,6 +1023,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'put',
@@ -1031,6 +1063,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'post',
             uri,
@@ -1058,6 +1091,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'get',
@@ -1087,6 +1121,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'patch',
             uri,
@@ -1115,6 +1150,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'delete',
             uri,
@@ -1138,6 +1174,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'patch',
@@ -1180,6 +1217,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'post',
             uri,
@@ -1214,6 +1252,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'put',
             uri,
@@ -1240,6 +1279,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'delete',
@@ -1284,6 +1324,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'post',
@@ -1334,6 +1375,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'post',
             uri,
@@ -1378,16 +1420,17 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
             'content-type': 'application/json',
         }
 
-        const location = await this.client.redirect(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
-        if (typeof window !== 'undefined') {
-            window.location.href = location;
+        payload['project'] = this.client.config.project;
+        for (const [key, value] of Object.entries(Service.flatten(payload))) {
+            uri.searchParams.append(key, value);
         }
-        return location.toString();
+
+        if (typeof window !== 'undefined' && window?.location) {
+            window.location.href = uri.toString();
+            return;
+        } else {
+            return uri.toString();
+        }
     }
     /**
      * Create phone token
@@ -1422,6 +1465,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'post',
             uri,
@@ -1455,6 +1499,7 @@ Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'post',
@@ -1494,6 +1539,7 @@ Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'put',
             uri,
@@ -1517,6 +1563,7 @@ Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'post',
@@ -1555,6 +1602,7 @@ Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'put',

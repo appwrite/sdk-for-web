@@ -1,3 +1,4 @@
+import { Service } from '../service';
 import { AppwriteException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 
@@ -33,6 +34,7 @@ export class Graphql {
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'post',
             uri,
@@ -64,6 +66,7 @@ export class Graphql {
             'x-sdk-graphql': 'true',
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'post',

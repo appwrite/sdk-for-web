@@ -1,3 +1,4 @@
+import { Service } from '../service';
 import { AppwriteException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 import { ExecutionMethod } from '../enums/execution-method';
@@ -42,6 +43,7 @@ export class Functions {
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'get',
             uri,
@@ -69,6 +71,7 @@ export class Functions {
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'get',
@@ -100,6 +103,11 @@ export class Functions {
 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
+        }
+
+        payload['project'] = this.client.config.project;
+        for (const [key, value] of Object.entries(Service.flatten(payload))) {
+            uri.searchParams.append(key, value);
         }
 
         payload['project'] = this.client.config.project;
@@ -138,6 +146,7 @@ export class Functions {
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'get',
@@ -191,6 +200,7 @@ export class Functions {
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'post',
             uri,
@@ -222,6 +232,7 @@ export class Functions {
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'get',

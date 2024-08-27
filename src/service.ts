@@ -2,6 +2,9 @@ import { Client } from './client';
 import type { Payload } from './client';
 
 export class Service {
+    /**
+     * The size for chunked uploads in bytes.
+     */
     static CHUNK_SIZE = 5*1024*1024; // 5MB
 
     client: Client;

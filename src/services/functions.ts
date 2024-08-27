@@ -11,47 +11,6 @@ export class Functions {
     }
 
     /**
-     * List function templates
-     *
-     * List available function templates. You can use template details in [createFunction](/docs/references/cloud/server-nodejs/functions#create) method.
-     *
-     * @param {string[]} runtimes
-     * @param {string[]} useCases
-     * @param {number} limit
-     * @param {number} offset
-     * @throws {AppwriteException}
-     * @returns {Promise<Models.TemplateFunctionList>}
-     */
-    async listTemplates(runtimes?: string[], useCases?: string[], limit?: number, offset?: number): Promise<Models.TemplateFunctionList> {
-        const apiPath = '/functions/templates';
-        const payload: Payload = {};
-        if (typeof runtimes !== 'undefined') {
-            payload['runtimes'] = runtimes;
-        }
-        if (typeof useCases !== 'undefined') {
-            payload['useCases'] = useCases;
-        }
-        if (typeof limit !== 'undefined') {
-            payload['limit'] = limit;
-        }
-        if (typeof offset !== 'undefined') {
-            payload['offset'] = offset;
-        }
-        const uri = new URL(this.client.config.endpoint + apiPath);
-
-        const apiHeaders: { [header: string]: string } = {
-            'content-type': 'application/json',
-        }
-
-
-        return await this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
-    }
-    /**
      * Get function template
      *
      * Get a function template using ID. You can use template details in [createFunction](/docs/references/cloud/server-nodejs/functions#create) method.

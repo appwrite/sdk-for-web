@@ -1,3 +1,10 @@
+/**
+ * Appwrite Web SDK
+ *
+ * This SDK is compatible with Appwrite server version 1.6.x. 
+ * For older versions, please check
+ * [previous releases](https://github.com/appwrite/sdk-for-web/releases).
+ */
 export { Client, Query, AppwriteException } from './client';
 export { Account } from './services/account';
 export { Avatars } from './services/avatars';
@@ -8,8 +15,9 @@ export { Locale } from './services/locale';
 export { Messaging } from './services/messaging';
 export { Storage } from './services/storage';
 export { Teams } from './services/teams';
-export type { Models, Payload, RealtimeResponseEvent, UploadProgress } from './client';
+export type { Models, RealtimeResponseEvent, UploadProgress } from './client';
 export type { QueryTypes, QueryTypesList } from './query';
+export { Payload } from './payload';
 export { Permission } from './permission';
 export { Role } from './role';
 export { ID } from './id';

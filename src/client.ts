@@ -305,7 +305,7 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '17.0.0-rc1',
+        'x-sdk-version': '17.0.0',
         'X-Appwrite-Response-Format': '1.6.0',
     };
 
@@ -608,7 +608,11 @@ class Client {
 
                     for (const [name, value] of Object.entries(params)) {
                         if (value instanceof Payload) {
-                            formData.append(name, await value.toFile(), value.filename);
+                            if (value.filename) {
+                                formData.append(name, await value.toFile(), value.filename);
+                            } else {
+                                formData.append(name, await value.toString());
+                            }
                         } else if (Array.isArray(value)) {
                             for (const nestedValue of value) {
                                 formData.append(`${name}[]`, nestedValue);

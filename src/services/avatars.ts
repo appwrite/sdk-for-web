@@ -1,5 +1,5 @@
-import { Payload } from '../payload';
-import { AppwriteException, Client, type Params, UploadProgress } from '../client';
+import { Service } from '../service';
+import { AppwriteException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 import { Browser } from '../enums/browser';
 import { CreditCard } from '../enums/credit-card';
@@ -31,29 +31,30 @@ When one dimension is specified and the other is 0, the image is scaled with pre
             throw new AppwriteException('Missing required parameter: "code"');
         }
         const apiPath = '/avatars/browsers/{code}'.replace('{code}', code);
-        const params: Params = {};
+        const payload: Payload = {};
         if (typeof width !== 'undefined') {
-            params['width'] = width;
+            payload['width'] = width;
         }
         if (typeof height !== 'undefined') {
-            params['height'] = height;
+            payload['height'] = height;
         }
         if (typeof quality !== 'undefined') {
-            params['quality'] = quality;
+            payload['quality'] = quality;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
-        params['project'] = this.client.config.project;
-        for (const [key, value] of Object.entries(Client.flatten(params))) {
+
+        payload['project'] = this.client.config.project;
+        for (const [key, value] of Object.entries(Service.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
 
-        params['project'] = this.client.config.project;
+        payload['project'] = this.client.config.project;
 
-        for (const [key, value] of Object.entries(Client.flatten(params))) {
+        for (const [key, value] of Object.entries(Client.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
 
@@ -79,29 +80,30 @@ When one dimension is specified and the other is 0, the image is scaled with pre
             throw new AppwriteException('Missing required parameter: "code"');
         }
         const apiPath = '/avatars/credit-cards/{code}'.replace('{code}', code);
-        const params: Params = {};
+        const payload: Payload = {};
         if (typeof width !== 'undefined') {
-            params['width'] = width;
+            payload['width'] = width;
         }
         if (typeof height !== 'undefined') {
-            params['height'] = height;
+            payload['height'] = height;
         }
         if (typeof quality !== 'undefined') {
-            params['quality'] = quality;
+            payload['quality'] = quality;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
-        params['project'] = this.client.config.project;
-        for (const [key, value] of Object.entries(Client.flatten(params))) {
+
+        payload['project'] = this.client.config.project;
+        for (const [key, value] of Object.entries(Service.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
 
-        params['project'] = this.client.config.project;
+        payload['project'] = this.client.config.project;
 
-        for (const [key, value] of Object.entries(Client.flatten(params))) {
+        for (const [key, value] of Object.entries(Client.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
 
@@ -123,23 +125,24 @@ This endpoint does not follow HTTP redirects.
             throw new AppwriteException('Missing required parameter: "url"');
         }
         const apiPath = '/avatars/favicon';
-        const params: Params = {};
+        const payload: Payload = {};
         if (typeof url !== 'undefined') {
-            params['url'] = url;
+            payload['url'] = url;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
-        params['project'] = this.client.config.project;
-        for (const [key, value] of Object.entries(Client.flatten(params))) {
+
+        payload['project'] = this.client.config.project;
+        for (const [key, value] of Object.entries(Service.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
 
-        params['project'] = this.client.config.project;
+        payload['project'] = this.client.config.project;
 
-        for (const [key, value] of Object.entries(Client.flatten(params))) {
+        for (const [key, value] of Object.entries(Client.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
 
@@ -165,29 +168,30 @@ When one dimension is specified and the other is 0, the image is scaled with pre
             throw new AppwriteException('Missing required parameter: "code"');
         }
         const apiPath = '/avatars/flags/{code}'.replace('{code}', code);
-        const params: Params = {};
+        const payload: Payload = {};
         if (typeof width !== 'undefined') {
-            params['width'] = width;
+            payload['width'] = width;
         }
         if (typeof height !== 'undefined') {
-            params['height'] = height;
+            payload['height'] = height;
         }
         if (typeof quality !== 'undefined') {
-            params['quality'] = quality;
+            payload['quality'] = quality;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
-        params['project'] = this.client.config.project;
-        for (const [key, value] of Object.entries(Client.flatten(params))) {
+
+        payload['project'] = this.client.config.project;
+        for (const [key, value] of Object.entries(Service.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
 
-        params['project'] = this.client.config.project;
+        payload['project'] = this.client.config.project;
 
-        for (const [key, value] of Object.entries(Client.flatten(params))) {
+        for (const [key, value] of Object.entries(Client.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
 
@@ -213,29 +217,30 @@ This endpoint does not follow HTTP redirects.
             throw new AppwriteException('Missing required parameter: "url"');
         }
         const apiPath = '/avatars/image';
-        const params: Params = {};
+        const payload: Payload = {};
         if (typeof url !== 'undefined') {
-            params['url'] = url;
+            payload['url'] = url;
         }
         if (typeof width !== 'undefined') {
-            params['width'] = width;
+            payload['width'] = width;
         }
         if (typeof height !== 'undefined') {
-            params['height'] = height;
+            payload['height'] = height;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
-        params['project'] = this.client.config.project;
-        for (const [key, value] of Object.entries(Client.flatten(params))) {
+
+        payload['project'] = this.client.config.project;
+        for (const [key, value] of Object.entries(Service.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
 
-        params['project'] = this.client.config.project;
+        payload['project'] = this.client.config.project;
 
-        for (const [key, value] of Object.entries(Client.flatten(params))) {
+        for (const [key, value] of Object.entries(Client.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
 
@@ -260,32 +265,33 @@ When one dimension is specified and the other is 0, the image is scaled with pre
      */
     getInitials(name?: string, width?: number, height?: number, background?: string): string {
         const apiPath = '/avatars/initials';
-        const params: Params = {};
+        const payload: Payload = {};
         if (typeof name !== 'undefined') {
-            params['name'] = name;
+            payload['name'] = name;
         }
         if (typeof width !== 'undefined') {
-            params['width'] = width;
+            payload['width'] = width;
         }
         if (typeof height !== 'undefined') {
-            params['height'] = height;
+            payload['height'] = height;
         }
         if (typeof background !== 'undefined') {
-            params['background'] = background;
+            payload['background'] = background;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
-        params['project'] = this.client.config.project;
-        for (const [key, value] of Object.entries(Client.flatten(params))) {
+
+        payload['project'] = this.client.config.project;
+        for (const [key, value] of Object.entries(Service.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
 
-        params['project'] = this.client.config.project;
+        payload['project'] = this.client.config.project;
 
-        for (const [key, value] of Object.entries(Client.flatten(params))) {
+        for (const [key, value] of Object.entries(Client.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
 
@@ -309,32 +315,33 @@ When one dimension is specified and the other is 0, the image is scaled with pre
             throw new AppwriteException('Missing required parameter: "text"');
         }
         const apiPath = '/avatars/qr';
-        const params: Params = {};
+        const payload: Payload = {};
         if (typeof text !== 'undefined') {
-            params['text'] = text;
+            payload['text'] = text;
         }
         if (typeof size !== 'undefined') {
-            params['size'] = size;
+            payload['size'] = size;
         }
         if (typeof margin !== 'undefined') {
-            params['margin'] = margin;
+            payload['margin'] = margin;
         }
         if (typeof download !== 'undefined') {
-            params['download'] = download;
+            payload['download'] = download;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
-        params['project'] = this.client.config.project;
-        for (const [key, value] of Object.entries(Client.flatten(params))) {
+
+        payload['project'] = this.client.config.project;
+        for (const [key, value] of Object.entries(Service.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
 
-        params['project'] = this.client.config.project;
+        payload['project'] = this.client.config.project;
 
-        for (const [key, value] of Object.entries(Client.flatten(params))) {
+        for (const [key, value] of Object.entries(Client.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
 

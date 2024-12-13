@@ -1,11 +1,9 @@
 import { Models } from './models';
-import { Payload } from './payload';
-import { MultipartParser } from './multipart';
 
 /**
  * Payload type representing a key-value pair with string keys and any values.
  */
-type Params = {
+type Payload = {
     [key: string]: any;
 }
 
@@ -576,7 +574,7 @@ class Client {
         }
     }
 
-    async prepareRequest(method: string, url: URL, headers: Headers = {}, params: Params = {}): Promise<{ uri: string, options: RequestInit }> {
+    prepareRequest(method: string, url: URL, headers: Headers = {}, params: Payload = {}): { uri: string, options: RequestInit } {
         method = method.toUpperCase();
 
         headers = Object.assign({}, this.headers, headers);
@@ -607,25 +605,20 @@ class Client {
                 case 'multipart/form-data':
                     const formData = new FormData();
 
-                    for (const [name, value] of Object.entries(params)) {
-                        if (value instanceof Payload) {
-                            if (value.filename) {
-                                formData.append(name, await value.toFile(), value.filename);
-                            } else {
-                                formData.append(name, await value.toString());
-                            }
+                    for (const [key, value] of Object.entries(params)) {
+                        if (value instanceof File) {
+                            formData.append(key, value, value.name);
                         } else if (Array.isArray(value)) {
                             for (const nestedValue of value) {
-                                formData.append(`${name}[]`, nestedValue);
+                                formData.append(`${key}[]`, nestedValue);
                             }
                         } else {
-                            formData.append(name, value);
+                            formData.append(key, value);
                         }
                     }
-                    
+
                     options.body = formData;
                     delete headers['content-type'];
-                    headers['accept'] = 'multipart/form-data';
                     break;
             }
         }
@@ -633,37 +626,35 @@ class Client {
         return { uri: url.toString(), options };
     }
 
-    async chunkedUpload(method: string, url: URL, headers: Headers = {}, params: Params = {}, onProgress: (progress: UploadProgress) => void) {
-        const entry = Object.entries(params).find(([_key, value]) => value instanceof Payload);
-        if (!entry) {
-            throw new Error('No payload found in params');
-        }
+    async chunkedUpload(method: string, url: URL, headers: Headers = {}, originalPayload: Payload = {}, onProgress: (progress: UploadProgress) => void) {
+        const file = Object.values(originalPayload).find((value) => value instanceof File);
 
-        const [paramName, payload] = entry as [string, Payload];
-
-        if (payload.size <= Client.CHUNK_SIZE) {
-            return await this.call(method, url, headers, params);
+        if (file.size <= Client.CHUNK_SIZE) {
+            return await this.call(method, url, headers, originalPayload);
         }
 
         let start = 0;
         let response = null;
 
-        while (start < payload.size) {
-            const end = Math.min(start + Client.CHUNK_SIZE, payload.size);
+        while (start < file.size) {
+            let end = start + Client.CHUNK_SIZE; // Prepare end for the next chunk
+            if (end >= file.size) {
+                end = file.size; // Adjust for the last chunk to include the last byte
+            }
 
-            headers['content-range'] = `bytes ${start}-${end-1}/${payload.size}`;
+            headers['content-range'] = `bytes ${start}-${end-1}/${file.size}`;
+            const chunk = file.slice(start, end);
 
-            const buffer = await payload.toBinary(start, end - start);
-            params[paramName] = Payload.fromBinary(buffer, payload.filename);
+            let payload = { ...originalPayload, file: new File([chunk], file.name)};
 
-            response = await this.call(method, url, headers, params);
+            response = await this.call(method, url, headers, payload);
 
             if (onProgress && typeof onProgress === 'function') {
                 onProgress({
                     $id: response.$id,
-                    progress: Math.round((end / payload.size) * 100),
+                    progress: Math.round((end / file.size) * 100),
                     sizeUploaded: end,
-                    chunksTotal: Math.ceil(payload.size / Client.CHUNK_SIZE),
+                    chunksTotal: Math.ceil(file.size / Client.CHUNK_SIZE),
                     chunksUploaded: Math.ceil(end / Client.CHUNK_SIZE)
                 });
             }
@@ -678,8 +669,12 @@ class Client {
         return response;
     }
 
-    async call(method: string, url: URL, headers: Headers = {}, params: Params = {}, responseType = 'json'): Promise<any> {
-        const { uri, options } = await this.prepareRequest(method, url, headers, params);
+    async ping(): Promise<string> {
+        return this.call('GET', new URL(this.config.endpoint + '/ping'));
+    }
+
+    async call(method: string, url: URL, headers: Headers = {}, params: Payload = {}, responseType = 'json'): Promise<any> {
+        const { uri, options } = this.prepareRequest(method, url, headers, params);
 
         let data: any = null;
 
@@ -692,12 +687,6 @@ class Client {
 
         if (response.headers.get('content-type')?.includes('application/json')) {
             data = await response.json();
-
-        } else if (response.headers.get('content-type')?.includes('multipart/form-data')) {
-            const buffer = await response.arrayBuffer();
-            const multipart = new MultipartParser(buffer, response.headers.get('content-type')!);
-            data = multipart.toObject();
-
         } else if (responseType === 'arrayBuffer') {
             data = await response.arrayBuffer();
         } else {
@@ -720,8 +709,8 @@ class Client {
         return data;
     }
 
-    static flatten(data: Params, prefix = ''): Params {
-        let output: Params = {};
+    static flatten(data: Payload, prefix = ''): Payload {
+        let output: Payload = {};
 
         for (const [key, value] of Object.entries(data)) {
             let finalKey = prefix ? prefix + '[' + key +']' : key;
@@ -738,6 +727,6 @@ class Client {
 
 export { Client, AppwriteException };
 export { Query } from './query';
-export type { Models, Params, UploadProgress };
+export type { Models, Payload, UploadProgress };
 export type { RealtimeResponseEvent };
 export type { QueryTypes, QueryTypesList } from './query';

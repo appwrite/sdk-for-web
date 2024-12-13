@@ -1,5 +1,5 @@
-import { Payload } from '../payload';
-import { AppwriteException, Client, type Params, UploadProgress } from '../client';
+import { Service } from '../service';
+import { AppwriteException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 import { ExecutionMethod } from '../enums/execution-method';
 
@@ -26,12 +26,12 @@ export class Functions {
             throw new AppwriteException('Missing required parameter: "functionId"');
         }
         const apiPath = '/functions/{functionId}/executions'.replace('{functionId}', functionId);
-        const params: Params = {};
+        const payload: Payload = {};
         if (typeof queries !== 'undefined') {
-            params['queries'] = queries;
+            payload['queries'] = queries;
         }
         if (typeof search !== 'undefined') {
-            params['search'] = search;
+            payload['search'] = search;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -39,11 +39,12 @@ export class Functions {
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'get',
             uri,
             apiHeaders,
-            params
+            payload
         );
     }
     /**
@@ -52,7 +53,7 @@ export class Functions {
      * Trigger a function execution. The returned object will return you the current execution status. You can ping the `Get Execution` endpoint to get updates on the current execution status. Once this endpoint is called, your function execution process will start asynchronously.
      *
      * @param {string} functionId
-     * @param {Payload} body
+     * @param {string} body
      * @param {boolean} async
      * @param {string} xpath
      * @param {ExecutionMethod} method
@@ -61,41 +62,42 @@ export class Functions {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Execution>}
      */
-    async createExecution(functionId: string, body?: Payload, async?: boolean, xpath?: string, method?: ExecutionMethod, headers?: object, scheduledAt?: string, onProgress = (progress: UploadProgress) => {}): Promise<Models.Execution> {
+    async createExecution(functionId: string, body?: string, async?: boolean, xpath?: string, method?: ExecutionMethod, headers?: object, scheduledAt?: string): Promise<Models.Execution> {
         if (typeof functionId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "functionId"');
         }
         const apiPath = '/functions/{functionId}/executions'.replace('{functionId}', functionId);
-        const params: Params = {};
+        const payload: Payload = {};
         if (typeof body !== 'undefined') {
-            params['body'] = body;
+            payload['body'] = body;
         }
         if (typeof async !== 'undefined') {
-            params['async'] = async;
+            payload['async'] = async;
         }
         if (typeof xpath !== 'undefined') {
-            params['path'] = xpath;
+            payload['path'] = xpath;
         }
         if (typeof method !== 'undefined') {
-            params['method'] = method;
+            payload['method'] = method;
         }
         if (typeof headers !== 'undefined') {
-            params['headers'] = headers;
+            payload['headers'] = headers;
         }
         if (typeof scheduledAt !== 'undefined') {
-            params['scheduledAt'] = scheduledAt;
+            payload['scheduledAt'] = scheduledAt;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
-            'content-type': 'multipart/form-data',
+            'content-type': 'application/json',
         }
+
 
         return await this.client.call(
             'post',
             uri,
             apiHeaders,
-            params
+            payload
         );
     }
     /**
@@ -116,18 +118,19 @@ export class Functions {
             throw new AppwriteException('Missing required parameter: "executionId"');
         }
         const apiPath = '/functions/{functionId}/executions/{executionId}'.replace('{functionId}', functionId).replace('{executionId}', executionId);
-        const params: Params = {};
+        const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'get',
             uri,
             apiHeaders,
-            params
+            payload
         );
     }
 }

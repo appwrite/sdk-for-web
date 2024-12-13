@@ -9,7 +9,7 @@ const storage = new Storage(client);
 const result = await storage.createFile(
     '<BUCKET_ID>', // bucketId
     '<FILE_ID>', // fileId
-    Payload.fromFile(document.getElementById('uploader').files[0]), // file
+    document.getElementById('uploader').files[0], // file
     ["read("any")"] // permissions (optional)
 );
 

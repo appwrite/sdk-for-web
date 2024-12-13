@@ -1,5 +1,5 @@
-import { Payload } from '../payload';
-import { AppwriteException, Client, type Params, UploadProgress } from '../client';
+import { Service } from '../service';
+import { AppwriteException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 
 export class Databases {
@@ -28,9 +28,9 @@ export class Databases {
             throw new AppwriteException('Missing required parameter: "collectionId"');
         }
         const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
-        const params: Params = {};
+        const payload: Payload = {};
         if (typeof queries !== 'undefined') {
-            params['queries'] = queries;
+            payload['queries'] = queries;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -38,11 +38,12 @@ export class Databases {
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'get',
             uri,
             apiHeaders,
-            params
+            payload
         );
     }
     /**
@@ -72,15 +73,15 @@ export class Databases {
             throw new AppwriteException('Missing required parameter: "data"');
         }
         const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
-        const params: Params = {};
+        const payload: Payload = {};
         if (typeof documentId !== 'undefined') {
-            params['documentId'] = documentId;
+            payload['documentId'] = documentId;
         }
         if (typeof data !== 'undefined') {
-            params['data'] = data;
+            payload['data'] = data;
         }
         if (typeof permissions !== 'undefined') {
-            params['permissions'] = permissions;
+            payload['permissions'] = permissions;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -88,11 +89,12 @@ export class Databases {
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'post',
             uri,
             apiHeaders,
-            params
+            payload
         );
     }
     /**
@@ -118,9 +120,9 @@ export class Databases {
             throw new AppwriteException('Missing required parameter: "documentId"');
         }
         const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{documentId}', documentId);
-        const params: Params = {};
+        const payload: Payload = {};
         if (typeof queries !== 'undefined') {
-            params['queries'] = queries;
+            payload['queries'] = queries;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -128,11 +130,12 @@ export class Databases {
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'get',
             uri,
             apiHeaders,
-            params
+            payload
         );
     }
     /**
@@ -159,12 +162,12 @@ export class Databases {
             throw new AppwriteException('Missing required parameter: "documentId"');
         }
         const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{documentId}', documentId);
-        const params: Params = {};
+        const payload: Payload = {};
         if (typeof data !== 'undefined') {
-            params['data'] = data;
+            payload['data'] = data;
         }
         if (typeof permissions !== 'undefined') {
-            params['permissions'] = permissions;
+            payload['permissions'] = permissions;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -172,11 +175,12 @@ export class Databases {
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'patch',
             uri,
             apiHeaders,
-            params
+            payload
         );
     }
     /**
@@ -201,18 +205,19 @@ export class Databases {
             throw new AppwriteException('Missing required parameter: "documentId"');
         }
         const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{documentId}', documentId);
-        const params: Params = {};
+        const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'delete',
             uri,
             apiHeaders,
-            params
+            payload
         );
     }
 }

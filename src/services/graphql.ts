@@ -1,5 +1,5 @@
-import { Payload } from '../payload';
-import { AppwriteException, Client, type Params, UploadProgress } from '../client';
+import { Service } from '../service';
+import { AppwriteException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 
 export class Graphql {
@@ -23,9 +23,9 @@ export class Graphql {
             throw new AppwriteException('Missing required parameter: "query"');
         }
         const apiPath = '/graphql';
-        const params: Params = {};
+        const payload: Payload = {};
         if (typeof query !== 'undefined') {
-            params['query'] = query;
+            payload['query'] = query;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -34,11 +34,12 @@ export class Graphql {
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'post',
             uri,
             apiHeaders,
-            params
+            payload
         );
     }
     /**
@@ -55,9 +56,9 @@ export class Graphql {
             throw new AppwriteException('Missing required parameter: "query"');
         }
         const apiPath = '/graphql/mutation';
-        const params: Params = {};
+        const payload: Payload = {};
         if (typeof query !== 'undefined') {
-            params['query'] = query;
+            payload['query'] = query;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -66,11 +67,12 @@ export class Graphql {
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'post',
             uri,
             apiHeaders,
-            params
+            payload
         );
     }
 }

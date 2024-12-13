@@ -1,5 +1,5 @@
-import { Payload } from '../payload';
-import { AppwriteException, Client, type Params, UploadProgress } from '../client';
+import { Service } from '../service';
+import { AppwriteException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 
 export class Messaging {
@@ -31,12 +31,12 @@ export class Messaging {
             throw new AppwriteException('Missing required parameter: "targetId"');
         }
         const apiPath = '/messaging/topics/{topicId}/subscribers'.replace('{topicId}', topicId);
-        const params: Params = {};
+        const payload: Payload = {};
         if (typeof subscriberId !== 'undefined') {
-            params['subscriberId'] = subscriberId;
+            payload['subscriberId'] = subscriberId;
         }
         if (typeof targetId !== 'undefined') {
-            params['targetId'] = targetId;
+            payload['targetId'] = targetId;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -44,11 +44,12 @@ export class Messaging {
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'post',
             uri,
             apiHeaders,
-            params
+            payload
         );
     }
     /**
@@ -69,18 +70,19 @@ export class Messaging {
             throw new AppwriteException('Missing required parameter: "subscriberId"');
         }
         const apiPath = '/messaging/topics/{topicId}/subscribers/{subscriberId}'.replace('{topicId}', topicId).replace('{subscriberId}', subscriberId);
-        const params: Params = {};
+        const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
 
+
         return await this.client.call(
             'delete',
             uri,
             apiHeaders,
-            params
+            payload
         );
     }
 }

@@ -842,11 +842,11 @@ export namespace Models {
          */
         userId: string;
         /**
-         * User name.
+         * User name. Hide this attribute by toggling membership privacy in the Console.
          */
         userName: string;
         /**
-         * User email address.
+         * User email address. Hide this attribute by toggling membership privacy in the Console.
          */
         userEmail: string;
         /**
@@ -870,7 +870,7 @@ export namespace Models {
          */
         confirm: boolean;
         /**
-         * Multi factor authentication status, true if the user has MFA enabled or false otherwise.
+         * Multi factor authentication status, true if the user has MFA enabled or false otherwise. Hide this attribute by toggling membership privacy in the Console.
          */
         mfa: boolean;
         /**
@@ -1198,5 +1198,9 @@ export namespace Models {
          * The target identifier.
          */
         identifier: string;
+        /**
+         * Is the target expired.
+         */
+        expired: boolean;
     }
 }

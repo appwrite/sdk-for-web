@@ -19,14 +19,14 @@ type Headers = {
  */
 type RealtimeResponse = {
     /**
-     * Type of the response: 'error', 'event', 'connected', 'pong', or 'response'.
+     * Type of the response: 'error', 'event', 'connected', 'response' or 'pong'.
      */
     type: 'error' | 'event' | 'connected' | 'response' | 'pong';
 
     /**
      * Data associated with the response based on the response type.
      */
-    data: RealtimeResponseAuthenticated | RealtimeResponseConnected | RealtimeResponseError | RealtimeResponseEvent<unknown>;
+    data: RealtimeResponseAuthenticated | RealtimeResponseConnected | RealtimeResponseError | RealtimeResponseEvent<unknown> | undefined;
 }
 
 /**
@@ -315,7 +315,7 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '16.1.0',
+        'x-sdk-version': '16.1.1',
         'X-Appwrite-Response-Format': '1.6.0',
     };
 
@@ -531,6 +531,8 @@ class Client {
                             })
                         }
                         break;
+                    case 'pong':
+                        break; // Handle pong response if needed
                     case 'error':
                         throw message.data;
                     default:

@@ -19,9 +19,9 @@ type Headers = {
  */
 type RealtimeResponse = {
     /**
-     * Type of the response: 'error', 'event', 'connected', or 'response'.
+     * Type of the response: 'error', 'event', 'connected', 'pong', or 'response'.
      */
-    type: 'error' | 'event' | 'connected' | 'response';
+    type: 'error' | 'event' | 'connected' | 'response' | 'pong';
 
     /**
      * Data associated with the response based on the response type.
@@ -129,6 +129,8 @@ type RealtimeRequestAuthenticate = {
     session: string;
 }
 
+type TimeoutHandle = ReturnType<typeof setTimeout> | number;
+
 /**
  * Realtime interface representing the structure of a realtime communication object.
  */
@@ -139,9 +141,14 @@ type Realtime = {
     socket?: WebSocket;
 
     /**
-     * Timeout duration for communication operations.
+     * Timeout for reconnect operations.
      */
-    timeout?: number;
+    timeout?: TimeoutHandle;
+
+    /**
+     * Heartbeat interval for the realtime connection.
+    */
+    heartbeat?: TimeoutHandle;
 
     /**
      * URL for establishing the WebSocket connection.
@@ -195,6 +202,11 @@ type Realtime = {
      * Function to create a new WebSocket instance.
      */
     createSocket: () => void;
+
+    /**
+     * Function to create a new heartbeat interval.
+     */
+    createHeartbeat: () => void;
 
     /**
      * Function to clean up resources associated with specified channels.
@@ -303,7 +315,7 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '16.0.2',
+        'x-sdk-version': '16.1.0',
         'X-Appwrite-Response-Format': '1.6.0',
     };
 
@@ -394,6 +406,7 @@ class Client {
     private realtime: Realtime = {
         socket: undefined,
         timeout: undefined,
+        heartbeat: undefined,
         url: '',
         channels: new Set(),
         subscriptions: new Map(),
@@ -418,6 +431,17 @@ class Client {
                 default:
                     return 60_000;
             }
+        },
+        createHeartbeat: () => {
+            if (this.realtime.heartbeat) {
+                clearTimeout(this.realtime.heartbeat);
+            }
+
+            this.realtime.heartbeat = window?.setInterval(() => {
+                this.realtime.socket?.send(JSON.stringify({
+                    type: 'ping'
+                }));
+            }, 20_000);
         },
         createSocket: () => {
             if (this.realtime.channels.size < 1) {
@@ -452,6 +476,7 @@ class Client {
                 this.realtime.socket.addEventListener('message', this.realtime.onMessage);
                 this.realtime.socket.addEventListener('open', _event => {
                     this.realtime.reconnectAttempts = 0;
+                    this.realtime.createHeartbeat();
                 });
                 this.realtime.socket.addEventListener('close', event => {
                     if (
@@ -667,6 +692,10 @@ class Client {
         }
 
         return response;
+    }
+
+    async ping(): Promise<string> {
+        return this.call('GET', new URL(this.config.endpoint + '/ping'));
     }
 
     async call(method: string, url: URL, headers: Headers = {}, params: Payload = {}, responseType = 'json'): Promise<any> {

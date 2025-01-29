@@ -182,7 +182,7 @@ export class Teams {
     /**
      * List team memberships
      *
-     * Use this endpoint to list a team&#039;s members using the team&#039;s ID. All team members have read access to this endpoint.
+     * Use this endpoint to list a team&#039;s members using the team&#039;s ID. All team members have read access to this endpoint. Hide sensitive attributes from the response by toggling membership privacy in the Console.
      *
      * @param {string} teamId
      * @param {string[]} queries
@@ -282,7 +282,7 @@ Please note that to avoid a [Redirect Attack](https://github.com/OWASP/CheatShee
     /**
      * Get team membership
      *
-     * Get a team member by the membership unique id. All team members have read access for this resource.
+     * Get a team member by the membership unique id. All team members have read access for this resource. Hide sensitive attributes from the response by toggling membership privacy in the Console.
      *
      * @param {string} teamId
      * @param {string} membershipId

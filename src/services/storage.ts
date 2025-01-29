@@ -242,10 +242,6 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
 
         payload['project'] = this.client.config.project;
 
-        for (const [key, value] of Object.entries(Client.flatten(payload))) {
-            uri.searchParams.append(key, value);
-        }
-
         return uri.toString();
     }
     /**
@@ -324,10 +320,6 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
 
         payload['project'] = this.client.config.project;
 
-        for (const [key, value] of Object.entries(Client.flatten(payload))) {
-            uri.searchParams.append(key, value);
-        }
-
         return uri.toString();
     }
     /**
@@ -361,10 +353,6 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
         }
 
         payload['project'] = this.client.config.project;
-
-        for (const [key, value] of Object.entries(Client.flatten(payload))) {
-            uri.searchParams.append(key, value);
-        }
 
         return uri.toString();
     }

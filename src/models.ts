@@ -55,8 +55,8 @@ export namespace Models {
         logs: Log[];
     }
     /**
-     * Files List
-     */
+         * Files List
+         */
     export type FileList = {
         /**
          * Total number of files documents that matched your query.
@@ -212,6 +212,11 @@ export namespace Models {
          * Document permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).
          */
         $permissions: string[];
+    }
+    /**
+     * AnyDocument
+     */
+    export interface AnyDocument extends Document {
         [key: string]: any;
     }
     /**
@@ -978,8 +983,8 @@ export namespace Models {
         code: string;
     }
     /**
-     * Language
-     */
+         * Language
+         */
     export type Language = {
         /**
          * Language name.

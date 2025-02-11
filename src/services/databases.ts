@@ -54,12 +54,12 @@ export class Databases {
      * @param {string} databaseId
      * @param {string} collectionId
      * @param {string} documentId
-     * @param {Omit<Document, keyof Models.Document>} data
+     * @param {Omit<T, keyof Models.Document>} data
      * @param {string[]} permissions
      * @throws {AppwriteException}
-     * @returns {Promise<Document>}
+     * @returns {Promise<T>}
      */
-    async createDocument<Document extends Models.Document>(databaseId: string, collectionId: string, documentId: string, data: Omit<Document, keyof Models.Document>, permissions?: string[]): Promise<Document> {
+    async createDocument<T extends Models.Document = Models.AnyDocument>(databaseId: string, collectionId: string, documentId: string, data: Omit<T, keyof Models.Document>, permissions?: string[]): Promise<T> {
         if (typeof databaseId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "databaseId"');
         }

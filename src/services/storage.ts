@@ -12,8 +12,6 @@ export class Storage {
     }
 
     /**
-     * List files
-     *
      * Get a list of all the user files. You can use the query params to filter your results.
      *
      * @param {string} bucketId
@@ -40,6 +38,8 @@ export class Storage {
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'get',
@@ -49,8 +49,6 @@ export class Storage {
         );
     }
     /**
-     * Create file
-     *
      * Create a new file. Before using this route, you should create a new bucket resource using either a [server integration](https://appwrite.io/docs/server/storage#storageCreateBucket) API or directly from your Appwrite console.
 
 Larger files should be uploaded using multiple requests with the [content-range](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Range) header to send a partial request with a maximum supported chunk of `5MB`. The `content-range` header values should always be in bytes.
@@ -94,6 +92,8 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
             'content-type': 'multipart/form-data',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.chunkedUpload(
             'post',
@@ -104,8 +104,6 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
         );
     }
     /**
-     * Get file
-     *
      * Get a file by its unique ID. This endpoint response returns a JSON object with the file metadata.
      *
      * @param {string} bucketId
@@ -128,6 +126,8 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'get',
@@ -137,8 +137,6 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
         );
     }
     /**
-     * Update file
-     *
      * Update a file by its unique ID. Only users with write permissions have access to update this resource.
      *
      * @param {string} bucketId
@@ -169,6 +167,8 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'put',
@@ -178,8 +178,6 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
         );
     }
     /**
-     * Delete file
-     *
      * Delete a file by its unique ID. Only users with write permissions have access to delete this resource.
      *
      * @param {string} bucketId
@@ -202,6 +200,8 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'delete',
@@ -211,8 +211,6 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
         );
     }
     /**
-     * Get file for download
-     *
      * Get a file content by its unique ID. The endpoint response return with a &#039;Content-Disposition: attachment&#039; header that tells the browser to start downloading the file to user downloads directory.
      *
      * @param {string} bucketId
@@ -236,17 +234,14 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
         }
 
         payload['project'] = this.client.config.project;
+
         for (const [key, value] of Object.entries(Service.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
 
-        payload['project'] = this.client.config.project;
-
         return uri.toString();
     }
     /**
-     * Get file preview
-     *
      * Get a file preview image. Currently, this method supports preview for image files (jpg, png, and gif), other supported formats, like pdf, docs, slides, and spreadsheets, will return the file icon image. You can also pass query string arguments for cutting and resizing your preview image. Preview is supported only for image files smaller than 10MB.
      *
      * @param {string} bucketId
@@ -314,17 +309,14 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
         }
 
         payload['project'] = this.client.config.project;
+
         for (const [key, value] of Object.entries(Service.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
 
-        payload['project'] = this.client.config.project;
-
         return uri.toString();
     }
     /**
-     * Get file for view
-     *
      * Get a file content by its unique ID. This endpoint is similar to the download method but returns with no  &#039;Content-Disposition: attachment&#039; header.
      *
      * @param {string} bucketId
@@ -348,11 +340,10 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
         }
 
         payload['project'] = this.client.config.project;
+
         for (const [key, value] of Object.entries(Service.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
-
-        payload['project'] = this.client.config.project;
 
         return uri.toString();
     }

@@ -10,8 +10,6 @@ export class Teams {
     }
 
     /**
-     * List teams
-     *
      * Get a list of all the teams in which the current user is a member. You can use the parameters to filter your results.
      *
      * @param {string[]} queries
@@ -34,6 +32,8 @@ export class Teams {
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'get',
@@ -43,8 +43,6 @@ export class Teams {
         );
     }
     /**
-     * Create team
-     *
      * Create a new team. The user who creates the team will automatically be assigned as the owner of the team. Only the users with the owner role can invite new members, add new owners and delete or update the team.
      *
      * @param {string} teamId
@@ -77,6 +75,8 @@ export class Teams {
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'post',
@@ -86,8 +86,6 @@ export class Teams {
         );
     }
     /**
-     * Get team
-     *
      * Get a team by its ID. All team members have read access for this resource.
      *
      * @param {string} teamId
@@ -106,6 +104,8 @@ export class Teams {
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'get',
@@ -115,8 +115,6 @@ export class Teams {
         );
     }
     /**
-     * Update name
-     *
      * Update the team&#039;s name by its unique ID.
      *
      * @param {string} teamId
@@ -142,6 +140,8 @@ export class Teams {
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'put',
@@ -151,8 +151,6 @@ export class Teams {
         );
     }
     /**
-     * Delete team
-     *
      * Delete a team using its ID. Only team members with the owner role can delete the team.
      *
      * @param {string} teamId
@@ -171,6 +169,8 @@ export class Teams {
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'delete',
@@ -180,8 +180,6 @@ export class Teams {
         );
     }
     /**
-     * List team memberships
-     *
      * Use this endpoint to list a team&#039;s members using the team&#039;s ID. All team members have read access to this endpoint. Hide sensitive attributes from the response by toggling membership privacy in the Console.
      *
      * @param {string} teamId
@@ -208,6 +206,8 @@ export class Teams {
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'get',
@@ -217,8 +217,6 @@ export class Teams {
         );
     }
     /**
-     * Create team membership
-     *
      * Invite a new member to join your team. Provide an ID for existing users, or invite unregistered users using an email or phone number. If initiated from a Client SDK, Appwrite will send an email or sms with a link to join the team to the invited user, and an account will be created for them if one doesn&#039;t exist. If initiated from a Server SDK, the new member will be added automatically to the team.
 
 You only need to provide one of a user ID, email, or phone number. Appwrite will prioritize accepting the user ID &gt; email &gt; phone number if you provide more than one of these parameters.
@@ -271,6 +269,8 @@ Please note that to avoid a [Redirect Attack](https://github.com/OWASP/CheatShee
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'post',
@@ -280,8 +280,6 @@ Please note that to avoid a [Redirect Attack](https://github.com/OWASP/CheatShee
         );
     }
     /**
-     * Get team membership
-     *
      * Get a team member by the membership unique id. All team members have read access for this resource. Hide sensitive attributes from the response by toggling membership privacy in the Console.
      *
      * @param {string} teamId
@@ -304,6 +302,8 @@ Please note that to avoid a [Redirect Attack](https://github.com/OWASP/CheatShee
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'get',
@@ -313,8 +313,6 @@ Please note that to avoid a [Redirect Attack](https://github.com/OWASP/CheatShee
         );
     }
     /**
-     * Update membership
-     *
      * Modify the roles of a team member. Only team members with the owner role have access to this endpoint. Learn more about [roles and permissions](https://appwrite.io/docs/permissions).
 
      *
@@ -345,6 +343,8 @@ Please note that to avoid a [Redirect Attack](https://github.com/OWASP/CheatShee
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'patch',
@@ -354,8 +354,6 @@ Please note that to avoid a [Redirect Attack](https://github.com/OWASP/CheatShee
         );
     }
     /**
-     * Delete team membership
-     *
      * This endpoint allows a user to leave a team or for a team owner to delete the membership of any other team member. You can also use this endpoint to delete a user membership even if it is not accepted.
      *
      * @param {string} teamId
@@ -378,6 +376,8 @@ Please note that to avoid a [Redirect Attack](https://github.com/OWASP/CheatShee
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'delete',
@@ -387,8 +387,6 @@ Please note that to avoid a [Redirect Attack](https://github.com/OWASP/CheatShee
         );
     }
     /**
-     * Update team membership status
-     *
      * Use this endpoint to allow a user to accept an invitation to join a team after being redirected back to your app from the invitation email received by the user.
 
 If the request is successful, a session for the user is automatically created.
@@ -428,6 +426,8 @@ If the request is successful, a session for the user is automatically created.
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'patch',
@@ -437,8 +437,6 @@ If the request is successful, a session for the user is automatically created.
         );
     }
     /**
-     * Get team preferences
-     *
      * Get the team&#039;s shared preferences by its unique ID. If a preference doesn&#039;t need to be shared by all team members, prefer storing them in [user preferences](https://appwrite.io/docs/references/cloud/client-web/account#getPrefs).
      *
      * @param {string} teamId
@@ -457,6 +455,8 @@ If the request is successful, a session for the user is automatically created.
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'get',
@@ -466,8 +466,6 @@ If the request is successful, a session for the user is automatically created.
         );
     }
     /**
-     * Update preferences
-     *
      * Update the team&#039;s preferences by its unique ID. The object you pass is stored as is and replaces any previous value. The maximum allowed prefs size is 64kB and throws an error if exceeded.
      *
      * @param {string} teamId
@@ -492,6 +490,8 @@ If the request is successful, a session for the user is automatically created.
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
+        payload['project'] = this.client.config.project;
 
 
         return await this.client.call(

@@ -10,8 +10,6 @@ export class Messaging {
     }
 
     /**
-     * Create subscriber
-     *
      * Create a new subscriber.
      *
      * @param {string} topicId
@@ -44,6 +42,8 @@ export class Messaging {
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'post',
@@ -53,8 +53,6 @@ export class Messaging {
         );
     }
     /**
-     * Delete subscriber
-     *
      * Delete a subscriber by its unique ID.
      *
      * @param {string} topicId
@@ -76,6 +74,8 @@ export class Messaging {
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
+        payload['project'] = this.client.config.project;
 
 
         return await this.client.call(

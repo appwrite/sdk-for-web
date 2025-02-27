@@ -11,8 +11,6 @@ export class Functions {
     }
 
     /**
-     * List executions
-     *
      * Get a list of all the current user function execution logs. You can use the query params to filter your results.
      *
      * @param {string} functionId
@@ -39,6 +37,8 @@ export class Functions {
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'get',
@@ -48,8 +48,6 @@ export class Functions {
         );
     }
     /**
-     * Create execution
-     *
      * Trigger a function execution. The returned object will return you the current execution status. You can ping the `Get Execution` endpoint to get updates on the current execution status. Once this endpoint is called, your function execution process will start asynchronously.
      *
      * @param {string} functionId
@@ -92,6 +90,8 @@ export class Functions {
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'post',
@@ -101,8 +101,6 @@ export class Functions {
         );
     }
     /**
-     * Get execution
-     *
      * Get a function execution log by its unique ID.
      *
      * @param {string} functionId
@@ -124,6 +122,8 @@ export class Functions {
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
+        payload['project'] = this.client.config.project;
 
 
         return await this.client.call(

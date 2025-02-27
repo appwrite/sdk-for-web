@@ -10,8 +10,6 @@ export class Databases {
     }
 
     /**
-     * List documents
-     *
      * Get a list of all the user&#039;s documents in a given collection. You can use the query params to filter your results.
      *
      * @param {string} databaseId
@@ -38,6 +36,8 @@ export class Databases {
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'get',
@@ -47,8 +47,6 @@ export class Databases {
         );
     }
     /**
-     * Create document
-     *
      * Create a new Document. Before using this route, you should create a new collection resource using either a [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.
      *
      * @param {string} databaseId
@@ -89,6 +87,8 @@ export class Databases {
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'post',
@@ -98,8 +98,6 @@ export class Databases {
         );
     }
     /**
-     * Get document
-     *
      * Get a document by its unique ID. This endpoint response returns a JSON object with the document data.
      *
      * @param {string} databaseId
@@ -130,6 +128,8 @@ export class Databases {
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'get',
@@ -139,8 +139,6 @@ export class Databases {
         );
     }
     /**
-     * Update document
-     *
      * Update a document by its unique ID. Using the patch method you can pass only specific fields that will get updated.
      *
      * @param {string} databaseId
@@ -175,6 +173,8 @@ export class Databases {
             'content-type': 'application/json',
         }
 
+        payload['project'] = this.client.config.project;
+
 
         return await this.client.call(
             'patch',
@@ -184,8 +184,6 @@ export class Databases {
         );
     }
     /**
-     * Delete document
-     *
      * Delete a document by its unique ID.
      *
      * @param {string} databaseId
@@ -211,6 +209,8 @@ export class Databases {
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
+
+        payload['project'] = this.client.config.project;
 
 
         return await this.client.call(

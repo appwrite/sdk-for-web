@@ -41,7 +41,7 @@ export class Storage {
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'get',
             uri,
             apiHeaders,
@@ -95,7 +95,7 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.chunkedUpload(
+        return this.client.chunkedUpload(
             'post',
             uri,
             apiHeaders,
@@ -129,7 +129,7 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'get',
             uri,
             apiHeaders,
@@ -170,7 +170,7 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'put',
             uri,
             apiHeaders,
@@ -203,7 +203,7 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'delete',
             uri,
             apiHeaders,

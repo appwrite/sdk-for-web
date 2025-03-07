@@ -40,7 +40,7 @@ export class Functions {
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'get',
             uri,
             apiHeaders,
@@ -93,7 +93,7 @@ export class Functions {
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'post',
             uri,
             apiHeaders,
@@ -126,7 +126,7 @@ export class Functions {
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'get',
             uri,
             apiHeaders,

@@ -30,7 +30,7 @@ export class Account {
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'get',
             uri,
             apiHeaders,
@@ -80,7 +80,7 @@ export class Account {
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'post',
             uri,
             apiHeaders,
@@ -121,7 +121,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'patch',
             uri,
             apiHeaders,
@@ -150,7 +150,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'get',
             uri,
             apiHeaders,
@@ -179,7 +179,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'delete',
             uri,
             apiHeaders,
@@ -204,7 +204,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'post',
             uri,
             apiHeaders,
@@ -233,7 +233,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'get',
             uri,
             apiHeaders,
@@ -265,7 +265,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'patch',
             uri,
             apiHeaders,
@@ -294,7 +294,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'post',
             uri,
             apiHeaders,
@@ -330,7 +330,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'put',
             uri,
             apiHeaders,
@@ -359,7 +359,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'delete',
             uri,
             apiHeaders,
@@ -391,7 +391,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'post',
             uri,
             apiHeaders,
@@ -430,7 +430,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'put',
             uri,
             apiHeaders,
@@ -455,7 +455,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'get',
             uri,
             apiHeaders,
@@ -480,7 +480,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'get',
             uri,
             apiHeaders,
@@ -505,7 +505,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'post',
             uri,
             apiHeaders,
@@ -530,7 +530,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'patch',
             uri,
             apiHeaders,
@@ -562,7 +562,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'patch',
             uri,
             apiHeaders,
@@ -598,7 +598,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'patch',
             uri,
             apiHeaders,
@@ -637,7 +637,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'patch',
             uri,
             apiHeaders,
@@ -662,7 +662,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'get',
             uri,
             apiHeaders,
@@ -694,7 +694,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'patch',
             uri,
             apiHeaders,
@@ -733,7 +733,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'post',
             uri,
             apiHeaders,
@@ -781,7 +781,7 @@ Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'put',
             uri,
             apiHeaders,
@@ -806,7 +806,7 @@ Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'get',
             uri,
             apiHeaders,
@@ -831,7 +831,7 @@ Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'delete',
             uri,
             apiHeaders,
@@ -856,7 +856,7 @@ Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'post',
             uri,
             apiHeaders,
@@ -897,7 +897,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'post',
             uri,
             apiHeaders,
@@ -936,7 +936,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'put',
             uri,
             apiHeaders,
@@ -1024,7 +1024,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'put',
             uri,
             apiHeaders,
@@ -1063,7 +1063,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'post',
             uri,
             apiHeaders,
@@ -1092,7 +1092,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'get',
             uri,
             apiHeaders,
@@ -1121,7 +1121,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'patch',
             uri,
             apiHeaders,
@@ -1150,7 +1150,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'delete',
             uri,
             apiHeaders,
@@ -1175,7 +1175,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'patch',
             uri,
             apiHeaders,
@@ -1218,7 +1218,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'post',
             uri,
             apiHeaders,
@@ -1254,7 +1254,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'put',
             uri,
             apiHeaders,
@@ -1283,7 +1283,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'delete',
             uri,
             apiHeaders,
@@ -1328,7 +1328,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'post',
             uri,
             apiHeaders,
@@ -1378,7 +1378,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'post',
             uri,
             apiHeaders,
@@ -1467,7 +1467,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'post',
             uri,
             apiHeaders,
@@ -1502,7 +1502,7 @@ Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'post',
             uri,
             apiHeaders,
@@ -1541,7 +1541,7 @@ Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'put',
             uri,
             apiHeaders,
@@ -1566,7 +1566,7 @@ Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'post',
             uri,
             apiHeaders,
@@ -1605,7 +1605,7 @@ Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'put',
             uri,
             apiHeaders,

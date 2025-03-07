@@ -35,7 +35,7 @@ export class Graphql {
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'post',
             uri,
             apiHeaders,
@@ -68,7 +68,7 @@ export class Graphql {
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'post',
             uri,
             apiHeaders,

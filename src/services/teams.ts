@@ -35,7 +35,7 @@ export class Teams {
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'get',
             uri,
             apiHeaders,
@@ -78,7 +78,7 @@ export class Teams {
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'post',
             uri,
             apiHeaders,
@@ -107,7 +107,7 @@ export class Teams {
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'get',
             uri,
             apiHeaders,
@@ -143,7 +143,7 @@ export class Teams {
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'put',
             uri,
             apiHeaders,
@@ -172,7 +172,7 @@ export class Teams {
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'delete',
             uri,
             apiHeaders,
@@ -209,7 +209,7 @@ export class Teams {
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'get',
             uri,
             apiHeaders,
@@ -272,7 +272,7 @@ Please note that to avoid a [Redirect Attack](https://github.com/OWASP/CheatShee
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'post',
             uri,
             apiHeaders,
@@ -305,7 +305,7 @@ Please note that to avoid a [Redirect Attack](https://github.com/OWASP/CheatShee
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'get',
             uri,
             apiHeaders,
@@ -346,7 +346,7 @@ Please note that to avoid a [Redirect Attack](https://github.com/OWASP/CheatShee
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'patch',
             uri,
             apiHeaders,
@@ -379,7 +379,7 @@ Please note that to avoid a [Redirect Attack](https://github.com/OWASP/CheatShee
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'delete',
             uri,
             apiHeaders,
@@ -429,7 +429,7 @@ If the request is successful, a session for the user is automatically created.
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'patch',
             uri,
             apiHeaders,
@@ -458,7 +458,7 @@ If the request is successful, a session for the user is automatically created.
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'get',
             uri,
             apiHeaders,
@@ -494,7 +494,7 @@ If the request is successful, a session for the user is automatically created.
         payload['project'] = this.client.config.project;
 
 
-        return await this.client.call(
+        return this.client.call(
             'put',
             uri,
             apiHeaders,

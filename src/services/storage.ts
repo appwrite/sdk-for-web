@@ -20,7 +20,7 @@ export class Storage {
      * @throws {AppwriteException}
      * @returns {Promise<Models.FileList>}
      */
-    async listFiles(bucketId: string, queries?: string[], search?: string): Promise<Models.FileList> {
+    listFiles(bucketId: string, queries?: string[], search?: string): Promise<Models.FileList> {
         if (typeof bucketId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "bucketId"');
         }
@@ -37,9 +37,6 @@ export class Storage {
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
-
-        payload['project'] = this.client.config.project;
-
 
         return this.client.call(
             'get',
@@ -65,7 +62,7 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
      * @throws {AppwriteException}
      * @returns {Promise<Models.File>}
      */
-    async createFile(bucketId: string, fileId: string, file: File, permissions?: string[], onProgress = (progress: UploadProgress) => {}): Promise<Models.File> {
+    createFile(bucketId: string, fileId: string, file: File, permissions?: string[], onProgress = (progress: UploadProgress) => {}): Promise<Models.File> {
         if (typeof bucketId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "bucketId"');
         }
@@ -92,9 +89,6 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
             'content-type': 'multipart/form-data',
         }
 
-        payload['project'] = this.client.config.project;
-
-
         return this.client.chunkedUpload(
             'post',
             uri,
@@ -111,7 +105,7 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
      * @throws {AppwriteException}
      * @returns {Promise<Models.File>}
      */
-    async getFile(bucketId: string, fileId: string): Promise<Models.File> {
+    getFile(bucketId: string, fileId: string): Promise<Models.File> {
         if (typeof bucketId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "bucketId"');
         }
@@ -125,9 +119,6 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
-
-        payload['project'] = this.client.config.project;
-
 
         return this.client.call(
             'get',
@@ -146,7 +137,7 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
      * @throws {AppwriteException}
      * @returns {Promise<Models.File>}
      */
-    async updateFile(bucketId: string, fileId: string, name?: string, permissions?: string[]): Promise<Models.File> {
+    updateFile(bucketId: string, fileId: string, name?: string, permissions?: string[]): Promise<Models.File> {
         if (typeof bucketId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "bucketId"');
         }
@@ -167,9 +158,6 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
             'content-type': 'application/json',
         }
 
-        payload['project'] = this.client.config.project;
-
-
         return this.client.call(
             'put',
             uri,
@@ -185,7 +173,7 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
      * @throws {AppwriteException}
      * @returns {Promise<{}>}
      */
-    async deleteFile(bucketId: string, fileId: string): Promise<{}> {
+    deleteFile(bucketId: string, fileId: string): Promise<{}> {
         if (typeof bucketId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "bucketId"');
         }
@@ -199,9 +187,6 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
-
-        payload['project'] = this.client.config.project;
-
 
         return this.client.call(
             'delete',
@@ -238,7 +223,7 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
         for (const [key, value] of Object.entries(Service.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
-
+        
         return uri.toString();
     }
     /**
@@ -313,7 +298,7 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
         for (const [key, value] of Object.entries(Service.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
-
+        
         return uri.toString();
     }
     /**
@@ -344,7 +329,7 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
         for (const [key, value] of Object.entries(Service.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
-
+        
         return uri.toString();
     }
 }

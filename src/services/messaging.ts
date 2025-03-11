@@ -18,7 +18,7 @@ export class Messaging {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Subscriber>}
      */
-    async createSubscriber(topicId: string, subscriberId: string, targetId: string): Promise<Models.Subscriber> {
+    createSubscriber(topicId: string, subscriberId: string, targetId: string): Promise<Models.Subscriber> {
         if (typeof topicId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "topicId"');
         }
@@ -42,9 +42,6 @@ export class Messaging {
             'content-type': 'application/json',
         }
 
-        payload['project'] = this.client.config.project;
-
-
         return this.client.call(
             'post',
             uri,
@@ -60,7 +57,7 @@ export class Messaging {
      * @throws {AppwriteException}
      * @returns {Promise<{}>}
      */
-    async deleteSubscriber(topicId: string, subscriberId: string): Promise<{}> {
+    deleteSubscriber(topicId: string, subscriberId: string): Promise<{}> {
         if (typeof topicId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "topicId"');
         }
@@ -74,9 +71,6 @@ export class Messaging {
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
-
-        payload['project'] = this.client.config.project;
-
 
         return this.client.call(
             'delete',

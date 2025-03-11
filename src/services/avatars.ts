@@ -50,7 +50,7 @@ When one dimension is specified and the other is 0, the image is scaled with pre
         for (const [key, value] of Object.entries(Service.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
-
+        
         return uri.toString();
     }
     /**
@@ -92,7 +92,7 @@ When one dimension is specified and the other is 0, the image is scaled with pre
         for (const [key, value] of Object.entries(Service.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
-
+        
         return uri.toString();
     }
     /**
@@ -124,7 +124,7 @@ This endpoint does not follow HTTP redirects.
         for (const [key, value] of Object.entries(Service.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
-
+        
         return uri.toString();
     }
     /**
@@ -166,7 +166,7 @@ When one dimension is specified and the other is 0, the image is scaled with pre
         for (const [key, value] of Object.entries(Service.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
-
+        
         return uri.toString();
     }
     /**
@@ -208,7 +208,7 @@ This endpoint does not follow HTTP redirects.
         for (const [key, value] of Object.entries(Service.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
-
+        
         return uri.toString();
     }
     /**
@@ -252,7 +252,7 @@ When one dimension is specified and the other is 0, the image is scaled with pre
         for (const [key, value] of Object.entries(Service.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
-
+        
         return uri.toString();
     }
     /**
@@ -295,7 +295,7 @@ When one dimension is specified and the other is 0, the image is scaled with pre
         for (const [key, value] of Object.entries(Service.flatten(payload))) {
             uri.searchParams.append(key, value);
         }
-
+        
         return uri.toString();
     }
 }

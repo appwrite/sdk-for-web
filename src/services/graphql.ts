@@ -16,7 +16,7 @@ export class Graphql {
      * @throws {AppwriteException}
      * @returns {Promise<{}>}
      */
-    async query(query: object): Promise<{}> {
+    query(query: object): Promise<{}> {
         if (typeof query === 'undefined') {
             throw new AppwriteException('Missing required parameter: "query"');
         }
@@ -32,9 +32,6 @@ export class Graphql {
             'content-type': 'application/json',
         }
 
-        payload['project'] = this.client.config.project;
-
-
         return this.client.call(
             'post',
             uri,
@@ -49,7 +46,7 @@ export class Graphql {
      * @throws {AppwriteException}
      * @returns {Promise<{}>}
      */
-    async mutation(query: object): Promise<{}> {
+    mutation(query: object): Promise<{}> {
         if (typeof query === 'undefined') {
             throw new AppwriteException('Missing required parameter: "query"');
         }
@@ -64,9 +61,6 @@ export class Graphql {
             'x-sdk-graphql': 'true',
             'content-type': 'application/json',
         }
-
-        payload['project'] = this.client.config.project;
-
 
         return this.client.call(
             'post',

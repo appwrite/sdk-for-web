@@ -18,7 +18,7 @@ export class Databases {
      * @throws {AppwriteException}
      * @returns {Promise<Models.DocumentList<Document>>}
      */
-    async listDocuments<Document extends Models.Document>(databaseId: string, collectionId: string, queries?: string[]): Promise<Models.DocumentList<Document>> {
+    listDocuments<Document extends Models.Document>(databaseId: string, collectionId: string, queries?: string[]): Promise<Models.DocumentList<Document>> {
         if (typeof databaseId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "databaseId"');
         }
@@ -35,9 +35,6 @@ export class Databases {
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
-
-        payload['project'] = this.client.config.project;
-
 
         return this.client.call(
             'get',
@@ -57,7 +54,7 @@ export class Databases {
      * @throws {AppwriteException}
      * @returns {Promise<Document>}
      */
-    async createDocument<Document extends Models.Document>(databaseId: string, collectionId: string, documentId: string, data: Omit<Document, keyof Models.Document>, permissions?: string[]): Promise<Document> {
+    createDocument<Document extends Models.Document>(databaseId: string, collectionId: string, documentId: string, data: Omit<Document, keyof Models.Document>, permissions?: string[]): Promise<Document> {
         if (typeof databaseId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "databaseId"');
         }
@@ -87,9 +84,6 @@ export class Databases {
             'content-type': 'application/json',
         }
 
-        payload['project'] = this.client.config.project;
-
-
         return this.client.call(
             'post',
             uri,
@@ -107,7 +101,7 @@ export class Databases {
      * @throws {AppwriteException}
      * @returns {Promise<Document>}
      */
-    async getDocument<Document extends Models.Document>(databaseId: string, collectionId: string, documentId: string, queries?: string[]): Promise<Document> {
+    getDocument<Document extends Models.Document>(databaseId: string, collectionId: string, documentId: string, queries?: string[]): Promise<Document> {
         if (typeof databaseId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "databaseId"');
         }
@@ -128,9 +122,6 @@ export class Databases {
             'content-type': 'application/json',
         }
 
-        payload['project'] = this.client.config.project;
-
-
         return this.client.call(
             'get',
             uri,
@@ -149,7 +140,7 @@ export class Databases {
      * @throws {AppwriteException}
      * @returns {Promise<Document>}
      */
-    async updateDocument<Document extends Models.Document>(databaseId: string, collectionId: string, documentId: string, data?: Partial<Omit<Document, keyof Models.Document>>, permissions?: string[]): Promise<Document> {
+    updateDocument<Document extends Models.Document>(databaseId: string, collectionId: string, documentId: string, data?: Partial<Omit<Document, keyof Models.Document>>, permissions?: string[]): Promise<Document> {
         if (typeof databaseId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "databaseId"');
         }
@@ -173,9 +164,6 @@ export class Databases {
             'content-type': 'application/json',
         }
 
-        payload['project'] = this.client.config.project;
-
-
         return this.client.call(
             'patch',
             uri,
@@ -192,7 +180,7 @@ export class Databases {
      * @throws {AppwriteException}
      * @returns {Promise<{}>}
      */
-    async deleteDocument(databaseId: string, collectionId: string, documentId: string): Promise<{}> {
+    deleteDocument(databaseId: string, collectionId: string, documentId: string): Promise<{}> {
         if (typeof databaseId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "databaseId"');
         }
@@ -209,9 +197,6 @@ export class Databases {
         const apiHeaders: { [header: string]: string } = {
             'content-type': 'application/json',
         }
-
-        payload['project'] = this.client.config.project;
-
 
         return this.client.call(
             'delete',

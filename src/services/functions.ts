@@ -11,8 +11,6 @@ export class Functions {
     }
 
     /**
-     * List executions
-     *
      * Get a list of all the current user function execution logs. You can use the query params to filter your results.
      *
      * @param {string} functionId
@@ -21,7 +19,7 @@ export class Functions {
      * @throws {AppwriteException}
      * @returns {Promise<Models.ExecutionList>}
      */
-    async listExecutions(functionId: string, queries?: string[], search?: string): Promise<Models.ExecutionList> {
+    listExecutions(functionId: string, queries?: string[], search?: string): Promise<Models.ExecutionList> {
         if (typeof functionId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "functionId"');
         }
@@ -39,8 +37,7 @@ export class Functions {
             'content-type': 'application/json',
         }
 
-
-        return await this.client.call(
+        return this.client.call(
             'get',
             uri,
             apiHeaders,
@@ -48,8 +45,6 @@ export class Functions {
         );
     }
     /**
-     * Create execution
-     *
      * Trigger a function execution. The returned object will return you the current execution status. You can ping the `Get Execution` endpoint to get updates on the current execution status. Once this endpoint is called, your function execution process will start asynchronously.
      *
      * @param {string} functionId
@@ -62,7 +57,7 @@ export class Functions {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Execution>}
      */
-    async createExecution(functionId: string, body?: string, async?: boolean, xpath?: string, method?: ExecutionMethod, headers?: object, scheduledAt?: string): Promise<Models.Execution> {
+    createExecution(functionId: string, body?: string, async?: boolean, xpath?: string, method?: ExecutionMethod, headers?: object, scheduledAt?: string): Promise<Models.Execution> {
         if (typeof functionId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "functionId"');
         }
@@ -92,8 +87,7 @@ export class Functions {
             'content-type': 'application/json',
         }
 
-
-        return await this.client.call(
+        return this.client.call(
             'post',
             uri,
             apiHeaders,
@@ -101,8 +95,6 @@ export class Functions {
         );
     }
     /**
-     * Get execution
-     *
      * Get a function execution log by its unique ID.
      *
      * @param {string} functionId
@@ -110,7 +102,7 @@ export class Functions {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Execution>}
      */
-    async getExecution(functionId: string, executionId: string): Promise<Models.Execution> {
+    getExecution(functionId: string, executionId: string): Promise<Models.Execution> {
         if (typeof functionId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "functionId"');
         }
@@ -125,8 +117,7 @@ export class Functions {
             'content-type': 'application/json',
         }
 
-
-        return await this.client.call(
+        return this.client.call(
             'get',
             uri,
             apiHeaders,

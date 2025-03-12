@@ -10,8 +10,6 @@ export class Messaging {
     }
 
     /**
-     * Create subscriber
-     *
      * Create a new subscriber.
      *
      * @param {string} topicId
@@ -20,7 +18,7 @@ export class Messaging {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Subscriber>}
      */
-    async createSubscriber(topicId: string, subscriberId: string, targetId: string): Promise<Models.Subscriber> {
+    createSubscriber(topicId: string, subscriberId: string, targetId: string): Promise<Models.Subscriber> {
         if (typeof topicId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "topicId"');
         }
@@ -44,8 +42,7 @@ export class Messaging {
             'content-type': 'application/json',
         }
 
-
-        return await this.client.call(
+        return this.client.call(
             'post',
             uri,
             apiHeaders,
@@ -53,8 +50,6 @@ export class Messaging {
         );
     }
     /**
-     * Delete subscriber
-     *
      * Delete a subscriber by its unique ID.
      *
      * @param {string} topicId
@@ -62,7 +57,7 @@ export class Messaging {
      * @throws {AppwriteException}
      * @returns {Promise<{}>}
      */
-    async deleteSubscriber(topicId: string, subscriberId: string): Promise<{}> {
+    deleteSubscriber(topicId: string, subscriberId: string): Promise<{}> {
         if (typeof topicId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "topicId"');
         }
@@ -77,8 +72,7 @@ export class Messaging {
             'content-type': 'application/json',
         }
 
-
-        return await this.client.call(
+        return this.client.call(
             'delete',
             uri,
             apiHeaders,

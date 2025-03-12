@@ -315,7 +315,7 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '17.0.0',
+        'x-sdk-version': '17.0.1',
         'X-Appwrite-Response-Format': '1.6.0',
     };
 
@@ -704,6 +704,7 @@ class Client {
         const { uri, options } = this.prepareRequest(method, url, headers, params);
 
         let data: any = null;
+        let text: string = '';
 
         const response = await fetch(uri, options);
 
@@ -714,16 +715,18 @@ class Client {
 
         if (response.headers.get('content-type')?.includes('application/json')) {
             data = await response.json();
+            text = JSON.stringify(data);
         } else if (responseType === 'arrayBuffer') {
             data = await response.arrayBuffer();
         } else {
+            text = await response.text();
             data = {
-                message: await response.text()
+                message: text
             };
         }
 
         if (400 <= response.status) {
-            throw new AppwriteException(data?.message, response.status, data?.type, data);
+            throw new AppwriteException(data?.message, response.status, data?.type, text);
         }
 
         const cookieFallback = response.headers.get('X-Fallback-Cookies');

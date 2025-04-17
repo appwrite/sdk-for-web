@@ -42,7 +42,6 @@ When one dimension is specified and the other is 0, the image is scaled with pre
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
-            'content-type': 'application/json',
         }
 
         payload['project'] = this.client.config.project;
@@ -84,7 +83,6 @@ When one dimension is specified and the other is 0, the image is scaled with pre
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
-            'content-type': 'application/json',
         }
 
         payload['project'] = this.client.config.project;
@@ -116,7 +114,6 @@ This endpoint does not follow HTTP redirects.
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
-            'content-type': 'application/json',
         }
 
         payload['project'] = this.client.config.project;
@@ -158,7 +155,6 @@ When one dimension is specified and the other is 0, the image is scaled with pre
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
-            'content-type': 'application/json',
         }
 
         payload['project'] = this.client.config.project;
@@ -200,7 +196,6 @@ This endpoint does not follow HTTP redirects.
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
-            'content-type': 'application/json',
         }
 
         payload['project'] = this.client.config.project;
@@ -244,7 +239,6 @@ When one dimension is specified and the other is 0, the image is scaled with pre
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
-            'content-type': 'application/json',
         }
 
         payload['project'] = this.client.config.project;
@@ -287,7 +281,6 @@ When one dimension is specified and the other is 0, the image is scaled with pre
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
-            'content-type': 'application/json',
         }
 
         payload['project'] = this.client.config.project;

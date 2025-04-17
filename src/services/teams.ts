@@ -29,7 +29,6 @@ export class Teams {
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
-            'content-type': 'application/json',
         }
 
         return this.client.call(
@@ -95,7 +94,6 @@ export class Teams {
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
-            'content-type': 'application/json',
         }
 
         return this.client.call(
@@ -188,7 +186,6 @@ export class Teams {
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
-            'content-type': 'application/json',
         }
 
         return this.client.call(
@@ -278,7 +275,6 @@ Please note that to avoid a [Redirect Attack](https://github.com/OWASP/CheatShee
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
-            'content-type': 'application/json',
         }
 
         return this.client.call(
@@ -419,7 +415,6 @@ If the request is successful, a session for the user is automatically created.
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
-            'content-type': 'application/json',
         }
 
         return this.client.call(

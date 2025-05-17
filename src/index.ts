@@ -1,7 +1,7 @@
 /**
  * Appwrite Web SDK
  *
- * This SDK is compatible with Appwrite server version 1.6.x. 
+ * This SDK is compatible with Appwrite server version 1.7.x. 
  * For older versions, please check
  * [previous releases](https://github.com/appwrite/sdk-for-web/releases).
  */

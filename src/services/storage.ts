@@ -198,10 +198,11 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
      *
      * @param {string} bucketId
      * @param {string} fileId
+     * @param {string} token
      * @throws {AppwriteException}
      * @returns {string}
      */
-    getFileDownload(bucketId: string, fileId: string): string {
+    getFileDownload(bucketId: string, fileId: string, token?: string): string {
         if (typeof bucketId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "bucketId"');
         }
@@ -210,6 +211,9 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
         }
         const apiPath = '/storage/buckets/{bucketId}/files/{fileId}/download'.replace('{bucketId}', bucketId).replace('{fileId}', fileId);
         const payload: Payload = {};
+        if (typeof token !== 'undefined') {
+            payload['token'] = token;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -239,10 +243,11 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
      * @param {number} rotation
      * @param {string} background
      * @param {ImageFormat} output
+     * @param {string} token
      * @throws {AppwriteException}
      * @returns {string}
      */
-    getFilePreview(bucketId: string, fileId: string, width?: number, height?: number, gravity?: ImageGravity, quality?: number, borderWidth?: number, borderColor?: string, borderRadius?: number, opacity?: number, rotation?: number, background?: string, output?: ImageFormat): string {
+    getFilePreview(bucketId: string, fileId: string, width?: number, height?: number, gravity?: ImageGravity, quality?: number, borderWidth?: number, borderColor?: string, borderRadius?: number, opacity?: number, rotation?: number, background?: string, output?: ImageFormat, token?: string): string {
         if (typeof bucketId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "bucketId"');
         }
@@ -284,6 +289,9 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
         if (typeof output !== 'undefined') {
             payload['output'] = output;
         }
+        if (typeof token !== 'undefined') {
+            payload['token'] = token;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -302,10 +310,11 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
      *
      * @param {string} bucketId
      * @param {string} fileId
+     * @param {string} token
      * @throws {AppwriteException}
      * @returns {string}
      */
-    getFileView(bucketId: string, fileId: string): string {
+    getFileView(bucketId: string, fileId: string, token?: string): string {
         if (typeof bucketId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "bucketId"');
         }
@@ -314,6 +323,9 @@ If you&#039;re creating a new file using one of the Appwrite SDKs, all the chunk
         }
         const apiPath = '/storage/buckets/{bucketId}/files/{fileId}/view'.replace('{bucketId}', bucketId).replace('{fileId}', fileId);
         const payload: Payload = {};
+        if (typeof token !== 'undefined') {
+            payload['token'] = token;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {

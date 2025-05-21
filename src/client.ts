@@ -307,6 +307,7 @@ class Client {
         jwt: '',
         locale: '',
         session: '',
+        devkey: '',
     };
     /**
      * Custom headers for API requests.
@@ -315,7 +316,7 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '18.0.0',
+        'x-sdk-version': '18.1.0',
         'X-Appwrite-Response-Format': '1.7.0',
     };
 
@@ -407,6 +408,20 @@ class Client {
     setSession(value: string): this {
         this.headers['X-Appwrite-Session'] = value;
         this.config.session = value;
+        return this;
+    }
+    /**
+     * Set DevKey
+     *
+     * Your secret dev API key
+     *
+     * @param value string
+     *
+     * @return {this}
+     */
+    setDevKey(value: string): this {
+        this.headers['X-Appwrite-Dev-Key'] = value;
+        this.config.devkey = value;
         return this;
     }
 

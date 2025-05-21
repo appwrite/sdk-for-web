@@ -128,6 +128,51 @@ export class Databases {
         );
     }
     /**
+     * Create or update a Document. Before using this route, you should create a new collection resource using either a [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.
+     *
+     * @param {string} databaseId
+     * @param {string} collectionId
+     * @param {string} documentId
+     * @param {object} data
+     * @param {string[]} permissions
+     * @throws {AppwriteException}
+     * @returns {Promise<Document>}
+     */
+    upsertDocument<Document extends Models.Document>(databaseId: string, collectionId: string, documentId: string, data: object, permissions?: string[]): Promise<Document> {
+        if (typeof databaseId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "databaseId"');
+        }
+        if (typeof collectionId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "collectionId"');
+        }
+        if (typeof documentId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "documentId"');
+        }
+        if (typeof data === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "data"');
+        }
+        const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{documentId}', documentId);
+        const payload: Payload = {};
+        if (typeof data !== 'undefined') {
+            payload['data'] = data;
+        }
+        if (typeof permissions !== 'undefined') {
+            payload['permissions'] = permissions;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'put',
+            uri,
+            apiHeaders,
+            payload
+        );
+    }
+    /**
      * Update a document by its unique ID. Using the patch method you can pass only specific fields that will get updated.
      *
      * @param {string} databaseId

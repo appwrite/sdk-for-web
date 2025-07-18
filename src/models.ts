@@ -193,6 +193,10 @@ export namespace Models {
          */
         $id: string;
         /**
+         * Document automatically incrementing ID.
+         */
+        $sequence: number;
+        /**
          * Collection ID.
          */
         $collectionId: string;

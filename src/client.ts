@@ -679,9 +679,9 @@ class Client {
     }
 
     async chunkedUpload(method: string, url: URL, headers: Headers = {}, originalPayload: Payload = {}, onProgress: (progress: UploadProgress) => void) {
-        const file = Object.values(originalPayload).find((value) => value instanceof File);
+        const [fileParam, file] = Object.entries(originalPayload).find(([_, value]) => value instanceof File) ?? [];
 
-        if (!file) {
+        if (!file || !fileParam) {
             throw new Error('File not found in payload');
         }
 
@@ -701,7 +701,8 @@ class Client {
             headers['content-range'] = `bytes ${start}-${end-1}/${file.size}`;
             const chunk = file.slice(start, end);
 
-            let payload = { ...originalPayload, file: new File([chunk], file.name)};
+            let payload = { ...originalPayload };
+            payload[fileParam] = new File([chunk], file.name);
 
             response = await this.call(method, url, headers, payload);
 

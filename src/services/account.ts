@@ -18,7 +18,7 @@ export class Account {
      * @throws {AppwriteException}
      * @returns {Promise<Models.User<Preferences>>}
      */
-    get<Preferences extends Models.Preferences>(): Promise<Models.User<Preferences>> {
+    get<Preferences extends Models.Preferences = Models.DefaultPreferences>(): Promise<Models.User<Preferences>> {
         const apiPath = '/account';
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
@@ -43,7 +43,7 @@ export class Account {
      * @throws {AppwriteException}
      * @returns {Promise<Models.User<Preferences>>}
      */
-    create<Preferences extends Models.Preferences>(userId: string, email: string, password: string, name?: string): Promise<Models.User<Preferences>> {
+    create<Preferences extends Models.Preferences = Models.DefaultPreferences>(userId: string, email: string, password: string, name?: string): Promise<Models.User<Preferences>> {
         if (typeof userId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "userId"');
         }
@@ -90,7 +90,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
      * @throws {AppwriteException}
      * @returns {Promise<Models.User<Preferences>>}
      */
-    updateEmail<Preferences extends Models.Preferences>(email: string, password: string): Promise<Models.User<Preferences>> {
+    updateEmail<Preferences extends Models.Preferences = Models.DefaultPreferences>(email: string, password: string): Promise<Models.User<Preferences>> {
         if (typeof email === 'undefined') {
             throw new AppwriteException('Missing required parameter: "email"');
         }
@@ -223,7 +223,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
      * @throws {AppwriteException}
      * @returns {Promise<Models.User<Preferences>>}
      */
-    updateMFA<Preferences extends Models.Preferences>(mfa: boolean): Promise<Models.User<Preferences>> {
+    updateMFA<Preferences extends Models.Preferences = Models.DefaultPreferences>(mfa: boolean): Promise<Models.User<Preferences>> {
         if (typeof mfa === 'undefined') {
             throw new AppwriteException('Missing required parameter: "mfa"');
         }
@@ -279,7 +279,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
      * @throws {AppwriteException}
      * @returns {Promise<Models.User<Preferences>>}
      */
-    updateMfaAuthenticator<Preferences extends Models.Preferences>(type: AuthenticatorType, otp: string): Promise<Models.User<Preferences>> {
+    updateMfaAuthenticator<Preferences extends Models.Preferences = Models.DefaultPreferences>(type: AuthenticatorType, otp: string): Promise<Models.User<Preferences>> {
         if (typeof type === 'undefined') {
             throw new AppwriteException('Missing required parameter: "type"');
         }
@@ -488,7 +488,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
      * @throws {AppwriteException}
      * @returns {Promise<Models.User<Preferences>>}
      */
-    updateName<Preferences extends Models.Preferences>(name: string): Promise<Models.User<Preferences>> {
+    updateName<Preferences extends Models.Preferences = Models.DefaultPreferences>(name: string): Promise<Models.User<Preferences>> {
         if (typeof name === 'undefined') {
             throw new AppwriteException('Missing required parameter: "name"');
         }
@@ -518,7 +518,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
      * @throws {AppwriteException}
      * @returns {Promise<Models.User<Preferences>>}
      */
-    updatePassword<Preferences extends Models.Preferences>(password: string, oldPassword?: string): Promise<Models.User<Preferences>> {
+    updatePassword<Preferences extends Models.Preferences = Models.DefaultPreferences>(password: string, oldPassword?: string): Promise<Models.User<Preferences>> {
         if (typeof password === 'undefined') {
             throw new AppwriteException('Missing required parameter: "password"');
         }
@@ -551,7 +551,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
      * @throws {AppwriteException}
      * @returns {Promise<Models.User<Preferences>>}
      */
-    updatePhone<Preferences extends Models.Preferences>(phone: string, password: string): Promise<Models.User<Preferences>> {
+    updatePhone<Preferences extends Models.Preferences = Models.DefaultPreferences>(phone: string, password: string): Promise<Models.User<Preferences>> {
         if (typeof phone === 'undefined') {
             throw new AppwriteException('Missing required parameter: "phone"');
         }
@@ -585,7 +585,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
      * @throws {AppwriteException}
      * @returns {Promise<Preferences>}
      */
-    getPrefs<Preferences extends Models.Preferences>(): Promise<Preferences> {
+    getPrefs<Preferences extends Models.Preferences = Models.DefaultPreferences>(): Promise<Preferences> {
         const apiPath = '/account/prefs';
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
@@ -607,7 +607,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
      * @throws {AppwriteException}
      * @returns {Promise<Models.User<Preferences>>}
      */
-    updatePrefs<Preferences extends Models.Preferences>(prefs: Partial<Preferences>): Promise<Models.User<Preferences>> {
+    updatePrefs<Preferences extends Models.Preferences = Models.DefaultPreferences>(prefs: Partial<Preferences>): Promise<Models.User<Preferences>> {
         if (typeof prefs === 'undefined') {
             throw new AppwriteException('Missing required parameter: "prefs"');
         }
@@ -1052,7 +1052,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
      * @throws {AppwriteException}
      * @returns {Promise<Models.User<Preferences>>}
      */
-    updateStatus<Preferences extends Models.Preferences>(): Promise<Models.User<Preferences>> {
+    updateStatus<Preferences extends Models.Preferences = Models.DefaultPreferences>(): Promise<Models.User<Preferences>> {
         const apiPath = '/account/status';
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);

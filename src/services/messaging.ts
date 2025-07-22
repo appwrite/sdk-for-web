@@ -49,6 +49,7 @@ export class Messaging {
             payload
         );
     }
+
     /**
      * Delete a subscriber by its unique ID.
      *

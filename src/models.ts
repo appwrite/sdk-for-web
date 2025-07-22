@@ -2,12 +2,29 @@
  * Appwrite Models
  */
 export namespace Models {
+
+    declare const __default: unique symbol;
+
+    /**
+     * Rows List
+     */
+    export type RowList<Row extends Models.Row = Models.DefaultRow> = {
+        /**
+         * Total number of rows rows that matched your query.
+         */
+        total: number;
+        /**
+         * List of rows.
+         */
+        rows: Row[];
+    }
+
     /**
      * Documents List
      */
-    export type DocumentList<Document extends Models.Document> = {
+    export type DocumentList<Document extends Models.Document = Models.DefaultDocument> = {
         /**
-         * Total number of documents documents that matched your query.
+         * Total number of documents rows that matched your query.
          */
         total: number;
         /**
@@ -15,12 +32,13 @@ export namespace Models {
          */
         documents: Document[];
     }
+
     /**
      * Sessions List
      */
     export type SessionList = {
         /**
-         * Total number of sessions documents that matched your query.
+         * Total number of sessions rows that matched your query.
          */
         total: number;
         /**
@@ -28,12 +46,13 @@ export namespace Models {
          */
         sessions: Session[];
     }
+
     /**
      * Identities List
      */
     export type IdentityList = {
         /**
-         * Total number of identities documents that matched your query.
+         * Total number of identities rows that matched your query.
          */
         total: number;
         /**
@@ -41,12 +60,13 @@ export namespace Models {
          */
         identities: Identity[];
     }
+
     /**
      * Logs List
      */
     export type LogList = {
         /**
-         * Total number of logs documents that matched your query.
+         * Total number of logs rows that matched your query.
          */
         total: number;
         /**
@@ -54,12 +74,13 @@ export namespace Models {
          */
         logs: Log[];
     }
+
     /**
      * Files List
      */
     export type FileList = {
         /**
-         * Total number of files documents that matched your query.
+         * Total number of files rows that matched your query.
          */
         total: number;
         /**
@@ -67,12 +88,13 @@ export namespace Models {
          */
         files: File[];
     }
+
     /**
      * Teams List
      */
-    export type TeamList<Preferences extends Models.Preferences> = {
+    export type TeamList<Preferences extends Models.Preferences = Models.DefaultPreferences> = {
         /**
-         * Total number of teams documents that matched your query.
+         * Total number of teams rows that matched your query.
          */
         total: number;
         /**
@@ -80,12 +102,13 @@ export namespace Models {
          */
         teams: Team<Preferences>[];
     }
+
     /**
      * Memberships List
      */
     export type MembershipList = {
         /**
-         * Total number of memberships documents that matched your query.
+         * Total number of memberships rows that matched your query.
          */
         total: number;
         /**
@@ -93,12 +116,13 @@ export namespace Models {
          */
         memberships: Membership[];
     }
+
     /**
      * Executions List
      */
     export type ExecutionList = {
         /**
-         * Total number of executions documents that matched your query.
+         * Total number of executions rows that matched your query.
          */
         total: number;
         /**
@@ -106,12 +130,13 @@ export namespace Models {
          */
         executions: Execution[];
     }
+
     /**
      * Countries List
      */
     export type CountryList = {
         /**
-         * Total number of countries documents that matched your query.
+         * Total number of countries rows that matched your query.
          */
         total: number;
         /**
@@ -119,12 +144,13 @@ export namespace Models {
          */
         countries: Country[];
     }
+
     /**
      * Continents List
      */
     export type ContinentList = {
         /**
-         * Total number of continents documents that matched your query.
+         * Total number of continents rows that matched your query.
          */
         total: number;
         /**
@@ -132,12 +158,13 @@ export namespace Models {
          */
         continents: Continent[];
     }
+
     /**
      * Languages List
      */
     export type LanguageList = {
         /**
-         * Total number of languages documents that matched your query.
+         * Total number of languages rows that matched your query.
          */
         total: number;
         /**
@@ -145,12 +172,13 @@ export namespace Models {
          */
         languages: Language[];
     }
+
     /**
      * Currencies List
      */
     export type CurrencyList = {
         /**
-         * Total number of currencies documents that matched your query.
+         * Total number of currencies rows that matched your query.
          */
         total: number;
         /**
@@ -158,12 +186,13 @@ export namespace Models {
          */
         currencies: Currency[];
     }
+
     /**
      * Phones List
      */
     export type PhoneList = {
         /**
-         * Total number of phones documents that matched your query.
+         * Total number of phones rows that matched your query.
          */
         total: number;
         /**
@@ -171,12 +200,13 @@ export namespace Models {
          */
         phones: Phone[];
     }
+
     /**
      * Locale codes list
      */
     export type LocaleCodeList = {
         /**
-         * Total number of localeCodes documents that matched your query.
+         * Total number of localeCodes rows that matched your query.
          */
         total: number;
         /**
@@ -184,6 +214,52 @@ export namespace Models {
          */
         localeCodes: LocaleCode[];
     }
+
+    /**
+     * Row
+     */
+    export type Row = {
+        /**
+         * Row ID.
+         */
+        $id: string;
+        /**
+         * Row automatically incrementing ID.
+         */
+        $sequence: number;
+        /**
+         * Table ID.
+         */
+        $tableId: string;
+        /**
+         * Database ID.
+         */
+        $databaseId: string;
+        /**
+         * Row creation date in ISO 8601 format.
+         */
+        $createdAt: string;
+        /**
+         * Row update date in ISO 8601 format.
+         */
+        $updatedAt: string;
+        /**
+         * Row permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).
+         */
+        $permissions: string[];
+    }
+
+    export type DefaultRow = Row & {
+        [key: string]: any;
+        [__default]: true;
+    };
+
+    export type DataWithoutRowKeys = {
+        [K in string]: any;
+    } & {
+        [K in keyof Row]?: never;
+    };
+
     /**
      * Document
      */
@@ -216,8 +292,19 @@ export namespace Models {
          * Document permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).
          */
         $permissions: string[];
-        [key: string]: any;
     }
+
+    export type DefaultDocument = Document & {
+        [key: string]: any;
+        [__default]: true;
+    };
+
+    export type DataWithoutDocumentKeys = {
+        [K in string]: any;
+    } & {
+        [K in keyof Document]?: never;
+    };
+
     /**
      * Log
      */
@@ -307,10 +394,11 @@ export namespace Models {
          */
         countryName: string;
     }
+
     /**
      * User
      */
-    export type User<Preferences extends Models.Preferences> = {
+    export type User<Preferences extends Models.Preferences = Models.DefaultPreferences> = {
         /**
          * User ID.
          */
@@ -388,6 +476,7 @@ export namespace Models {
          */
         accessedAt: string;
     }
+
     /**
      * AlgoMD5
      */
@@ -397,6 +486,7 @@ export namespace Models {
          */
         type: string;
     }
+
     /**
      * AlgoSHA
      */
@@ -406,6 +496,7 @@ export namespace Models {
          */
         type: string;
     }
+
     /**
      * AlgoPHPass
      */
@@ -415,6 +506,7 @@ export namespace Models {
          */
         type: string;
     }
+
     /**
      * AlgoBcrypt
      */
@@ -424,6 +516,7 @@ export namespace Models {
          */
         type: string;
     }
+
     /**
      * AlgoScrypt
      */
@@ -449,6 +542,7 @@ export namespace Models {
          */
         length: number;
     }
+
     /**
      * AlgoScryptModified
      */
@@ -470,6 +564,7 @@ export namespace Models {
          */
         signerKey: string;
     }
+
     /**
      * AlgoArgon2
      */
@@ -491,12 +586,24 @@ export namespace Models {
          */
         threads: number;
     }
+
     /**
      * Preferences
      */
     export type Preferences = {
-        [key: string]: any;
     }
+
+    export type DefaultPreferences = Preferences & {
+        [key: string]: any;
+        [__default]: true;
+    };
+
+    export type DataWithoutPreferencesKeys = {
+        [K in string]: any;
+    } & {
+        [K in keyof Preferences]?: never;
+    };
+
     /**
      * Session
      */
@@ -618,6 +725,7 @@ export namespace Models {
          */
         mfaUpdatedAt: string;
     }
+
     /**
      * Identity
      */
@@ -663,6 +771,7 @@ export namespace Models {
          */
         providerRefreshToken: string;
     }
+
     /**
      * Token
      */
@@ -692,6 +801,7 @@ export namespace Models {
          */
         phrase: string;
     }
+
     /**
      * JWT
      */
@@ -701,6 +811,7 @@ export namespace Models {
          */
         jwt: string;
     }
+
     /**
      * Locale
      */
@@ -734,6 +845,7 @@ export namespace Models {
          */
         currency: string;
     }
+
     /**
      * LocaleCode
      */
@@ -747,6 +859,7 @@ export namespace Models {
          */
         name: string;
     }
+
     /**
      * File
      */
@@ -796,10 +909,11 @@ export namespace Models {
          */
         chunksUploaded: number;
     }
+
     /**
      * Team
      */
-    export type Team<Preferences extends Models.Preferences> = {
+    export type Team<Preferences extends Models.Preferences = Models.DefaultPreferences> = {
         /**
          * Team ID.
          */
@@ -825,6 +939,7 @@ export namespace Models {
          */
         prefs: Preferences;
     }
+
     /**
      * Membership
      */
@@ -882,6 +997,7 @@ export namespace Models {
          */
         roles: string[];
     }
+
     /**
      * Execution
      */
@@ -955,6 +1071,7 @@ export namespace Models {
          */
         scheduledAt?: string;
     }
+
     /**
      * Country
      */
@@ -968,6 +1085,7 @@ export namespace Models {
          */
         code: string;
     }
+
     /**
      * Continent
      */
@@ -981,6 +1099,7 @@ export namespace Models {
          */
         code: string;
     }
+
     /**
      * Language
      */
@@ -998,6 +1117,7 @@ export namespace Models {
          */
         nativeName: string;
     }
+
     /**
      * Currency
      */
@@ -1031,6 +1151,7 @@ export namespace Models {
          */
         namePlural: string;
     }
+
     /**
      * Phone
      */
@@ -1048,6 +1169,7 @@ export namespace Models {
          */
         countryName: string;
     }
+
     /**
      * Headers
      */
@@ -1061,6 +1183,7 @@ export namespace Models {
          */
         value: string;
     }
+
     /**
      * MFA Challenge
      */
@@ -1082,6 +1205,7 @@ export namespace Models {
          */
         expire: string;
     }
+
     /**
      * MFA Recovery Codes
      */
@@ -1091,6 +1215,7 @@ export namespace Models {
          */
         recoveryCodes: string[];
     }
+
     /**
      * MFAType
      */
@@ -1104,6 +1229,7 @@ export namespace Models {
          */
         uri: string;
     }
+
     /**
      * MFAFactors
      */
@@ -1125,6 +1251,7 @@ export namespace Models {
          */
         recoveryCode: boolean;
     }
+
     /**
      * Subscriber
      */
@@ -1166,6 +1293,7 @@ export namespace Models {
          */
         providerType: string;
     }
+
     /**
      * Target
      */

@@ -1,4 +1,4 @@
-import { Client, Databases } from "appwrite";
+import { Client, Tables } from "appwrite";
 
 const client = new Client()
     .setEndpoint('https://<REGION>.cloud.appwrite.io/v1') // Your API Endpoint
@@ -6,14 +6,12 @@ const client = new Client()
     .setKey('') // 
     .setJWT('<YOUR_JWT>'); // Your secret JSON Web Token
 
-const databases = new Databases(client);
+const tables = new Tables(client);
 
-const result = await databases.createDocument(
+const result = await tables.upsertRow(
     '<DATABASE_ID>', // databaseId
-    '<COLLECTION_ID>', // collectionId
-    '<DOCUMENT_ID>', // documentId
-    {}, // data
-    ["read("any")"] // permissions (optional)
+    '<TABLE_ID>', // tableId
+    '<ROW_ID>' // rowId
 );
 
 console.log(result);

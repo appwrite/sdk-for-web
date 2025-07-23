@@ -1,5 +1,14 @@
 # Change Log
 
+## 18.1.1
+
+* Fix using `devKeys` resulting in an error by conditionally removing credentials
+
+## 18.1.0
+
+* Add `devKeys` support to `Client` service
+* Add `upsertDocument` support to `Databases` service
+
 ## 18.0.0
 
 * Add `<REGION>` to doc examples due to the new multi region endpoints

@@ -39,6 +39,7 @@ export class Functions {
             payload
         );
     }
+
     /**
      * Trigger a function execution. The returned object will return you the current execution status. You can ping the `Get Execution` endpoint to get updates on the current execution status. Once this endpoint is called, your function execution process will start asynchronously.
      *
@@ -89,6 +90,7 @@ export class Functions {
             payload
         );
     }
+
     /**
      * Get a function execution log by its unique ID.
      *

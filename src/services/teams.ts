@@ -2,6 +2,7 @@ import { Service } from '../service';
 import { AppwriteException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 
+
 export class Teams {
     client: Client;
 
@@ -12,12 +13,43 @@ export class Teams {
     /**
      * Get a list of all the teams in which the current user is a member. You can use the parameters to filter your results.
      *
-     * @param {string[]} queries
-     * @param {string} search
+     * @param {string[]} queries - Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, total, billingPlan
+     * @param {string} search - Search term to filter your list results. Max length: 256 chars.
      * @throws {AppwriteException}
      * @returns {Promise<Models.TeamList<Preferences>>}
      */
-    list<Preferences extends Models.Preferences = Models.DefaultPreferences>(queries?: string[], search?: string): Promise<Models.TeamList<Preferences>> {
+    list<Preferences extends Models.Preferences = Models.DefaultPreferences>(params: { queries?: string[], search?: string  }): Promise<Models.TeamList<Preferences>>;
+    /**
+     * @deprecated Parameter-based methods will be removed in the upcoming version.
+     * Please use the object based method instead for better developer experience.
+     *
+     * @example
+     * // Old (deprecated)
+     * list<Preferences extends Models.Preferences = Models.DefaultPreferences>(queries?: string[], search?: string): Promise<Models.TeamList<Preferences>>;
+     *
+     * // New (object based)
+     * list<Preferences extends Models.Preferences = Models.DefaultPreferences>(params: { queries?: string[], search?: string  }): Promise<Models.TeamList<Preferences>>;
+     */
+    list<Preferences extends Models.Preferences = Models.DefaultPreferences>(queries?: string[], search?: string): Promise<Models.TeamList<Preferences>>;
+    list<Preferences extends Models.Preferences = Models.DefaultPreferences>(
+        paramsOrFirst?: { queries?: string[], search?: string } | string[],
+        ...rest: [(string)?]    
+    ): Promise<Models.TeamList<Preferences>> {
+        let params: { queries?: string[], search?: string };
+        
+        if (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst)) {
+            params = paramsOrFirst as { queries?: string[], search?: string };
+        } else {
+            params = {
+                queries: paramsOrFirst as string[],
+                search: rest[0] as string            
+            };
+        }
+        
+        const queries = params.queries;
+        const search = params.search;
+
+
         const apiPath = '/teams';
         const payload: Payload = {};
         if (typeof queries !== 'undefined') {
@@ -42,19 +74,52 @@ export class Teams {
     /**
      * Create a new team. The user who creates the team will automatically be assigned as the owner of the team. Only the users with the owner role can invite new members, add new owners and delete or update the team.
      *
-     * @param {string} teamId
-     * @param {string} name
-     * @param {string[]} roles
+     * @param {string} teamId - Team ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.
+     * @param {string} name - Team name. Max length: 128 chars.
+     * @param {string[]} roles - Array of strings. Use this param to set the roles in the team for the user who created it. The default role is **owner**. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 32 characters long.
      * @throws {AppwriteException}
      * @returns {Promise<Models.Team<Preferences>>}
      */
-    create<Preferences extends Models.Preferences = Models.DefaultPreferences>(teamId: string, name: string, roles?: string[]): Promise<Models.Team<Preferences>> {
+    create<Preferences extends Models.Preferences = Models.DefaultPreferences>(params: { teamId: string, name: string, roles?: string[]  }): Promise<Models.Team<Preferences>>;
+    /**
+     * @deprecated Parameter-based methods will be removed in the upcoming version.
+     * Please use the object based method instead for better developer experience.
+     *
+     * @example
+     * // Old (deprecated)
+     * create<Preferences extends Models.Preferences = Models.DefaultPreferences>(teamId: string, name: string, roles?: string[]): Promise<Models.Team<Preferences>>;
+     *
+     * // New (object based)
+     * create<Preferences extends Models.Preferences = Models.DefaultPreferences>(params: { teamId: string, name: string, roles?: string[]  }): Promise<Models.Team<Preferences>>;
+     */
+    create<Preferences extends Models.Preferences = Models.DefaultPreferences>(teamId: string, name: string, roles?: string[]): Promise<Models.Team<Preferences>>;
+    create<Preferences extends Models.Preferences = Models.DefaultPreferences>(
+        paramsOrFirst: { teamId: string, name: string, roles?: string[] } | string,
+        ...rest: [(string)?, (string[])?]    
+    ): Promise<Models.Team<Preferences>> {
+        let params: { teamId: string, name: string, roles?: string[] };
+        
+        if (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst)) {
+            params = paramsOrFirst as { teamId: string, name: string, roles?: string[] };
+        } else {
+            params = {
+                teamId: paramsOrFirst as string,
+                name: rest[0] as string,
+                roles: rest[1] as string[]            
+            };
+        }
+        
+        const teamId = params.teamId;
+        const name = params.name;
+        const roles = params.roles;
+
         if (typeof teamId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
         if (typeof name === 'undefined') {
             throw new AppwriteException('Missing required parameter: "name"');
         }
+
         const apiPath = '/teams';
         const payload: Payload = {};
         if (typeof teamId !== 'undefined') {
@@ -83,14 +148,42 @@ export class Teams {
     /**
      * Get a team by its ID. All team members have read access for this resource.
      *
-     * @param {string} teamId
+     * @param {string} teamId - Team ID.
      * @throws {AppwriteException}
      * @returns {Promise<Models.Team<Preferences>>}
      */
-    get<Preferences extends Models.Preferences = Models.DefaultPreferences>(teamId: string): Promise<Models.Team<Preferences>> {
+    get<Preferences extends Models.Preferences = Models.DefaultPreferences>(params: { teamId: string  }): Promise<Models.Team<Preferences>>;
+    /**
+     * @deprecated Parameter-based methods will be removed in the upcoming version.
+     * Please use the object based method instead for better developer experience.
+     *
+     * @example
+     * // Old (deprecated)
+     * get<Preferences extends Models.Preferences = Models.DefaultPreferences>(teamId: string): Promise<Models.Team<Preferences>>;
+     *
+     * // New (object based)
+     * get<Preferences extends Models.Preferences = Models.DefaultPreferences>(params: { teamId: string  }): Promise<Models.Team<Preferences>>;
+     */
+    get<Preferences extends Models.Preferences = Models.DefaultPreferences>(teamId: string): Promise<Models.Team<Preferences>>;
+    get<Preferences extends Models.Preferences = Models.DefaultPreferences>(
+        paramsOrFirst: { teamId: string } | string    
+    ): Promise<Models.Team<Preferences>> {
+        let params: { teamId: string };
+        
+        if (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst)) {
+            params = paramsOrFirst as { teamId: string };
+        } else {
+            params = {
+                teamId: paramsOrFirst as string            
+            };
+        }
+        
+        const teamId = params.teamId;
+
         if (typeof teamId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
+
         const apiPath = '/teams/{teamId}'.replace('{teamId}', teamId);
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
@@ -107,20 +200,51 @@ export class Teams {
     }
 
     /**
-     * Update the team&#039;s name by its unique ID.
+     * Update the team's name by its unique ID.
      *
-     * @param {string} teamId
-     * @param {string} name
+     * @param {string} teamId - Team ID.
+     * @param {string} name - New team name. Max length: 128 chars.
      * @throws {AppwriteException}
      * @returns {Promise<Models.Team<Preferences>>}
      */
-    updateName<Preferences extends Models.Preferences = Models.DefaultPreferences>(teamId: string, name: string): Promise<Models.Team<Preferences>> {
+    updateName<Preferences extends Models.Preferences = Models.DefaultPreferences>(params: { teamId: string, name: string  }): Promise<Models.Team<Preferences>>;
+    /**
+     * @deprecated Parameter-based methods will be removed in the upcoming version.
+     * Please use the object based method instead for better developer experience.
+     *
+     * @example
+     * // Old (deprecated)
+     * updateName<Preferences extends Models.Preferences = Models.DefaultPreferences>(teamId: string, name: string): Promise<Models.Team<Preferences>>;
+     *
+     * // New (object based)
+     * updateName<Preferences extends Models.Preferences = Models.DefaultPreferences>(params: { teamId: string, name: string  }): Promise<Models.Team<Preferences>>;
+     */
+    updateName<Preferences extends Models.Preferences = Models.DefaultPreferences>(teamId: string, name: string): Promise<Models.Team<Preferences>>;
+    updateName<Preferences extends Models.Preferences = Models.DefaultPreferences>(
+        paramsOrFirst: { teamId: string, name: string } | string,
+        ...rest: [(string)?]    
+    ): Promise<Models.Team<Preferences>> {
+        let params: { teamId: string, name: string };
+        
+        if (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst)) {
+            params = paramsOrFirst as { teamId: string, name: string };
+        } else {
+            params = {
+                teamId: paramsOrFirst as string,
+                name: rest[0] as string            
+            };
+        }
+        
+        const teamId = params.teamId;
+        const name = params.name;
+
         if (typeof teamId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
         if (typeof name === 'undefined') {
             throw new AppwriteException('Missing required parameter: "name"');
         }
+
         const apiPath = '/teams/{teamId}'.replace('{teamId}', teamId);
         const payload: Payload = {};
         if (typeof name !== 'undefined') {
@@ -143,14 +267,42 @@ export class Teams {
     /**
      * Delete a team using its ID. Only team members with the owner role can delete the team.
      *
-     * @param {string} teamId
+     * @param {string} teamId - Team ID.
      * @throws {AppwriteException}
      * @returns {Promise<{}>}
      */
-    delete(teamId: string): Promise<{}> {
+    delete(params: { teamId: string  }): Promise<{}>;
+    /**
+     * @deprecated Parameter-based methods will be removed in the upcoming version.
+     * Please use the object based method instead for better developer experience.
+     *
+     * @example
+     * // Old (deprecated)
+     * delete(teamId: string): Promise<{}>;
+     *
+     * // New (object based)
+     * delete(params: { teamId: string  }): Promise<{}>;
+     */
+    delete(teamId: string): Promise<{}>;
+    delete(
+        paramsOrFirst: { teamId: string } | string    
+    ): Promise<{}> {
+        let params: { teamId: string };
+        
+        if (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst)) {
+            params = paramsOrFirst as { teamId: string };
+        } else {
+            params = {
+                teamId: paramsOrFirst as string            
+            };
+        }
+        
+        const teamId = params.teamId;
+
         if (typeof teamId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
+
         const apiPath = '/teams/{teamId}'.replace('{teamId}', teamId);
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
@@ -168,18 +320,51 @@ export class Teams {
     }
 
     /**
-     * Use this endpoint to list a team&#039;s members using the team&#039;s ID. All team members have read access to this endpoint. Hide sensitive attributes from the response by toggling membership privacy in the Console.
+     * Use this endpoint to list a team's members using the team's ID. All team members have read access to this endpoint. Hide sensitive attributes from the response by toggling membership privacy in the Console.
      *
-     * @param {string} teamId
-     * @param {string[]} queries
-     * @param {string} search
+     * @param {string} teamId - Team ID.
+     * @param {string[]} queries - Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, teamId, invited, joined, confirm, roles
+     * @param {string} search - Search term to filter your list results. Max length: 256 chars.
      * @throws {AppwriteException}
      * @returns {Promise<Models.MembershipList>}
      */
-    listMemberships(teamId: string, queries?: string[], search?: string): Promise<Models.MembershipList> {
+    listMemberships(params: { teamId: string, queries?: string[], search?: string  }): Promise<Models.MembershipList>;
+    /**
+     * @deprecated Parameter-based methods will be removed in the upcoming version.
+     * Please use the object based method instead for better developer experience.
+     *
+     * @example
+     * // Old (deprecated)
+     * listMemberships(teamId: string, queries?: string[], search?: string): Promise<Models.MembershipList>;
+     *
+     * // New (object based)
+     * listMemberships(params: { teamId: string, queries?: string[], search?: string  }): Promise<Models.MembershipList>;
+     */
+    listMemberships(teamId: string, queries?: string[], search?: string): Promise<Models.MembershipList>;
+    listMemberships(
+        paramsOrFirst: { teamId: string, queries?: string[], search?: string } | string,
+        ...rest: [(string[])?, (string)?]    
+    ): Promise<Models.MembershipList> {
+        let params: { teamId: string, queries?: string[], search?: string };
+        
+        if (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst)) {
+            params = paramsOrFirst as { teamId: string, queries?: string[], search?: string };
+        } else {
+            params = {
+                teamId: paramsOrFirst as string,
+                queries: rest[0] as string[],
+                search: rest[1] as string            
+            };
+        }
+        
+        const teamId = params.teamId;
+        const queries = params.queries;
+        const search = params.search;
+
         if (typeof teamId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
+
         const apiPath = '/teams/{teamId}/memberships'.replace('{teamId}', teamId);
         const payload: Payload = {};
         if (typeof queries !== 'undefined') {
@@ -202,32 +387,73 @@ export class Teams {
     }
 
     /**
-     * Invite a new member to join your team. Provide an ID for existing users, or invite unregistered users using an email or phone number. If initiated from a Client SDK, Appwrite will send an email or sms with a link to join the team to the invited user, and an account will be created for them if one doesn&#039;t exist. If initiated from a Server SDK, the new member will be added automatically to the team.
+     * Invite a new member to join your team. Provide an ID for existing users, or invite unregistered users using an email or phone number. If initiated from a Client SDK, Appwrite will send an email or sms with a link to join the team to the invited user, and an account will be created for them if one doesn't exist. If initiated from a Server SDK, the new member will be added automatically to the team.
      * 
-     * You only need to provide one of a user ID, email, or phone number. Appwrite will prioritize accepting the user ID &gt; email &gt; phone number if you provide more than one of these parameters.
+     * You only need to provide one of a user ID, email, or phone number. Appwrite will prioritize accepting the user ID > email > phone number if you provide more than one of these parameters.
      * 
      * Use the `url` parameter to redirect the user from the invitation email to your app. After the user is redirected, use the [Update Team Membership Status](https://appwrite.io/docs/references/cloud/client-web/teams#updateMembershipStatus) endpoint to allow the user to accept the invitation to the team. 
      * 
      * Please note that to avoid a [Redirect Attack](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md) Appwrite will accept the only redirect URLs under the domains you have added as a platform on the Appwrite Console.
      * 
      *
-     * @param {string} teamId
-     * @param {string[]} roles
-     * @param {string} email
-     * @param {string} userId
-     * @param {string} phone
-     * @param {string} url
-     * @param {string} name
+     * @param {string} teamId - Team ID.
+     * @param {string[]} roles - Array of strings. Use this param to set the user roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 32 characters long.
+     * @param {string} email - Email of the new team member.
+     * @param {string} userId - ID of the user to be added to a team.
+     * @param {string} phone - Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.
+     * @param {string} url - URL to redirect the user back to your app from the invitation email. This parameter is not required when an API key is supplied. Only URLs from hostnames in your project platform list are allowed. This requirement helps to prevent an [open redirect](https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.
+     * @param {string} name - Name of the new team member. Max length: 128 chars.
      * @throws {AppwriteException}
      * @returns {Promise<Models.Membership>}
      */
-    createMembership(teamId: string, roles: string[], email?: string, userId?: string, phone?: string, url?: string, name?: string): Promise<Models.Membership> {
+    createMembership(params: { teamId: string, roles: string[], email?: string, userId?: string, phone?: string, url?: string, name?: string  }): Promise<Models.Membership>;
+    /**
+     * @deprecated Parameter-based methods will be removed in the upcoming version.
+     * Please use the object based method instead for better developer experience.
+     *
+     * @example
+     * // Old (deprecated)
+     * createMembership(teamId: string, roles: string[], email?: string, userId?: string, phone?: string, url?: string, name?: string): Promise<Models.Membership>;
+     *
+     * // New (object based)
+     * createMembership(params: { teamId: string, roles: string[], email?: string, userId?: string, phone?: string, url?: string, name?: string  }): Promise<Models.Membership>;
+     */
+    createMembership(teamId: string, roles: string[], email?: string, userId?: string, phone?: string, url?: string, name?: string): Promise<Models.Membership>;
+    createMembership(
+        paramsOrFirst: { teamId: string, roles: string[], email?: string, userId?: string, phone?: string, url?: string, name?: string } | string,
+        ...rest: [(string[])?, (string)?, (string)?, (string)?, (string)?, (string)?]    
+    ): Promise<Models.Membership> {
+        let params: { teamId: string, roles: string[], email?: string, userId?: string, phone?: string, url?: string, name?: string };
+        
+        if (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst)) {
+            params = paramsOrFirst as { teamId: string, roles: string[], email?: string, userId?: string, phone?: string, url?: string, name?: string };
+        } else {
+            params = {
+                teamId: paramsOrFirst as string,
+                roles: rest[0] as string[],
+                email: rest[1] as string,
+                userId: rest[2] as string,
+                phone: rest[3] as string,
+                url: rest[4] as string,
+                name: rest[5] as string            
+            };
+        }
+        
+        const teamId = params.teamId;
+        const roles = params.roles;
+        const email = params.email;
+        const userId = params.userId;
+        const phone = params.phone;
+        const url = params.url;
+        const name = params.name;
+
         if (typeof teamId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
         if (typeof roles === 'undefined') {
             throw new AppwriteException('Missing required parameter: "roles"');
         }
+
         const apiPath = '/teams/{teamId}/memberships'.replace('{teamId}', teamId);
         const payload: Payload = {};
         if (typeof email !== 'undefined') {
@@ -265,18 +491,49 @@ export class Teams {
     /**
      * Get a team member by the membership unique id. All team members have read access for this resource. Hide sensitive attributes from the response by toggling membership privacy in the Console.
      *
-     * @param {string} teamId
-     * @param {string} membershipId
+     * @param {string} teamId - Team ID.
+     * @param {string} membershipId - Membership ID.
      * @throws {AppwriteException}
      * @returns {Promise<Models.Membership>}
      */
-    getMembership(teamId: string, membershipId: string): Promise<Models.Membership> {
+    getMembership(params: { teamId: string, membershipId: string  }): Promise<Models.Membership>;
+    /**
+     * @deprecated Parameter-based methods will be removed in the upcoming version.
+     * Please use the object based method instead for better developer experience.
+     *
+     * @example
+     * // Old (deprecated)
+     * getMembership(teamId: string, membershipId: string): Promise<Models.Membership>;
+     *
+     * // New (object based)
+     * getMembership(params: { teamId: string, membershipId: string  }): Promise<Models.Membership>;
+     */
+    getMembership(teamId: string, membershipId: string): Promise<Models.Membership>;
+    getMembership(
+        paramsOrFirst: { teamId: string, membershipId: string } | string,
+        ...rest: [(string)?]    
+    ): Promise<Models.Membership> {
+        let params: { teamId: string, membershipId: string };
+        
+        if (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst)) {
+            params = paramsOrFirst as { teamId: string, membershipId: string };
+        } else {
+            params = {
+                teamId: paramsOrFirst as string,
+                membershipId: rest[0] as string            
+            };
+        }
+        
+        const teamId = params.teamId;
+        const membershipId = params.membershipId;
+
         if (typeof teamId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
         if (typeof membershipId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "membershipId"');
         }
+
         const apiPath = '/teams/{teamId}/memberships/{membershipId}'.replace('{teamId}', teamId).replace('{membershipId}', membershipId);
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
@@ -296,13 +553,45 @@ export class Teams {
      * Modify the roles of a team member. Only team members with the owner role have access to this endpoint. Learn more about [roles and permissions](https://appwrite.io/docs/permissions).
      * 
      *
-     * @param {string} teamId
-     * @param {string} membershipId
-     * @param {string[]} roles
+     * @param {string} teamId - Team ID.
+     * @param {string} membershipId - Membership ID.
+     * @param {string[]} roles - An array of strings. Use this param to set the user's roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 32 characters long.
      * @throws {AppwriteException}
      * @returns {Promise<Models.Membership>}
      */
-    updateMembership(teamId: string, membershipId: string, roles: string[]): Promise<Models.Membership> {
+    updateMembership(params: { teamId: string, membershipId: string, roles: string[]  }): Promise<Models.Membership>;
+    /**
+     * @deprecated Parameter-based methods will be removed in the upcoming version.
+     * Please use the object based method instead for better developer experience.
+     *
+     * @example
+     * // Old (deprecated)
+     * updateMembership(teamId: string, membershipId: string, roles: string[]): Promise<Models.Membership>;
+     *
+     * // New (object based)
+     * updateMembership(params: { teamId: string, membershipId: string, roles: string[]  }): Promise<Models.Membership>;
+     */
+    updateMembership(teamId: string, membershipId: string, roles: string[]): Promise<Models.Membership>;
+    updateMembership(
+        paramsOrFirst: { teamId: string, membershipId: string, roles: string[] } | string,
+        ...rest: [(string)?, (string[])?]    
+    ): Promise<Models.Membership> {
+        let params: { teamId: string, membershipId: string, roles: string[] };
+        
+        if (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst)) {
+            params = paramsOrFirst as { teamId: string, membershipId: string, roles: string[] };
+        } else {
+            params = {
+                teamId: paramsOrFirst as string,
+                membershipId: rest[0] as string,
+                roles: rest[1] as string[]            
+            };
+        }
+        
+        const teamId = params.teamId;
+        const membershipId = params.membershipId;
+        const roles = params.roles;
+
         if (typeof teamId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
@@ -312,6 +601,7 @@ export class Teams {
         if (typeof roles === 'undefined') {
             throw new AppwriteException('Missing required parameter: "roles"');
         }
+
         const apiPath = '/teams/{teamId}/memberships/{membershipId}'.replace('{teamId}', teamId).replace('{membershipId}', membershipId);
         const payload: Payload = {};
         if (typeof roles !== 'undefined') {
@@ -334,18 +624,49 @@ export class Teams {
     /**
      * This endpoint allows a user to leave a team or for a team owner to delete the membership of any other team member. You can also use this endpoint to delete a user membership even if it is not accepted.
      *
-     * @param {string} teamId
-     * @param {string} membershipId
+     * @param {string} teamId - Team ID.
+     * @param {string} membershipId - Membership ID.
      * @throws {AppwriteException}
      * @returns {Promise<{}>}
      */
-    deleteMembership(teamId: string, membershipId: string): Promise<{}> {
+    deleteMembership(params: { teamId: string, membershipId: string  }): Promise<{}>;
+    /**
+     * @deprecated Parameter-based methods will be removed in the upcoming version.
+     * Please use the object based method instead for better developer experience.
+     *
+     * @example
+     * // Old (deprecated)
+     * deleteMembership(teamId: string, membershipId: string): Promise<{}>;
+     *
+     * // New (object based)
+     * deleteMembership(params: { teamId: string, membershipId: string  }): Promise<{}>;
+     */
+    deleteMembership(teamId: string, membershipId: string): Promise<{}>;
+    deleteMembership(
+        paramsOrFirst: { teamId: string, membershipId: string } | string,
+        ...rest: [(string)?]    
+    ): Promise<{}> {
+        let params: { teamId: string, membershipId: string };
+        
+        if (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst)) {
+            params = paramsOrFirst as { teamId: string, membershipId: string };
+        } else {
+            params = {
+                teamId: paramsOrFirst as string,
+                membershipId: rest[0] as string            
+            };
+        }
+        
+        const teamId = params.teamId;
+        const membershipId = params.membershipId;
+
         if (typeof teamId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
         if (typeof membershipId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "membershipId"');
         }
+
         const apiPath = '/teams/{teamId}/memberships/{membershipId}'.replace('{teamId}', teamId).replace('{membershipId}', membershipId);
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
@@ -368,14 +689,48 @@ export class Teams {
      * If the request is successful, a session for the user is automatically created.
      * 
      *
-     * @param {string} teamId
-     * @param {string} membershipId
-     * @param {string} userId
-     * @param {string} secret
+     * @param {string} teamId - Team ID.
+     * @param {string} membershipId - Membership ID.
+     * @param {string} userId - User ID.
+     * @param {string} secret - Secret key.
      * @throws {AppwriteException}
      * @returns {Promise<Models.Membership>}
      */
-    updateMembershipStatus(teamId: string, membershipId: string, userId: string, secret: string): Promise<Models.Membership> {
+    updateMembershipStatus(params: { teamId: string, membershipId: string, userId: string, secret: string  }): Promise<Models.Membership>;
+    /**
+     * @deprecated Parameter-based methods will be removed in the upcoming version.
+     * Please use the object based method instead for better developer experience.
+     *
+     * @example
+     * // Old (deprecated)
+     * updateMembershipStatus(teamId: string, membershipId: string, userId: string, secret: string): Promise<Models.Membership>;
+     *
+     * // New (object based)
+     * updateMembershipStatus(params: { teamId: string, membershipId: string, userId: string, secret: string  }): Promise<Models.Membership>;
+     */
+    updateMembershipStatus(teamId: string, membershipId: string, userId: string, secret: string): Promise<Models.Membership>;
+    updateMembershipStatus(
+        paramsOrFirst: { teamId: string, membershipId: string, userId: string, secret: string } | string,
+        ...rest: [(string)?, (string)?, (string)?]    
+    ): Promise<Models.Membership> {
+        let params: { teamId: string, membershipId: string, userId: string, secret: string };
+        
+        if (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst)) {
+            params = paramsOrFirst as { teamId: string, membershipId: string, userId: string, secret: string };
+        } else {
+            params = {
+                teamId: paramsOrFirst as string,
+                membershipId: rest[0] as string,
+                userId: rest[1] as string,
+                secret: rest[2] as string            
+            };
+        }
+        
+        const teamId = params.teamId;
+        const membershipId = params.membershipId;
+        const userId = params.userId;
+        const secret = params.secret;
+
         if (typeof teamId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
@@ -388,6 +743,7 @@ export class Teams {
         if (typeof secret === 'undefined') {
             throw new AppwriteException('Missing required parameter: "secret"');
         }
+
         const apiPath = '/teams/{teamId}/memberships/{membershipId}/status'.replace('{teamId}', teamId).replace('{membershipId}', membershipId);
         const payload: Payload = {};
         if (typeof userId !== 'undefined') {
@@ -411,16 +767,44 @@ export class Teams {
     }
 
     /**
-     * Get the team&#039;s shared preferences by its unique ID. If a preference doesn&#039;t need to be shared by all team members, prefer storing them in [user preferences](https://appwrite.io/docs/references/cloud/client-web/account#getPrefs).
+     * Get the team's shared preferences by its unique ID. If a preference doesn't need to be shared by all team members, prefer storing them in [user preferences](https://appwrite.io/docs/references/cloud/client-web/account#getPrefs).
      *
-     * @param {string} teamId
+     * @param {string} teamId - Team ID.
      * @throws {AppwriteException}
      * @returns {Promise<Preferences>}
      */
-    getPrefs<Preferences extends Models.Preferences = Models.DefaultPreferences>(teamId: string): Promise<Preferences> {
+    getPrefs<Preferences extends Models.Preferences = Models.DefaultPreferences>(params: { teamId: string  }): Promise<Preferences>;
+    /**
+     * @deprecated Parameter-based methods will be removed in the upcoming version.
+     * Please use the object based method instead for better developer experience.
+     *
+     * @example
+     * // Old (deprecated)
+     * getPrefs<Preferences extends Models.Preferences = Models.DefaultPreferences>(teamId: string): Promise<Preferences>;
+     *
+     * // New (object based)
+     * getPrefs<Preferences extends Models.Preferences = Models.DefaultPreferences>(params: { teamId: string  }): Promise<Preferences>;
+     */
+    getPrefs<Preferences extends Models.Preferences = Models.DefaultPreferences>(teamId: string): Promise<Preferences>;
+    getPrefs<Preferences extends Models.Preferences = Models.DefaultPreferences>(
+        paramsOrFirst: { teamId: string } | string    
+    ): Promise<Preferences> {
+        let params: { teamId: string };
+        
+        if (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst)) {
+            params = paramsOrFirst as { teamId: string };
+        } else {
+            params = {
+                teamId: paramsOrFirst as string            
+            };
+        }
+        
+        const teamId = params.teamId;
+
         if (typeof teamId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
+
         const apiPath = '/teams/{teamId}/prefs'.replace('{teamId}', teamId);
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
@@ -437,20 +821,51 @@ export class Teams {
     }
 
     /**
-     * Update the team&#039;s preferences by its unique ID. The object you pass is stored as is and replaces any previous value. The maximum allowed prefs size is 64kB and throws an error if exceeded.
+     * Update the team's preferences by its unique ID. The object you pass is stored as is and replaces any previous value. The maximum allowed prefs size is 64kB and throws an error if exceeded.
      *
-     * @param {string} teamId
-     * @param {object} prefs
+     * @param {string} teamId - Team ID.
+     * @param {object} prefs - Prefs key-value JSON object.
      * @throws {AppwriteException}
      * @returns {Promise<Preferences>}
      */
-    updatePrefs<Preferences extends Models.Preferences = Models.DefaultPreferences>(teamId: string, prefs: object): Promise<Preferences> {
+    updatePrefs<Preferences extends Models.Preferences = Models.DefaultPreferences>(params: { teamId: string, prefs: object  }): Promise<Preferences>;
+    /**
+     * @deprecated Parameter-based methods will be removed in the upcoming version.
+     * Please use the object based method instead for better developer experience.
+     *
+     * @example
+     * // Old (deprecated)
+     * updatePrefs<Preferences extends Models.Preferences = Models.DefaultPreferences>(teamId: string, prefs: object): Promise<Preferences>;
+     *
+     * // New (object based)
+     * updatePrefs<Preferences extends Models.Preferences = Models.DefaultPreferences>(params: { teamId: string, prefs: object  }): Promise<Preferences>;
+     */
+    updatePrefs<Preferences extends Models.Preferences = Models.DefaultPreferences>(teamId: string, prefs: object): Promise<Preferences>;
+    updatePrefs<Preferences extends Models.Preferences = Models.DefaultPreferences>(
+        paramsOrFirst: { teamId: string, prefs: object } | string,
+        ...rest: [(object)?]    
+    ): Promise<Preferences> {
+        let params: { teamId: string, prefs: object };
+        
+        if (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst)) {
+            params = paramsOrFirst as { teamId: string, prefs: object };
+        } else {
+            params = {
+                teamId: paramsOrFirst as string,
+                prefs: rest[0] as object            
+            };
+        }
+        
+        const teamId = params.teamId;
+        const prefs = params.prefs;
+
         if (typeof teamId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
         if (typeof prefs === 'undefined') {
             throw new AppwriteException('Missing required parameter: "prefs"');
         }
+
         const apiPath = '/teams/{teamId}/prefs'.replace('{teamId}', teamId);
         const payload: Payload = {};
         if (typeof prefs !== 'undefined') {

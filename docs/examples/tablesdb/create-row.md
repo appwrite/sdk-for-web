@@ -6,12 +6,12 @@ const client = new Client()
 
 const tablesDb = new TablesDb(client);
 
-const result = await tablesDb.createRow(
-    '<DATABASE_ID>', // databaseId
-    '<TABLE_ID>', // tableId
-    '<ROW_ID>', // rowId
-    {}, // data
-    ["read("any")"] // permissions (optional)
-);
+const result = await tablesDb.createRow({
+    databaseId: '<DATABASE_ID>',
+    tableId: '<TABLE_ID>',
+    rowId: '<ROW_ID>',
+    data: {},
+    permissions: ["read("any")"]
+});
 
 console.log(result);

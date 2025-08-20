@@ -14,15 +14,21 @@ export class Functions {
     /**
      * Get a list of all the current user function execution logs. You can use the query params to filter your results.
      *
-     * @param {string} functionId - Function ID.
-     * @param {string[]} queries - Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: trigger, status, responseStatusCode, duration, requestMethod, requestPath, deploymentId
+     * @param {string} params.functionId - Function ID.
+     * @param {string[]} params.queries - Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: trigger, status, responseStatusCode, duration, requestMethod, requestPath, deploymentId
      * @throws {AppwriteException}
      * @returns {Promise<Models.ExecutionList>}
      */
     listExecutions(params: { functionId: string, queries?: string[]  }): Promise<Models.ExecutionList>;
     /**
-     * @deprecated Parameter-based methods will be removed in the upcoming version.
-     * Please use the object based method instead for better developer experience.
+     * Get a list of all the current user function execution logs. You can use the query params to filter your results.
+     *
+     * @param {string} functionId - Function ID.
+     * @param {string[]} queries - Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: trigger, status, responseStatusCode, duration, requestMethod, requestPath, deploymentId
+     * @throws {AppwriteException}
+     * @returns {Promise<Models.ExecutionList>}
+     * @deprecated Flat parameter style methods will be removed in a future version.
+     * Please use the object parameter style method instead for a better developer experience.
      *
      * @example
      * // Old (deprecated)
@@ -38,8 +44,8 @@ export class Functions {
     ): Promise<Models.ExecutionList> {
         let params: { functionId: string, queries?: string[] };
         
-        if (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst)) {
-            params = paramsOrFirst as { functionId: string, queries?: string[] };
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { functionId: string, queries?: string[] };
         } else {
             params = {
                 functionId: paramsOrFirst as string,
@@ -75,6 +81,20 @@ export class Functions {
     /**
      * Trigger a function execution. The returned object will return you the current execution status. You can ping the `Get Execution` endpoint to get updates on the current execution status. Once this endpoint is called, your function execution process will start asynchronously.
      *
+     * @param {string} params.functionId - Function ID.
+     * @param {string} params.body - HTTP body of execution. Default value is empty string.
+     * @param {boolean} params.async - Execute code in the background. Default value is false.
+     * @param {string} params.xpath - HTTP path of execution. Path can include query params. Default value is /
+     * @param {ExecutionMethod} params.method - HTTP method of execution. Default value is GET.
+     * @param {object} params.headers - HTTP headers of execution. Defaults to empty.
+     * @param {string} params.scheduledAt - Scheduled execution time in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future with precision in minutes.
+     * @throws {AppwriteException}
+     * @returns {Promise<Models.Execution>}
+     */
+    createExecution(params: { functionId: string, body?: string, async?: boolean, xpath?: string, method?: ExecutionMethod, headers?: object, scheduledAt?: string  }): Promise<Models.Execution>;
+    /**
+     * Trigger a function execution. The returned object will return you the current execution status. You can ping the `Get Execution` endpoint to get updates on the current execution status. Once this endpoint is called, your function execution process will start asynchronously.
+     *
      * @param {string} functionId - Function ID.
      * @param {string} body - HTTP body of execution. Default value is empty string.
      * @param {boolean} async - Execute code in the background. Default value is false.
@@ -84,11 +104,8 @@ export class Functions {
      * @param {string} scheduledAt - Scheduled execution time in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future with precision in minutes.
      * @throws {AppwriteException}
      * @returns {Promise<Models.Execution>}
-     */
-    createExecution(params: { functionId: string, body?: string, async?: boolean, xpath?: string, method?: ExecutionMethod, headers?: object, scheduledAt?: string  }): Promise<Models.Execution>;
-    /**
-     * @deprecated Parameter-based methods will be removed in the upcoming version.
-     * Please use the object based method instead for better developer experience.
+     * @deprecated Flat parameter style methods will be removed in a future version.
+     * Please use the object parameter style method instead for a better developer experience.
      *
      * @example
      * // Old (deprecated)
@@ -104,8 +121,8 @@ export class Functions {
     ): Promise<Models.Execution> {
         let params: { functionId: string, body?: string, async?: boolean, xpath?: string, method?: ExecutionMethod, headers?: object, scheduledAt?: string };
         
-        if (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst)) {
-            params = paramsOrFirst as { functionId: string, body?: string, async?: boolean, xpath?: string, method?: ExecutionMethod, headers?: object, scheduledAt?: string };
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { functionId: string, body?: string, async?: boolean, xpath?: string, method?: ExecutionMethod, headers?: object, scheduledAt?: string };
         } else {
             params = {
                 functionId: paramsOrFirst as string,
@@ -167,15 +184,21 @@ export class Functions {
     /**
      * Get a function execution log by its unique ID.
      *
-     * @param {string} functionId - Function ID.
-     * @param {string} executionId - Execution ID.
+     * @param {string} params.functionId - Function ID.
+     * @param {string} params.executionId - Execution ID.
      * @throws {AppwriteException}
      * @returns {Promise<Models.Execution>}
      */
     getExecution(params: { functionId: string, executionId: string  }): Promise<Models.Execution>;
     /**
-     * @deprecated Parameter-based methods will be removed in the upcoming version.
-     * Please use the object based method instead for better developer experience.
+     * Get a function execution log by its unique ID.
+     *
+     * @param {string} functionId - Function ID.
+     * @param {string} executionId - Execution ID.
+     * @throws {AppwriteException}
+     * @returns {Promise<Models.Execution>}
+     * @deprecated Flat parameter style methods will be removed in a future version.
+     * Please use the object parameter style method instead for a better developer experience.
      *
      * @example
      * // Old (deprecated)
@@ -191,8 +214,8 @@ export class Functions {
     ): Promise<Models.Execution> {
         let params: { functionId: string, executionId: string };
         
-        if (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst)) {
-            params = paramsOrFirst as { functionId: string, executionId: string };
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { functionId: string, executionId: string };
         } else {
             params = {
                 functionId: paramsOrFirst as string,

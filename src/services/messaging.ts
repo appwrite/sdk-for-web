@@ -28,15 +28,7 @@ export class Messaging {
      * @param {string} targetId - Target ID. The target ID to link to the specified Topic ID.
      * @throws {AppwriteException}
      * @returns {Promise<Models.Subscriber>}
-     * @deprecated Flat parameter style methods will be removed in a future version.
-     * Please use the object parameter style method instead for a better developer experience.
-     *
-     * @example
-     * // Old (deprecated)
-     * createSubscriber(topicId: string, subscriberId: string, targetId: string): Promise<Models.Subscriber>;
-     *
-     * // New (object based)
-     * createSubscriber(params: { topicId: string, subscriberId: string, targetId: string  }): Promise<Models.Subscriber>;
+     * @deprecated Use the object parameter style method for a better developer experience.
      */
     createSubscriber(topicId: string, subscriberId: string, targetId: string): Promise<Models.Subscriber>;
     createSubscriber(
@@ -107,15 +99,7 @@ export class Messaging {
      * @param {string} subscriberId - Subscriber ID.
      * @throws {AppwriteException}
      * @returns {Promise<{}>}
-     * @deprecated Flat parameter style methods will be removed in a future version.
-     * Please use the object parameter style method instead for a better developer experience.
-     *
-     * @example
-     * // Old (deprecated)
-     * deleteSubscriber(topicId: string, subscriberId: string): Promise<{}>;
-     *
-     * // New (object based)
-     * deleteSubscriber(params: { topicId: string, subscriberId: string  }): Promise<{}>;
+     * @deprecated Use the object parameter style method for a better developer experience.
      */
     deleteSubscriber(topicId: string, subscriberId: string): Promise<{}>;
     deleteSubscriber(

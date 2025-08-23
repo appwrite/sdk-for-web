@@ -403,7 +403,7 @@ export class Avatars {
      * @throws {AppwriteException}
      * @returns {string}
      */
-    getInitials(params: { name?: string, width?: number, height?: number, background?: string  }): string;
+    getInitials(params?: { name?: string, width?: number, height?: number, background?: string  }): string;
     /**
      * Use this endpoint to show your user initials avatar icon on your website or app. By default, this route will try to print your logged-in user name or email initials. You can also overwrite the user name if you pass the 'name' parameter. If no name is given and no user is logged, an empty avatar will be returned.
      * 

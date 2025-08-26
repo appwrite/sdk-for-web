@@ -6,11 +6,25 @@ export namespace Models {
     declare const __default: unique symbol;
 
     /**
+     * Rows List
+     */
+    export type RowList<Row extends Models.Row = Models.DefaultRow> = {
+        /**
+         * Total number of rows that matched your query.
+         */
+        total: number;
+        /**
+         * List of rows.
+         */
+        rows: Row[];
+    }
+
+    /**
      * Documents List
      */
     export type DocumentList<Document extends Models.Document = Models.DefaultDocument> = {
         /**
-         * Total number of documents documents that matched your query.
+         * Total number of documents that matched your query.
          */
         total: number;
         /**
@@ -24,7 +38,7 @@ export namespace Models {
      */
     export type SessionList = {
         /**
-         * Total number of sessions documents that matched your query.
+         * Total number of sessions that matched your query.
          */
         total: number;
         /**
@@ -38,7 +52,7 @@ export namespace Models {
      */
     export type IdentityList = {
         /**
-         * Total number of identities documents that matched your query.
+         * Total number of identities that matched your query.
          */
         total: number;
         /**
@@ -52,7 +66,7 @@ export namespace Models {
      */
     export type LogList = {
         /**
-         * Total number of logs documents that matched your query.
+         * Total number of logs that matched your query.
          */
         total: number;
         /**
@@ -66,7 +80,7 @@ export namespace Models {
      */
     export type FileList = {
         /**
-         * Total number of files documents that matched your query.
+         * Total number of files that matched your query.
          */
         total: number;
         /**
@@ -80,7 +94,7 @@ export namespace Models {
      */
     export type TeamList<Preferences extends Models.Preferences = Models.DefaultPreferences> = {
         /**
-         * Total number of teams documents that matched your query.
+         * Total number of teams that matched your query.
          */
         total: number;
         /**
@@ -94,7 +108,7 @@ export namespace Models {
      */
     export type MembershipList = {
         /**
-         * Total number of memberships documents that matched your query.
+         * Total number of memberships that matched your query.
          */
         total: number;
         /**
@@ -108,7 +122,7 @@ export namespace Models {
      */
     export type ExecutionList = {
         /**
-         * Total number of executions documents that matched your query.
+         * Total number of executions that matched your query.
          */
         total: number;
         /**
@@ -122,7 +136,7 @@ export namespace Models {
      */
     export type CountryList = {
         /**
-         * Total number of countries documents that matched your query.
+         * Total number of countries that matched your query.
          */
         total: number;
         /**
@@ -136,7 +150,7 @@ export namespace Models {
      */
     export type ContinentList = {
         /**
-         * Total number of continents documents that matched your query.
+         * Total number of continents that matched your query.
          */
         total: number;
         /**
@@ -150,7 +164,7 @@ export namespace Models {
      */
     export type LanguageList = {
         /**
-         * Total number of languages documents that matched your query.
+         * Total number of languages that matched your query.
          */
         total: number;
         /**
@@ -164,7 +178,7 @@ export namespace Models {
      */
     export type CurrencyList = {
         /**
-         * Total number of currencies documents that matched your query.
+         * Total number of currencies that matched your query.
          */
         total: number;
         /**
@@ -178,7 +192,7 @@ export namespace Models {
      */
     export type PhoneList = {
         /**
-         * Total number of phones documents that matched your query.
+         * Total number of phones that matched your query.
          */
         total: number;
         /**
@@ -192,7 +206,7 @@ export namespace Models {
      */
     export type LocaleCodeList = {
         /**
-         * Total number of localeCodes documents that matched your query.
+         * Total number of localeCodes that matched your query.
          */
         total: number;
         /**
@@ -200,6 +214,45 @@ export namespace Models {
          */
         localeCodes: LocaleCode[];
     }
+
+    /**
+     * Row
+     */
+    export type Row = {
+        /**
+         * Row ID.
+         */
+        $id: string;
+        /**
+         * Row automatically incrementing ID.
+         */
+        $sequence: number;
+        /**
+         * Table ID.
+         */
+        $tableId: string;
+        /**
+         * Database ID.
+         */
+        $databaseId: string;
+        /**
+         * Row creation date in ISO 8601 format.
+         */
+        $createdAt: string;
+        /**
+         * Row update date in ISO 8601 format.
+         */
+        $updatedAt: string;
+        /**
+         * Row permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).
+         */
+        $permissions: string[];
+    }
+
+    export type DefaultRow = Row & {
+        [key: string]: any;
+        [__default]: true;
+    };
 
     /**
      * Document
@@ -238,12 +291,6 @@ export namespace Models {
     export type DefaultDocument = Document & {
         [key: string]: any;
         [__default]: true;
-    };
-
-    export type DataWithoutDocumentKeys = {
-        [K in string]: any;
-    } & {
-        [K in keyof Document]?: never;
     };
 
     /**
@@ -539,12 +586,6 @@ export namespace Models {
         [__default]: true;
     };
 
-    export type DataWithoutPreferencesKeys = {
-        [K in string]: any;
-    } & {
-        [K in keyof Preferences]?: never;
-    };
-
     /**
      * Session
      */
@@ -770,7 +811,7 @@ export namespace Models {
          */
         country: string;
         /**
-         * Continent code. A two character continent code &quot;AF&quot; for Africa, &quot;AN&quot; for Antarctica, &quot;AS&quot; for Asia, &quot;EU&quot; for Europe, &quot;NA&quot; for North America, &quot;OC&quot; for Oceania, and &quot;SA&quot; for South America.
+         * Continent code. A two character continent code "AF" for Africa, "AN" for Antarctica, "AS" for Asia, "EU" for Europe, "NA" for North America, "OC" for Oceania, and "SA" for South America.
          */
         continentCode: string;
         /**
@@ -952,7 +993,7 @@ export namespace Models {
          */
         $createdAt: string;
         /**
-         * Execution upate date in ISO 8601 format.
+         * Execution update date in ISO 8601 format.
          */
         $updatedAt: string;
         /**
@@ -963,6 +1004,10 @@ export namespace Models {
          * Function ID.
          */
         functionId: string;
+        /**
+         * Function's deployment ID used to create the execution.
+         */
+        deploymentId: string;
         /**
          * The trigger that caused the function to execute. Possible values can be: `http`, `schedule`, or `event`.
          */

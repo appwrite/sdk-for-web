@@ -1751,7 +1751,7 @@ export class Account {
      * @param {string} params.secret - Valid verification token.
      * @throws {AppwriteException}
      * @returns {Promise<Models.Session>}
-     * @deprecated This API has been deprecated.
+     * @deprecated This API has been deprecated since 1.6.0. Please use `Account.createSession` instead.
      */
     updateMagicURLSession(params: { userId: string, secret: string  }): Promise<Models.Session>;
     /**
@@ -1907,7 +1907,7 @@ export class Account {
      * @param {string} params.secret - Valid verification token.
      * @throws {AppwriteException}
      * @returns {Promise<Models.Session>}
-     * @deprecated This API has been deprecated.
+     * @deprecated This API has been deprecated since 1.6.0. Please use `Account.createSession` instead.
      */
     updatePhoneSession(params: { userId: string, secret: string  }): Promise<Models.Session>;
     /**

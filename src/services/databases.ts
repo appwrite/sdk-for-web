@@ -139,9 +139,6 @@ export class Databases {
         if (typeof data === 'undefined') {
             throw new AppwriteException('Missing required parameter: "data"');
         }
-        delete data?.$sequence;
-        delete data?.$collectionId;
-        delete data?.$databaseId;
 
         const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
         const payload: Payload = {};
@@ -304,9 +301,6 @@ export class Databases {
         if (typeof data === 'undefined') {
             throw new AppwriteException('Missing required parameter: "data"');
         }
-        delete data?.$sequence;
-        delete data?.$collectionId;
-        delete data?.$databaseId;
 
         const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{documentId}', documentId);
         const payload: Payload = {};
@@ -389,9 +383,6 @@ export class Databases {
         if (typeof documentId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "documentId"');
         }
-        delete data?.$sequence;
-        delete data?.$collectionId;
-        delete data?.$databaseId;
 
         const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{documentId}', documentId);
         const payload: Payload = {};

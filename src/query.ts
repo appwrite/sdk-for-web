@@ -1,5 +1,5 @@
 type QueryTypesSingle = string | number | boolean;
-export type QueryTypesList = string[] | number[] | boolean[] | Query[];
+export type QueryTypesList = string[] | number[] | boolean[] | Query[] | any[];
 export type QueryTypes = QueryTypesSingle | QueryTypesList;
 type AttributesTypes = string | string[];
 
@@ -52,20 +52,20 @@ export class Query {
    * Filter resources where attribute is equal to value.
    *
    * @param {string} attribute
-   * @param {QueryTypes} value
+   * @param {QueryTypes | any[]} value
    * @returns {string}
    */
-  static equal = (attribute: string, value: QueryTypes): string =>
+  static equal = (attribute: string, value: QueryTypes | any[]): string =>
     new Query("equal", attribute, value).toString();
 
   /**
    * Filter resources where attribute is not equal to value.
    *
    * @param {string} attribute
-   * @param {QueryTypes} value
+   * @param {QueryTypes | any[]} value
    * @returns {string}
    */
-  static notEqual = (attribute: string, value: QueryTypes): string =>
+  static notEqual = (attribute: string, value: QueryTypes | any[]): string =>
     new Query("notEqual", attribute, value).toString();
 
   /**
@@ -238,17 +238,17 @@ export class Query {
    * @param {string | string[]} value
    * @returns {string}
    */
-  static contains = (attribute: string, value: string | string[]): string =>
+  static contains = (attribute: string, value: string | any[]): string =>
     new Query("contains", attribute, value).toString();
 
   /**
    * Filter resources where attribute does not contain the specified value.
    *
    * @param {string} attribute
-   * @param {string | string[]} value
+   * @param {string | any[]} value
    * @returns {string}
    */
-  static notContains = (attribute: string, value: string | string[]): string =>
+  static notContains = (attribute: string, value: string | any[]): string =>
     new Query("notContains", attribute, value).toString();
 
   /**
@@ -377,7 +377,7 @@ export class Query {
    * @returns {string}
    */
   static distanceEqual = (attribute: string, values: any[], distance: number, meters: boolean = true): string =>
-    new Query("distanceEqual", attribute, [values, distance, meters] as QueryTypesList).toString();
+    new Query("distanceEqual", attribute, [[values, distance, meters]] as QueryTypesList).toString();
 
   /**
    * Filter resources where attribute is not at a specific distance from the given coordinates.
@@ -389,7 +389,7 @@ export class Query {
    * @returns {string}
    */
   static distanceNotEqual = (attribute: string, values: any[], distance: number, meters: boolean = true): string =>
-    new Query("distanceNotEqual", attribute, [values, distance, meters] as QueryTypesList).toString();
+    new Query("distanceNotEqual", attribute, [[values, distance, meters]] as QueryTypesList).toString();
 
   /**
    * Filter resources where attribute is at a distance greater than the specified value from the given coordinates.
@@ -401,7 +401,7 @@ export class Query {
    * @returns {string}
    */
   static distanceGreaterThan = (attribute: string, values: any[], distance: number, meters: boolean = true): string =>
-    new Query("distanceGreaterThan", attribute, [values, distance, meters] as QueryTypesList).toString();
+    new Query("distanceGreaterThan", attribute, [[values, distance, meters]] as QueryTypesList).toString();
 
   /**
    * Filter resources where attribute is at a distance less than the specified value from the given coordinates.
@@ -413,7 +413,7 @@ export class Query {
    * @returns {string}
    */
   static distanceLessThan = (attribute: string, values: any[], distance: number, meters: boolean = true): string =>
-    new Query("distanceLessThan", attribute, [values, distance, meters] as QueryTypesList).toString();
+    new Query("distanceLessThan", attribute, [[values, distance, meters]] as QueryTypesList).toString();
 
   /**
    * Filter resources where attribute intersects with the given geometry.
@@ -423,7 +423,7 @@ export class Query {
    * @returns {string}
    */
   static intersects = (attribute: string, values: any[]): string =>
-    new Query("intersects", attribute, values).toString();
+    new Query("intersects", attribute, [values]).toString();
 
   /**
    * Filter resources where attribute does not intersect with the given geometry.
@@ -433,7 +433,7 @@ export class Query {
    * @returns {string}
    */
   static notIntersects = (attribute: string, values: any[]): string =>
-    new Query("notIntersects", attribute, values).toString();
+    new Query("notIntersects", attribute, [values]).toString();
 
   /**
    * Filter resources where attribute crosses the given geometry.
@@ -443,7 +443,7 @@ export class Query {
    * @returns {string}
    */
   static crosses = (attribute: string, values: any[]): string =>
-    new Query("crosses", attribute, values).toString();
+    new Query("crosses", attribute, [values]).toString();
 
   /**
    * Filter resources where attribute does not cross the given geometry.
@@ -453,7 +453,7 @@ export class Query {
    * @returns {string}
    */
   static notCrosses = (attribute: string, values: any[]): string =>
-    new Query("notCrosses", attribute, values).toString();
+    new Query("notCrosses", attribute, [values]).toString();
 
   /**
    * Filter resources where attribute overlaps with the given geometry.
@@ -463,7 +463,7 @@ export class Query {
    * @returns {string}
    */
   static overlaps = (attribute: string, values: any[]): string =>
-    new Query("overlaps", attribute, values).toString();
+    new Query("overlaps", attribute, [values]).toString();
 
   /**
    * Filter resources where attribute does not overlap with the given geometry.
@@ -473,7 +473,7 @@ export class Query {
    * @returns {string}
    */
   static notOverlaps = (attribute: string, values: any[]): string =>
-    new Query("notOverlaps", attribute, values).toString();
+    new Query("notOverlaps", attribute, [values]).toString();
 
   /**
    * Filter resources where attribute touches the given geometry.
@@ -483,7 +483,7 @@ export class Query {
    * @returns {string}
    */
   static touches = (attribute: string, values: any[]): string =>
-    new Query("touches", attribute, values).toString();
+    new Query("touches", attribute, [values]).toString();
 
   /**
    * Filter resources where attribute does not touch the given geometry.
@@ -493,5 +493,5 @@ export class Query {
    * @returns {string}
    */
   static notTouches = (attribute: string, values: any[]): string =>
-    new Query("notTouches", attribute, values).toString();
+    new Query("notTouches", attribute, [values]).toString();
 }

@@ -6,13 +6,8 @@ const client = new Client()
 
 const databases = new Databases(client);
 
-const result = await databases.updateDocument({
-    databaseId: '<DATABASE_ID>',
-    collectionId: '<COLLECTION_ID>',
-    documentId: '<DOCUMENT_ID>',
-    data: {}, // optional
-    permissions: ["read("any")"], // optional
-    transactionId: '<TRANSACTION_ID>' // optional
+const result = await databases.deleteTransaction({
+    transactionId: '<TRANSACTION_ID>'
 });
 
 console.log(result);

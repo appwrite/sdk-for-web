@@ -52,20 +52,20 @@ export class Query {
    * Filter resources where attribute is equal to value.
    *
    * @param {string} attribute
-   * @param {QueryTypes | any[]} value
+   * @param {QueryTypes} value
    * @returns {string}
    */
-  static equal = (attribute: string, value: QueryTypes | any[]): string =>
+  static equal = (attribute: string, value: QueryTypes): string =>
     new Query("equal", attribute, value).toString();
 
   /**
    * Filter resources where attribute is not equal to value.
    *
    * @param {string} attribute
-   * @param {QueryTypes | any[]} value
+   * @param {QueryTypes} value
    * @returns {string}
    */
-  static notEqual = (attribute: string, value: QueryTypes | any[]): string =>
+  static notEqual = (attribute: string, value: QueryTypes): string =>
     new Query("notEqual", attribute, value).toString();
 
   /**

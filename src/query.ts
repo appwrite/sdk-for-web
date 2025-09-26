@@ -196,14 +196,6 @@ export class Query {
     new Query("orderAsc", attribute).toString();
 
   /**
-   * Sort results randomly.
-   *
-   * @returns {string}
-   */
-  static orderRandom = (): string =>
-    new Query("orderRandom").toString();
-
-  /**
    * Return results after documentId.
    *
    * @param {string} documentId

@@ -316,7 +316,7 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '21.0.0',
+        'x-sdk-version': '21.0.1',
         'X-Appwrite-Response-Format': '1.8.0',
     };
 

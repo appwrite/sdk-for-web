@@ -1,3 +1,6 @@
+import { ExecutionTrigger } from "./enums/execution-trigger"
+import { ExecutionStatus } from "./enums/execution-status"
+
 /**
  * Appwrite Models
  */
@@ -1025,11 +1028,11 @@ export namespace Models {
         /**
          * The trigger that caused the function to execute. Possible values can be: `http`, `schedule`, or `event`.
          */
-        trigger: string;
+        trigger: ExecutionTrigger;
         /**
          * The status of the function execution. Possible values can be: `waiting`, `processing`, `completed`, or `failed`.
          */
-        status: string;
+        status: ExecutionStatus;
         /**
          * HTTP request method type.
          */

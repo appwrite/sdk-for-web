@@ -316,7 +316,7 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '21.2.1',
+        'x-sdk-version': '21.3.0',
         'X-Appwrite-Response-Format': '1.8.0',
     };
 
@@ -528,10 +528,13 @@ class Client {
                 this.realtime.lastMessage = message;
                 switch (message.type) {
                     case 'connected':
-                        const cookie = JSON.parse(window.localStorage.getItem('cookieFallback') ?? '{}');
-                        const session = cookie?.[`a_session_${this.config.project}`];
-                        const messageData = <RealtimeResponseConnected>message.data;
+                        let session = this.config.session;
+                        if (!session) {
+                            const cookie = JSON.parse(window.localStorage.getItem('cookieFallback') ?? '{}');
+                            session = cookie?.[`a_session_${this.config.project}`];
+                        }
 
+                        const messageData = <RealtimeResponseConnected>message.data;
                         if (session && !messageData.user) {
                             this.realtime.socket?.send(JSON.stringify(<RealtimeRequest>{
                                 type: 'authentication',
@@ -581,6 +584,9 @@ class Client {
 
     /**
      * Subscribes to Appwrite events and passes you the payload in realtime.
+     *
+     * @deprecated Use the Realtime service instead.
+     * @see Realtime
      *
      * @param {string|string[]} channels
      * Channel to subscribe - pass a single channel as a string or multiple with an array of strings.

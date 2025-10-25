@@ -300,7 +300,11 @@ class Client {
     /**
      * Holds configuration such as project.
      */
-    config = {
+    config: {
+        endpoint: string;
+        endpointRealtime: string;
+        [key: string]: string | undefined;
+    } = {
         endpoint: 'https://cloud.appwrite.io/v1',
         endpointRealtime: '',
         project: '',
@@ -473,7 +477,9 @@ class Client {
             }
 
             const channels = new URLSearchParams();
-            channels.set('project', this.config.project);
+            if (this.config.project) {
+                channels.set('project', this.config.project);
+            }
             this.realtime.channels.forEach(channel => {
                 channels.append('channels[]', channel);
             });

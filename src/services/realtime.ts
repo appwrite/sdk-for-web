@@ -21,6 +21,18 @@ export type RealtimeResponseEvent<T = any> = {
     payload: T;
 }
 
+export type RealtimeResponseConnected = {
+    channels: string[];
+    user?: object;
+}
+
+export type RealtimeRequest = {
+    type: 'authentication';
+    data: {
+        session: string;
+    };
+}
+
 export enum RealtimeCode {
     NORMAL_CLOSURE = 1000,
     POLICY_VIOLATION = 1008,
@@ -31,6 +43,7 @@ export class Realtime {
     private readonly TYPE_ERROR = 'error';
     private readonly TYPE_EVENT = 'event';
     private readonly TYPE_PONG = 'pong';
+    private readonly TYPE_CONNECTED = 'connected';
     private readonly DEBOUNCE_MS = 1;
     private readonly HEARTBEAT_INTERVAL = 20000; // 20 seconds in milliseconds
 
@@ -332,6 +345,9 @@ export class Realtime {
         }
 
         switch (message.type) {
+            case this.TYPE_CONNECTED:
+                this.handleResponseConnected(message);
+                break;
             case this.TYPE_ERROR:
                 this.handleResponseError(message);
                 break;
@@ -341,6 +357,33 @@ export class Realtime {
             case this.TYPE_PONG:
                 // Handle pong response if needed
                 break;
+        }
+    }
+
+    private handleResponseConnected(message: RealtimeResponse): void {
+        if (!message.data) {
+            return;
+        }
+
+        const messageData = message.data as RealtimeResponseConnected;
+
+        let session = this.client.config.session;
+        if (!session) {
+            try {
+                const cookie = JSON.parse(window.localStorage.getItem('cookieFallback') ?? '{}');
+                session = cookie?.[`a_session_${this.client.config.project}`];
+            } catch (error) {
+                console.error('Failed to parse cookie fallback:', error);
+            }
+        }
+
+        if (session && !messageData.user) {
+            this.socket?.send(JSON.stringify(<RealtimeRequest>{
+                type: 'authentication',
+                data: {
+                    session
+                }
+            }));
         }
     }
 

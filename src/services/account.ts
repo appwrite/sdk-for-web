@@ -812,7 +812,7 @@ export class Account {
             throw new AppwriteException('Missing required parameter: "factor"');
         }
 
-        const apiPath = '/account/mfa/challenge';
+        const apiPath = '/account/mfa/challenges';
         const payload: Payload = {};
         if (typeof factor !== 'undefined') {
             payload['factor'] = factor;
@@ -867,7 +867,7 @@ export class Account {
             throw new AppwriteException('Missing required parameter: "factor"');
         }
 
-        const apiPath = '/account/mfa/challenge';
+        const apiPath = '/account/mfa/challenges';
         const payload: Payload = {};
         if (typeof factor !== 'undefined') {
             payload['factor'] = factor;
@@ -931,7 +931,7 @@ export class Account {
             throw new AppwriteException('Missing required parameter: "otp"');
         }
 
-        const apiPath = '/account/mfa/challenge';
+        const apiPath = '/account/mfa/challenges';
         const payload: Payload = {};
         if (typeof challengeId !== 'undefined') {
             payload['challengeId'] = challengeId;
@@ -997,7 +997,7 @@ export class Account {
             throw new AppwriteException('Missing required parameter: "otp"');
         }
 
-        const apiPath = '/account/mfa/challenge';
+        const apiPath = '/account/mfa/challenges';
         const payload: Payload = {};
         if (typeof challengeId !== 'undefined') {
             payload['challengeId'] = challengeId;

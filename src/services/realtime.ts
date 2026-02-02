@@ -1,4 +1,5 @@
 import { AppwriteException, Client } from '../client';
+import { Channel, ActionableChannel, ResolvedChannel } from '../channel';
 
 export type RealtimeSubscription = {
     close: () => Promise<void>;
@@ -238,60 +239,82 @@ export class Realtime {
     }
 
     /**
+     * Convert a channel value to a string
+     *
+     * @private
+     * @param {string | Channel<any> | ActionableChannel | ResolvedChannel} channel - Channel value (string or Channel builder instance)
+     * @returns {string} Channel string representation
+     */
+    private channelToString(channel: string | Channel<any> | ActionableChannel | ResolvedChannel): string {
+        if (typeof channel === 'string') {
+            return channel;
+        }
+        // All Channel instances have toString() method
+        if (channel && typeof (channel as Channel<any>).toString === 'function') {
+            return (channel as Channel<any>).toString();
+        }
+        return String(channel);
+    }
+
+    /**
      * Subscribe to a single channel
      *
-     * @param {string} channel - Channel name to subscribe to
+     * @param {string | Channel<any> | ActionableChannel | ResolvedChannel} channel - Channel name to subscribe to (string or Channel builder instance)
      * @param {Function} callback - Callback function to handle events
      * @returns {Promise<RealtimeSubscription>} Subscription object with close method
      */
     public async subscribe(
-        channel: string,
+        channel: string | Channel<any> | ActionableChannel | ResolvedChannel,
         callback: (event: RealtimeResponseEvent<any>) => void
     ): Promise<RealtimeSubscription>;
 
     /**
      * Subscribe to multiple channels
      *
-     * @param {string[]} channels - Array of channel names to subscribe to
+     * @param {(string | Channel<any> | ActionableChannel | ResolvedChannel)[]} channels - Array of channel names to subscribe to (strings or Channel builder instances)
      * @param {Function} callback - Callback function to handle events
      * @returns {Promise<RealtimeSubscription>} Subscription object with close method
      */
     public async subscribe(
-        channels: string[],
+        channels: (string | Channel<any> | ActionableChannel | ResolvedChannel)[],
         callback: (event: RealtimeResponseEvent<any>) => void
     ): Promise<RealtimeSubscription>;
 
     /**
      * Subscribe to a single channel with typed payload
      *
-     * @param {string} channel - Channel name to subscribe to
+     * @param {string | Channel<any> | ActionableChannel | ResolvedChannel} channel - Channel name to subscribe to (string or Channel builder instance)
      * @param {Function} callback - Callback function to handle events with typed payload
      * @returns {Promise<RealtimeSubscription>} Subscription object with close method
      */
     public async subscribe<T>(
-        channel: string,
+        channel: string | Channel<any> | ActionableChannel | ResolvedChannel,
         callback: (event: RealtimeResponseEvent<T>) => void
     ): Promise<RealtimeSubscription>;
 
     /**
      * Subscribe to multiple channels with typed payload
      *
-     * @param {string[]} channels - Array of channel names to subscribe to
+     * @param {(string | Channel<any> | ActionableChannel | ResolvedChannel)[]} channels - Array of channel names to subscribe to (strings or Channel builder instances)
      * @param {Function} callback - Callback function to handle events with typed payload
      * @returns {Promise<RealtimeSubscription>} Subscription object with close method
      */
     public async subscribe<T>(
-        channels: string[],
+        channels: (string | Channel<any> | ActionableChannel | ResolvedChannel)[],
         callback: (event: RealtimeResponseEvent<T>) => void
     ): Promise<RealtimeSubscription>;
 
     public async subscribe<T = any>(
-        channelsOrChannel: string | string[],
+        channelsOrChannel: string | Channel<any> | ActionableChannel | ResolvedChannel | (string | Channel<any> | ActionableChannel | ResolvedChannel)[],
         callback: (event: RealtimeResponseEvent<T>) => void
     ): Promise<RealtimeSubscription> {
-        const channels = Array.isArray(channelsOrChannel)
-            ? new Set(channelsOrChannel)
-            : new Set([channelsOrChannel]);
+        const channelArray = Array.isArray(channelsOrChannel)
+            ? channelsOrChannel
+            : [channelsOrChannel];
+        
+        // Convert all channels to strings
+        const channelStrings = channelArray.map(ch => this.channelToString(ch));
+        const channels = new Set(channelStrings);
 
         this.subscriptionsCounter++;
         const count = this.subscriptionsCounter;

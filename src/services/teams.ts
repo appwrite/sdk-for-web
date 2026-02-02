@@ -2,6 +2,7 @@ import { Service } from '../service';
 import { AppwriteException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 
+import { Roles } from '../enums/roles';
 
 export class Teams {
     client: Client;
@@ -19,7 +20,7 @@ export class Teams {
      * @throws {AppwriteException}
      * @returns {Promise<Models.TeamList<Preferences>>}
      */
-    list<Preferences extends Models.Preferences = Models.DefaultPreferences>(params?: { queries?: string[], search?: string, total?: boolean  }): Promise<Models.TeamList<Preferences>>;
+    list<Preferences extends Models.Preferences = Models.DefaultPreferences>(params?: { queries?: string[], search?: string, total?: boolean }): Promise<Models.TeamList<Preferences>>;
     /**
      * Get a list of all the teams in which the current user is a member. You can use the parameters to filter your results.
      *
@@ -85,7 +86,7 @@ export class Teams {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Team<Preferences>>}
      */
-    create<Preferences extends Models.Preferences = Models.DefaultPreferences>(params: { teamId: string, name: string, roles?: string[]  }): Promise<Models.Team<Preferences>>;
+    create<Preferences extends Models.Preferences = Models.DefaultPreferences>(params: { teamId: string, name: string, roles?: string[] }): Promise<Models.Team<Preferences>>;
     /**
      * Create a new team. The user who creates the team will automatically be assigned as the owner of the team. Only the users with the owner role can invite new members, add new owners and delete or update the team.
      *
@@ -156,7 +157,7 @@ export class Teams {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Team<Preferences>>}
      */
-    get<Preferences extends Models.Preferences = Models.DefaultPreferences>(params: { teamId: string  }): Promise<Models.Team<Preferences>>;
+    get<Preferences extends Models.Preferences = Models.DefaultPreferences>(params: { teamId: string }): Promise<Models.Team<Preferences>>;
     /**
      * Get a team by its ID. All team members have read access for this resource.
      *
@@ -208,7 +209,7 @@ export class Teams {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Team<Preferences>>}
      */
-    updateName<Preferences extends Models.Preferences = Models.DefaultPreferences>(params: { teamId: string, name: string  }): Promise<Models.Team<Preferences>>;
+    updateName<Preferences extends Models.Preferences = Models.DefaultPreferences>(params: { teamId: string, name: string }): Promise<Models.Team<Preferences>>;
     /**
      * Update the team's name by its unique ID.
      *
@@ -270,7 +271,7 @@ export class Teams {
      * @throws {AppwriteException}
      * @returns {Promise<{}>}
      */
-    delete(params: { teamId: string  }): Promise<{}>;
+    delete(params: { teamId: string }): Promise<{}>;
     /**
      * Delete a team using its ID. Only team members with the owner role can delete the team.
      *
@@ -325,7 +326,7 @@ export class Teams {
      * @throws {AppwriteException}
      * @returns {Promise<Models.MembershipList>}
      */
-    listMemberships(params: { teamId: string, queries?: string[], search?: string, total?: boolean  }): Promise<Models.MembershipList>;
+    listMemberships(params: { teamId: string, queries?: string[], search?: string, total?: boolean }): Promise<Models.MembershipList>;
     /**
      * Use this endpoint to list a team's members using the team's ID. All team members have read access to this endpoint. Hide sensitive attributes from the response by toggling membership privacy in the Console.
      *
@@ -399,7 +400,7 @@ export class Teams {
      * 
      *
      * @param {string} params.teamId - Team ID.
-     * @param {string[]} params.roles - Array of strings. Use this param to set the user roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 32 characters long.
+     * @param {Roles[]} params.roles - Array of strings. Use this param to set the user roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 32 characters long.
      * @param {string} params.email - Email of the new team member.
      * @param {string} params.userId - ID of the user to be added to a team.
      * @param {string} params.phone - Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.
@@ -408,7 +409,7 @@ export class Teams {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Membership>}
      */
-    createMembership(params: { teamId: string, roles: string[], email?: string, userId?: string, phone?: string, url?: string, name?: string  }): Promise<Models.Membership>;
+    createMembership(params: { teamId: string, roles: Roles[], email?: string, userId?: string, phone?: string, url?: string, name?: string }): Promise<Models.Membership>;
     /**
      * Invite a new member to join your team. Provide an ID for existing users, or invite unregistered users using an email or phone number. If initiated from a Client SDK, Appwrite will send an email or sms with a link to join the team to the invited user, and an account will be created for them if one doesn't exist. If initiated from a Server SDK, the new member will be added automatically to the team.
      * 
@@ -420,7 +421,7 @@ export class Teams {
      * 
      *
      * @param {string} teamId - Team ID.
-     * @param {string[]} roles - Array of strings. Use this param to set the user roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 32 characters long.
+     * @param {Roles[]} roles - Array of strings. Use this param to set the user roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 32 characters long.
      * @param {string} email - Email of the new team member.
      * @param {string} userId - ID of the user to be added to a team.
      * @param {string} phone - Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.
@@ -430,19 +431,19 @@ export class Teams {
      * @returns {Promise<Models.Membership>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    createMembership(teamId: string, roles: string[], email?: string, userId?: string, phone?: string, url?: string, name?: string): Promise<Models.Membership>;
+    createMembership(teamId: string, roles: Roles[], email?: string, userId?: string, phone?: string, url?: string, name?: string): Promise<Models.Membership>;
     createMembership(
-        paramsOrFirst: { teamId: string, roles: string[], email?: string, userId?: string, phone?: string, url?: string, name?: string } | string,
-        ...rest: [(string[])?, (string)?, (string)?, (string)?, (string)?, (string)?]    
+        paramsOrFirst: { teamId: string, roles: Roles[], email?: string, userId?: string, phone?: string, url?: string, name?: string } | string,
+        ...rest: [(Roles[])?, (string)?, (string)?, (string)?, (string)?, (string)?]    
     ): Promise<Models.Membership> {
-        let params: { teamId: string, roles: string[], email?: string, userId?: string, phone?: string, url?: string, name?: string };
+        let params: { teamId: string, roles: Roles[], email?: string, userId?: string, phone?: string, url?: string, name?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { teamId: string, roles: string[], email?: string, userId?: string, phone?: string, url?: string, name?: string };
+            params = (paramsOrFirst || {}) as { teamId: string, roles: Roles[], email?: string, userId?: string, phone?: string, url?: string, name?: string };
         } else {
             params = {
                 teamId: paramsOrFirst as string,
-                roles: rest[0] as string[],
+                roles: rest[0] as Roles[],
                 email: rest[1] as string,
                 userId: rest[2] as string,
                 phone: rest[3] as string,
@@ -508,7 +509,7 @@ export class Teams {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Membership>}
      */
-    getMembership(params: { teamId: string, membershipId: string  }): Promise<Models.Membership>;
+    getMembership(params: { teamId: string, membershipId: string }): Promise<Models.Membership>;
     /**
      * Get a team member by the membership unique id. All team members have read access for this resource. Hide sensitive attributes from the response by toggling membership privacy in the Console.
      *
@@ -565,36 +566,36 @@ export class Teams {
      *
      * @param {string} params.teamId - Team ID.
      * @param {string} params.membershipId - Membership ID.
-     * @param {string[]} params.roles - An array of strings. Use this param to set the user's roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 32 characters long.
+     * @param {Roles[]} params.roles - An array of strings. Use this param to set the user's roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 32 characters long.
      * @throws {AppwriteException}
      * @returns {Promise<Models.Membership>}
      */
-    updateMembership(params: { teamId: string, membershipId: string, roles: string[]  }): Promise<Models.Membership>;
+    updateMembership(params: { teamId: string, membershipId: string, roles: Roles[] }): Promise<Models.Membership>;
     /**
      * Modify the roles of a team member. Only team members with the owner role have access to this endpoint. Learn more about [roles and permissions](https://appwrite.io/docs/permissions).
      * 
      *
      * @param {string} teamId - Team ID.
      * @param {string} membershipId - Membership ID.
-     * @param {string[]} roles - An array of strings. Use this param to set the user's roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 32 characters long.
+     * @param {Roles[]} roles - An array of strings. Use this param to set the user's roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 32 characters long.
      * @throws {AppwriteException}
      * @returns {Promise<Models.Membership>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    updateMembership(teamId: string, membershipId: string, roles: string[]): Promise<Models.Membership>;
+    updateMembership(teamId: string, membershipId: string, roles: Roles[]): Promise<Models.Membership>;
     updateMembership(
-        paramsOrFirst: { teamId: string, membershipId: string, roles: string[] } | string,
-        ...rest: [(string)?, (string[])?]    
+        paramsOrFirst: { teamId: string, membershipId: string, roles: Roles[] } | string,
+        ...rest: [(string)?, (Roles[])?]    
     ): Promise<Models.Membership> {
-        let params: { teamId: string, membershipId: string, roles: string[] };
+        let params: { teamId: string, membershipId: string, roles: Roles[] };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { teamId: string, membershipId: string, roles: string[] };
+            params = (paramsOrFirst || {}) as { teamId: string, membershipId: string, roles: Roles[] };
         } else {
             params = {
                 teamId: paramsOrFirst as string,
                 membershipId: rest[0] as string,
-                roles: rest[1] as string[]            
+                roles: rest[1] as Roles[]            
             };
         }
         
@@ -639,7 +640,7 @@ export class Teams {
      * @throws {AppwriteException}
      * @returns {Promise<{}>}
      */
-    deleteMembership(params: { teamId: string, membershipId: string  }): Promise<{}>;
+    deleteMembership(params: { teamId: string, membershipId: string }): Promise<{}>;
     /**
      * This endpoint allows a user to leave a team or for a team owner to delete the membership of any other team member. You can also use this endpoint to delete a user membership even if it is not accepted.
      *
@@ -704,7 +705,7 @@ export class Teams {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Membership>}
      */
-    updateMembershipStatus(params: { teamId: string, membershipId: string, userId: string, secret: string  }): Promise<Models.Membership>;
+    updateMembershipStatus(params: { teamId: string, membershipId: string, userId: string, secret: string }): Promise<Models.Membership>;
     /**
      * Use this endpoint to allow a user to accept an invitation to join a team after being redirected back to your app from the invitation email received by the user.
      * 
@@ -784,7 +785,7 @@ export class Teams {
      * @throws {AppwriteException}
      * @returns {Promise<Preferences>}
      */
-    getPrefs<Preferences extends Models.Preferences = Models.DefaultPreferences>(params: { teamId: string  }): Promise<Preferences>;
+    getPrefs<Preferences extends Models.Preferences = Models.DefaultPreferences>(params: { teamId: string }): Promise<Preferences>;
     /**
      * Get the team's shared preferences by its unique ID. If a preference doesn't need to be shared by all team members, prefer storing them in [user preferences](https://appwrite.io/docs/references/cloud/client-web/account#getPrefs).
      *
@@ -836,7 +837,7 @@ export class Teams {
      * @throws {AppwriteException}
      * @returns {Promise<Preferences>}
      */
-    updatePrefs<Preferences extends Models.Preferences = Models.DefaultPreferences>(params: { teamId: string, prefs: object  }): Promise<Preferences>;
+    updatePrefs<Preferences extends Models.Preferences = Models.DefaultPreferences>(params: { teamId: string, prefs: object }): Promise<Preferences>;
     /**
      * Update the team's preferences by its unique ID. The object you pass is stored as is and replaces any previous value. The maximum allowed prefs size is 64kB and throws an error if exceeded.
      *

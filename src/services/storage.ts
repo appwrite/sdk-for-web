@@ -22,7 +22,7 @@ export class Storage {
      * @throws {AppwriteException}
      * @returns {Promise<Models.FileList>}
      */
-    listFiles(params: { bucketId: string, queries?: string[], search?: string, total?: boolean  }): Promise<Models.FileList>;
+    listFiles(params: { bucketId: string, queries?: string[], search?: string, total?: boolean }): Promise<Models.FileList>;
     /**
      * Get a list of all the user files. You can use the query params to filter your results.
      *
@@ -102,7 +102,7 @@ export class Storage {
      * @throws {AppwriteException}
      * @returns {Promise<Models.File>}
      */
-    createFile(params: { bucketId: string, fileId: string, file: File, permissions?: string[] , onProgress?: (progress: UploadProgress) => void }): Promise<Models.File>;
+    createFile(params: { bucketId: string, fileId: string, file: File, permissions?: string[], onProgress?: (progress: UploadProgress) => void }): Promise<Models.File>;
     /**
      * Create a new file. Before using this route, you should create a new bucket resource using either a [server integration](https://appwrite.io/docs/server/storage#storageCreateBucket) API or directly from your Appwrite console.
      * 
@@ -123,7 +123,7 @@ export class Storage {
      */
     createFile(bucketId: string, fileId: string, file: File, permissions?: string[], onProgress?: (progress: UploadProgress) => void): Promise<Models.File>;
     createFile(
-        paramsOrFirst: { bucketId: string, fileId: string, file: File, permissions?: string[], onProgress?: (progress: UploadProgress) => void  } | string,
+        paramsOrFirst: { bucketId: string, fileId: string, file: File, permissions?: string[], onProgress?: (progress: UploadProgress) => void } | string,
         ...rest: [(string)?, (File)?, (string[])?,((progress: UploadProgress) => void)?]    
     ): Promise<Models.File> {
         let params: { bucketId: string, fileId: string, file: File, permissions?: string[] };
@@ -191,7 +191,7 @@ export class Storage {
      * @throws {AppwriteException}
      * @returns {Promise<Models.File>}
      */
-    getFile(params: { bucketId: string, fileId: string  }): Promise<Models.File>;
+    getFile(params: { bucketId: string, fileId: string }): Promise<Models.File>;
     /**
      * Get a file by its unique ID. This endpoint response returns a JSON object with the file metadata.
      *
@@ -245,21 +245,21 @@ export class Storage {
     /**
      * Update a file by its unique ID. Only users with write permissions have access to update this resource.
      *
-     * @param {string} params.bucketId - Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).
-     * @param {string} params.fileId - File unique ID.
-     * @param {string} params.name - Name of the file
-     * @param {string[]} params.permissions - An array of permission string. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).
+     * @param {string} params.bucketId - Bucket unique ID.
+     * @param {string} params.fileId - File ID.
+     * @param {string} params.name - File name.
+     * @param {string[]} params.permissions - An array of permission strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).
      * @throws {AppwriteException}
      * @returns {Promise<Models.File>}
      */
-    updateFile(params: { bucketId: string, fileId: string, name?: string, permissions?: string[]  }): Promise<Models.File>;
+    updateFile(params: { bucketId: string, fileId: string, name?: string, permissions?: string[] }): Promise<Models.File>;
     /**
      * Update a file by its unique ID. Only users with write permissions have access to update this resource.
      *
-     * @param {string} bucketId - Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).
-     * @param {string} fileId - File unique ID.
-     * @param {string} name - Name of the file
-     * @param {string[]} permissions - An array of permission string. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).
+     * @param {string} bucketId - Bucket unique ID.
+     * @param {string} fileId - File ID.
+     * @param {string} name - File name.
+     * @param {string[]} permissions - An array of permission strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).
      * @throws {AppwriteException}
      * @returns {Promise<Models.File>}
      * @deprecated Use the object parameter style method for a better developer experience.
@@ -324,7 +324,7 @@ export class Storage {
      * @throws {AppwriteException}
      * @returns {Promise<{}>}
      */
-    deleteFile(params: { bucketId: string, fileId: string  }): Promise<{}>;
+    deleteFile(params: { bucketId: string, fileId: string }): Promise<{}>;
     /**
      * Delete a file by its unique ID. Only users with write permissions have access to delete this resource.
      *
@@ -385,7 +385,7 @@ export class Storage {
      * @throws {AppwriteException}
      * @returns {string}
      */
-    getFileDownload(params: { bucketId: string, fileId: string, token?: string  }): string;
+    getFileDownload(params: { bucketId: string, fileId: string, token?: string }): string;
     /**
      * Get a file content by its unique ID. The endpoint response return with a 'Content-Disposition: attachment' header that tells the browser to start downloading the file to user downloads directory.
      *
@@ -463,7 +463,7 @@ export class Storage {
      * @throws {AppwriteException}
      * @returns {string}
      */
-    getFilePreview(params: { bucketId: string, fileId: string, width?: number, height?: number, gravity?: ImageGravity, quality?: number, borderWidth?: number, borderColor?: string, borderRadius?: number, opacity?: number, rotation?: number, background?: string, output?: ImageFormat, token?: string  }): string;
+    getFilePreview(params: { bucketId: string, fileId: string, width?: number, height?: number, gravity?: ImageGravity, quality?: number, borderWidth?: number, borderColor?: string, borderRadius?: number, opacity?: number, rotation?: number, background?: string, output?: ImageFormat, token?: string }): string;
     /**
      * Get a file preview image. Currently, this method supports preview for image files (jpg, png, and gif), other supported formats, like pdf, docs, slides, and spreadsheets, will return the file icon image. You can also pass query string arguments for cutting and resizing your preview image. Preview is supported only for image files smaller than 10MB.
      *
@@ -596,7 +596,7 @@ export class Storage {
      * @throws {AppwriteException}
      * @returns {string}
      */
-    getFileView(params: { bucketId: string, fileId: string, token?: string  }): string;
+    getFileView(params: { bucketId: string, fileId: string, token?: string }): string;
     /**
      * Get a file content by its unique ID. This endpoint is similar to the download method but returns with no  'Content-Disposition: attachment' header.
      *

@@ -20,7 +20,7 @@ export class Functions {
      * @throws {AppwriteException}
      * @returns {Promise<Models.ExecutionList>}
      */
-    listExecutions(params: { functionId: string, queries?: string[], total?: boolean  }): Promise<Models.ExecutionList>;
+    listExecutions(params: { functionId: string, queries?: string[], total?: boolean }): Promise<Models.ExecutionList>;
     /**
      * Get a list of all the current user function execution logs. You can use the query params to filter your results.
      *
@@ -90,7 +90,7 @@ export class Functions {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Execution>}
      */
-    createExecution(params: { functionId: string, body?: string, async?: boolean, xpath?: string, method?: ExecutionMethod, headers?: object, scheduledAt?: string  }): Promise<Models.Execution>;
+    createExecution(params: { functionId: string, body?: string, async?: boolean, xpath?: string, method?: ExecutionMethod, headers?: object, scheduledAt?: string }): Promise<Models.Execution>;
     /**
      * Trigger a function execution. The returned object will return you the current execution status. You can ping the `Get Execution` endpoint to get updates on the current execution status. Once this endpoint is called, your function execution process will start asynchronously.
      *
@@ -180,7 +180,7 @@ export class Functions {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Execution>}
      */
-    getExecution(params: { functionId: string, executionId: string  }): Promise<Models.Execution>;
+    getExecution(params: { functionId: string, executionId: string }): Promise<Models.Execution>;
     /**
      * Get a function execution log by its unique ID.
      *

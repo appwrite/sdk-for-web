@@ -19,7 +19,7 @@ export class Messaging {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Subscriber>}
      */
-    createSubscriber(params: { topicId: string, subscriberId: string, targetId: string  }): Promise<Models.Subscriber>;
+    createSubscriber(params: { topicId: string, subscriberId: string, targetId: string }): Promise<Models.Subscriber>;
     /**
      * Create a new subscriber.
      *
@@ -91,7 +91,7 @@ export class Messaging {
      * @throws {AppwriteException}
      * @returns {Promise<{}>}
      */
-    deleteSubscriber(params: { topicId: string, subscriberId: string  }): Promise<{}>;
+    deleteSubscriber(params: { topicId: string, subscriberId: string }): Promise<{}>;
     /**
      * Delete a subscriber by its unique ID.
      *

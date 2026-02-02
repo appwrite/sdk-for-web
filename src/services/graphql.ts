@@ -17,7 +17,7 @@ export class Graphql {
      * @throws {AppwriteException}
      * @returns {Promise<{}>}
      */
-    query(params: { query: object  }): Promise<{}>;
+    query(params: { query: object }): Promise<{}>;
     /**
      * Execute a GraphQL mutation.
      *
@@ -73,7 +73,7 @@ export class Graphql {
      * @throws {AppwriteException}
      * @returns {Promise<{}>}
      */
-    mutation(params: { query: object  }): Promise<{}>;
+    mutation(params: { query: object }): Promise<{}>;
     /**
      * Execute a GraphQL mutation.
      *

@@ -17,7 +17,7 @@ export class Databases {
      * @throws {AppwriteException}
      * @returns {Promise<Models.TransactionList>}
      */
-    listTransactions(params?: { queries?: string[]  }): Promise<Models.TransactionList>;
+    listTransactions(params?: { queries?: string[] }): Promise<Models.TransactionList>;
     /**
      * List transactions across all databases.
      *
@@ -68,7 +68,7 @@ export class Databases {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Transaction>}
      */
-    createTransaction(params?: { ttl?: number  }): Promise<Models.Transaction>;
+    createTransaction(params?: { ttl?: number }): Promise<Models.Transaction>;
     /**
      * Create a new transaction.
      *
@@ -120,7 +120,7 @@ export class Databases {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Transaction>}
      */
-    getTransaction(params: { transactionId: string  }): Promise<Models.Transaction>;
+    getTransaction(params: { transactionId: string }): Promise<Models.Transaction>;
     /**
      * Get a transaction by its unique ID.
      *
@@ -173,7 +173,7 @@ export class Databases {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Transaction>}
      */
-    updateTransaction(params: { transactionId: string, commit?: boolean, rollback?: boolean  }): Promise<Models.Transaction>;
+    updateTransaction(params: { transactionId: string, commit?: boolean, rollback?: boolean }): Promise<Models.Transaction>;
     /**
      * Update a transaction, to either commit or roll back its operations.
      *
@@ -238,7 +238,7 @@ export class Databases {
      * @throws {AppwriteException}
      * @returns {Promise<{}>}
      */
-    deleteTransaction(params: { transactionId: string  }): Promise<{}>;
+    deleteTransaction(params: { transactionId: string }): Promise<{}>;
     /**
      * Delete a transaction by its unique ID.
      *
@@ -291,7 +291,7 @@ export class Databases {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Transaction>}
      */
-    createOperations(params: { transactionId: string, operations?: object[]  }): Promise<Models.Transaction>;
+    createOperations(params: { transactionId: string, operations?: object[] }): Promise<Models.Transaction>;
     /**
      * Create multiple operations in a single transaction.
      *
@@ -355,7 +355,7 @@ export class Databases {
      * @returns {Promise<Models.DocumentList<Document>>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.listRows` instead.
      */
-    listDocuments<Document extends Models.Document = Models.DefaultDocument>(params: { databaseId: string, collectionId: string, queries?: string[], transactionId?: string, total?: boolean  }): Promise<Models.DocumentList<Document>>;
+    listDocuments<Document extends Models.Document = Models.DefaultDocument>(params: { databaseId: string, collectionId: string, queries?: string[], transactionId?: string, total?: boolean }): Promise<Models.DocumentList<Document>>;
     /**
      * Get a list of all the user's documents in a given collection. You can use the query params to filter your results.
      *
@@ -437,7 +437,7 @@ export class Databases {
      * @returns {Promise<Document>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.createRow` instead.
      */
-    createDocument<Document extends Models.Document = Models.DefaultDocument>(params: { databaseId: string, collectionId: string, documentId: string, data: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Omit<Document, keyof Models.Document>, permissions?: string[], transactionId?: string  }): Promise<Document>;
+    createDocument<Document extends Models.Document = Models.DefaultDocument>(params: { databaseId: string, collectionId: string, documentId: string, data: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Omit<Document, keyof Models.Document>, permissions?: string[], transactionId?: string }): Promise<Document>;
     /**
      * Create a new Document. Before using this route, you should create a new collection resource using either a [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.
      *
@@ -531,7 +531,7 @@ export class Databases {
      * @returns {Promise<Document>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.getRow` instead.
      */
-    getDocument<Document extends Models.Document = Models.DefaultDocument>(params: { databaseId: string, collectionId: string, documentId: string, queries?: string[], transactionId?: string  }): Promise<Document>;
+    getDocument<Document extends Models.Document = Models.DefaultDocument>(params: { databaseId: string, collectionId: string, documentId: string, queries?: string[], transactionId?: string }): Promise<Document>;
     /**
      * Get a document by its unique ID. This endpoint response returns a JSON object with the document data.
      *
@@ -613,7 +613,7 @@ export class Databases {
      * @returns {Promise<Document>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.upsertRow` instead.
      */
-    upsertDocument<Document extends Models.Document = Models.DefaultDocument>(params: { databaseId: string, collectionId: string, documentId: string, data: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>, permissions?: string[], transactionId?: string  }): Promise<Document>;
+    upsertDocument<Document extends Models.Document = Models.DefaultDocument>(params: { databaseId: string, collectionId: string, documentId: string, data?: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>, permissions?: string[], transactionId?: string }): Promise<Document>;
     /**
      * Create or update a Document. Before using this route, you should create a new collection resource using either a [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.
      *
@@ -627,15 +627,15 @@ export class Databases {
      * @returns {Promise<Document>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    upsertDocument<Document extends Models.Document = Models.DefaultDocument>(databaseId: string, collectionId: string, documentId: string, data: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>, permissions?: string[], transactionId?: string): Promise<Document>;
+    upsertDocument<Document extends Models.Document = Models.DefaultDocument>(databaseId: string, collectionId: string, documentId: string, data?: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>, permissions?: string[], transactionId?: string): Promise<Document>;
     upsertDocument<Document extends Models.Document = Models.DefaultDocument>(
-        paramsOrFirst: { databaseId: string, collectionId: string, documentId: string, data: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>, permissions?: string[], transactionId?: string } | string,
+        paramsOrFirst: { databaseId: string, collectionId: string, documentId: string, data?: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>, permissions?: string[], transactionId?: string } | string,
         ...rest: [(string)?, (string)?, (Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>)?, (string[])?, (string)?]    
     ): Promise<Document> {
-        let params: { databaseId: string, collectionId: string, documentId: string, data: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>, permissions?: string[], transactionId?: string };
+        let params: { databaseId: string, collectionId: string, documentId: string, data?: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>, permissions?: string[], transactionId?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { databaseId: string, collectionId: string, documentId: string, data: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>, permissions?: string[], transactionId?: string };
+            params = (paramsOrFirst || {}) as { databaseId: string, collectionId: string, documentId: string, data?: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>, permissions?: string[], transactionId?: string };
         } else {
             params = {
                 databaseId: paramsOrFirst as string,
@@ -662,9 +662,6 @@ export class Databases {
         }
         if (typeof documentId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "documentId"');
-        }
-        if (typeof data === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "data"');
         }
 
         const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{documentId}', documentId);
@@ -705,7 +702,7 @@ export class Databases {
      * @returns {Promise<Document>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.updateRow` instead.
      */
-    updateDocument<Document extends Models.Document = Models.DefaultDocument>(params: { databaseId: string, collectionId: string, documentId: string, data?: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>, permissions?: string[], transactionId?: string  }): Promise<Document>;
+    updateDocument<Document extends Models.Document = Models.DefaultDocument>(params: { databaseId: string, collectionId: string, documentId: string, data?: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>, permissions?: string[], transactionId?: string }): Promise<Document>;
     /**
      * Update a document by its unique ID. Using the patch method you can pass only specific fields that will get updated.
      *
@@ -792,7 +789,7 @@ export class Databases {
      * @returns {Promise<{}>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.deleteRow` instead.
      */
-    deleteDocument(params: { databaseId: string, collectionId: string, documentId: string, transactionId?: string  }): Promise<{}>;
+    deleteDocument(params: { databaseId: string, collectionId: string, documentId: string, transactionId?: string }): Promise<{}>;
     /**
      * Delete a document by its unique ID.
      *
@@ -870,7 +867,7 @@ export class Databases {
      * @returns {Promise<Document>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.decrementRowColumn` instead.
      */
-    decrementDocumentAttribute<Document extends Models.Document = Models.DefaultDocument>(params: { databaseId: string, collectionId: string, documentId: string, attribute: string, value?: number, min?: number, transactionId?: string  }): Promise<Document>;
+    decrementDocumentAttribute<Document extends Models.Document = Models.DefaultDocument>(params: { databaseId: string, collectionId: string, documentId: string, attribute: string, value?: number, min?: number, transactionId?: string }): Promise<Document>;
     /**
      * Decrement a specific attribute of a document by a given value.
      *
@@ -966,7 +963,7 @@ export class Databases {
      * @returns {Promise<Document>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.incrementRowColumn` instead.
      */
-    incrementDocumentAttribute<Document extends Models.Document = Models.DefaultDocument>(params: { databaseId: string, collectionId: string, documentId: string, attribute: string, value?: number, max?: number, transactionId?: string  }): Promise<Document>;
+    incrementDocumentAttribute<Document extends Models.Document = Models.DefaultDocument>(params: { databaseId: string, collectionId: string, documentId: string, attribute: string, value?: number, max?: number, transactionId?: string }): Promise<Document>;
     /**
      * Increment a specific attribute of a document by a given value.
      *

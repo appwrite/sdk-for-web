@@ -17,7 +17,7 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Models.TransactionList>}
      */
-    listTransactions(params?: { queries?: string[]  }): Promise<Models.TransactionList>;
+    listTransactions(params?: { queries?: string[] }): Promise<Models.TransactionList>;
     /**
      * List transactions across all databases.
      *
@@ -68,7 +68,7 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Transaction>}
      */
-    createTransaction(params?: { ttl?: number  }): Promise<Models.Transaction>;
+    createTransaction(params?: { ttl?: number }): Promise<Models.Transaction>;
     /**
      * Create a new transaction.
      *
@@ -120,7 +120,7 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Transaction>}
      */
-    getTransaction(params: { transactionId: string  }): Promise<Models.Transaction>;
+    getTransaction(params: { transactionId: string }): Promise<Models.Transaction>;
     /**
      * Get a transaction by its unique ID.
      *
@@ -173,7 +173,7 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Transaction>}
      */
-    updateTransaction(params: { transactionId: string, commit?: boolean, rollback?: boolean  }): Promise<Models.Transaction>;
+    updateTransaction(params: { transactionId: string, commit?: boolean, rollback?: boolean }): Promise<Models.Transaction>;
     /**
      * Update a transaction, to either commit or roll back its operations.
      *
@@ -238,7 +238,7 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<{}>}
      */
-    deleteTransaction(params: { transactionId: string  }): Promise<{}>;
+    deleteTransaction(params: { transactionId: string }): Promise<{}>;
     /**
      * Delete a transaction by its unique ID.
      *
@@ -291,7 +291,7 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Transaction>}
      */
-    createOperations(params: { transactionId: string, operations?: object[]  }): Promise<Models.Transaction>;
+    createOperations(params: { transactionId: string, operations?: object[] }): Promise<Models.Transaction>;
     /**
      * Create multiple operations in a single transaction.
      *
@@ -354,7 +354,7 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Models.RowList<Row>>}
      */
-    listRows<Row extends Models.Row = Models.DefaultRow>(params: { databaseId: string, tableId: string, queries?: string[], transactionId?: string, total?: boolean  }): Promise<Models.RowList<Row>>;
+    listRows<Row extends Models.Row = Models.DefaultRow>(params: { databaseId: string, tableId: string, queries?: string[], transactionId?: string, total?: boolean }): Promise<Models.RowList<Row>>;
     /**
      * Get a list of all the user's rows in a given table. You can use the query params to filter your results.
      *
@@ -435,7 +435,7 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Row>}
      */
-    createRow<Row extends Models.Row = Models.DefaultRow>(params: { databaseId: string, tableId: string, rowId: string, data: Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Omit<Row, keyof Models.Row>, permissions?: string[], transactionId?: string  }): Promise<Row>;
+    createRow<Row extends Models.Row = Models.DefaultRow>(params: { databaseId: string, tableId: string, rowId: string, data: Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Omit<Row, keyof Models.Row>, permissions?: string[], transactionId?: string }): Promise<Row>;
     /**
      * Create a new Row. Before using this route, you should create a new table resource using either a [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.
      *
@@ -528,7 +528,7 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Row>}
      */
-    getRow<Row extends Models.Row = Models.DefaultRow>(params: { databaseId: string, tableId: string, rowId: string, queries?: string[], transactionId?: string  }): Promise<Row>;
+    getRow<Row extends Models.Row = Models.DefaultRow>(params: { databaseId: string, tableId: string, rowId: string, queries?: string[], transactionId?: string }): Promise<Row>;
     /**
      * Get a row by its unique ID. This endpoint response returns a JSON object with the row data.
      *
@@ -609,7 +609,7 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Row>}
      */
-    upsertRow<Row extends Models.Row = Models.DefaultRow>(params: { databaseId: string, tableId: string, rowId: string, data?: Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>, permissions?: string[], transactionId?: string  }): Promise<Row>;
+    upsertRow<Row extends Models.Row = Models.DefaultRow>(params: { databaseId: string, tableId: string, rowId: string, data?: Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>, permissions?: string[], transactionId?: string }): Promise<Row>;
     /**
      * Create or update a Row. Before using this route, you should create a new table resource using either a [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.
      *
@@ -697,7 +697,7 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Row>}
      */
-    updateRow<Row extends Models.Row = Models.DefaultRow>(params: { databaseId: string, tableId: string, rowId: string, data?: Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>, permissions?: string[], transactionId?: string  }): Promise<Row>;
+    updateRow<Row extends Models.Row = Models.DefaultRow>(params: { databaseId: string, tableId: string, rowId: string, data?: Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>, permissions?: string[], transactionId?: string }): Promise<Row>;
     /**
      * Update a row by its unique ID. Using the patch method you can pass only specific fields that will get updated.
      *
@@ -783,7 +783,7 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<{}>}
      */
-    deleteRow(params: { databaseId: string, tableId: string, rowId: string, transactionId?: string  }): Promise<{}>;
+    deleteRow(params: { databaseId: string, tableId: string, rowId: string, transactionId?: string }): Promise<{}>;
     /**
      * Delete a row by its unique ID.
      *
@@ -860,7 +860,7 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Row>}
      */
-    decrementRowColumn<Row extends Models.Row = Models.DefaultRow>(params: { databaseId: string, tableId: string, rowId: string, column: string, value?: number, min?: number, transactionId?: string  }): Promise<Row>;
+    decrementRowColumn<Row extends Models.Row = Models.DefaultRow>(params: { databaseId: string, tableId: string, rowId: string, column: string, value?: number, min?: number, transactionId?: string }): Promise<Row>;
     /**
      * Decrement a specific column of a row by a given value.
      *
@@ -955,7 +955,7 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Row>}
      */
-    incrementRowColumn<Row extends Models.Row = Models.DefaultRow>(params: { databaseId: string, tableId: string, rowId: string, column: string, value?: number, max?: number, transactionId?: string  }): Promise<Row>;
+    incrementRowColumn<Row extends Models.Row = Models.DefaultRow>(params: { databaseId: string, tableId: string, rowId: string, column: string, value?: number, max?: number, transactionId?: string }): Promise<Row>;
     /**
      * Increment a specific column of a row by a given value.
      *

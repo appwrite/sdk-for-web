@@ -32,7 +32,7 @@ export class Graphql {
     ): Promise<{}> {
         let params: { query: object };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && 'query' in paramsOrFirst)) {
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('query' in paramsOrFirst))) {
             params = (paramsOrFirst || {}) as { query: object };
         } else {
             params = {
@@ -88,7 +88,7 @@ export class Graphql {
     ): Promise<{}> {
         let params: { query: object };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && 'query' in paramsOrFirst)) {
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('query' in paramsOrFirst))) {
             params = (paramsOrFirst || {}) as { query: object };
         } else {
             params = {

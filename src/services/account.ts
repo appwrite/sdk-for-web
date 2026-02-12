@@ -489,7 +489,7 @@ export class Account {
     ): Promise<Models.MfaType> {
         let params: { type: AuthenticatorType };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && 'type' in paramsOrFirst)) {
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('type' in paramsOrFirst))) {
             params = (paramsOrFirst || {}) as { type: AuthenticatorType };
         } else {
             params = {
@@ -541,7 +541,7 @@ export class Account {
     ): Promise<Models.MfaType> {
         let params: { type: AuthenticatorType };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && 'type' in paramsOrFirst)) {
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('type' in paramsOrFirst))) {
             params = (paramsOrFirst || {}) as { type: AuthenticatorType };
         } else {
             params = {
@@ -597,7 +597,7 @@ export class Account {
     ): Promise<Models.User<Preferences>> {
         let params: { type: AuthenticatorType, otp: string };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && 'type' in paramsOrFirst)) {
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('type' in paramsOrFirst || 'otp' in paramsOrFirst))) {
             params = (paramsOrFirst || {}) as { type: AuthenticatorType, otp: string };
         } else {
             params = {
@@ -660,7 +660,7 @@ export class Account {
     ): Promise<Models.User<Preferences>> {
         let params: { type: AuthenticatorType, otp: string };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && 'type' in paramsOrFirst)) {
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('type' in paramsOrFirst || 'otp' in paramsOrFirst))) {
             params = (paramsOrFirst || {}) as { type: AuthenticatorType, otp: string };
         } else {
             params = {
@@ -721,7 +721,7 @@ export class Account {
     ): Promise<{}> {
         let params: { type: AuthenticatorType };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && 'type' in paramsOrFirst)) {
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('type' in paramsOrFirst))) {
             params = (paramsOrFirst || {}) as { type: AuthenticatorType };
         } else {
             params = {
@@ -773,7 +773,7 @@ export class Account {
     ): Promise<{}> {
         let params: { type: AuthenticatorType };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && 'type' in paramsOrFirst)) {
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('type' in paramsOrFirst))) {
             params = (paramsOrFirst || {}) as { type: AuthenticatorType };
         } else {
             params = {
@@ -826,7 +826,7 @@ export class Account {
     ): Promise<Models.MfaChallenge> {
         let params: { factor: AuthenticationFactor };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && 'factor' in paramsOrFirst)) {
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('factor' in paramsOrFirst))) {
             params = (paramsOrFirst || {}) as { factor: AuthenticationFactor };
         } else {
             params = {
@@ -881,7 +881,7 @@ export class Account {
     ): Promise<Models.MfaChallenge> {
         let params: { factor: AuthenticationFactor };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && 'factor' in paramsOrFirst)) {
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('factor' in paramsOrFirst))) {
             params = (paramsOrFirst || {}) as { factor: AuthenticationFactor };
         } else {
             params = {
@@ -1468,7 +1468,7 @@ export class Account {
     ): Promise<Models.User<Preferences>> {
         let params: { prefs: Partial<Preferences> };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && 'prefs' in paramsOrFirst)) {
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('prefs' in paramsOrFirst))) {
             params = (paramsOrFirst || {}) as { prefs: Partial<Preferences> };
         } else {
             params = {
@@ -1894,7 +1894,7 @@ export class Account {
     ): void | string {
         let params: { provider: OAuthProvider, success?: string, failure?: string, scopes?: string[] };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && 'provider' in paramsOrFirst)) {
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('provider' in paramsOrFirst || 'success' in paramsOrFirst || 'failure' in paramsOrFirst || 'scopes' in paramsOrFirst))) {
             params = (paramsOrFirst || {}) as { provider: OAuthProvider, success?: string, failure?: string, scopes?: string[] };
         } else {
             params = {
@@ -2646,7 +2646,7 @@ export class Account {
     ): void | string {
         let params: { provider: OAuthProvider, success?: string, failure?: string, scopes?: string[] };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && 'provider' in paramsOrFirst)) {
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('provider' in paramsOrFirst || 'success' in paramsOrFirst || 'failure' in paramsOrFirst || 'scopes' in paramsOrFirst))) {
             params = (paramsOrFirst || {}) as { provider: OAuthProvider, success?: string, failure?: string, scopes?: string[] };
         } else {
             params = {

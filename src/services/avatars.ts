@@ -50,7 +50,7 @@ export class Avatars {
     ): string {
         let params: { code: Browser, width?: number, height?: number, quality?: number };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && 'code' in paramsOrFirst)) {
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('code' in paramsOrFirst || 'width' in paramsOrFirst || 'height' in paramsOrFirst || 'quality' in paramsOrFirst))) {
             params = (paramsOrFirst || {}) as { code: Browser, width?: number, height?: number, quality?: number };
         } else {
             params = {
@@ -130,7 +130,7 @@ export class Avatars {
     ): string {
         let params: { code: CreditCard, width?: number, height?: number, quality?: number };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && 'code' in paramsOrFirst)) {
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('code' in paramsOrFirst || 'width' in paramsOrFirst || 'height' in paramsOrFirst || 'quality' in paramsOrFirst))) {
             params = (paramsOrFirst || {}) as { code: CreditCard, width?: number, height?: number, quality?: number };
         } else {
             params = {
@@ -269,7 +269,7 @@ export class Avatars {
     ): string {
         let params: { code: Flag, width?: number, height?: number, quality?: number };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && 'code' in paramsOrFirst)) {
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('code' in paramsOrFirst || 'width' in paramsOrFirst || 'height' in paramsOrFirst || 'quality' in paramsOrFirst))) {
             params = (paramsOrFirst || {}) as { code: Flag, width?: number, height?: number, quality?: number };
         } else {
             params = {

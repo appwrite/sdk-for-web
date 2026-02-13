@@ -1738,20 +1738,6 @@ export namespace Models {
     }
 
     /**
-     * Billing address list
-     */
-    export type BillingAddressList = {
-        /**
-         * Total number of billingAddresses that matched your query.
-         */
-        total: number;
-        /**
-         * List of billingAddresses.
-         */
-        billingAddresses: BillingAddress[];
-    }
-
-    /**
      * Payment methods list
      */
     export type PaymentMethodList = {

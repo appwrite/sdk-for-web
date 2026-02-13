@@ -1,5 +1,6 @@
 import { AppwriteException, Client } from '../client';
 import { Channel, ActionableChannel, ResolvedChannel } from '../channel';
+import { Query } from '../query';
 
 export type RealtimeSubscription = {
     close: () => Promise<void>;
@@ -7,6 +8,7 @@ export type RealtimeSubscription = {
 
 export type RealtimeCallback<T = any> = {
     channels: Set<string>;
+    queries: string[]; // Array of query strings
     callback: (event: RealtimeResponseEvent<T>) => void;
 }
 
@@ -20,11 +22,13 @@ export type RealtimeResponseEvent<T = any> = {
     channels: string[];
     timestamp: string;
     payload: T;
+    subscriptions: string[]; // Backend-provided subscription IDs
 }
 
 export type RealtimeResponseConnected = {
     channels: string[];
     user?: object;
+    subscriptions?: { [slot: string]: string }; // Map slot index -> subscriptionId
 }
 
 export type RealtimeRequest = {
@@ -50,13 +54,18 @@ export class Realtime {
 
     private client: Client;
     private socket?: WebSocket;
-    private activeChannels = new Set<string>();
+    // Slot-centric state: Map<slot, { channels: Set<string>, queries: string[], callback: Function }>
     private activeSubscriptions = new Map<number, RealtimeCallback<any>>();
+    // Map slot index -> subscriptionId (from backend)
+    private slotToSubscriptionId = new Map<number, string>();
+    // Inverse map: subscriptionId -> slot index (for O(1) lookup)
+    private subscriptionIdToSlot = new Map<string, number>();
     private heartbeatTimer?: number;
 
     private subCallDepth = 0;
     private reconnectAttempts = 0;
     private subscriptionsCounter = 0;
+    private connectionId = 0;
     private reconnect = true;
 
     private onErrorCallbacks: Array<(error?: Error, statusCode?: number) => void> = [];
@@ -114,7 +123,7 @@ export class Realtime {
     }
 
     private async createSocket(): Promise<void> {
-        if (this.activeChannels.size === 0) {
+        if (this.activeSubscriptions.size === 0) {
             this.reconnect = false;
             await this.closeSocket();
             return;
@@ -125,9 +134,38 @@ export class Realtime {
             throw new AppwriteException('Missing project ID');
         }
 
+        // Collect all unique channels from all slots
+        const allChannels = new Set<string>();
+        for (const subscription of this.activeSubscriptions.values()) {
+            for (const channel of subscription.channels) {
+                allChannels.add(channel);
+            }
+        }
+
         let queryParams = `project=${projectId}`;
-        for (const channel of this.activeChannels) {
+        for (const channel of allChannels) {
             queryParams += `&channels[]=${encodeURIComponent(channel)}`;
+        }
+
+        // Build query string from slots → channels → queries
+        // Format: channel[slot][]=query
+        // For each slot, repeat its queries under each channel it subscribes to
+        // Example: slot 1 → channels [tests, prod], queries [q1, q2]
+        //   Produces: tests[1][]=q1&tests[1][]=q2&prod[1][]=q1&prod[1][]=q2
+        const selectAllQuery = Query.select(['*']).toString();
+        for (const [slot, subscription] of this.activeSubscriptions) {
+            // queries is string[] - iterate over each query string
+            const queries = subscription.queries.length === 0 
+                ? [selectAllQuery] 
+                : subscription.queries;
+            
+            // Repeat this slot's queries under each channel it subscribes to
+            // Each query is sent as a separate parameter: channel[slot][]=q1&channel[slot][]=q2
+            for (const channel of subscription.channels) {
+                for (const query of queries) {
+                    queryParams += `&${encodeURIComponent(channel)}[${slot}][]=${encodeURIComponent(query)}`;
+                }
+            }
         }
 
         const endpoint =
@@ -141,21 +179,32 @@ export class Realtime {
 
         if (this.socket) {
             this.reconnect = false;
-            await this.closeSocket();
+            if (this.socket.readyState < WebSocket.CLOSING) {
+                await this.closeSocket();
+            }
+            // Ensure reconnect isn't stuck false if close event was missed.
+            this.reconnect = true;
         }
 
         return new Promise((resolve, reject) => {
             try {
-                this.socket = new WebSocket(url);
+                const connectionId = ++this.connectionId;
+                const socket = (this.socket = new WebSocket(url));
 
-                this.socket.addEventListener('open', () => {
+                socket.addEventListener('open', () => {
+                    if (connectionId !== this.connectionId) {
+                        return;
+                    }
                     this.reconnectAttempts = 0;
                     this.onOpenCallbacks.forEach(callback => callback());
                     this.startHeartbeat();
                     resolve();
                 });
 
-                this.socket.addEventListener('message', (event: MessageEvent) => {
+                socket.addEventListener('message', (event: MessageEvent) => {
+                    if (connectionId !== this.connectionId) {
+                        return;
+                    }
                     try {
                         const message = JSON.parse(event.data) as RealtimeResponse;
                         this.handleMessage(message);
@@ -164,7 +213,10 @@ export class Realtime {
                     }
                 });
 
-                this.socket.addEventListener('close', async (event: CloseEvent) => {
+                socket.addEventListener('close', async (event: CloseEvent) => {
+                    if (connectionId !== this.connectionId || socket !== this.socket) {
+                        return;
+                    }
                     this.stopHeartbeat();
                     this.onCloseCallbacks.forEach(callback => callback());
 
@@ -186,7 +238,10 @@ export class Realtime {
                     }
                 });
 
-                this.socket.addEventListener('error', (event: Event) => {
+                socket.addEventListener('error', (event: Event) => {
+                    if (connectionId !== this.connectionId || socket !== this.socket) {
+                        return;
+                    }
                     this.stopHeartbeat();
                     const error = new Error('WebSocket error');
                     console.error('WebSocket error:', error.message);
@@ -265,7 +320,8 @@ export class Realtime {
      */
     public async subscribe(
         channel: string | Channel<any> | ActionableChannel | ResolvedChannel,
-        callback: (event: RealtimeResponseEvent<any>) => void
+        callback: (event: RealtimeResponseEvent<any>) => void,
+        queries?: (string | Query)[]
     ): Promise<RealtimeSubscription>;
 
     /**
@@ -277,7 +333,8 @@ export class Realtime {
      */
     public async subscribe(
         channels: (string | Channel<any> | ActionableChannel | ResolvedChannel)[],
-        callback: (event: RealtimeResponseEvent<any>) => void
+        callback: (event: RealtimeResponseEvent<any>) => void,
+        queries?: (string | Query)[]
     ): Promise<RealtimeSubscription>;
 
     /**
@@ -289,7 +346,8 @@ export class Realtime {
      */
     public async subscribe<T>(
         channel: string | Channel<any> | ActionableChannel | ResolvedChannel,
-        callback: (event: RealtimeResponseEvent<T>) => void
+        callback: (event: RealtimeResponseEvent<T>) => void,
+        queries?: (string | Query)[]
     ): Promise<RealtimeSubscription>;
 
     /**
@@ -301,12 +359,14 @@ export class Realtime {
      */
     public async subscribe<T>(
         channels: (string | Channel<any> | ActionableChannel | ResolvedChannel)[],
-        callback: (event: RealtimeResponseEvent<T>) => void
+        callback: (event: RealtimeResponseEvent<T>) => void,
+        queries?: (string | Query)[]
     ): Promise<RealtimeSubscription>;
 
     public async subscribe<T = any>(
         channelsOrChannel: string | Channel<any> | ActionableChannel | ResolvedChannel | (string | Channel<any> | ActionableChannel | ResolvedChannel)[],
-        callback: (event: RealtimeResponseEvent<T>) => void
+        callback: (event: RealtimeResponseEvent<T>) => void,
+        queries: (string | Query)[] = []
     ): Promise<RealtimeSubscription> {
         const channelArray = Array.isArray(channelsOrChannel)
             ? channelsOrChannel
@@ -316,15 +376,30 @@ export class Realtime {
         const channelStrings = channelArray.map(ch => this.channelToString(ch));
         const channels = new Set(channelStrings);
 
-        this.subscriptionsCounter++;
-        const count = this.subscriptionsCounter;
-
-        for (const channel of channels) {
-            this.activeChannels.add(channel);
+        // Convert queries to array of strings
+        // Ensure each query is a separate string in the array
+        const queryStrings: string[] = [];
+        for (const q of (queries ?? [])) {
+            if (Array.isArray(q)) {
+                // Handle nested arrays: [[q1, q2]] -> [q1, q2]
+                for (const inner of q) {
+                    queryStrings.push(typeof inner === 'string' ? inner : inner.toString());
+                }
+            } else {
+                queryStrings.push(typeof q === 'string' ? q : q.toString());
+            }
         }
 
-        this.activeSubscriptions.set(count, {
+        // Allocate a new slot index
+        this.subscriptionsCounter++;
+        const slot = this.subscriptionsCounter;
+
+        // Store slot-centric data: channels, queries, and callback belong to the slot
+        // queries is stored as string[] (array of query strings)
+        // No channel mutation occurs here - channels are derived from slots in createSocket()
+        this.activeSubscriptions.set(slot, {
             channels,
+            queries: queryStrings,
             callback
         });
 
@@ -340,27 +415,19 @@ export class Realtime {
 
         return {
             close: async () => {
-                this.activeSubscriptions.delete(count);
-                this.cleanUp(channels);
+                const subscriptionId = this.slotToSubscriptionId.get(slot);
+                this.activeSubscriptions.delete(slot);
+                this.slotToSubscriptionId.delete(slot);
+                if (subscriptionId) {
+                    this.subscriptionIdToSlot.delete(subscriptionId);
+                }
                 await this.createSocket();
             }
         };
     }
 
-    private cleanUp(channels: Set<string>): void {
-        this.activeChannels = new Set(
-            Array.from(this.activeChannels).filter(channel => {
-                if (!channels.has(channel)) {
-                    return true;
-                }
-
-                const subsWithChannel = Array.from(this.activeSubscriptions.values())
-                    .filter(sub => sub.channels.has(channel));
-
-                return subsWithChannel.length > 0;
-            })
-        );
-    }
+    // cleanUp is no longer needed - slots are removed directly in subscribe().close()
+    // Channels are automatically rebuilt from remaining slots in createSocket()
 
     private handleMessage(message: RealtimeResponse): void {
         if (!message.type) {
@@ -389,6 +456,20 @@ export class Realtime {
         }
 
         const messageData = message.data as RealtimeResponseConnected;
+
+        // Store subscription ID mappings from backend
+        // Format: { "0": "sub_a1f9", "1": "sub_b83c", ... }
+        if (messageData.subscriptions) {
+            this.slotToSubscriptionId.clear();
+            this.subscriptionIdToSlot.clear();
+            for (const [slotStr, subscriptionId] of Object.entries(messageData.subscriptions)) {
+                const slot = Number(slotStr);
+                if (!isNaN(slot)) {
+                    this.slotToSubscriptionId.set(slot, subscriptionId);
+                    this.subscriptionIdToSlot.set(subscriptionId, slot);
+                }
+            }
+        }
 
         let session = this.client.config.session;
         if (!session) {
@@ -428,32 +509,28 @@ export class Realtime {
         const events = data.events as string[];
         const payload = data.payload;
         const timestamp = data.timestamp as string;
+        const subscriptions = data.subscriptions as string[] | undefined;
 
-        if (!channels || !events || !payload) {
+        if (!channels || !events || !payload || !subscriptions || subscriptions.length === 0) {
             return;
         }
 
-        const hasActiveChannel = channels.some(channel =>
-            this.activeChannels.has(channel)
-        );
-
-        if (!hasActiveChannel) {
-            return;
-        }
-
-        for (const [_, subscription] of this.activeSubscriptions) {
-            const hasSubscribedChannel = channels.some(channel =>
-                subscription.channels.has(channel)
-            );
-
-            if (hasSubscribedChannel) {
-                const response: RealtimeResponseEvent<any> = {
-                    events,
-                    channels,
-                    timestamp,
-                    payload
-                };
-                subscription.callback(response);
+        // Iterate over all matching subscriptionIds and call callback for each
+        for (const subscriptionId of subscriptions) {
+            // O(1) lookup using subscriptionId
+            const slot = this.subscriptionIdToSlot.get(subscriptionId);
+            if (slot !== undefined) {
+                const subscription = this.activeSubscriptions.get(slot);
+                if (subscription) {
+                    const response: RealtimeResponseEvent<any> = {
+                        events,
+                        channels,
+                        timestamp,
+                        payload,
+                        subscriptions
+                    };
+                    subscription.callback(response);
+                }
             }
         }
     }

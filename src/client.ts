@@ -1,5 +1,6 @@
 import { Models } from './models';
 import { Channel, ActionableChannel, ResolvedChannel } from './channel';
+import { Query } from './query';
 import JSONbigModule from 'json-bigint';
 import BigNumber from 'bignumber.js';
 const JSONbigParser = JSONbigModule({ storeAsString: false });
@@ -89,12 +90,17 @@ type RealtimeResponseEvent<T extends unknown> = {
     /**
      * Timestamp indicating the time of the event.
      */
-    timestamp: number;
+    timestamp: string;
 
     /**
      * Payload containing event-specific data.
      */
     payload: T;
+
+    /**
+     * Subscription IDs this event matches (from backend, optional).
+     */
+    subscriptions?: string[];
 }
 
 /**
@@ -125,6 +131,11 @@ type RealtimeResponseConnected = {
      * User object representing the connected user (optional).
      */
     user?: object;
+
+    /**
+     * Map slot index -> subscription ID from backend (optional).
+     */
+    subscriptions?: Record<string, string>;
 }
 
 /**
@@ -194,12 +205,28 @@ type Realtime = {
     channels: Set<string>;
 
     /**
+     * Set of query strings the client is subscribed to.
+     */
+    queries: Set<string>;
+
+    /**
      * Map of subscriptions containing channel names and corresponding callback functions.
      */
     subscriptions: Map<number, {
         channels: string[];
+        queries: string[];
         callback: (payload: RealtimeResponseEvent<any>) => void
     }>;
+
+    /**
+     * Map slot index -> subscription ID (from backend, set on 'connected').
+     */
+    slotToSubscriptionId: Map<number, string>;
+
+    /**
+     * Map subscription ID -> slot index (for O(1) event dispatch).
+     */
+    subscriptionIdToSlot: Map<string, number>;
 
     /**
      * Counter for managing subscriptions.
@@ -241,7 +268,7 @@ type Realtime = {
      *
      * @param {string[]} channels - List of channel names to clean up.
      */
-    cleanUp: (channels: string[]) => void;
+    cleanUp: (channels: string[], queries: string[]) => void;
 
     /**
      * Function to handle incoming messages from the WebSocket connection.
@@ -352,7 +379,7 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '22.0.0',
+        'x-sdk-version': '22.1.0',
         'X-Appwrite-Response-Format': '1.8.0',
     };
 
@@ -475,7 +502,10 @@ class Client {
         heartbeat: undefined,
         url: '',
         channels: new Set(),
+        queries: new Set(),
         subscriptions: new Map(),
+        slotToSubscriptionId: new Map(),
+        subscriptionIdToSlot: new Map(),
         subscriptionsCounter: 0,
         reconnect: true,
         reconnectAttempts: 0,
@@ -510,21 +540,31 @@ class Client {
             }, 20_000);
         },
         createSocket: () => {
-            if (this.realtime.channels.size < 1) {
+            if (this.realtime.subscriptions.size < 1) {
                 this.realtime.reconnect = false;
                 this.realtime.socket?.close();
                 return;
             }
 
-            const channels = new URLSearchParams();
-            if (this.config.project) {
-                channels.set('project', this.config.project as string);
-            }
+            const encodedProject = encodeURIComponent((this.config.project as string) ?? '');
+            let queryParams = 'project=' + encodedProject;
+
             this.realtime.channels.forEach(channel => {
-                channels.append('channels[]', channel);
+                queryParams += '&channels[]=' + encodeURIComponent(channel);
             });
 
-            const url = this.config.endpointRealtime + '/realtime?' + channels.toString();
+            // Per-subscription queries: channel[slot][]=query so server can route events by subscription
+            const selectAllQuery = Query.select(['*']).toString();
+            this.realtime.subscriptions.forEach((sub, slot) => {
+                const queries = sub.queries.length > 0 ? sub.queries : [selectAllQuery];
+                sub.channels.forEach(channel => {
+                    queries.forEach(query => {
+                        queryParams += '&' + encodeURIComponent(channel) + '[' + slot + '][]=' + encodeURIComponent(query);
+                    });
+                });
+            });
+
+            const url = this.config.endpointRealtime + '/realtime?' + queryParams;
 
             if (
                 url !== this.realtime.url || // Check if URL is present
@@ -573,15 +613,26 @@ class Client {
                 const message: RealtimeResponse = JSONbig.parse(event.data);
                 this.realtime.lastMessage = message;
                 switch (message.type) {
-                    case 'connected':
+                    case 'connected': {
+                        const messageData = <RealtimeResponseConnected>message.data;
+                        if (messageData?.subscriptions) {
+                            this.realtime.slotToSubscriptionId.clear();
+                            this.realtime.subscriptionIdToSlot.clear();
+                            for (const [slotStr, subscriptionId] of Object.entries(messageData.subscriptions)) {
+                                const slot = Number(slotStr);
+                                if (!isNaN(slot) && typeof subscriptionId === 'string') {
+                                    this.realtime.slotToSubscriptionId.set(slot, subscriptionId);
+                                    this.realtime.subscriptionIdToSlot.set(subscriptionId, slot);
+                                }
+                            }
+                        }
+
                         let session = this.config.session;
                         if (!session) {
                             const cookie = JSONbig.parse(window.localStorage.getItem('cookieFallback') ?? '{}');
                             session = cookie?.[`a_session_${this.config.project}`];
                         }
-
-                        const messageData = <RealtimeResponseConnected>message.data;
-                        if (session && !messageData.user) {
+                        if (session && !messageData?.user) {
                             this.realtime.socket?.send(JSONbig.stringify(<RealtimeRequest>{
                                 type: 'authentication',
                                 data: {
@@ -590,18 +641,33 @@ class Client {
                             }));
                         }
                         break;
-                    case 'event':
-                        let data = <RealtimeResponseEvent<unknown>>message.data;
-                        if (data?.channels) {
+                    }
+                    case 'event': {
+                        const data = <RealtimeResponseEvent<unknown>>message.data;
+                        if (!data?.channels) break;
+
+                        const eventSubIds = data.subscriptions;
+                        if (eventSubIds && eventSubIds.length > 0) {
+                            for (const subscriptionId of eventSubIds) {
+                                const slot = this.realtime.subscriptionIdToSlot.get(subscriptionId);
+                                if (slot !== undefined) {
+                                    const subscription = this.realtime.subscriptions.get(slot);
+                                    if (subscription) {
+                                        setTimeout(() => subscription.callback(data));
+                                    }
+                                }
+                            }
+                        } else {
                             const isSubscribed = data.channels.some(channel => this.realtime.channels.has(channel));
-                            if (!isSubscribed) return;
+                            if (!isSubscribed) break;
                             this.realtime.subscriptions.forEach(subscription => {
                                 if (data.channels.some(channel => subscription.channels.includes(channel))) {
                                     setTimeout(() => subscription.callback(data));
                                 }
-                            })
+                            });
                         }
                         break;
+                    }
                     case 'pong':
                         break; // Handle pong response if needed
                     case 'error':
@@ -613,7 +679,7 @@ class Client {
                 console.error(e);
             }
         },
-        cleanUp: channels => {
+        cleanUp: (channels, queries) => {
             this.realtime.channels.forEach(channel => {
                 if (channels.includes(channel)) {
                     let found = Array.from(this.realtime.subscriptions).some(([_key, subscription] )=> {
@@ -622,6 +688,18 @@ class Client {
 
                     if (!found) {
                         this.realtime.channels.delete(channel);
+                    }
+                }
+            })
+
+            this.realtime.queries.forEach(query => {
+                if (queries.includes(query)) {
+                    let found = Array.from(this.realtime.subscriptions).some(([_key, subscription]) => {
+                        return subscription.queries?.includes(query);
+                    });
+
+                    if (!found) {
+                        this.realtime.queries.delete(query);
                     }
                 }
             })
@@ -663,7 +741,11 @@ class Client {
      * @param {(payload: RealtimeMessage) => void} callback Is called on every realtime update.
      * @returns {() => void} Unsubscribes from events.
      */
-    subscribe<T extends unknown>(channels: string | string[] | Channel<any> | ActionableChannel | ResolvedChannel | (Channel<any> | ActionableChannel | ResolvedChannel)[], callback: (payload: RealtimeResponseEvent<T>) => void): () => void {
+    subscribe<T extends unknown>(
+        channels: string | string[] | Channel<any> | ActionableChannel | ResolvedChannel | (Channel<any> | ActionableChannel | ResolvedChannel)[],
+        callback: (payload: RealtimeResponseEvent<T>) => void,
+        queries: (string | Query)[] = []
+    ): () => void {
         const channelArray = Array.isArray(channels) ? channels : [channels];
         // Convert Channel instances to strings
         const channelStrings = channelArray.map(ch => {
@@ -679,9 +761,13 @@ class Client {
         });
         channelStrings.forEach(channel => this.realtime.channels.add(channel));
 
+        const queryStrings = (queries ?? []).map(q => typeof q === 'string' ? q : q.toString());
+        queryStrings.forEach(query => this.realtime.queries.add(query));
+
         const counter = this.realtime.subscriptionsCounter++;
         this.realtime.subscriptions.set(counter, {
             channels: channelStrings,
+            queries: queryStrings,
             callback
         });
 
@@ -689,7 +775,7 @@ class Client {
 
         return () => {
             this.realtime.subscriptions.delete(counter);
-            this.realtime.cleanUp(channelStrings);
+            this.realtime.cleanUp(channelStrings, queryStrings);
             this.realtime.connect();
         }
     }

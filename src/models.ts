@@ -135,20 +135,6 @@ export namespace Models {
     }
 
     /**
-     * API Keys List
-     */
-    export type KeyList = {
-        /**
-         * Total number of keys that matched your query.
-         */
-        total: number;
-        /**
-         * List of keys.
-         */
-        keys: Key[];
-    }
-
-    /**
      * Countries List
      */
     export type CountryList = {
@@ -1095,48 +1081,6 @@ export namespace Models {
          * The scheduled time for execution. If left empty, execution will be queued immediately.
          */
         scheduledAt?: string;
-    }
-
-    /**
-     * Key
-     */
-    export type Key = {
-        /**
-         * Key ID.
-         */
-        $id: string;
-        /**
-         * Key creation date in ISO 8601 format.
-         */
-        $createdAt: string;
-        /**
-         * Key update date in ISO 8601 format.
-         */
-        $updatedAt: string;
-        /**
-         * Key name.
-         */
-        name: string;
-        /**
-         * Key expiration date in ISO 8601 format.
-         */
-        expire: string;
-        /**
-         * Allowed permission scopes.
-         */
-        scopes: string[];
-        /**
-         * Secret key.
-         */
-        secret: string;
-        /**
-         * Most recent access date in ISO 8601 format. This attribute is only updated again after 24 hours.
-         */
-        accessedAt: string;
-        /**
-         * List of SDK user agents that used this key.
-         */
-        sdks: string[];
     }
 
     /**

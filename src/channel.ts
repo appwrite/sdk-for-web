@@ -139,6 +139,10 @@ export class Channel<T> {
   static teams(): string {
     return "teams";
   }
+
+  static memberships(): string {
+    return "memberships";
+  }
 }
 
 // Export types for backward compatibility with realtime

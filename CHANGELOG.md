@@ -1,6 +1,6 @@
 # Change Log
 
-## 22.1.1
+## 22.3.1
 
 * Fix `bignumber.js` bundler conflict with Next.js Turbopack by removing direct dependency in favor of transitive dependency from `json-bigint`
 

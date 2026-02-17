@@ -2,7 +2,7 @@
   "name": "appwrite",
   "homepage": "https://appwrite.io/support",
   "description": "Appwrite is an open-source self-hosted backend server that abstracts and simplifies complex and repetitive development tasks behind a very simple REST API",
-  "version": "22.1.1",
+  "version": "22.3.1",
   "license": "BSD-3-Clause",
   "main": "dist/cjs/sdk.js",
   "exports": {
@@ -25,8 +25,7 @@
     "build:libs": "rollup -c"
   },
   "dependencies": {
-    "json-bigint": "1.0.0",
-    "bignumber.js": "9.0.0"
+    "json-bigint": "1.0.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "22.0.0",

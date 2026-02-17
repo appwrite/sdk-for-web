@@ -18,6 +18,7 @@ export { TablesDB } from './services/tables-db';
 export { Teams } from './services/teams';
 export { Realtime } from './services/realtime';
 export type { Models, Payload, RealtimeResponseEvent, UploadProgress } from './client';
+export type { RealtimeSubscription } from './services/realtime';
 export type { QueryTypes, QueryTypesList } from './query';
 export { Permission } from './permission';
 export { Role } from './role';

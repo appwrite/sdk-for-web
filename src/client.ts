@@ -7,6 +7,8 @@ const JSONbigSerializer = JSONbigModule({ useNativeBigInt: true });
 
 const MAX_SAFE = BigInt(Number.MAX_SAFE_INTEGER);
 const MIN_SAFE = BigInt(Number.MIN_SAFE_INTEGER);
+const MAX_INT64 = BigInt('9223372036854775807');
+const MIN_INT64 = BigInt('-9223372036854775808');
 
 function isBigNumber(value: any): boolean {
     return value !== null
@@ -25,7 +27,10 @@ function reviver(_key: string, value: any): any {
             if (bi >= MIN_SAFE && bi <= MAX_SAFE) {
                 return Number(str);
             }
-            return bi;
+            if (bi >= MIN_INT64 && bi <= MAX_INT64) {
+                return bi;
+            }
+            return value.toNumber();
         }
         return value.toNumber();
     }
@@ -387,7 +392,7 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '22.4.0',
+        'x-sdk-version': '22.3.1',
         'X-Appwrite-Response-Format': '1.8.0',
     };
 

@@ -241,9 +241,9 @@ export namespace Models {
          */
         $id: string;
         /**
-         * Row automatically incrementing ID.
+         * Row sequence ID.
          */
-        $sequence: number;
+        $sequence: string;
         /**
          * Table ID.
          */
@@ -280,9 +280,9 @@ export namespace Models {
          */
         $id: string;
         /**
-         * Document automatically incrementing ID.
+         * Document sequence ID.
          */
-        $sequence: number;
+        $sequence: string;
         /**
          * Collection ID.
          */

@@ -33,7 +33,7 @@
     "@rollup/plugin-typescript": "8.3.2",
     "@types/json-bigint": "1.0.4",
     "playwright": "1.56.1",
-    "rollup": "2.79.2",
+    "rollup": "2.80.0",
     "serve-handler": "6.1.0",
     "tslib": "2.4.0",
     "typescript": "4.7.2"

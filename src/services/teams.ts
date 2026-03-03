@@ -399,7 +399,7 @@ export class Teams {
      * 
      *
      * @param {string} params.teamId - Team ID.
-     * @param {string[]} params.roles - Array of strings. Use this param to set the user roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 32 characters long.
+     * @param {string[]} params.roles - Array of strings. Use this param to set the user roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 81 characters long.
      * @param {string} params.email - Email of the new team member.
      * @param {string} params.userId - ID of the user to be added to a team.
      * @param {string} params.phone - Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.
@@ -420,7 +420,7 @@ export class Teams {
      * 
      *
      * @param {string} teamId - Team ID.
-     * @param {string[]} roles - Array of strings. Use this param to set the user roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 32 characters long.
+     * @param {string[]} roles - Array of strings. Use this param to set the user roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 81 characters long.
      * @param {string} email - Email of the new team member.
      * @param {string} userId - ID of the user to be added to a team.
      * @param {string} phone - Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.
@@ -565,7 +565,7 @@ export class Teams {
      *
      * @param {string} params.teamId - Team ID.
      * @param {string} params.membershipId - Membership ID.
-     * @param {string[]} params.roles - An array of strings. Use this param to set the user's roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 32 characters long.
+     * @param {string[]} params.roles - An array of strings. Use this param to set the user's roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 81 characters long.
      * @throws {AppwriteException}
      * @returns {Promise<Models.Membership>}
      */
@@ -576,7 +576,7 @@ export class Teams {
      *
      * @param {string} teamId - Team ID.
      * @param {string} membershipId - Membership ID.
-     * @param {string[]} roles - An array of strings. Use this param to set the user's roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 32 characters long.
+     * @param {string[]} roles - An array of strings. Use this param to set the user's roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 81 characters long.
      * @throws {AppwriteException}
      * @returns {Promise<Models.Membership>}
      * @deprecated Use the object parameter style method for a better developer experience.

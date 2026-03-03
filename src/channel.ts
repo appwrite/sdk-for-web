@@ -16,8 +16,14 @@ interface Resolved { _res: any }
 type Actionable = Document | Row | File | Team | Membership;
 
 function normalize(id: string): string {
-  const trimmed = id.trim();
-  return trimmed === "" ? "*" : trimmed;
+  if (id === undefined || id === null) {
+    throw new Error("Channel ID is required");
+  }
+  const trimmed = String(id).trim();
+  if (trimmed === "") {
+    throw new Error("Channel ID is required");
+  }
+  return trimmed;
 }
 
 export class Channel<T> {
@@ -44,9 +50,8 @@ export class Channel<T> {
 
   // --- DATABASE ROUTE ---
   // Only available on Channel<Database>
-  collection(this: Channel<Database>, id?: string): Channel<Collection> {
-    // Default: wildcard collection ID
-    return this.next<Collection>("collections", id ?? "*");
+  collection(this: Channel<Database>, id: string): Channel<Collection> {
+    return this.next<Collection>("collections", id);
   }
 
   // Only available on Channel<Collection>
@@ -56,9 +61,8 @@ export class Channel<T> {
   }
 
   // --- TABLESDB ROUTE ---
-  table(this: Channel<TablesDB>, id?: string): Channel<Table> {
-    // Default: wildcard table ID
-    return this.next<Table>("tables", id ?? "*");
+  table(this: Channel<TablesDB>, id: string): Channel<Table> {
+    return this.next<Table>("tables", id);
   }
 
   row(this: Channel<Table>, id?: string): Channel<Row> {
@@ -91,31 +95,31 @@ export class Channel<T> {
   }
 
   // --- ROOT FACTORIES ---
-  static database(id: string = "*") {
+  static database(id: string) {
     return new Channel<Database>(["databases", normalize(id)]);
   }
 
-  static execution(id: string = "*") {
+  static execution(id: string) {
     return new Channel<Execution>(["executions", normalize(id)]);
   }
 
-  static tablesdb(id: string = "*") {
+  static tablesdb(id: string) {
     return new Channel<TablesDB>(["tablesdb", normalize(id)]);
   }
 
-  static bucket(id: string = "*") {
+  static bucket(id: string) {
     return new Channel<Bucket>(["buckets", normalize(id)]);
   }
 
-  static function(id: string = "*") {
+  static function(id: string) {
     return new Channel<Func>(["functions", normalize(id)]);
   }
 
-  static team(id: string = "*") {
+  static team(id: string) {
     return new Channel<Team>(["teams", normalize(id)]);
   }
 
-  static membership(id: string = "*") {
+  static membership(id: string) {
     return new Channel<Membership>(["memberships", normalize(id)]);
   }
 

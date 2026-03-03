@@ -1,5 +1,12 @@
 # Change Log
 
+## 23.0.0
+
+* Breaking: Made Channel.collection() require id parameter
+* Breaking: Made Channel.table() require id parameter
+* Breaking: Root factory methods require explicit IDs (databases, executions, tablesdb, bucket, function, team, membership)
+* Added ttl option to listDocuments and listRows for caching
+
 ## 22.4.1
 
 * Fix very large double values (for example 1.7976931348623157e+308) from being expanded into giant integer literals

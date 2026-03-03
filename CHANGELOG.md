@@ -1,5 +1,9 @@
 # Change Log
 
+## 22.4.1
+
+* Fix very large double values (for example 1.7976931348623157e+308) from being expanded into giant integer literals
+
 ## 22.4.0
 
 * Added Query.containsAny(attribute, value[]) to filter resources where the attribute contains any of the given values.

@@ -1,11 +1,11 @@
 # Change Log
 
-## 23.0.0
+## 22.5.0
 
-* Breaking: Made Channel.collection() require id parameter
-* Breaking: Made Channel.table() require id parameter
-* Breaking: Root factory methods require explicit IDs (databases, executions, tablesdb, bucket, function, team, membership)
-* Added ttl option to listDocuments and listRows for caching
+* Added `DocumentsDB` API with document management methods
+* Added `VectorsDB` API with vector document methods
+* Updated API version to 1.9.0 and server compatibility to 1.8.x
+* Updated CDN script to `appwrite@22.4.1`
 
 ## 22.4.1
 

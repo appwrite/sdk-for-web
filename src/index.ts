@@ -1,7 +1,7 @@
 /**
  * Appwrite Web SDK
  *
- * This SDK is compatible with Appwrite server version 1.8.x. 
+ * This SDK is compatible with Appwrite server version 1.9.x. 
  * For older versions, please check
  * [previous releases](https://github.com/appwrite/sdk-for-web/releases).
  */
@@ -9,6 +9,7 @@ export { Client, Query, AppwriteException } from './client';
 export { Account } from './services/account';
 export { Avatars } from './services/avatars';
 export { Databases } from './services/databases';
+export { DocumentsDB } from './services/documents-db';
 export { Functions } from './services/functions';
 export { Graphql } from './services/graphql';
 export { Locale } from './services/locale';
@@ -16,6 +17,7 @@ export { Messaging } from './services/messaging';
 export { Storage } from './services/storage';
 export { TablesDB } from './services/tables-db';
 export { Teams } from './services/teams';
+export { VectorsDB } from './services/vectors-db';
 export { Realtime } from './services/realtime';
 export type { Models, Payload, RealtimeResponseEvent, UploadProgress } from './client';
 export type { RealtimeSubscription } from './services/realtime';

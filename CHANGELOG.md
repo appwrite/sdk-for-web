@@ -1,11 +1,9 @@
 # Change Log
 
-## 22.5.0
+## 23.0.0
 
-* Added `DocumentsDB` API with document management methods
-* Added `VectorsDB` API with vector document methods
+* [BREAKING] Changed `$sequence` type from `int` to `string` for rows and documents
 * Updated API version to 1.9.0 and server compatibility to 1.8.x
-* Updated CDN script to `appwrite@22.4.1`
 
 ## 22.4.1
 

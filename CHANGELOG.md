@@ -1,9 +1,15 @@
 # Change Log
 
-## 23.0.0
+## 24.0.0
 
 * [BREAKING] Changed `$sequence` type from `int` to `string` for rows and documents
-* Updated API version to 1.9.0 and server compatibility to 1.8.x
+
+## 23.0.0
+
+* Breaking: Made Channel.collection() require id parameter
+* Breaking: Made Channel.table() require id parameter
+* Breaking: Root factory methods require explicit IDs (databases, executions, tablesdb, bucket, function, team, membership)
+* Added ttl option to listDocuments and listRows for caching
 
 ## 22.4.1
 

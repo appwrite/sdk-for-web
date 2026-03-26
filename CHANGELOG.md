@@ -1,5 +1,9 @@
 # Change Log
 
+## 24.0.0
+
+* [BREAKING] Changed `$sequence` type from `int` to `string` for rows and documents
+
 ## 23.0.0
 
 * Breaking: Made Channel.collection() require id parameter

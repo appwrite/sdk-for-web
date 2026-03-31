@@ -3,6 +3,7 @@
 ## 24.1.0
 
 * Added: Added `getHeaders()` method to `Client` to expose current request headers
+* Added: Added `package-lock.json` to track dependency lockfile in version control
 
 ## 24.0.0
 

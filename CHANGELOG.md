@@ -1,5 +1,9 @@
 # Change Log
 
+## 24.1.0
+
+* Added: Added `getHeaders()` method to `Client` to expose current request headers
+
 ## 24.0.0
 
 * [BREAKING] Changed `$sequence` type from `number` to `string` for `Row` and `Document` models

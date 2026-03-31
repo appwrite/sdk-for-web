@@ -398,9 +398,21 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '24.0.0',
+        'x-sdk-version': '24.1.0',
         'X-Appwrite-Response-Format': '1.9.0',
     };
+
+    /**
+     * Get Headers
+     *
+     * Returns a copy of the current request headers, including any
+     * authentication headers. Handle with care.
+     *
+     * @returns {Headers}
+     */
+    getHeaders(): Headers {
+        return { ...this.headers };
+    }
 
     /**
      * Set Endpoint

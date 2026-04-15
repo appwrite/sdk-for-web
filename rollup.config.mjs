@@ -10,7 +10,7 @@ export default [
     {
         input: "src/index.ts",
         external,
-        plugins: [typescript()],
+        plugins: [typescript({ outDir: "dist" })],
         output: [
             {
                 format: "cjs",
@@ -30,7 +30,7 @@ export default [
         plugins: [
             resolve({ browser: true }),
             commonjs(),
-            typescript()
+            typescript({ outDir: "dist" })
         ],
         output: [
             {

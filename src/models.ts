@@ -335,6 +335,10 @@ export namespace Models {
          */
         mode: string;
         /**
+         * User type who triggered the audit log. Possible values: user, admin, guest, keyProject, keyAccount, keyOrganization.
+         */
+        userType: string;
+        /**
          * IP session in use when the session was created.
          */
         ip: string;

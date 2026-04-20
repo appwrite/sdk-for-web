@@ -1,5 +1,11 @@
 # Change Log
 
+## 24.3.0
+
+* Added: `Realtime` switched to explicit `subscribe` messages with per-subscription queries
+* Fixed: `Realtime` subscription IDs persisted correctly across reconnects
+* Updated: README compatibility note now targets `latest` server version
+
 ## 24.2.0
 
 * Added `x` OAuth provider to `OAuthProvider` enum

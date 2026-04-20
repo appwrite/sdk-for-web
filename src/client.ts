@@ -76,14 +76,30 @@ type RealtimeResponse = {
  */
 type RealtimeRequest = {
     /**
-     * Type of the request: 'authentication'.
+     * Type of the request: 'authentication' or 'subscribe'.
      */
-    type: 'authentication';
+    type: 'authentication' | 'subscribe';
 
     /**
      * Data required for authentication.
      */
-    data: RealtimeRequestAuthenticate;
+    data: RealtimeRequestAuthenticate | RealtimeRequestSubscribe[];
+}
+
+type RealtimeRequestSubscribe = {
+    subscriptionId?: string;
+    channels: string[];
+    queries: string[];
+}
+
+type RealtimeResponseAction = {
+    to?: string;
+    success?: boolean;
+    subscriptions?: Array<{
+        subscriptionId?: string;
+        channels?: string[];
+        queries?: string[];
+    }>;
 }
 
 /**
@@ -218,11 +234,6 @@ type Realtime = {
     channels: Set<string>;
 
     /**
-     * Set of query strings the client is subscribed to.
-     */
-    queries: Set<string>;
-
-    /**
      * Map of subscriptions containing channel names and corresponding callback functions.
      */
     subscriptions: Map<number, {
@@ -240,6 +251,8 @@ type Realtime = {
      * Map subscription ID -> slot index (for O(1) event dispatch).
      */
     subscriptionIdToSlot: Map<string, number>;
+
+    pendingSubscribeSlots: number[];
 
     /**
      * Counter for managing subscriptions.
@@ -276,12 +289,7 @@ type Realtime = {
      */
     createHeartbeat: () => void;
 
-    /**
-     * Function to clean up resources associated with specified channels.
-     *
-     * @param {string[]} channels - List of channel names to clean up.
-     */
-    cleanUp: (channels: string[], queries: string[]) => void;
+    sendSubscribeMessage: () => void;
 
     /**
      * Function to handle incoming messages from the WebSocket connection.
@@ -398,8 +406,8 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '24.2.0',
-        'X-Appwrite-Response-Format': '1.9.0',
+        'x-sdk-version': '24.3.0',
+        'X-Appwrite-Response-Format': '1.9.1',
     };
 
     /**
@@ -575,10 +583,10 @@ class Client {
         heartbeat: undefined,
         url: '',
         channels: new Set(),
-        queries: new Set(),
         subscriptions: new Map(),
         slotToSubscriptionId: new Map(),
         subscriptionIdToSlot: new Map(),
+        pendingSubscribeSlots: [],
         subscriptionsCounter: 0,
         reconnect: true,
         reconnectAttempts: 0,
@@ -620,22 +628,8 @@ class Client {
             }
 
             const encodedProject = encodeURIComponent((this.config.project as string) ?? '');
-            let queryParams = 'project=' + encodedProject;
-
-            this.realtime.channels.forEach(channel => {
-                queryParams += '&channels[]=' + encodeURIComponent(channel);
-            });
-
-            // Per-subscription queries: channel[slot][]=query so server can route events by subscription
-            const selectAllQuery = Query.select(['*']).toString();
-            this.realtime.subscriptions.forEach((sub, slot) => {
-                const queries = sub.queries.length > 0 ? sub.queries : [selectAllQuery];
-                sub.channels.forEach(channel => {
-                    queries.forEach(query => {
-                        queryParams += '&' + encodeURIComponent(channel) + '[' + slot + '][]=' + encodeURIComponent(query);
-                    });
-                });
-            });
+            // URL carries only the project; channels/queries are sent via subscribe message.
+            const queryParams = 'project=' + encodedProject;
 
             const url = this.config.endpointRealtime + '/realtime?' + queryParams;
 
@@ -679,7 +673,44 @@ class Client {
                         this.realtime.createSocket();
                     }, timeout);
                 })
+            } else if (this.realtime.socket?.readyState === WebSocket.OPEN) {
+                // URL is unchanged; re-send subscribe message to apply updated queries.
+                this.realtime.sendSubscribeMessage();
             }
+        },
+        sendSubscribeMessage: () => {
+            if (!this.realtime.socket || this.realtime.socket.readyState !== WebSocket.OPEN) {
+                return;
+            }
+
+            const rows: RealtimeRequestSubscribe[] = [];
+            this.realtime.pendingSubscribeSlots = [];
+
+            this.realtime.subscriptions.forEach((sub, slot) => {
+                const queries = sub.queries ?? [];
+
+                const row: RealtimeRequestSubscribe = {
+                    channels: sub.channels,
+                    queries
+                };
+
+                const knownSubscriptionId = this.realtime.slotToSubscriptionId.get(slot);
+                if (knownSubscriptionId) {
+                    row.subscriptionId = knownSubscriptionId;
+                }
+
+                rows.push(row);
+                this.realtime.pendingSubscribeSlots.push(slot);
+            });
+
+            if (rows.length < 1) {
+                return;
+            }
+
+            this.realtime.socket.send(JSONbig.stringify(<RealtimeRequest>{
+                type: 'subscribe',
+                data: rows
+            }));
         },
         onMessage: (event) => {
             try {
@@ -689,17 +720,29 @@ class Client {
                     case 'connected': {
                         const messageData = <RealtimeResponseConnected>message.data;
                         if (messageData?.subscriptions) {
-                            this.realtime.slotToSubscriptionId.clear();
-                            this.realtime.subscriptionIdToSlot.clear();
                             for (const [slotStr, subscriptionId] of Object.entries(messageData.subscriptions)) {
                                 const slot = Number(slotStr);
-                                if (!isNaN(slot) && typeof subscriptionId === 'string') {
-                                    this.realtime.slotToSubscriptionId.set(slot, subscriptionId);
-                                    this.realtime.subscriptionIdToSlot.set(subscriptionId, slot);
+                                if (isNaN(slot) || typeof subscriptionId !== 'string') {
+                                    continue;
                                 }
+
+                                const directSlotExists = this.realtime.subscriptions.has(slot);
+                                const shiftedSlot = slot + 1;
+                                const shiftedSlotExists = this.realtime.subscriptions.has(shiftedSlot);
+                                const targetSlot = directSlotExists ? slot : shiftedSlotExists ? shiftedSlot : slot;
+
+                                this.realtime.slotToSubscriptionId.set(targetSlot, subscriptionId);
+                                this.realtime.subscriptionIdToSlot.set(subscriptionId, targetSlot);
                             }
                         }
 
+                        this.realtime.subscriptions.forEach((_sub, slot) => {
+                            const existing = this.realtime.slotToSubscriptionId.get(slot);
+                            if (existing) {
+                                this.realtime.subscriptionIdToSlot.set(existing, slot);
+                            }
+                        });
+                        
                         let session = this.config.session;
                         if (!session) {
                             const cookie = JSONbig.parse(window.localStorage.getItem('cookieFallback') ?? '{}');
@@ -713,6 +756,26 @@ class Client {
                                 }
                             }));
                         }
+
+                        this.realtime.sendSubscribeMessage();
+                        break;
+                    }
+                    case 'response': {
+                        const action = message.data as RealtimeResponseAction;
+                        if (action?.to !== 'subscribe' || !Array.isArray(action.subscriptions)) {
+                            break;
+                        }
+
+                        action.subscriptions.forEach((subscription, index) => {
+                            const subscriptionId = subscription?.subscriptionId;
+                            const slot = this.realtime.pendingSubscribeSlots[index];
+                            if (!subscriptionId || slot === undefined) {
+                                return;
+                            }
+
+                            this.realtime.slotToSubscriptionId.set(slot, subscriptionId);
+                            this.realtime.subscriptionIdToSlot.set(subscriptionId, slot);
+                        });
                         break;
                     }
                     case 'event': {
@@ -751,31 +814,6 @@ class Client {
             } catch (e) {
                 console.error(e);
             }
-        },
-        cleanUp: (channels, queries) => {
-            this.realtime.channels.forEach(channel => {
-                if (channels.includes(channel)) {
-                    let found = Array.from(this.realtime.subscriptions).some(([_key, subscription] )=> {
-                        return subscription.channels.includes(channel);
-                    })
-
-                    if (!found) {
-                        this.realtime.channels.delete(channel);
-                    }
-                }
-            })
-
-            this.realtime.queries.forEach(query => {
-                if (queries.includes(query)) {
-                    let found = Array.from(this.realtime.subscriptions).some(([_key, subscription]) => {
-                        return subscription.queries?.includes(query);
-                    });
-
-                    if (!found) {
-                        this.realtime.queries.delete(query);
-                    }
-                }
-            })
         }
     }
 
@@ -835,8 +873,6 @@ class Client {
         channelStrings.forEach(channel => this.realtime.channels.add(channel));
 
         const queryStrings = (queries ?? []).map(q => typeof q === 'string' ? q : q.toString());
-        queryStrings.forEach(query => this.realtime.queries.add(query));
-
         const counter = this.realtime.subscriptionsCounter++;
         this.realtime.subscriptions.set(counter, {
             channels: channelStrings,
@@ -847,8 +883,22 @@ class Client {
         this.realtime.connect();
 
         return () => {
+            const subscriptionId = this.realtime.slotToSubscriptionId.get(counter);
             this.realtime.subscriptions.delete(counter);
-            this.realtime.cleanUp(channelStrings, queryStrings);
+            this.realtime.slotToSubscriptionId.delete(counter);
+            if (subscriptionId) {
+                this.realtime.subscriptionIdToSlot.delete(subscriptionId);
+            }
+            // Remove channels that are no longer referenced by any active subscription.
+            const stillUsed = new Set<string>();
+            this.realtime.subscriptions.forEach(sub => {
+                sub.channels.forEach(channel => stillUsed.add(channel));
+            });
+            this.realtime.channels.forEach(channel => {
+                if (!stillUsed.has(channel)) {
+                    this.realtime.channels.delete(channel);
+                }
+            });
             this.realtime.connect();
         }
     }

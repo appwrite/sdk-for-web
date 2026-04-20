@@ -32,10 +32,24 @@ export type RealtimeResponseConnected = {
 }
 
 export type RealtimeRequest = {
-    type: 'authentication';
-    data: {
-        session: string;
-    };
+    type: 'authentication' | 'subscribe';
+    data: any;
+}
+
+type RealtimeRequestSubscribeRow = {
+    subscriptionId?: string;
+    channels: string[];
+    queries: string[];
+}
+
+type RealtimeResponseAction = {
+    to?: string;
+    success?: boolean;
+    subscriptions?: Array<{
+        subscriptionId?: string;
+        channels?: string[];
+        queries?: string[];
+    }>;
 }
 
 export enum RealtimeCode {
@@ -49,6 +63,7 @@ export class Realtime {
     private readonly TYPE_EVENT = 'event';
     private readonly TYPE_PONG = 'pong';
     private readonly TYPE_CONNECTED = 'connected';
+    private readonly TYPE_RESPONSE = 'response';
     private readonly DEBOUNCE_MS = 1;
     private readonly HEARTBEAT_INTERVAL = 20000; // 20 seconds in milliseconds
 
@@ -63,6 +78,7 @@ export class Realtime {
     private heartbeatTimer?: number;
 
     private subCallDepth = 0;
+    private pendingSubscribeSlots: number[] = [];
     private reconnectAttempts = 0;
     private subscriptionsCounter = 0;
     private connectionId = 0;
@@ -134,39 +150,8 @@ export class Realtime {
             throw new AppwriteException('Missing project ID');
         }
 
-        // Collect all unique channels from all slots
-        const allChannels = new Set<string>();
-        for (const subscription of this.activeSubscriptions.values()) {
-            for (const channel of subscription.channels) {
-                allChannels.add(channel);
-            }
-        }
-
-        let queryParams = `project=${projectId}`;
-        for (const channel of allChannels) {
-            queryParams += `&channels[]=${encodeURIComponent(channel)}`;
-        }
-
-        // Build query string from slots → channels → queries
-        // Format: channel[slot][]=query
-        // For each slot, repeat its queries under each channel it subscribes to
-        // Example: slot 1 → channels [tests, prod], queries [q1, q2]
-        //   Produces: tests[1][]=q1&tests[1][]=q2&prod[1][]=q1&prod[1][]=q2
-        const selectAllQuery = Query.select(['*']).toString();
-        for (const [slot, subscription] of this.activeSubscriptions) {
-            // queries is string[] - iterate over each query string
-            const queries = subscription.queries.length === 0 
-                ? [selectAllQuery] 
-                : subscription.queries;
-            
-            // Repeat this slot's queries under each channel it subscribes to
-            // Each query is sent as a separate parameter: channel[slot][]=q1&channel[slot][]=q2
-            for (const channel of subscription.channels) {
-                for (const query of queries) {
-                    queryParams += `&${encodeURIComponent(channel)}[${slot}][]=${encodeURIComponent(query)}`;
-                }
-            }
-        }
+        // URL carries only the project; channels/queries are sent via the subscribe message.
+        const queryParams = `project=${projectId}`;
 
         const endpoint =
             this.client.config.endpointRealtime !== ''
@@ -293,6 +278,44 @@ export class Realtime {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
+    private getKnownSubscriptionId(slot: number): string | undefined {
+        return this.slotToSubscriptionId.get(slot);
+    }
+
+    private sendSubscribeMessage(): void {
+        if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+            return;
+        }
+
+        const rows: RealtimeRequestSubscribeRow[] = [];
+        this.pendingSubscribeSlots = [];
+
+        for (const [slot, subscription] of this.activeSubscriptions) {
+            const queries = subscription.queries ?? [];
+
+            const row: RealtimeRequestSubscribeRow = {
+                channels: Array.from(subscription.channels),
+                queries
+            };
+            const knownSubscriptionId = this.getKnownSubscriptionId(slot);
+            if (knownSubscriptionId) {
+                row.subscriptionId = knownSubscriptionId;
+            }
+
+            rows.push(row);
+            this.pendingSubscribeSlots.push(slot);
+        }
+
+        if (rows.length < 1) {
+            return;
+        }
+
+        this.socket.send(JSON.stringify(<RealtimeRequest>{
+            type: 'subscribe',
+            data: rows
+        }));
+    }
+
     /**
      * Convert a channel value to a string
      *
@@ -408,7 +431,11 @@ export class Realtime {
         await this.sleep(this.DEBOUNCE_MS);
 
         if (this.subCallDepth === 1) {
-            await this.createSocket();
+            if (!this.socket || this.socket.readyState > WebSocket.OPEN) {
+                await this.createSocket();
+            } else if (this.socket.readyState === WebSocket.OPEN) {
+                this.sendSubscribeMessage();
+            }
         }
 
         this.subCallDepth--;
@@ -421,7 +448,17 @@ export class Realtime {
                 if (subscriptionId) {
                     this.subscriptionIdToSlot.delete(subscriptionId);
                 }
-                await this.createSocket();
+                if (this.activeSubscriptions.size === 0) {
+                    this.reconnect = false;
+                    await this.closeSocket();
+                    return;
+                }
+
+                if (!this.socket || this.socket.readyState > WebSocket.OPEN) {
+                    await this.createSocket();
+                } else if (this.socket.readyState === WebSocket.OPEN) {
+                    this.sendSubscribeMessage();
+                }
             }
         };
     }
@@ -447,6 +484,9 @@ export class Realtime {
             case this.TYPE_PONG:
                 // Handle pong response if needed
                 break;
+            case this.TYPE_RESPONSE:
+                this.handleResponseAction(message);
+                break;
         }
     }
 
@@ -457,16 +497,23 @@ export class Realtime {
 
         const messageData = message.data as RealtimeResponseConnected;
 
-        // Store subscription ID mappings from backend
-        // Format: { "0": "sub_a1f9", "1": "sub_b83c", ... }
+        // Store subscription ID mappings from backend.
+        // Use direct slot first; if URL mapping is zero-based, try slot+1.
         if (messageData.subscriptions) {
-            this.slotToSubscriptionId.clear();
-            this.subscriptionIdToSlot.clear();
             for (const [slotStr, subscriptionId] of Object.entries(messageData.subscriptions)) {
                 const slot = Number(slotStr);
-                if (!isNaN(slot)) {
-                    this.slotToSubscriptionId.set(slot, subscriptionId);
-                    this.subscriptionIdToSlot.set(subscriptionId, slot);
+                if (isNaN(slot)) {
+                    continue;
+                }
+
+                const directSlotExists = this.activeSubscriptions.has(slot);
+                const shiftedSlot = slot + 1;
+                const shiftedSlotExists = this.activeSubscriptions.has(shiftedSlot);
+                const targetSlot = directSlotExists ? slot : shiftedSlotExists ? shiftedSlot : slot;
+
+                if (typeof subscriptionId === 'string') {
+                    this.slotToSubscriptionId.set(targetSlot, subscriptionId);
+                    this.subscriptionIdToSlot.set(subscriptionId, targetSlot);
                 }
             }
         }
@@ -489,6 +536,8 @@ export class Realtime {
                 }
             }));
         }
+
+        this.sendSubscribeMessage();
     }
 
     private handleResponseError(message: RealtimeResponse): void {
@@ -532,6 +581,25 @@ export class Realtime {
                     subscription.callback(response);
                 }
             }
+        }
+    }
+
+    private handleResponseAction(message: RealtimeResponse): void {
+        const data = message.data as RealtimeResponseAction | undefined;
+        if (!data || data.to !== 'subscribe' || !Array.isArray(data.subscriptions)) {
+            return;
+        }
+
+        for (let i = 0; i < data.subscriptions.length; i++) {
+            const subscription = data.subscriptions[i];
+            const subscriptionId = subscription?.subscriptionId;
+            const slot = this.pendingSubscribeSlots[i];
+            if (slot === undefined || !subscriptionId) {
+                continue;
+            }
+
+            this.slotToSubscriptionId.set(slot, subscriptionId);
+            this.subscriptionIdToSlot.set(subscriptionId, slot);
         }
     }
 }

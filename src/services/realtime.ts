@@ -1,8 +1,29 @@
-import { AppwriteException, Client } from '../client';
+import { AppwriteException, Client, JSONbig } from '../client';
 import { Channel, ActionableChannel, ResolvedChannel } from '../channel';
 import { Query } from '../query';
+import { ID } from '../id';
+
+export type RealtimeSubscriptionUpdate = {
+    channels?: (string | Channel<any> | ActionableChannel | ResolvedChannel)[];
+    queries?: (string | Query)[];
+}
 
 export type RealtimeSubscription = {
+    /**
+     * Remove this subscription only. Keeps the WebSocket open so other subscriptions keep receiving events.
+     * Use `Realtime.disconnect()` to close the connection entirely.
+     */
+    unsubscribe: () => Promise<void>;
+
+    /**
+     * Replace the channels and/or queries for this subscription on the server without re-creating it.
+     */
+    update: (changes: RealtimeSubscriptionUpdate) => Promise<void>;
+
+    /**
+     * Alias of `unsubscribe()` plus legacy auto-disconnect when this was the last active subscription.
+     * Prefer `unsubscribe()` for per-subscription teardown and `Realtime.disconnect()` for full shutdown.
+     */
     close: () => Promise<void>;
 }
 
@@ -28,11 +49,10 @@ export type RealtimeResponseEvent<T = any> = {
 export type RealtimeResponseConnected = {
     channels: string[];
     user?: object;
-    subscriptions?: { [slot: string]: string }; // Map slot index -> subscriptionId
 }
 
 export type RealtimeRequest = {
-    type: 'authentication' | 'subscribe';
+    type: 'authentication' | 'subscribe' | 'unsubscribe';
     data: any;
 }
 
@@ -40,16 +60,6 @@ type RealtimeRequestSubscribeRow = {
     subscriptionId?: string;
     channels: string[];
     queries: string[];
-}
-
-type RealtimeResponseAction = {
-    to?: string;
-    success?: boolean;
-    subscriptions?: Array<{
-        subscriptionId?: string;
-        channels?: string[];
-        queries?: string[];
-    }>;
 }
 
 export enum RealtimeCode {
@@ -69,18 +79,12 @@ export class Realtime {
 
     private client: Client;
     private socket?: WebSocket;
-    // Slot-centric state: Map<slot, { channels: Set<string>, queries: string[], callback: Function }>
-    private activeSubscriptions = new Map<number, RealtimeCallback<any>>();
-    // Map slot index -> subscriptionId (from backend)
-    private slotToSubscriptionId = new Map<number, string>();
-    // Inverse map: subscriptionId -> slot index (for O(1) lookup)
-    private subscriptionIdToSlot = new Map<string, number>();
+    private activeSubscriptions = new Map<string, RealtimeCallback<any>>();
+    private pendingSubscribes = new Map<string, RealtimeRequestSubscribeRow>();
     private heartbeatTimer?: number;
 
     private subCallDepth = 0;
-    private pendingSubscribeSlots: number[] = [];
     private reconnectAttempts = 0;
-    private subscriptionsCounter = 0;
     private connectionId = 0;
     private reconnect = true;
 
@@ -124,16 +128,16 @@ export class Realtime {
 
     private startHeartbeat(): void {
         this.stopHeartbeat();
-        this.heartbeatTimer = window.setInterval(() => {
+        this.heartbeatTimer = window?.setInterval(() => {
             if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-                this.socket.send(JSON.stringify({ type: 'ping' }));
+                this.socket.send(JSONbig.stringify({ type: 'ping' }));
             }
         }, this.HEARTBEAT_INTERVAL);
     }
 
     private stopHeartbeat(): void {
         if (this.heartbeatTimer) {
-            window.clearInterval(this.heartbeatTimer);
+            window?.clearInterval(this.heartbeatTimer);
             this.heartbeatTimer = undefined;
         }
     }
@@ -191,7 +195,7 @@ export class Realtime {
                         return;
                     }
                     try {
-                        const message = JSON.parse(event.data) as RealtimeResponse;
+                        const message = JSONbig.parse(event.data) as RealtimeResponse;
                         this.handleMessage(message);
                     } catch (error) {
                         console.error('Failed to parse message:', error);
@@ -278,39 +282,67 @@ export class Realtime {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    private getKnownSubscriptionId(slot: number): string | undefined {
-        return this.slotToSubscriptionId.get(slot);
+    private sendUnsubscribeMessage(subscriptionIds: string[]): void {
+        const ids = subscriptionIds.filter(id => typeof id === 'string' && id.length > 0);
+        if (ids.length === 0) {
+            return;
+        }
+        if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+            return;
+        }
+        this.socket.send(JSONbig.stringify(<RealtimeRequest>{
+            type: 'unsubscribe',
+            data: ids.map(subscriptionId => ({ subscriptionId }))
+        }));
     }
 
-    private sendSubscribeMessage(): void {
+    private generateUniqueSubscriptionId(): string {
+        const attempts = this.activeSubscriptions.size + 1;
+        for (let i = 0; i < attempts; i++) {
+            const id = ID.unique();
+            if (!this.activeSubscriptions.has(id)) {
+                return id;
+            }
+        }
+        throw new AppwriteException('Failed to generate unique subscription id');
+    }
+
+    private enqueuePendingSubscribe(subscriptionId: string): void {
+        const subscription = this.activeSubscriptions.get(subscriptionId);
+        if (!subscription) {
+            return;
+        }
+        this.pendingSubscribes.set(subscriptionId, {
+            subscriptionId,
+            channels: Array.from(subscription.channels),
+            queries: subscription.queries ?? []
+        });
+    }
+
+    /**
+     * Close the WebSocket connection and drop all active subscriptions client-side.
+     * Use this instead of calling `unsubscribe()` on every subscription when you want to tear everything down.
+     */
+    public async disconnect(): Promise<void> {
+        this.activeSubscriptions.clear();
+        this.pendingSubscribes.clear();
+        this.reconnect = false;
+        await this.closeSocket();
+    }
+
+    private sendPendingSubscribes(): void {
         if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
             return;
         }
 
-        const rows: RealtimeRequestSubscribeRow[] = [];
-        this.pendingSubscribeSlots = [];
-
-        for (const [slot, subscription] of this.activeSubscriptions) {
-            const queries = subscription.queries ?? [];
-
-            const row: RealtimeRequestSubscribeRow = {
-                channels: Array.from(subscription.channels),
-                queries
-            };
-            const knownSubscriptionId = this.getKnownSubscriptionId(slot);
-            if (knownSubscriptionId) {
-                row.subscriptionId = knownSubscriptionId;
-            }
-
-            rows.push(row);
-            this.pendingSubscribeSlots.push(slot);
-        }
-
-        if (rows.length < 1) {
+        if (this.pendingSubscribes.size < 1) {
             return;
         }
 
-        this.socket.send(JSON.stringify(<RealtimeRequest>{
+        const rows = Array.from(this.pendingSubscribes.values());
+        this.pendingSubscribes.clear();
+
+        this.socket.send(JSONbig.stringify(<RealtimeRequest>{
             type: 'subscribe',
             data: rows
         }));
@@ -413,58 +445,92 @@ export class Realtime {
             }
         }
 
-        // Allocate a new slot index
-        this.subscriptionsCounter++;
-        const slot = this.subscriptionsCounter;
+        const subscriptionId = this.generateUniqueSubscriptionId();
 
-        // Store slot-centric data: channels, queries, and callback belong to the slot
-        // queries is stored as string[] (array of query strings)
-        // No channel mutation occurs here - channels are derived from slots in createSocket()
-        this.activeSubscriptions.set(slot, {
+        this.activeSubscriptions.set(subscriptionId, {
             channels,
             queries: queryStrings,
             callback
         });
+        this.enqueuePendingSubscribe(subscriptionId);
 
         this.subCallDepth++;
+        try {
+            await this.sleep(this.DEBOUNCE_MS);
 
-        await this.sleep(this.DEBOUNCE_MS);
-
-        if (this.subCallDepth === 1) {
-            if (!this.socket || this.socket.readyState > WebSocket.OPEN) {
-                await this.createSocket();
-            } else if (this.socket.readyState === WebSocket.OPEN) {
-                this.sendSubscribeMessage();
-            }
-        }
-
-        this.subCallDepth--;
-
-        return {
-            close: async () => {
-                const subscriptionId = this.slotToSubscriptionId.get(slot);
-                this.activeSubscriptions.delete(slot);
-                this.slotToSubscriptionId.delete(slot);
-                if (subscriptionId) {
-                    this.subscriptionIdToSlot.delete(subscriptionId);
-                }
-                if (this.activeSubscriptions.size === 0) {
-                    this.reconnect = false;
-                    await this.closeSocket();
-                    return;
-                }
-
+            if (this.subCallDepth === 1) {
                 if (!this.socket || this.socket.readyState > WebSocket.OPEN) {
                     await this.createSocket();
                 } else if (this.socket.readyState === WebSocket.OPEN) {
-                    this.sendSubscribeMessage();
+                    this.sendPendingSubscribes();
                 }
             }
-        };
-    }
+        } finally {
+            this.subCallDepth--;
+        }
 
-    // cleanUp is no longer needed - slots are removed directly in subscribe().close()
-    // Channels are automatically rebuilt from remaining slots in createSocket()
+        const unsubscribe = async (): Promise<void> => {
+            if (!this.activeSubscriptions.has(subscriptionId)) {
+                return;
+            }
+            this.activeSubscriptions.delete(subscriptionId);
+            this.pendingSubscribes.delete(subscriptionId);
+            this.sendUnsubscribeMessage([subscriptionId]);
+        };
+
+        const update = async (changes: RealtimeSubscriptionUpdate): Promise<void> => {
+            const subscription = this.activeSubscriptions.get(subscriptionId);
+            if (!subscription) {
+                return;
+            }
+
+            if (changes.channels !== undefined) {
+                const nextChannelStrings = changes.channels.map(ch => this.channelToString(ch));
+                subscription.channels = new Set(nextChannelStrings);
+            }
+
+            if (changes.queries !== undefined) {
+                const nextQueries: string[] = [];
+                for (const q of changes.queries) {
+                    if (Array.isArray(q)) {
+                        for (const inner of q) {
+                            nextQueries.push(typeof inner === 'string' ? inner : (inner as Query).toString());
+                        }
+                    } else {
+                        nextQueries.push(typeof q === 'string' ? q : q.toString());
+                    }
+                }
+                subscription.queries = nextQueries;
+            }
+
+            this.enqueuePendingSubscribe(subscriptionId);
+
+            this.subCallDepth++;
+            try {
+                await this.sleep(this.DEBOUNCE_MS);
+
+                if (this.subCallDepth === 1) {
+                    if (!this.socket || this.socket.readyState > WebSocket.OPEN) {
+                        await this.createSocket();
+                    } else if (this.socket.readyState === WebSocket.OPEN) {
+                        this.sendPendingSubscribes();
+                    }
+                }
+            } finally {
+                this.subCallDepth--;
+            }
+        };
+
+        const close = async (): Promise<void> => {
+            await unsubscribe();
+            if (this.activeSubscriptions.size === 0) {
+                this.reconnect = false;
+                await this.closeSocket();
+            }
+        };
+
+        return { unsubscribe, update, close };
+    }
 
     private handleMessage(message: RealtimeResponse): void {
         if (!message.type) {
@@ -497,31 +563,10 @@ export class Realtime {
 
         const messageData = message.data as RealtimeResponseConnected;
 
-        // Store subscription ID mappings from backend.
-        // Use direct slot first; if URL mapping is zero-based, try slot+1.
-        if (messageData.subscriptions) {
-            for (const [slotStr, subscriptionId] of Object.entries(messageData.subscriptions)) {
-                const slot = Number(slotStr);
-                if (isNaN(slot)) {
-                    continue;
-                }
-
-                const directSlotExists = this.activeSubscriptions.has(slot);
-                const shiftedSlot = slot + 1;
-                const shiftedSlotExists = this.activeSubscriptions.has(shiftedSlot);
-                const targetSlot = directSlotExists ? slot : shiftedSlotExists ? shiftedSlot : slot;
-
-                if (typeof subscriptionId === 'string') {
-                    this.slotToSubscriptionId.set(targetSlot, subscriptionId);
-                    this.subscriptionIdToSlot.set(subscriptionId, targetSlot);
-                }
-            }
-        }
-
         let session = this.client.config.session;
         if (!session) {
             try {
-                const cookie = JSON.parse(window.localStorage.getItem('cookieFallback') ?? '{}');
+                const cookie = JSONbig.parse(window.localStorage.getItem('cookieFallback') ?? '{}');
                 session = cookie?.[`a_session_${this.client.config.project}`];
             } catch (error) {
                 console.error('Failed to parse cookie fallback:', error);
@@ -529,7 +574,7 @@ export class Realtime {
         }
 
         if (session && !messageData.user) {
-            this.socket?.send(JSON.stringify(<RealtimeRequest>{
+            this.socket?.send(JSONbig.stringify(<RealtimeRequest>{
                 type: 'authentication',
                 data: {
                     session
@@ -537,7 +582,10 @@ export class Realtime {
             }));
         }
 
-        this.sendSubscribeMessage();
+        for (const subscriptionId of this.activeSubscriptions.keys()) {
+            this.enqueuePendingSubscribe(subscriptionId);
+        }
+        this.sendPendingSubscribes();
     }
 
     private handleResponseError(message: RealtimeResponse): void {
@@ -564,42 +612,24 @@ export class Realtime {
             return;
         }
 
-        // Iterate over all matching subscriptionIds and call callback for each
         for (const subscriptionId of subscriptions) {
-            // O(1) lookup using subscriptionId
-            const slot = this.subscriptionIdToSlot.get(subscriptionId);
-            if (slot !== undefined) {
-                const subscription = this.activeSubscriptions.get(slot);
-                if (subscription) {
-                    const response: RealtimeResponseEvent<any> = {
-                        events,
-                        channels,
-                        timestamp,
-                        payload,
-                        subscriptions
-                    };
-                    subscription.callback(response);
-                }
+            const subscription = this.activeSubscriptions.get(subscriptionId);
+            if (!subscription) {
+                continue;
             }
+            subscription.callback({
+                events,
+                channels,
+                timestamp,
+                payload,
+                subscriptions
+            });
         }
     }
 
-    private handleResponseAction(message: RealtimeResponse): void {
-        const data = message.data as RealtimeResponseAction | undefined;
-        if (!data || data.to !== 'subscribe' || !Array.isArray(data.subscriptions)) {
-            return;
-        }
-
-        for (let i = 0; i < data.subscriptions.length; i++) {
-            const subscription = data.subscriptions[i];
-            const subscriptionId = subscription?.subscriptionId;
-            const slot = this.pendingSubscribeSlots[i];
-            if (slot === undefined || !subscriptionId) {
-                continue;
-            }
-
-            this.slotToSubscriptionId.set(slot, subscriptionId);
-            this.subscriptionIdToSlot.set(subscriptionId, slot);
-        }
+    private handleResponseAction(_message: RealtimeResponse): void {
+        // The SDK generates subscriptionIds client-side and sends them on every
+        // subscribe/unsubscribe, so subscribe/unsubscribe acks carry no state
+        // the SDK needs to reconcile.
     }
 }

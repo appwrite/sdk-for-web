@@ -1,6 +1,7 @@
 import { Models } from './models';
 import { Channel, ActionableChannel, ResolvedChannel } from './channel';
 import { Query } from './query';
+import { ID } from './id';
 import JSONbigModule from 'json-bigint';
 const JSONbigParser = JSONbigModule({ storeAsString: false });
 const JSONbigSerializer = JSONbigModule({ useNativeBigInt: true });
@@ -37,7 +38,7 @@ function reviver(_key: string, value: any): any {
     return value;
 }
 
-const JSONbig = {
+export const JSONbig = {
     parse: (text: string) => JSONbigParser.parse(text, reviver),
     stringify: JSONbigSerializer.stringify
 };
@@ -87,19 +88,9 @@ type RealtimeRequest = {
 }
 
 type RealtimeRequestSubscribe = {
-    subscriptionId?: string;
+    subscriptionId: string;
     channels: string[];
     queries: string[];
-}
-
-type RealtimeResponseAction = {
-    to?: string;
-    success?: boolean;
-    subscriptions?: Array<{
-        subscriptionId?: string;
-        channels?: string[];
-        queries?: string[];
-    }>;
 }
 
 /**
@@ -160,11 +151,6 @@ type RealtimeResponseConnected = {
      * User object representing the connected user (optional).
      */
     user?: object;
-
-    /**
-     * Map slot index -> subscription ID from backend (optional).
-     */
-    subscriptions?: Record<string, string>;
 }
 
 /**
@@ -234,30 +220,18 @@ type Realtime = {
     channels: Set<string>;
 
     /**
-     * Map of subscriptions containing channel names and corresponding callback functions.
+     * Map of subscriptions keyed by client-generated subscriptionId.
      */
-    subscriptions: Map<number, {
+    subscriptions: Map<string, {
         channels: string[];
         queries: string[];
         callback: (payload: RealtimeResponseEvent<any>) => void
     }>;
 
     /**
-     * Map slot index -> subscription ID (from backend, set on 'connected').
+     * Pending subscribe rows keyed by subscriptionId. Flushed and cleared on each send.
      */
-    slotToSubscriptionId: Map<number, string>;
-
-    /**
-     * Map subscription ID -> slot index (for O(1) event dispatch).
-     */
-    subscriptionIdToSlot: Map<string, number>;
-
-    pendingSubscribeSlots: number[];
-
-    /**
-     * Counter for managing subscriptions.
-     */
-    subscriptionsCounter: number;
+    pendingSubscribes: Map<string, RealtimeRequestSubscribe>;
 
     /**
      * Boolean indicating whether automatic reconnection is enabled.
@@ -289,7 +263,7 @@ type Realtime = {
      */
     createHeartbeat: () => void;
 
-    sendSubscribeMessage: () => void;
+    sendPendingSubscribes: () => void;
 
     /**
      * Function to handle incoming messages from the WebSocket connection.
@@ -406,8 +380,8 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '24.3.0',
-        'X-Appwrite-Response-Format': '1.9.1',
+        'x-sdk-version': '25.0.0',
+        'X-Appwrite-Response-Format': '1.9.2',
     };
 
     /**
@@ -584,10 +558,7 @@ class Client {
         url: '',
         channels: new Set(),
         subscriptions: new Map(),
-        slotToSubscriptionId: new Map(),
-        subscriptionIdToSlot: new Map(),
-        pendingSubscribeSlots: [],
-        subscriptionsCounter: 0,
+        pendingSubscribes: new Map(),
         reconnect: true,
         reconnectAttempts: 0,
         lastMessage: undefined,
@@ -674,38 +645,20 @@ class Client {
                     }, timeout);
                 })
             } else if (this.realtime.socket?.readyState === WebSocket.OPEN) {
-                // URL is unchanged; re-send subscribe message to apply updated queries.
-                this.realtime.sendSubscribeMessage();
+                this.realtime.sendPendingSubscribes();
             }
         },
-        sendSubscribeMessage: () => {
+        sendPendingSubscribes: () => {
             if (!this.realtime.socket || this.realtime.socket.readyState !== WebSocket.OPEN) {
                 return;
             }
 
-            const rows: RealtimeRequestSubscribe[] = [];
-            this.realtime.pendingSubscribeSlots = [];
-
-            this.realtime.subscriptions.forEach((sub, slot) => {
-                const queries = sub.queries ?? [];
-
-                const row: RealtimeRequestSubscribe = {
-                    channels: sub.channels,
-                    queries
-                };
-
-                const knownSubscriptionId = this.realtime.slotToSubscriptionId.get(slot);
-                if (knownSubscriptionId) {
-                    row.subscriptionId = knownSubscriptionId;
-                }
-
-                rows.push(row);
-                this.realtime.pendingSubscribeSlots.push(slot);
-            });
-
-            if (rows.length < 1) {
+            if (this.realtime.pendingSubscribes.size < 1) {
                 return;
             }
+
+            const rows = Array.from(this.realtime.pendingSubscribes.values());
+            this.realtime.pendingSubscribes.clear();
 
             this.realtime.socket.send(JSONbig.stringify(<RealtimeRequest>{
                 type: 'subscribe',
@@ -719,30 +672,7 @@ class Client {
                 switch (message.type) {
                     case 'connected': {
                         const messageData = <RealtimeResponseConnected>message.data;
-                        if (messageData?.subscriptions) {
-                            for (const [slotStr, subscriptionId] of Object.entries(messageData.subscriptions)) {
-                                const slot = Number(slotStr);
-                                if (isNaN(slot) || typeof subscriptionId !== 'string') {
-                                    continue;
-                                }
 
-                                const directSlotExists = this.realtime.subscriptions.has(slot);
-                                const shiftedSlot = slot + 1;
-                                const shiftedSlotExists = this.realtime.subscriptions.has(shiftedSlot);
-                                const targetSlot = directSlotExists ? slot : shiftedSlotExists ? shiftedSlot : slot;
-
-                                this.realtime.slotToSubscriptionId.set(targetSlot, subscriptionId);
-                                this.realtime.subscriptionIdToSlot.set(subscriptionId, targetSlot);
-                            }
-                        }
-
-                        this.realtime.subscriptions.forEach((_sub, slot) => {
-                            const existing = this.realtime.slotToSubscriptionId.get(slot);
-                            if (existing) {
-                                this.realtime.subscriptionIdToSlot.set(existing, slot);
-                            }
-                        });
-                        
                         let session = this.config.session;
                         if (!session) {
                             const cookie = JSONbig.parse(window.localStorage.getItem('cookieFallback') ?? '{}');
@@ -757,27 +687,21 @@ class Client {
                             }));
                         }
 
-                        this.realtime.sendSubscribeMessage();
-                        break;
-                    }
-                    case 'response': {
-                        const action = message.data as RealtimeResponseAction;
-                        if (action?.to !== 'subscribe' || !Array.isArray(action.subscriptions)) {
-                            break;
-                        }
-
-                        action.subscriptions.forEach((subscription, index) => {
-                            const subscriptionId = subscription?.subscriptionId;
-                            const slot = this.realtime.pendingSubscribeSlots[index];
-                            if (!subscriptionId || slot === undefined) {
-                                return;
-                            }
-
-                            this.realtime.slotToSubscriptionId.set(slot, subscriptionId);
-                            this.realtime.subscriptionIdToSlot.set(subscriptionId, slot);
+                        this.realtime.subscriptions.forEach((sub, subscriptionId) => {
+                            this.realtime.pendingSubscribes.set(subscriptionId, {
+                                subscriptionId,
+                                channels: sub.channels,
+                                queries: sub.queries ?? []
+                            });
                         });
+                        this.realtime.sendPendingSubscribes();
                         break;
                     }
+                    case 'response':
+                        // The SDK generates subscriptionIds client-side and sends them on every
+                        // subscribe/unsubscribe, so subscribe/unsubscribe acks carry no state
+                        // the SDK needs to reconcile.
+                        break;
                     case 'event': {
                         const data = <RealtimeResponseEvent<unknown>>message.data;
                         if (!data?.channels) break;
@@ -785,12 +709,9 @@ class Client {
                         const eventSubIds = data.subscriptions;
                         if (eventSubIds && eventSubIds.length > 0) {
                             for (const subscriptionId of eventSubIds) {
-                                const slot = this.realtime.subscriptionIdToSlot.get(subscriptionId);
-                                if (slot !== undefined) {
-                                    const subscription = this.realtime.subscriptions.get(slot);
-                                    if (subscription) {
-                                        setTimeout(() => subscription.callback(data));
-                                    }
+                                const subscription = this.realtime.subscriptions.get(subscriptionId);
+                                if (subscription) {
+                                    setTimeout(() => subscription.callback(data));
                                 }
                             }
                         } else {
@@ -873,23 +794,35 @@ class Client {
         channelStrings.forEach(channel => this.realtime.channels.add(channel));
 
         const queryStrings = (queries ?? []).map(q => typeof q === 'string' ? q : q.toString());
-        const counter = this.realtime.subscriptionsCounter++;
-        this.realtime.subscriptions.set(counter, {
+
+        let subscriptionId = '';
+        const attempts = this.realtime.subscriptions.size + 1;
+        for (let i = 0; i < attempts; i++) {
+            const candidate = ID.unique();
+            if (!this.realtime.subscriptions.has(candidate)) {
+                subscriptionId = candidate;
+                break;
+            }
+        }
+        if (subscriptionId === '') {
+            throw new AppwriteException('Failed to generate unique subscription id');
+        }
+        this.realtime.subscriptions.set(subscriptionId, {
             channels: channelStrings,
             queries: queryStrings,
             callback
+        });
+        this.realtime.pendingSubscribes.set(subscriptionId, {
+            subscriptionId,
+            channels: channelStrings,
+            queries: queryStrings
         });
 
         this.realtime.connect();
 
         return () => {
-            const subscriptionId = this.realtime.slotToSubscriptionId.get(counter);
-            this.realtime.subscriptions.delete(counter);
-            this.realtime.slotToSubscriptionId.delete(counter);
-            if (subscriptionId) {
-                this.realtime.subscriptionIdToSlot.delete(subscriptionId);
-            }
-            // Remove channels that are no longer referenced by any active subscription.
+            this.realtime.subscriptions.delete(subscriptionId);
+            this.realtime.pendingSubscribes.delete(subscriptionId);
             const stillUsed = new Set<string>();
             this.realtime.subscriptions.forEach(sub => {
                 sub.channels.forEach(channel => stillUsed.add(channel));

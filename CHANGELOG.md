@@ -1,10 +1,10 @@
 # Change Log
 
-## 24.3.0
+## 25.0.0
 
-* Added: `Realtime` switched to explicit `subscribe` messages with per-subscription queries
-* Fixed: `Realtime` subscription IDs persisted correctly across reconnects
-* Updated: README compatibility note now targets `latest` server version
+* Breaking: Added `unsubscribe()`, `update()`, and `close()` for Realtime subscription lifecycle.
+* Added: Added `userPhone` to the `Membership` model.
+* Updated: Updated `X-Appwrite-Response-Format` header to `1.9.2`.
 
 ## 24.2.0
 

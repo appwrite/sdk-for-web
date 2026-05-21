@@ -354,9 +354,11 @@ class Client {
         endpoint: string;
         endpointRealtime: string;
         project: string;
+        key: string;
         jwt: string;
         locale: string;
         session: string;
+        forwardeduseragent: string;
         devkey: string;
         cookie: string;
         impersonateuserid: string;
@@ -366,9 +368,11 @@ class Client {
         endpoint: 'https://cloud.appwrite.io/v1',
         endpointRealtime: '',
         project: '',
+        key: '',
         jwt: '',
         locale: '',
         session: '',
+        forwardeduseragent: '',
         devkey: '',
         cookie: '',
         impersonateuserid: '',
@@ -380,9 +384,9 @@ class Client {
      */
     headers: Headers = {
         'x-sdk-name': 'Web',
-        'x-sdk-platform': 'client',
+        'x-sdk-platform': 'server',
         'x-sdk-language': 'web',
-        'x-sdk-version': '25.1.1',
+        'x-sdk-version': '25.2.0',
         'X-Appwrite-Response-Format': '1.9.5',
     };
 
@@ -457,6 +461,20 @@ class Client {
         return this;
     }
     /**
+     * Set Key
+     *
+     * Your secret API key
+     *
+     * @param value string
+     *
+     * @return {this}
+     */
+    setKey(value: string): this {
+        this.headers['X-Appwrite-Key'] = value;
+        this.config.key = value;
+        return this;
+    }
+    /**
      * Set JWT
      *
      * Your secret JSON Web Token
@@ -494,6 +512,20 @@ class Client {
     setSession(value: string): this {
         this.headers['X-Appwrite-Session'] = value;
         this.config.session = value;
+        return this;
+    }
+    /**
+     * Set ForwardedUserAgent
+     *
+     * The user agent string of the client that made the request
+     *
+     * @param value string
+     *
+     * @return {this}
+     */
+    setForwardedUserAgent(value: string): this {
+        this.headers['X-Forwarded-User-Agent'] = value;
+        this.config.forwardeduseragent = value;
         return this;
     }
     /**
@@ -918,44 +950,131 @@ class Client {
             return await this.call(method, url, headers, originalPayload);
         }
 
-        let start = 0;
-        let response = null;
+        const totalChunks = Math.ceil(file.size / Client.CHUNK_SIZE);
 
-        while (start < file.size) {
-            let end = start + Client.CHUNK_SIZE; // Prepare end for the next chunk
-            if (end >= file.size) {
-                end = file.size; // Adjust for the last chunk to include the last byte
+        // Upload first chunk alone to get the upload ID
+        const firstChunkEnd = Math.min(Client.CHUNK_SIZE, file.size);
+        const firstChunkHeaders = { ...headers, 'content-range': `bytes 0-${firstChunkEnd - 1}/${file.size}` };
+        const firstChunk = file.slice(0, firstChunkEnd);
+        const firstPayload = { ...originalPayload };
+        firstPayload[fileParam] = new File([firstChunk], file.name);
+
+        let response = await this.call(method, url, firstChunkHeaders, firstPayload);
+        const uploadId = response?.$id;
+
+        if (onProgress && typeof onProgress === 'function') {
+            onProgress({
+                $id: uploadId,
+                progress: Math.round((firstChunkEnd / file.size) * 100),
+                sizeUploaded: firstChunkEnd,
+                chunksTotal: totalChunks,
+                chunksUploaded: 1
+            });
+        }
+
+        if (totalChunks === 1) {
+            return response;
+        }
+
+        // Prepare remaining chunks
+        const chunks: { start: number; end: number }[] = [];
+        for (let i = 1; i < totalChunks; i++) {
+            const start = i * Client.CHUNK_SIZE;
+            const end = Math.min(start + Client.CHUNK_SIZE, file.size);
+            chunks.push({ start, end });
+        }
+
+        // Upload remaining chunks with max concurrency of 8
+        const CONCURRENCY = 8;
+        let completedCount = 1;
+        let uploadedBytes = firstChunkEnd;
+        let lastResponse = response;
+        let finalResponse = null;
+        let rejected = false;
+
+        const isUploadComplete = (chunkResponse: any) => {
+            const chunksUploaded = chunkResponse?.chunksUploaded;
+            const chunksTotal = chunkResponse?.chunksTotal ?? totalChunks;
+            return typeof chunksUploaded === 'number' && typeof chunksTotal === 'number' && chunksUploaded >= chunksTotal;
+        };
+
+        const uploadChunk = async (chunk: typeof chunks[0]) => {
+            const chunkHeaders = { ...headers };
+            if (uploadId) {
+                chunkHeaders['x-appwrite-id'] = uploadId;
             }
+            chunkHeaders['content-range'] = `bytes ${chunk.start}-${chunk.end - 1}/${file.size}`;
+            
+            const chunkBlob = file.slice(chunk.start, chunk.end);
+            const chunkPayload = { ...originalPayload };
+            chunkPayload[fileParam] = new File([chunkBlob], file.name);
 
-            headers['content-range'] = `bytes ${start}-${end-1}/${file.size}`;
-            const chunk = file.slice(start, end);
+            const chunkResponse = await this.call(method, url, chunkHeaders, chunkPayload);
 
-            let payload = { ...originalPayload };
-            payload[fileParam] = new File([chunk], file.name);
-
-            response = await this.call(method, url, headers, payload);
+            if (rejected) {
+                return chunkResponse;
+            }
+            
+            completedCount++;
+            uploadedBytes += (chunk.end - chunk.start);
+            
+            lastResponse = chunkResponse;
+            if (isUploadComplete(chunkResponse)) {
+                finalResponse = chunkResponse;
+            }
 
             if (onProgress && typeof onProgress === 'function') {
                 onProgress({
-                    $id: response.$id,
-                    progress: Math.round((end / file.size) * 100),
-                    sizeUploaded: end,
-                    chunksTotal: Math.ceil(file.size / Client.CHUNK_SIZE),
-                    chunksUploaded: Math.ceil(end / Client.CHUNK_SIZE)
+                    $id: uploadId,
+                    progress: Math.round((uploadedBytes / file.size) * 100),
+                    sizeUploaded: uploadedBytes,
+                    chunksTotal: totalChunks,
+                    chunksUploaded: completedCount
                 });
             }
 
-            if (response && response.$id) {
-                headers['x-appwrite-id'] = response.$id;
-            }
+            return chunkResponse;
+        };
 
-            start = end;
-        }
+        await new Promise<void>((resolve, reject) => {
+            let nextChunk = 0;
+            let inFlight = 0;
+            let completed = 0;
 
-        return response;
+            const uploadNext = () => {
+                if (rejected) {
+                    return;
+                }
+
+                if (completed === chunks.length) {
+                    resolve();
+                    return;
+                }
+
+                while (inFlight < CONCURRENCY && nextChunk < chunks.length) {
+                    const chunk = chunks[nextChunk++];
+                    inFlight++;
+
+                    uploadChunk(chunk)
+                        .then(() => {
+                            inFlight--;
+                            completed++;
+                            uploadNext();
+                        })
+                        .catch((error) => {
+                            rejected = true;
+                            reject(error);
+                        });
+                }
+            };
+
+            uploadNext();
+        });
+
+        return finalResponse ?? lastResponse;
     }
 
-    async ping(): Promise<string> {
+    async ping(): Promise<unknown> {
         return this.call('GET', new URL(this.config.endpoint + '/ping'));
     }
 

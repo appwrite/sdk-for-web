@@ -2,6 +2,7 @@ import { Models } from './models';
 import { Channel, ActionableChannel, ResolvedChannel } from './channel';
 import { Query } from './query';
 import { ID } from './id';
+import { WafChallenge, WAF_CHALLENGE_ERROR } from './waf';
 import JSONbigModule from 'json-bigint';
 const JSONbigParser = JSONbigModule({ storeAsString: false });
 const JSONbigSerializer = JSONbigModule({ useNativeBigInt: true });
@@ -355,8 +356,10 @@ class Client {
         endpointRealtime: string;
         project: string;
         jwt: string;
+        bearer: string;
         locale: string;
         session: string;
+        mode: string;
         devkey: string;
         cookie: string;
         impersonateuserid: string;
@@ -367,8 +370,10 @@ class Client {
         endpointRealtime: '',
         project: '',
         jwt: '',
+        bearer: '',
         locale: '',
         session: '',
+        mode: '',
         devkey: '',
         cookie: '',
         impersonateuserid: '',
@@ -385,6 +390,15 @@ class Client {
         'x-sdk-version': '26.1.0',
         'X-Appwrite-Response-Format': '1.9.5',
     };
+
+    /**
+     * Handles WAF proof-of-work challenges transparently: solves and retries so
+     * application code never sees `waf_challenge_required`. See ./waf.
+     */
+    private waf: WafChallenge = new WafChallenge(
+        () => this.config.endpoint,
+        () => this.config.project,
+    );
 
     /**
      * Get Headers
@@ -470,6 +484,20 @@ class Client {
         return this;
     }
     /**
+     * Set Bearer
+     *
+     * The OAuth access token to authenticate with
+     *
+     * @param value string
+     *
+     * @return {this}
+     */
+    setBearer(value: string): this {
+        this.headers['Authorization'] = value;
+        this.config.bearer = value;
+        return this;
+    }
+    /**
      * Set Locale
      *
      * @param value string
@@ -493,6 +521,18 @@ class Client {
     setSession(value: string): this {
         this.headers['X-Appwrite-Session'] = value;
         this.config.session = value;
+        return this;
+    }
+    /**
+     * Set Mode
+     *
+     * @param value string
+     *
+     * @return {this}
+     */
+    setMode(value: string): this {
+        this.headers['X-Appwrite-Mode'] = value;
+        this.config.mode = value;
         return this;
     }
     /**
@@ -692,19 +732,19 @@ class Client {
                     case 'connected': {
                         const messageData = <RealtimeResponseConnected>message.data;
 
-                        let session = this.config.session;
-                        if (!session) {
-                            const cookie = JSONbig.parse(window.localStorage.getItem('cookieFallback') ?? '{}');
-                            session = cookie?.[`a_session_${this.config.project}`];
-                        }
-                        if (session && !messageData?.user) {
-                            this.realtime.socket?.send(JSONbig.stringify(<RealtimeRequest>{
-                                type: 'authentication',
-                                data: {
-                                    session
-                                }
-                            }));
-                        }
+                            let session = this.config.session;
+                            if (!session) {
+                                const cookie = JSONbig.parse(window.localStorage.getItem('cookieFallback') ?? '{}');
+                                session = cookie?.[`a_session_${this.config.project}`];
+                            }
+                            if (session && !messageData?.user) {
+                                this.realtime.socket?.send(JSONbig.stringify(<RealtimeRequest>{
+                                    type: 'authentication',
+                                    data: {
+                                        session
+                                    }
+                                }));
+                            }
 
                         this.realtime.subscriptions.forEach((sub, subscriptionId) => {
                             this.realtime.pendingSubscribes.set(subscriptionId, {
@@ -1052,7 +1092,13 @@ class Client {
         });
     }
 
-    async call(method: string, url: URL, headers: Headers = {}, params: Payload = {}, responseType = 'json'): Promise<any> {
+    async call(method: string, url: URL, headers: Headers = {}, params: Payload = {}, responseType = 'json', _wafAttempt = 0): Promise<any> {
+        // Attach a cached WAF clearance token, if we hold a valid one.
+        const wafToken = this.waf.token();
+        if (wafToken) {
+            headers = { ...headers, 'X-Appwrite-WAF-Token': wafToken };
+        }
+
         const { uri, options } = this.prepareRequest(method, url, headers, params);
 
         let data: any = null;
@@ -1084,6 +1130,22 @@ class Client {
             };
         }
 
+        // WAF proof-of-work challenge: solve it transparently and retry once, so
+        // callers never see `waf_challenge_required`. A single retry (guarded by
+        // _wafAttempt) can never loop; a stale/rejected token is dropped and
+        // re-solved once before the error is surfaced.
+        if (response.status === 403 && data?.type === WAF_CHALLENGE_ERROR && _wafAttempt < 1) {
+            const challengeHeaders: Record<string, string> = {};
+            response.headers.forEach((value, key) => { challengeHeaders[key.toLowerCase()] = value; });
+            this.waf.reset();
+            try {
+                const token = await this.waf.solve(challengeHeaders);
+                return this.call(method, url, { ...headers, 'X-Appwrite-WAF-Token': token }, params, responseType, _wafAttempt + 1);
+            } catch {
+                // Solve failed — fall through and surface the original error.
+            }
+        }
+
         if (400 <= response.status) {
             let responseText = '';
             if (response.headers.get('content-type')?.includes('application/json') || responseType === 'arrayBuffer') {
@@ -1091,7 +1153,7 @@ class Client {
             } else {
                 responseText = data?.message;
             }
-            throw new AppwriteException(data?.message, response.status, data?.type, responseText);
+            throw new AppwriteException(data?.message ?? responseText, response.status, data?.type, responseText);
         }
 
         const cookieFallback = response.headers.get('X-Fallback-Cookies');

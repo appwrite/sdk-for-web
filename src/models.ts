@@ -79,17 +79,17 @@ export namespace Models {
     }
 
     /**
-     * Logs List
+     * Notifications List
      */
-    export type LogList = {
+    export type NotificationList = {
         /**
-         * Total number of logs that matched your query.
+         * Total number of notifications that matched your query.
          */
         total: number;
         /**
-         * List of logs.
+         * List of notifications.
          */
-        logs: Log[];
+        notifications: Notification[];
     }
 
     /**
@@ -364,100 +364,6 @@ export namespace Models {
          * Presence metadata.
          */
         metadata?: object;
-    }
-
-    /**
-     * Log
-     */
-    export type Log = {
-        /**
-         * Event name.
-         */
-        event: string;
-        /**
-         * User ID of the actor recorded for this log. During impersonation, this is the original impersonator, not the impersonated target user.
-         */
-        userId: string;
-        /**
-         * User email of the actor recorded for this log. During impersonation, this is the original impersonator.
-         */
-        userEmail: string;
-        /**
-         * User name of the actor recorded for this log. During impersonation, this is the original impersonator.
-         */
-        userName: string;
-        /**
-         * API mode when event triggered.
-         */
-        mode: string;
-        /**
-         * User type who triggered the audit log. Possible values: user, admin, guest, keyProject, keyAccount, keyOrganization.
-         */
-        userType: string;
-        /**
-         * IP session in use when the session was created.
-         */
-        ip: string;
-        /**
-         * Log creation date in ISO 8601 format.
-         */
-        time: string;
-        /**
-         * Operating system code name. View list of [available options](https://github.com/appwrite/appwrite/blob/master/docs/lists/os.json).
-         */
-        osCode: string;
-        /**
-         * Operating system name.
-         */
-        osName: string;
-        /**
-         * Operating system version.
-         */
-        osVersion: string;
-        /**
-         * Client type.
-         */
-        clientType: string;
-        /**
-         * Client code name. View list of [available options](https://github.com/appwrite/appwrite/blob/master/docs/lists/clients.json).
-         */
-        clientCode: string;
-        /**
-         * Client name.
-         */
-        clientName: string;
-        /**
-         * Client version.
-         */
-        clientVersion: string;
-        /**
-         * Client engine name.
-         */
-        clientEngine: string;
-        /**
-         * Client engine name.
-         */
-        clientEngineVersion: string;
-        /**
-         * Device name.
-         */
-        deviceName: string;
-        /**
-         * Device brand name.
-         */
-        deviceBrand: string;
-        /**
-         * Device model name.
-         */
-        deviceModel: string;
-        /**
-         * Country two-character ISO 3166-1 alpha code.
-         */
-        countryCode: string;
-        /**
-         * Country name.
-         */
-        countryName: string;
     }
 
     /**
@@ -857,6 +763,76 @@ export namespace Models {
          * Identity Provider Refresh Token.
          */
         providerRefreshToken: string;
+    }
+
+    /**
+     * Notification
+     */
+    export type Notification = {
+        /**
+         * Notification ID.
+         */
+        $id: string;
+        /**
+         * Notification creation date in ISO 8601 format.
+         */
+        $createdAt: string;
+        /**
+         * Notification update date in ISO 8601 format.
+         */
+        $updatedAt: string;
+        /**
+         * Stable message ID used for dedup.
+         */
+        messageId?: string;
+        /**
+         * Notification type: info, warning, error.
+         */
+        type: string;
+        /**
+         * Channel: email, sms, push, console, webhook.
+         */
+        channel: string;
+        /**
+         * Resource type this notification is addressed to.
+         */
+        resourceType: string;
+        /**
+         * Resource ID this notification is addressed to.
+         */
+        resourceId: string;
+        /**
+         * Parent resource type for the notification.
+         */
+        parentResourceType: string;
+        /**
+         * Parent resource ID for the notification.
+         */
+        parentResourceId: string;
+        /**
+         * Project the notification pertains to.
+         */
+        projectId?: string;
+        /**
+         * Notification title.
+         */
+        title: string;
+        /**
+         * Notification body.
+         */
+        body: string;
+        /**
+         * Whether the notification has been read.
+         */
+        read?: boolean;
+        /**
+         * First time the notification was viewed from a notification logo.
+         */
+        firstSeen?: string;
+        /**
+         * Most recent time the notification was viewed from a notification logo.
+         */
+        lastSeen?: string;
     }
 
     /**
@@ -1475,5 +1451,23 @@ export namespace Models {
          * Is the target expired.
          */
         expired: boolean;
+    }
+
+    /**
+     * WAF Challenge Token
+     */
+    export type WafChallengeToken = {
+        /**
+         * Clearance token proving the challenge was solved. Present it on subsequent requests via the X-Appwrite-WAF-Token header.
+         */
+        token: string;
+        /**
+         * Absolute expiry time of the clearance token as a UNIX timestamp. Advisory; prefer expiresIn.
+         */
+        expiresAt: number;
+        /**
+         * Lifetime of the clearance token in seconds from now. Clients should compute their local deadline from this to avoid clock skew.
+         */
+        expiresIn: number;
     }
 }

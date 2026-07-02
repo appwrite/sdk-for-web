@@ -364,67 +364,6 @@ export class Account {
     }
 
     /**
-     * Get the list of latest security activity logs for the currently logged in user. Each log returns user IP address, location and date and time of log.
-     *
-     * @param {string[]} params.queries - Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset
-     * @param {boolean} params.total - When set to false, the total count returned will be 0 and will not be calculated.
-     * @throws {AppwriteException}
-     * @returns {Promise<Models.LogList>}
-     */
-    listLogs(params?: { queries?: string[], total?: boolean }): Promise<Models.LogList>;
-    /**
-     * Get the list of latest security activity logs for the currently logged in user. Each log returns user IP address, location and date and time of log.
-     *
-     * @param {string[]} queries - Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset
-     * @param {boolean} total - When set to false, the total count returned will be 0 and will not be calculated.
-     * @throws {AppwriteException}
-     * @returns {Promise<Models.LogList>}
-     * @deprecated Use the object parameter style method for a better developer experience.
-     */
-    listLogs(queries?: string[], total?: boolean): Promise<Models.LogList>;
-    listLogs(
-        paramsOrFirst?: { queries?: string[], total?: boolean } | string[],
-        ...rest: [(boolean)?]    
-    ): Promise<Models.LogList> {
-        let params: { queries?: string[], total?: boolean };
-        
-        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { queries?: string[], total?: boolean };
-        } else {
-            params = {
-                queries: paramsOrFirst as string[],
-                total: rest[0] as boolean            
-            };
-        }
-        
-        const queries = params.queries;
-        const total = params.total;
-
-
-        const apiPath = '/account/logs';
-        const payload: Payload = {};
-        if (typeof queries !== 'undefined') {
-            payload['queries'] = queries;
-        }
-        if (typeof total !== 'undefined') {
-            payload['total'] = total;
-        }
-        const uri = new URL(this.client.config.endpoint + apiPath);
-
-        const apiHeaders: { [header: string]: string } = {
-            'X-Appwrite-Project': this.client.config.project,
-            'accept': 'application/json',
-        }
-
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
-    }
-
-    /**
      * Enable or disable MFA on an account.
      *
      * @param {boolean} params.mfa - Enable or disable MFA.

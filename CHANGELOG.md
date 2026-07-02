@@ -4,8 +4,6 @@
 
 * Added: Realtime connections now send the configured JWT for authentication.
 * Added: Forwarded `impersonateUserId` on `avatars` and `storage` file requests.
-* Fixed: URL-encode path parameters across all services.
-* Fixed: `ping` now sends an `Accept: application/json` header.
 
 ## 26.0.0
 

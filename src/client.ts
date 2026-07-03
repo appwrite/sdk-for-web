@@ -1136,7 +1136,7 @@ class Client {
         // re-solved once before the error is surfaced.
         if (response.status === 403 && data?.type === WAF_CHALLENGE_ERROR && _wafAttempt < 1) {
             const challengeHeaders: Record<string, string> = {};
-            response.headers.forEach((value, key) => { challengeHeaders[key.toLowerCase()] = value; });
+            response.headers.forEach((value: string, key: string) => { challengeHeaders[key.toLowerCase()] = value; });
             this.waf.reset();
             try {
                 const token = await this.waf.solve(challengeHeaders);

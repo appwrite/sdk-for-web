@@ -1,8 +1,8 @@
 /**
- * Appwrite WAF proof-of-work challenge handler (browser).
+ * Appwrite WAF challenge handler (browser).
  *
  * When a request is met with `waf_challenge_required`, the client solves the
- * proof-of-work advertised by the `X-Appwrite-WAF-*` headers, exchanges the
+ * challenge advertised by the `X-Appwrite-WAF-*` headers, exchanges the
  * solution for a short-lived clearance token, and retries the request with it —
  * transparently, so application code never sees the challenge.
  *
@@ -115,7 +115,7 @@ function meets(nonce: string, solution: string, difficulty: number): boolean {
 }
 
 /** Chunked, yielding solve so the browser tab stays responsive. */
-export function solvePow(nonce: string, difficulty: number, chunk = 2000): Promise<string> {
+export function solveChallenge(nonce: string, difficulty: number, chunk = 2000): Promise<string> {
     const yieldTo: (fn: () => void) => void = (typeof requestAnimationFrame === 'function')
         ? requestAnimationFrame
         : (fn) => setTimeout(fn, 0);
@@ -168,7 +168,7 @@ export class WafChallenge {
         const expiresIn = parseInt(headers['x-appwrite-waf-expires-in'] || '0', 10) || 0;
 
         this.inflight = (async () => {
-            const solution = await solvePow(nonce, difficulty);
+            const solution = await solveChallenge(nonce, difficulty);
             // Solve UNAUTHENTICATED — only the project header, never key/session.
             const endpoint = this.getEndpoint().replace(/\/+$/, '');
             const res = await fetch(endpoint + '/waf/challenge', {

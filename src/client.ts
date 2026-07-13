@@ -355,6 +355,7 @@ class Client {
         endpointRealtime: string;
         project: string;
         jwt: string;
+        bearer: string;
         locale: string;
         session: string;
         devkey: string;
@@ -367,6 +368,7 @@ class Client {
         endpointRealtime: '',
         project: '',
         jwt: '',
+        bearer: '',
         locale: '',
         session: '',
         devkey: '',
@@ -382,7 +384,7 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '26.1.0',
+        'x-sdk-version': '26.2.0',
         'X-Appwrite-Response-Format': '1.9.5',
     };
 
@@ -467,6 +469,20 @@ class Client {
     setJWT(value: string): this {
         this.headers['X-Appwrite-JWT'] = value;
         this.config.jwt = value;
+        return this;
+    }
+    /**
+     * Set Bearer
+     *
+     * The OAuth access token to authenticate with
+     *
+     * @param value string
+     *
+     * @return {this}
+     */
+    setBearer(value: string): this {
+        this.headers['Authorization'] = value;
+        this.config.bearer = value;
         return this;
     }
     /**
@@ -692,19 +708,19 @@ class Client {
                     case 'connected': {
                         const messageData = <RealtimeResponseConnected>message.data;
 
-                        let session = this.config.session;
-                        if (!session) {
-                            const cookie = JSONbig.parse(window.localStorage.getItem('cookieFallback') ?? '{}');
-                            session = cookie?.[`a_session_${this.config.project}`];
-                        }
-                        if (session && !messageData?.user) {
-                            this.realtime.socket?.send(JSONbig.stringify(<RealtimeRequest>{
-                                type: 'authentication',
-                                data: {
-                                    session
-                                }
-                            }));
-                        }
+                            let session = this.config.session;
+                            if (!session) {
+                                const cookie = JSONbig.parse(window.localStorage.getItem('cookieFallback') ?? '{}');
+                                session = cookie?.[`a_session_${this.config.project}`];
+                            }
+                            if (session && !messageData?.user) {
+                                this.realtime.socket?.send(JSONbig.stringify(<RealtimeRequest>{
+                                    type: 'authentication',
+                                    data: {
+                                        session
+                                    }
+                                }));
+                            }
 
                         this.realtime.subscriptions.forEach((sub, subscriptionId) => {
                             this.realtime.pendingSubscribes.set(subscriptionId, {
@@ -1091,7 +1107,7 @@ class Client {
             } else {
                 responseText = data?.message;
             }
-            throw new AppwriteException(data?.message, response.status, data?.type, responseText);
+            throw new AppwriteException(data?.message ?? responseText, response.status, data?.type, responseText);
         }
 
         const cookieFallback = response.headers.get('X-Fallback-Cookies');

@@ -1,11 +1,17 @@
 # Change Log
 
+## 26.2.0
+
+* Added: `Client.setBearer()` to authenticate requests with an OAuth access token
+* Added: `appwrite` value to `OAuthProvider` enum
+* Added: `Query.vectorDot`, `Query.vectorCosine`, `Query.vectorEuclidean` vector similarity query helpers
+* Added: geolocation and network fields (`city`, `timeZone`, `latitude`, `isp`, ASN, connection info) to `Locale` model
+* Fixed: `AppwriteException` message now falls back to response text when missing
+
 ## 26.1.0
 
 * Added: Realtime connections now send the configured JWT for authentication.
 * Added: Forwarded `impersonateUserId` on `avatars` and `storage` file requests.
-* Fixed: URL-encode path parameters across all services.
-* Fixed: `ping` now sends an `Accept: application/json` header.
 
 ## 26.0.0
 

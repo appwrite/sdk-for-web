@@ -1,4 +1,5 @@
 export enum ImageGravity {
+    Auto = 'auto',
     Center = 'center',
     Topleft = 'top-left',
     Top = 'top',

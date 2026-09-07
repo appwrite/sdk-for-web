@@ -47,7 +47,7 @@ export class Presences {
         let params: { queries?: string[]; total?: boolean; ttl?: number };
 
         if (
-            !paramsOrFirst ||
+            (typeof paramsOrFirst === 'undefined' && rest.length === 0) ||
             (paramsOrFirst &&
                 typeof paramsOrFirst === 'object' &&
                 !Array.isArray(paramsOrFirst))

@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Presences, Permission, Role } from "appwrite";
+import { Client, Presences, Permission, Role } from 'appwrite';
 
 const client = new Client()
     .setEndpoint('https://<REGION>.cloud.appwrite.io/v1') // Your API Endpoint
@@ -12,7 +12,7 @@ const result = await presences.upsert({
     status: '<STATUS>',
     permissions: [Permission.read(Role.any())], // optional
     expiresAt: '2020-10-15T06:38:00.000+00:00', // optional
-    metadata: {} // optional
+    metadata: {}, // optional
 });
 
 console.log(result);

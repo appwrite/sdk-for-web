@@ -1,9 +1,7 @@
-import { Service } from '../service';
-import { AppwriteException, Client, type Payload, UploadProgress } from '../client';
+import { AppwriteException, Client, type Payload } from '../client';
 import type { Models } from '../models';
 
 import { ExecutionMethod } from '../enums/execution-method';
-
 export class Functions {
     client: Client;
 
@@ -20,7 +18,11 @@ export class Functions {
      * @throws {AppwriteException}
      * @returns {Promise<Models.ExecutionList>}
      */
-    listExecutions(params: { functionId: string, queries?: string[], total?: boolean }): Promise<Models.ExecutionList>;
+    listExecutions(params: {
+        functionId: string;
+        queries?: string[];
+        total?: boolean;
+    }): Promise<Models.ExecutionList>;
     /**
      * Get a list of all the current user function execution logs. You can use the query params to filter your results.
      *
@@ -31,32 +33,50 @@ export class Functions {
      * @returns {Promise<Models.ExecutionList>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    listExecutions(functionId: string, queries?: string[], total?: boolean): Promise<Models.ExecutionList>;
     listExecutions(
-        paramsOrFirst: { functionId: string, queries?: string[], total?: boolean } | string,
-        ...rest: [(string[])?, (boolean)?]    
+        functionId: string,
+        queries?: string[],
+        total?: boolean,
+    ): Promise<Models.ExecutionList>;
+    listExecutions(
+        paramsOrFirst:
+            | { functionId: string; queries?: string[]; total?: boolean }
+            | string,
+        ...rest: [string[]?, boolean?]
     ): Promise<Models.ExecutionList> {
-        let params: { functionId: string, queries?: string[], total?: boolean };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { functionId: string, queries?: string[], total?: boolean };
+        let params: { functionId: string; queries?: string[]; total?: boolean };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                functionId: string;
+                queries?: string[];
+                total?: boolean;
+            };
         } else {
             params = {
                 functionId: paramsOrFirst as string,
                 queries: rest[0] as string[],
-                total: rest[1] as boolean            
+                total: rest[1] as boolean,
             };
         }
-        
+
         const functionId = params.functionId;
         const queries = params.queries;
         const total = params.total;
 
         if (typeof functionId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "functionId"');
+            throw new AppwriteException(
+                'Missing required parameter: "functionId"',
+            );
         }
-
-        const apiPath = '/functions/{functionId}/executions'.replace('{functionId}', encodeURIComponent(String(functionId)));
+        const apiPath = '/functions/{functionId}/executions'.replace(
+            '{functionId}',
+            encodeURIComponent(String(functionId)),
+        );
         const payload: Payload = {};
         if (typeof queries !== 'undefined') {
             payload['queries'] = queries;
@@ -68,15 +88,10 @@ export class Functions {
 
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('get', uri, apiHeaders, payload);
     }
 
     /**
@@ -92,7 +107,15 @@ export class Functions {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Execution>}
      */
-    createExecution(params: { functionId: string, body?: string, async?: boolean, xpath?: string, method?: ExecutionMethod, headers?: object, scheduledAt?: string }): Promise<Models.Execution>;
+    createExecution(params: {
+        functionId: string;
+        body?: string;
+        async?: boolean;
+        xpath?: string;
+        method?: ExecutionMethod;
+        headers?: object;
+        scheduledAt?: string;
+    }): Promise<Models.Execution>;
     /**
      * Trigger a function execution. The returned object will return you the current execution status. You can ping the `Get Execution` endpoint to get updates on the current execution status. Once this endpoint is called, your function execution process will start asynchronously.
      *
@@ -107,15 +130,60 @@ export class Functions {
      * @returns {Promise<Models.Execution>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    createExecution(functionId: string, body?: string, async?: boolean, xpath?: string, method?: ExecutionMethod, headers?: object, scheduledAt?: string): Promise<Models.Execution>;
     createExecution(
-        paramsOrFirst: { functionId: string, body?: string, async?: boolean, xpath?: string, method?: ExecutionMethod, headers?: object, scheduledAt?: string } | string,
-        ...rest: [(string)?, (boolean)?, (string)?, (ExecutionMethod)?, (object)?, (string)?]    
+        functionId: string,
+        body?: string,
+        async?: boolean,
+        xpath?: string,
+        method?: ExecutionMethod,
+        headers?: object,
+        scheduledAt?: string,
+    ): Promise<Models.Execution>;
+    createExecution(
+        paramsOrFirst:
+            | {
+                  functionId: string;
+                  body?: string;
+                  async?: boolean;
+                  xpath?: string;
+                  method?: ExecutionMethod;
+                  headers?: object;
+                  scheduledAt?: string;
+              }
+            | string,
+        ...rest: [
+            string?,
+            boolean?,
+            string?,
+            ExecutionMethod?,
+            object?,
+            string?,
+        ]
     ): Promise<Models.Execution> {
-        let params: { functionId: string, body?: string, async?: boolean, xpath?: string, method?: ExecutionMethod, headers?: object, scheduledAt?: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { functionId: string, body?: string, async?: boolean, xpath?: string, method?: ExecutionMethod, headers?: object, scheduledAt?: string };
+        let params: {
+            functionId: string;
+            body?: string;
+            async?: boolean;
+            xpath?: string;
+            method?: ExecutionMethod;
+            headers?: object;
+            scheduledAt?: string;
+        };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                functionId: string;
+                body?: string;
+                async?: boolean;
+                xpath?: string;
+                method?: ExecutionMethod;
+                headers?: object;
+                scheduledAt?: string;
+            };
         } else {
             params = {
                 functionId: paramsOrFirst as string,
@@ -124,10 +192,10 @@ export class Functions {
                 xpath: rest[2] as string,
                 method: rest[3] as ExecutionMethod,
                 headers: rest[4] as object,
-                scheduledAt: rest[5] as string            
+                scheduledAt: rest[5] as string,
             };
         }
-        
+
         const functionId = params.functionId;
         const body = params.body;
         const async = params.async;
@@ -137,10 +205,14 @@ export class Functions {
         const scheduledAt = params.scheduledAt;
 
         if (typeof functionId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "functionId"');
+            throw new AppwriteException(
+                'Missing required parameter: "functionId"',
+            );
         }
-
-        const apiPath = '/functions/{functionId}/executions'.replace('{functionId}', encodeURIComponent(String(functionId)));
+        const apiPath = '/functions/{functionId}/executions'.replace(
+            '{functionId}',
+            encodeURIComponent(String(functionId)),
+        );
         const payload: Payload = {};
         if (typeof body !== 'undefined') {
             payload['body'] = body;
@@ -165,15 +237,10 @@ export class Functions {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'post',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('post', uri, apiHeaders, payload);
     }
 
     /**
@@ -184,7 +251,10 @@ export class Functions {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Execution>}
      */
-    getExecution(params: { functionId: string, executionId: string }): Promise<Models.Execution>;
+    getExecution(params: {
+        functionId: string;
+        executionId: string;
+    }): Promise<Models.Execution>;
     /**
      * Get a function execution log by its unique ID.
      *
@@ -194,46 +264,56 @@ export class Functions {
      * @returns {Promise<Models.Execution>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    getExecution(functionId: string, executionId: string): Promise<Models.Execution>;
     getExecution(
-        paramsOrFirst: { functionId: string, executionId: string } | string,
-        ...rest: [(string)?]    
+        functionId: string,
+        executionId: string,
+    ): Promise<Models.Execution>;
+    getExecution(
+        paramsOrFirst: { functionId: string; executionId: string } | string,
+        ...rest: [string?]
     ): Promise<Models.Execution> {
-        let params: { functionId: string, executionId: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { functionId: string, executionId: string };
+        let params: { functionId: string; executionId: string };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                functionId: string;
+                executionId: string;
+            };
         } else {
             params = {
                 functionId: paramsOrFirst as string,
-                executionId: rest[0] as string            
+                executionId: rest[0] as string,
             };
         }
-        
+
         const functionId = params.functionId;
         const executionId = params.executionId;
 
         if (typeof functionId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "functionId"');
+            throw new AppwriteException(
+                'Missing required parameter: "functionId"',
+            );
         }
         if (typeof executionId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "executionId"');
+            throw new AppwriteException(
+                'Missing required parameter: "executionId"',
+            );
         }
-
-        const apiPath = '/functions/{functionId}/executions/{executionId}'.replace('{functionId}', encodeURIComponent(String(functionId))).replace('{executionId}', encodeURIComponent(String(executionId)));
+        const apiPath = '/functions/{functionId}/executions/{executionId}'
+            .replace('{functionId}', encodeURIComponent(String(functionId)))
+            .replace('{executionId}', encodeURIComponent(String(executionId)));
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('get', uri, apiHeaders, payload);
     }
 }

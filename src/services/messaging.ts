@@ -1,7 +1,5 @@
-import { Service } from '../service';
-import { AppwriteException, Client, type Payload, UploadProgress } from '../client';
+import { AppwriteException, Client, type Payload } from '../client';
 import type { Models } from '../models';
-
 
 export class Messaging {
     client: Client;
@@ -19,7 +17,11 @@ export class Messaging {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Subscriber>}
      */
-    createSubscriber(params: { topicId: string, subscriberId: string, targetId: string }): Promise<Models.Subscriber>;
+    createSubscriber(params: {
+        topicId: string;
+        subscriberId: string;
+        targetId: string;
+    }): Promise<Models.Subscriber>;
     /**
      * Create a new subscriber.
      *
@@ -30,38 +32,60 @@ export class Messaging {
      * @returns {Promise<Models.Subscriber>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    createSubscriber(topicId: string, subscriberId: string, targetId: string): Promise<Models.Subscriber>;
     createSubscriber(
-        paramsOrFirst: { topicId: string, subscriberId: string, targetId: string } | string,
-        ...rest: [(string)?, (string)?]    
+        topicId: string,
+        subscriberId: string,
+        targetId: string,
+    ): Promise<Models.Subscriber>;
+    createSubscriber(
+        paramsOrFirst:
+            | { topicId: string; subscriberId: string; targetId: string }
+            | string,
+        ...rest: [string?, string?]
     ): Promise<Models.Subscriber> {
-        let params: { topicId: string, subscriberId: string, targetId: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { topicId: string, subscriberId: string, targetId: string };
+        let params: { topicId: string; subscriberId: string; targetId: string };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                topicId: string;
+                subscriberId: string;
+                targetId: string;
+            };
         } else {
             params = {
                 topicId: paramsOrFirst as string,
                 subscriberId: rest[0] as string,
-                targetId: rest[1] as string            
+                targetId: rest[1] as string,
             };
         }
-        
+
         const topicId = params.topicId;
         const subscriberId = params.subscriberId;
         const targetId = params.targetId;
 
         if (typeof topicId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "topicId"');
+            throw new AppwriteException(
+                'Missing required parameter: "topicId"',
+            );
         }
         if (typeof subscriberId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "subscriberId"');
+            throw new AppwriteException(
+                'Missing required parameter: "subscriberId"',
+            );
         }
         if (typeof targetId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "targetId"');
+            throw new AppwriteException(
+                'Missing required parameter: "targetId"',
+            );
         }
-
-        const apiPath = '/messaging/topics/{topicId}/subscribers'.replace('{topicId}', encodeURIComponent(String(topicId)));
+        const apiPath = '/messaging/topics/{topicId}/subscribers'.replace(
+            '{topicId}',
+            encodeURIComponent(String(topicId)),
+        );
         const payload: Payload = {};
         if (typeof subscriberId !== 'undefined') {
             payload['subscriberId'] = subscriberId;
@@ -74,15 +98,10 @@ export class Messaging {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'post',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('post', uri, apiHeaders, payload);
     }
 
     /**
@@ -93,7 +112,10 @@ export class Messaging {
      * @throws {AppwriteException}
      * @returns {Promise<{}>}
      */
-    deleteSubscriber(params: { topicId: string, subscriberId: string }): Promise<{}>;
+    deleteSubscriber(params: {
+        topicId: string;
+        subscriberId: string;
+    }): Promise<{}>;
     /**
      * Delete a subscriber by its unique ID.
      *
@@ -105,44 +127,54 @@ export class Messaging {
      */
     deleteSubscriber(topicId: string, subscriberId: string): Promise<{}>;
     deleteSubscriber(
-        paramsOrFirst: { topicId: string, subscriberId: string } | string,
-        ...rest: [(string)?]    
+        paramsOrFirst: { topicId: string; subscriberId: string } | string,
+        ...rest: [string?]
     ): Promise<{}> {
-        let params: { topicId: string, subscriberId: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { topicId: string, subscriberId: string };
+        let params: { topicId: string; subscriberId: string };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                topicId: string;
+                subscriberId: string;
+            };
         } else {
             params = {
                 topicId: paramsOrFirst as string,
-                subscriberId: rest[0] as string            
+                subscriberId: rest[0] as string,
             };
         }
-        
+
         const topicId = params.topicId;
         const subscriberId = params.subscriberId;
 
         if (typeof topicId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "topicId"');
+            throw new AppwriteException(
+                'Missing required parameter: "topicId"',
+            );
         }
         if (typeof subscriberId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "subscriberId"');
+            throw new AppwriteException(
+                'Missing required parameter: "subscriberId"',
+            );
         }
-
-        const apiPath = '/messaging/topics/{topicId}/subscribers/{subscriberId}'.replace('{topicId}', encodeURIComponent(String(topicId))).replace('{subscriberId}', encodeURIComponent(String(subscriberId)));
+        const apiPath = '/messaging/topics/{topicId}/subscribers/{subscriberId}'
+            .replace('{topicId}', encodeURIComponent(String(topicId)))
+            .replace(
+                '{subscriberId}',
+                encodeURIComponent(String(subscriberId)),
+            );
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-        }
+        };
 
-        return this.client.call(
-            'delete',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('delete', uri, apiHeaders, payload);
     }
 }

@@ -1,24 +1,34 @@
 /**
  * Appwrite Web SDK
  *
- * This SDK is compatible with Appwrite server version 1.9.x. 
- * For older versions, please check
- * [previous releases](https://github.com/appwrite/sdk-for-web/releases).
+ * This SDK targets Appwrite server version 2.0.x as shipped on Appwrite Cloud.
+ * Self-hosted releases can lag behind Cloud — if you run an older self-hosted
+ * build, use a matching older SDK from
+ * [previous releases](https://github.com/appwrite/sdk-for-web/releases)
+ * when APIs differ.
  */
 export { Client, Query, AppwriteException } from './client';
 export { Account } from './services/account';
 export { Avatars } from './services/avatars';
 export { Databases } from './services/databases';
+export { DocumentsDB } from './services/documents-db';
 export { Functions } from './services/functions';
 export { Graphql } from './services/graphql';
 export { Locale } from './services/locale';
 export { Messaging } from './services/messaging';
+export { Organization } from './services/organization';
 export { Presences } from './services/presences';
 export { Storage } from './services/storage';
 export { TablesDB } from './services/tables-db';
 export { Teams } from './services/teams';
+export { VectorsDB } from './services/vectors-db';
 export { Realtime } from './services/realtime';
-export type { Models, Payload, RealtimeResponseEvent, UploadProgress } from './client';
+export type {
+    Models,
+    Payload,
+    RealtimeResponseEvent,
+    UploadProgress,
+} from './client';
 export type { RealtimeSubscription } from './services/realtime';
 export type { QueryTypes, QueryTypesList } from './query';
 export { Permission } from './permission';
@@ -38,5 +48,6 @@ export { BrowserPermission } from './enums/browser-permission';
 export { ImageFormat } from './enums/image-format';
 export { ExecutionMethod } from './enums/execution-method';
 export { ImageGravity } from './enums/image-gravity';
+export { ExecutionResourceType } from './enums/execution-resource-type';
 export { ExecutionTrigger } from './enums/execution-trigger';
 export { ExecutionStatus } from './enums/execution-status';

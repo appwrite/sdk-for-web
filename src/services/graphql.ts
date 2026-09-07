@@ -1,7 +1,4 @@
-import { Service } from '../service';
-import { AppwriteException, Client, type Payload, UploadProgress } from '../client';
-import type { Models } from '../models';
-
+import { AppwriteException, Client, type Payload } from '../client';
 
 export class Graphql {
     client: Client;
@@ -27,25 +24,27 @@ export class Graphql {
      * @deprecated Use the object parameter style method for a better developer experience.
      */
     query(query: object): Promise<{}>;
-    query(
-        paramsOrFirst: { query: object } | object    
-    ): Promise<{}> {
+    query(paramsOrFirst: { query: object } | object): Promise<{}> {
         let params: { query: object };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('query' in paramsOrFirst))) {
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst) &&
+            'query' in paramsOrFirst
+        ) {
             params = (paramsOrFirst || {}) as { query: object };
         } else {
             params = {
-                query: paramsOrFirst as object            
+                query: paramsOrFirst as object,
             };
         }
-        
+
         const query = params.query;
 
         if (typeof query === 'undefined') {
             throw new AppwriteException('Missing required parameter: "query"');
         }
-
         const apiPath = '/graphql';
         const payload: Payload = {};
         if (typeof query !== 'undefined') {
@@ -57,15 +56,10 @@ export class Graphql {
             'X-Appwrite-Project': this.client.config.project,
             'x-sdk-graphql': 'true',
             'content-type': 'application/json',
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'post',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('post', uri, apiHeaders, payload);
     }
 
     /**
@@ -85,25 +79,27 @@ export class Graphql {
      * @deprecated Use the object parameter style method for a better developer experience.
      */
     mutation(query: object): Promise<{}>;
-    mutation(
-        paramsOrFirst: { query: object } | object    
-    ): Promise<{}> {
+    mutation(paramsOrFirst: { query: object } | object): Promise<{}> {
         let params: { query: object };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('query' in paramsOrFirst))) {
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst) &&
+            'query' in paramsOrFirst
+        ) {
             params = (paramsOrFirst || {}) as { query: object };
         } else {
             params = {
-                query: paramsOrFirst as object            
+                query: paramsOrFirst as object,
             };
         }
-        
+
         const query = params.query;
 
         if (typeof query === 'undefined') {
             throw new AppwriteException('Missing required parameter: "query"');
         }
-
         const apiPath = '/graphql/mutation';
         const payload: Payload = {};
         if (typeof query !== 'undefined') {
@@ -115,14 +111,9 @@ export class Graphql {
             'X-Appwrite-Project': this.client.config.project,
             'x-sdk-graphql': 'true',
             'content-type': 'application/json',
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'post',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('post', uri, apiHeaders, payload);
     }
 }

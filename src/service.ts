@@ -5,7 +5,7 @@ export class Service {
     /**
      * The size for chunked uploads in bytes.
      */
-    static CHUNK_SIZE = 5*1024*1024; // 5MB
+    static CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
 
     client: Client;
 
@@ -17,7 +17,7 @@ export class Service {
         let output: Payload = {};
 
         for (const [key, value] of Object.entries(data)) {
-            let finalKey = prefix ? prefix + '[' + key +']' : key;
+            const finalKey = prefix ? prefix + '[' + key + ']' : key;
             if (Array.isArray(value)) {
                 output = { ...output, ...Service.flatten(value, finalKey) };
             } else {

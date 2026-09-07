@@ -1,7 +1,5 @@
-import { Service } from '../service';
-import { AppwriteException, Client, type Payload, UploadProgress } from '../client';
+import { AppwriteException, Client, type Payload } from '../client';
 import type { Models } from '../models';
-
 
 export class Databases {
     client: Client;
@@ -18,7 +16,9 @@ export class Databases {
      * @returns {Promise<Models.TransactionList>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.listTransactions` instead.
      */
-    listTransactions(params?: { queries?: string[] }): Promise<Models.TransactionList>;
+    listTransactions(params?: {
+        queries?: string[];
+    }): Promise<Models.TransactionList>;
     /**
      * List transactions across all databases.
      *
@@ -29,20 +29,24 @@ export class Databases {
      */
     listTransactions(queries?: string[]): Promise<Models.TransactionList>;
     listTransactions(
-        paramsOrFirst?: { queries?: string[] } | string[]    
+        paramsOrFirst?: { queries?: string[] } | string[],
     ): Promise<Models.TransactionList> {
         let params: { queries?: string[] };
-        
-        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+
+        if (
+            !paramsOrFirst ||
+            (paramsOrFirst &&
+                typeof paramsOrFirst === 'object' &&
+                !Array.isArray(paramsOrFirst))
+        ) {
             params = (paramsOrFirst || {}) as { queries?: string[] };
         } else {
             params = {
-                queries: paramsOrFirst as string[]            
+                queries: paramsOrFirst as string[],
             };
         }
-        
-        const queries = params.queries;
 
+        const queries = params.queries;
 
         const apiPath = '/databases/transactions';
         const payload: Payload = {};
@@ -53,15 +57,10 @@ export class Databases {
 
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('get', uri, apiHeaders, payload);
     }
 
     /**
@@ -83,20 +82,24 @@ export class Databases {
      */
     createTransaction(ttl?: number): Promise<Models.Transaction>;
     createTransaction(
-        paramsOrFirst?: { ttl?: number } | number    
+        paramsOrFirst?: { ttl?: number } | number,
     ): Promise<Models.Transaction> {
         let params: { ttl?: number };
-        
-        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+
+        if (
+            !paramsOrFirst ||
+            (paramsOrFirst &&
+                typeof paramsOrFirst === 'object' &&
+                !Array.isArray(paramsOrFirst))
+        ) {
             params = (paramsOrFirst || {}) as { ttl?: number };
         } else {
             params = {
-                ttl: paramsOrFirst as number            
+                ttl: paramsOrFirst as number,
             };
         }
-        
-        const ttl = params.ttl;
 
+        const ttl = params.ttl;
 
         const apiPath = '/databases/transactions';
         const payload: Payload = {};
@@ -108,15 +111,10 @@ export class Databases {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'post',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('post', uri, apiHeaders, payload);
     }
 
     /**
@@ -127,7 +125,9 @@ export class Databases {
      * @returns {Promise<Models.Transaction>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.getTransaction` instead.
      */
-    getTransaction(params: { transactionId: string }): Promise<Models.Transaction>;
+    getTransaction(params: {
+        transactionId: string;
+    }): Promise<Models.Transaction>;
     /**
      * Get a transaction by its unique ID.
      *
@@ -138,39 +138,42 @@ export class Databases {
      */
     getTransaction(transactionId: string): Promise<Models.Transaction>;
     getTransaction(
-        paramsOrFirst: { transactionId: string } | string    
+        paramsOrFirst: { transactionId: string } | string,
     ): Promise<Models.Transaction> {
         let params: { transactionId: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
             params = (paramsOrFirst || {}) as { transactionId: string };
         } else {
             params = {
-                transactionId: paramsOrFirst as string            
+                transactionId: paramsOrFirst as string,
             };
         }
-        
+
         const transactionId = params.transactionId;
 
         if (typeof transactionId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "transactionId"');
+            throw new AppwriteException(
+                'Missing required parameter: "transactionId"',
+            );
         }
-
-        const apiPath = '/databases/transactions/{transactionId}'.replace('{transactionId}', encodeURIComponent(String(transactionId)));
+        const apiPath = '/databases/transactions/{transactionId}'.replace(
+            '{transactionId}',
+            encodeURIComponent(String(transactionId)),
+        );
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('get', uri, apiHeaders, payload);
     }
 
     /**
@@ -183,7 +186,11 @@ export class Databases {
      * @returns {Promise<Models.Transaction>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.updateTransaction` instead.
      */
-    updateTransaction(params: { transactionId: string, commit?: boolean, rollback?: boolean }): Promise<Models.Transaction>;
+    updateTransaction(params: {
+        transactionId: string;
+        commit?: boolean;
+        rollback?: boolean;
+    }): Promise<Models.Transaction>;
     /**
      * Update a transaction, to either commit or roll back its operations.
      *
@@ -194,32 +201,54 @@ export class Databases {
      * @returns {Promise<Models.Transaction>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    updateTransaction(transactionId: string, commit?: boolean, rollback?: boolean): Promise<Models.Transaction>;
     updateTransaction(
-        paramsOrFirst: { transactionId: string, commit?: boolean, rollback?: boolean } | string,
-        ...rest: [(boolean)?, (boolean)?]    
+        transactionId: string,
+        commit?: boolean,
+        rollback?: boolean,
+    ): Promise<Models.Transaction>;
+    updateTransaction(
+        paramsOrFirst:
+            | { transactionId: string; commit?: boolean; rollback?: boolean }
+            | string,
+        ...rest: [boolean?, boolean?]
     ): Promise<Models.Transaction> {
-        let params: { transactionId: string, commit?: boolean, rollback?: boolean };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { transactionId: string, commit?: boolean, rollback?: boolean };
+        let params: {
+            transactionId: string;
+            commit?: boolean;
+            rollback?: boolean;
+        };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                transactionId: string;
+                commit?: boolean;
+                rollback?: boolean;
+            };
         } else {
             params = {
                 transactionId: paramsOrFirst as string,
                 commit: rest[0] as boolean,
-                rollback: rest[1] as boolean            
+                rollback: rest[1] as boolean,
             };
         }
-        
+
         const transactionId = params.transactionId;
         const commit = params.commit;
         const rollback = params.rollback;
 
         if (typeof transactionId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "transactionId"');
+            throw new AppwriteException(
+                'Missing required parameter: "transactionId"',
+            );
         }
-
-        const apiPath = '/databases/transactions/{transactionId}'.replace('{transactionId}', encodeURIComponent(String(transactionId)));
+        const apiPath = '/databases/transactions/{transactionId}'.replace(
+            '{transactionId}',
+            encodeURIComponent(String(transactionId)),
+        );
         const payload: Payload = {};
         if (typeof commit !== 'undefined') {
             payload['commit'] = commit;
@@ -232,15 +261,10 @@ export class Databases {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'patch',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('patch', uri, apiHeaders, payload);
     }
 
     /**
@@ -262,39 +286,42 @@ export class Databases {
      */
     deleteTransaction(transactionId: string): Promise<{}>;
     deleteTransaction(
-        paramsOrFirst: { transactionId: string } | string    
+        paramsOrFirst: { transactionId: string } | string,
     ): Promise<{}> {
         let params: { transactionId: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
             params = (paramsOrFirst || {}) as { transactionId: string };
         } else {
             params = {
-                transactionId: paramsOrFirst as string            
+                transactionId: paramsOrFirst as string,
             };
         }
-        
+
         const transactionId = params.transactionId;
 
         if (typeof transactionId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "transactionId"');
+            throw new AppwriteException(
+                'Missing required parameter: "transactionId"',
+            );
         }
-
-        const apiPath = '/databases/transactions/{transactionId}'.replace('{transactionId}', encodeURIComponent(String(transactionId)));
+        const apiPath = '/databases/transactions/{transactionId}'.replace(
+            '{transactionId}',
+            encodeURIComponent(String(transactionId)),
+        );
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-        }
+        };
 
-        return this.client.call(
-            'delete',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('delete', uri, apiHeaders, payload);
     }
 
     /**
@@ -306,7 +333,10 @@ export class Databases {
      * @returns {Promise<Models.Transaction>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.createOperations` instead.
      */
-    createOperations(params: { transactionId: string, operations?: object[] }): Promise<Models.Transaction>;
+    createOperations(params: {
+        transactionId: string;
+        operations?: object[];
+    }): Promise<Models.Transaction>;
     /**
      * Create multiple operations in a single transaction.
      *
@@ -316,30 +346,46 @@ export class Databases {
      * @returns {Promise<Models.Transaction>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    createOperations(transactionId: string, operations?: object[]): Promise<Models.Transaction>;
     createOperations(
-        paramsOrFirst: { transactionId: string, operations?: object[] } | string,
-        ...rest: [(object[])?]    
+        transactionId: string,
+        operations?: object[],
+    ): Promise<Models.Transaction>;
+    createOperations(
+        paramsOrFirst:
+            { transactionId: string; operations?: object[] } | string,
+        ...rest: [object[]?]
     ): Promise<Models.Transaction> {
-        let params: { transactionId: string, operations?: object[] };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { transactionId: string, operations?: object[] };
+        let params: { transactionId: string; operations?: object[] };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                transactionId: string;
+                operations?: object[];
+            };
         } else {
             params = {
                 transactionId: paramsOrFirst as string,
-                operations: rest[0] as object[]            
+                operations: rest[0] as object[],
             };
         }
-        
+
         const transactionId = params.transactionId;
         const operations = params.operations;
 
         if (typeof transactionId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "transactionId"');
+            throw new AppwriteException(
+                'Missing required parameter: "transactionId"',
+            );
         }
-
-        const apiPath = '/databases/transactions/{transactionId}/operations'.replace('{transactionId}', encodeURIComponent(String(transactionId)));
+        const apiPath =
+            '/databases/transactions/{transactionId}/operations'.replace(
+                '{transactionId}',
+                encodeURIComponent(String(transactionId)),
+            );
         const payload: Payload = {};
         if (typeof operations !== 'undefined') {
             payload['operations'] = operations;
@@ -349,15 +395,10 @@ export class Databases {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'post',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('post', uri, apiHeaders, payload);
     }
 
     /**
@@ -373,7 +414,16 @@ export class Databases {
      * @returns {Promise<Models.DocumentList<Document>>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.listRows` instead.
      */
-    listDocuments<Document extends Models.Document = Models.DefaultDocument>(params: { databaseId: string, collectionId: string, queries?: string[], transactionId?: string, total?: boolean, ttl?: number }): Promise<Models.DocumentList<Document>>;
+    listDocuments<
+        Document extends Models.Document = Models.DefaultDocument,
+    >(params: {
+        databaseId: string;
+        collectionId: string;
+        queries?: string[];
+        transactionId?: string;
+        total?: boolean;
+        ttl?: number;
+    }): Promise<Models.DocumentList<Document>>;
     /**
      * Get a list of all the user's documents in a given collection. You can use the query params to filter your results.
      *
@@ -387,15 +437,49 @@ export class Databases {
      * @returns {Promise<Models.DocumentList<Document>>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    listDocuments<Document extends Models.Document = Models.DefaultDocument>(databaseId: string, collectionId: string, queries?: string[], transactionId?: string, total?: boolean, ttl?: number): Promise<Models.DocumentList<Document>>;
     listDocuments<Document extends Models.Document = Models.DefaultDocument>(
-        paramsOrFirst: { databaseId: string, collectionId: string, queries?: string[], transactionId?: string, total?: boolean, ttl?: number } | string,
-        ...rest: [(string)?, (string[])?, (string)?, (boolean)?, (number)?]    
+        databaseId: string,
+        collectionId: string,
+        queries?: string[],
+        transactionId?: string,
+        total?: boolean,
+        ttl?: number,
+    ): Promise<Models.DocumentList<Document>>;
+    listDocuments<Document extends Models.Document = Models.DefaultDocument>(
+        paramsOrFirst:
+            | {
+                  databaseId: string;
+                  collectionId: string;
+                  queries?: string[];
+                  transactionId?: string;
+                  total?: boolean;
+                  ttl?: number;
+              }
+            | string,
+        ...rest: [string?, string[]?, string?, boolean?, number?]
     ): Promise<Models.DocumentList<Document>> {
-        let params: { databaseId: string, collectionId: string, queries?: string[], transactionId?: string, total?: boolean, ttl?: number };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { databaseId: string, collectionId: string, queries?: string[], transactionId?: string, total?: boolean, ttl?: number };
+        let params: {
+            databaseId: string;
+            collectionId: string;
+            queries?: string[];
+            transactionId?: string;
+            total?: boolean;
+            ttl?: number;
+        };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                databaseId: string;
+                collectionId: string;
+                queries?: string[];
+                transactionId?: string;
+                total?: boolean;
+                ttl?: number;
+            };
         } else {
             params = {
                 databaseId: paramsOrFirst as string,
@@ -403,10 +487,10 @@ export class Databases {
                 queries: rest[1] as string[],
                 transactionId: rest[2] as string,
                 total: rest[3] as boolean,
-                ttl: rest[4] as number            
+                ttl: rest[4] as number,
             };
         }
-        
+
         const databaseId = params.databaseId;
         const collectionId = params.collectionId;
         const queries = params.queries;
@@ -415,13 +499,22 @@ export class Databases {
         const ttl = params.ttl;
 
         if (typeof databaseId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "databaseId"');
+            throw new AppwriteException(
+                'Missing required parameter: "databaseId"',
+            );
         }
         if (typeof collectionId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "collectionId"');
+            throw new AppwriteException(
+                'Missing required parameter: "collectionId"',
+            );
         }
-
-        const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents'.replace('{databaseId}', encodeURIComponent(String(databaseId))).replace('{collectionId}', encodeURIComponent(String(collectionId)));
+        const apiPath =
+            '/databases/{databaseId}/collections/{collectionId}/documents'
+                .replace('{databaseId}', encodeURIComponent(String(databaseId)))
+                .replace(
+                    '{collectionId}',
+                    encodeURIComponent(String(collectionId)),
+                );
         const payload: Payload = {};
         if (typeof queries !== 'undefined') {
             payload['queries'] = queries;
@@ -439,15 +532,10 @@ export class Databases {
 
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('get', uri, apiHeaders, payload);
     }
 
     /**
@@ -463,7 +551,18 @@ export class Databases {
      * @returns {Promise<Document>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.createRow` instead.
      */
-    createDocument<Document extends Models.Document = Models.DefaultDocument>(params: { databaseId: string, collectionId: string, documentId: string, data: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Omit<Document, keyof Models.Document>, permissions?: string[], transactionId?: string }): Promise<Document>;
+    createDocument<
+        Document extends Models.Document = Models.DefaultDocument,
+    >(params: {
+        databaseId: string;
+        collectionId: string;
+        documentId: string;
+        data: Document extends Models.DefaultDocument
+            ? Partial<Models.Document> & Record<string, any>
+            : Partial<Models.Document> & Omit<Document, keyof Models.Document>;
+        permissions?: string[];
+        transactionId?: string;
+    }): Promise<Document>;
     /**
      * Create a new Document. Before using this route, you should create a new collection resource using either a [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.
      *
@@ -477,26 +576,83 @@ export class Databases {
      * @returns {Promise<Document>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    createDocument<Document extends Models.Document = Models.DefaultDocument>(databaseId: string, collectionId: string, documentId: string, data: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Omit<Document, keyof Models.Document>, permissions?: string[], transactionId?: string): Promise<Document>;
     createDocument<Document extends Models.Document = Models.DefaultDocument>(
-        paramsOrFirst: { databaseId: string, collectionId: string, documentId: string, data: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Omit<Document, keyof Models.Document>, permissions?: string[], transactionId?: string } | string,
-        ...rest: [(string)?, (string)?, (Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Omit<Document, keyof Models.Document>)?, (string[])?, (string)?]    
+        databaseId: string,
+        collectionId: string,
+        documentId: string,
+        data: Document extends Models.DefaultDocument
+            ? Partial<Models.Document> & Record<string, any>
+            : Partial<Models.Document> & Omit<Document, keyof Models.Document>,
+        permissions?: string[],
+        transactionId?: string,
+    ): Promise<Document>;
+    createDocument<Document extends Models.Document = Models.DefaultDocument>(
+        paramsOrFirst:
+            | {
+                  databaseId: string;
+                  collectionId: string;
+                  documentId: string;
+                  data: Document extends Models.DefaultDocument
+                      ? Partial<Models.Document> & Record<string, any>
+                      : Partial<Models.Document> &
+                            Omit<Document, keyof Models.Document>;
+                  permissions?: string[];
+                  transactionId?: string;
+              }
+            | string,
+        ...rest: [
+            string?,
+            string?,
+            (Document extends Models.DefaultDocument
+                ? Partial<Models.Document> & Record<string, any>
+                : Partial<Models.Document> &
+                      Omit<Document, keyof Models.Document>)?,
+            string[]?,
+            string?,
+        ]
     ): Promise<Document> {
-        let params: { databaseId: string, collectionId: string, documentId: string, data: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Omit<Document, keyof Models.Document>, permissions?: string[], transactionId?: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { databaseId: string, collectionId: string, documentId: string, data: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Omit<Document, keyof Models.Document>, permissions?: string[], transactionId?: string };
+        let params: {
+            databaseId: string;
+            collectionId: string;
+            documentId: string;
+            data: Document extends Models.DefaultDocument
+                ? Partial<Models.Document> & Record<string, any>
+                : Partial<Models.Document> &
+                      Omit<Document, keyof Models.Document>;
+            permissions?: string[];
+            transactionId?: string;
+        };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                databaseId: string;
+                collectionId: string;
+                documentId: string;
+                data: Document extends Models.DefaultDocument
+                    ? Partial<Models.Document> & Record<string, any>
+                    : Partial<Models.Document> &
+                          Omit<Document, keyof Models.Document>;
+                permissions?: string[];
+                transactionId?: string;
+            };
         } else {
             params = {
                 databaseId: paramsOrFirst as string,
                 collectionId: rest[0] as string,
                 documentId: rest[1] as string,
-                data: rest[2] as Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Omit<Document, keyof Models.Document>,
+                data: rest[2] as Document extends Models.DefaultDocument
+                    ? Partial<Models.Document> & Record<string, any>
+                    : Partial<Models.Document> &
+                          Omit<Document, keyof Models.Document>,
                 permissions: rest[3] as string[],
-                transactionId: rest[4] as string            
+                transactionId: rest[4] as string,
             };
         }
-        
+
         const databaseId = params.databaseId;
         const collectionId = params.collectionId;
         const documentId = params.documentId;
@@ -505,19 +661,30 @@ export class Databases {
         const transactionId = params.transactionId;
 
         if (typeof databaseId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "databaseId"');
+            throw new AppwriteException(
+                'Missing required parameter: "databaseId"',
+            );
         }
         if (typeof collectionId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "collectionId"');
+            throw new AppwriteException(
+                'Missing required parameter: "collectionId"',
+            );
         }
         if (typeof documentId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "documentId"');
+            throw new AppwriteException(
+                'Missing required parameter: "documentId"',
+            );
         }
         if (typeof data === 'undefined') {
             throw new AppwriteException('Missing required parameter: "data"');
         }
-
-        const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents'.replace('{databaseId}', encodeURIComponent(String(databaseId))).replace('{collectionId}', encodeURIComponent(String(collectionId)));
+        const apiPath =
+            '/databases/{databaseId}/collections/{collectionId}/documents'
+                .replace('{databaseId}', encodeURIComponent(String(databaseId)))
+                .replace(
+                    '{collectionId}',
+                    encodeURIComponent(String(collectionId)),
+                );
         const payload: Payload = {};
         if (typeof documentId !== 'undefined') {
             payload['documentId'] = documentId;
@@ -536,15 +703,10 @@ export class Databases {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'post',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('post', uri, apiHeaders, payload);
     }
 
     /**
@@ -559,7 +721,15 @@ export class Databases {
      * @returns {Promise<Document>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.getRow` instead.
      */
-    getDocument<Document extends Models.Document = Models.DefaultDocument>(params: { databaseId: string, collectionId: string, documentId: string, queries?: string[], transactionId?: string }): Promise<Document>;
+    getDocument<
+        Document extends Models.Document = Models.DefaultDocument,
+    >(params: {
+        databaseId: string;
+        collectionId: string;
+        documentId: string;
+        queries?: string[];
+        transactionId?: string;
+    }): Promise<Document>;
     /**
      * Get a document by its unique ID. This endpoint response returns a JSON object with the document data.
      *
@@ -572,25 +742,55 @@ export class Databases {
      * @returns {Promise<Document>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    getDocument<Document extends Models.Document = Models.DefaultDocument>(databaseId: string, collectionId: string, documentId: string, queries?: string[], transactionId?: string): Promise<Document>;
     getDocument<Document extends Models.Document = Models.DefaultDocument>(
-        paramsOrFirst: { databaseId: string, collectionId: string, documentId: string, queries?: string[], transactionId?: string } | string,
-        ...rest: [(string)?, (string)?, (string[])?, (string)?]    
+        databaseId: string,
+        collectionId: string,
+        documentId: string,
+        queries?: string[],
+        transactionId?: string,
+    ): Promise<Document>;
+    getDocument<Document extends Models.Document = Models.DefaultDocument>(
+        paramsOrFirst:
+            | {
+                  databaseId: string;
+                  collectionId: string;
+                  documentId: string;
+                  queries?: string[];
+                  transactionId?: string;
+              }
+            | string,
+        ...rest: [string?, string?, string[]?, string?]
     ): Promise<Document> {
-        let params: { databaseId: string, collectionId: string, documentId: string, queries?: string[], transactionId?: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { databaseId: string, collectionId: string, documentId: string, queries?: string[], transactionId?: string };
+        let params: {
+            databaseId: string;
+            collectionId: string;
+            documentId: string;
+            queries?: string[];
+            transactionId?: string;
+        };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                databaseId: string;
+                collectionId: string;
+                documentId: string;
+                queries?: string[];
+                transactionId?: string;
+            };
         } else {
             params = {
                 databaseId: paramsOrFirst as string,
                 collectionId: rest[0] as string,
                 documentId: rest[1] as string,
                 queries: rest[2] as string[],
-                transactionId: rest[3] as string            
+                transactionId: rest[3] as string,
             };
         }
-        
+
         const databaseId = params.databaseId;
         const collectionId = params.collectionId;
         const documentId = params.documentId;
@@ -598,16 +798,31 @@ export class Databases {
         const transactionId = params.transactionId;
 
         if (typeof databaseId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "databaseId"');
+            throw new AppwriteException(
+                'Missing required parameter: "databaseId"',
+            );
         }
         if (typeof collectionId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "collectionId"');
+            throw new AppwriteException(
+                'Missing required parameter: "collectionId"',
+            );
         }
         if (typeof documentId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "documentId"');
+            throw new AppwriteException(
+                'Missing required parameter: "documentId"',
+            );
         }
-
-        const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'.replace('{databaseId}', encodeURIComponent(String(databaseId))).replace('{collectionId}', encodeURIComponent(String(collectionId))).replace('{documentId}', encodeURIComponent(String(documentId)));
+        const apiPath =
+            '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'
+                .replace('{databaseId}', encodeURIComponent(String(databaseId)))
+                .replace(
+                    '{collectionId}',
+                    encodeURIComponent(String(collectionId)),
+                )
+                .replace(
+                    '{documentId}',
+                    encodeURIComponent(String(documentId)),
+                );
         const payload: Payload = {};
         if (typeof queries !== 'undefined') {
             payload['queries'] = queries;
@@ -619,15 +834,10 @@ export class Databases {
 
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('get', uri, apiHeaders, payload);
     }
 
     /**
@@ -643,7 +853,19 @@ export class Databases {
      * @returns {Promise<Document>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.upsertRow` instead.
      */
-    upsertDocument<Document extends Models.Document = Models.DefaultDocument>(params: { databaseId: string, collectionId: string, documentId: string, data?: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>, permissions?: string[], transactionId?: string }): Promise<Document>;
+    upsertDocument<
+        Document extends Models.Document = Models.DefaultDocument,
+    >(params: {
+        databaseId: string;
+        collectionId: string;
+        documentId: string;
+        data?: Document extends Models.DefaultDocument
+            ? Partial<Models.Document> & Record<string, any>
+            : Partial<Models.Document> &
+                  Partial<Omit<Document, keyof Models.Document>>;
+        permissions?: string[];
+        transactionId?: string;
+    }): Promise<Document>;
     /**
      * Create or update a Document. Before using this route, you should create a new collection resource using either a [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.
      *
@@ -657,26 +879,84 @@ export class Databases {
      * @returns {Promise<Document>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    upsertDocument<Document extends Models.Document = Models.DefaultDocument>(databaseId: string, collectionId: string, documentId: string, data?: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>, permissions?: string[], transactionId?: string): Promise<Document>;
     upsertDocument<Document extends Models.Document = Models.DefaultDocument>(
-        paramsOrFirst: { databaseId: string, collectionId: string, documentId: string, data?: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>, permissions?: string[], transactionId?: string } | string,
-        ...rest: [(string)?, (string)?, (Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>)?, (string[])?, (string)?]    
+        databaseId: string,
+        collectionId: string,
+        documentId: string,
+        data?: Document extends Models.DefaultDocument
+            ? Partial<Models.Document> & Record<string, any>
+            : Partial<Models.Document> &
+                  Partial<Omit<Document, keyof Models.Document>>,
+        permissions?: string[],
+        transactionId?: string,
+    ): Promise<Document>;
+    upsertDocument<Document extends Models.Document = Models.DefaultDocument>(
+        paramsOrFirst:
+            | {
+                  databaseId: string;
+                  collectionId: string;
+                  documentId: string;
+                  data?: Document extends Models.DefaultDocument
+                      ? Partial<Models.Document> & Record<string, any>
+                      : Partial<Models.Document> &
+                            Partial<Omit<Document, keyof Models.Document>>;
+                  permissions?: string[];
+                  transactionId?: string;
+              }
+            | string,
+        ...rest: [
+            string?,
+            string?,
+            (Document extends Models.DefaultDocument
+                ? Partial<Models.Document> & Record<string, any>
+                : Partial<Models.Document> &
+                      Partial<Omit<Document, keyof Models.Document>>)?,
+            string[]?,
+            string?,
+        ]
     ): Promise<Document> {
-        let params: { databaseId: string, collectionId: string, documentId: string, data?: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>, permissions?: string[], transactionId?: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { databaseId: string, collectionId: string, documentId: string, data?: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>, permissions?: string[], transactionId?: string };
+        let params: {
+            databaseId: string;
+            collectionId: string;
+            documentId: string;
+            data?: Document extends Models.DefaultDocument
+                ? Partial<Models.Document> & Record<string, any>
+                : Partial<Models.Document> &
+                      Partial<Omit<Document, keyof Models.Document>>;
+            permissions?: string[];
+            transactionId?: string;
+        };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                databaseId: string;
+                collectionId: string;
+                documentId: string;
+                data?: Document extends Models.DefaultDocument
+                    ? Partial<Models.Document> & Record<string, any>
+                    : Partial<Models.Document> &
+                          Partial<Omit<Document, keyof Models.Document>>;
+                permissions?: string[];
+                transactionId?: string;
+            };
         } else {
             params = {
                 databaseId: paramsOrFirst as string,
                 collectionId: rest[0] as string,
                 documentId: rest[1] as string,
-                data: rest[2] as Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>,
+                data: rest[2] as Document extends Models.DefaultDocument
+                    ? Partial<Models.Document> & Record<string, any>
+                    : Partial<Models.Document> &
+                          Partial<Omit<Document, keyof Models.Document>>,
                 permissions: rest[3] as string[],
-                transactionId: rest[4] as string            
+                transactionId: rest[4] as string,
             };
         }
-        
+
         const databaseId = params.databaseId;
         const collectionId = params.collectionId;
         const documentId = params.documentId;
@@ -685,16 +965,31 @@ export class Databases {
         const transactionId = params.transactionId;
 
         if (typeof databaseId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "databaseId"');
+            throw new AppwriteException(
+                'Missing required parameter: "databaseId"',
+            );
         }
         if (typeof collectionId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "collectionId"');
+            throw new AppwriteException(
+                'Missing required parameter: "collectionId"',
+            );
         }
         if (typeof documentId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "documentId"');
+            throw new AppwriteException(
+                'Missing required parameter: "documentId"',
+            );
         }
-
-        const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'.replace('{databaseId}', encodeURIComponent(String(databaseId))).replace('{collectionId}', encodeURIComponent(String(collectionId))).replace('{documentId}', encodeURIComponent(String(documentId)));
+        const apiPath =
+            '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'
+                .replace('{databaseId}', encodeURIComponent(String(databaseId)))
+                .replace(
+                    '{collectionId}',
+                    encodeURIComponent(String(collectionId)),
+                )
+                .replace(
+                    '{documentId}',
+                    encodeURIComponent(String(documentId)),
+                );
         const payload: Payload = {};
         if (typeof data !== 'undefined') {
             payload['data'] = data;
@@ -710,15 +1005,10 @@ export class Databases {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'put',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('put', uri, apiHeaders, payload);
     }
 
     /**
@@ -734,7 +1024,19 @@ export class Databases {
      * @returns {Promise<Document>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.updateRow` instead.
      */
-    updateDocument<Document extends Models.Document = Models.DefaultDocument>(params: { databaseId: string, collectionId: string, documentId: string, data?: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>, permissions?: string[], transactionId?: string }): Promise<Document>;
+    updateDocument<
+        Document extends Models.Document = Models.DefaultDocument,
+    >(params: {
+        databaseId: string;
+        collectionId: string;
+        documentId: string;
+        data?: Document extends Models.DefaultDocument
+            ? Partial<Models.Document> & Record<string, any>
+            : Partial<Models.Document> &
+                  Partial<Omit<Document, keyof Models.Document>>;
+        permissions?: string[];
+        transactionId?: string;
+    }): Promise<Document>;
     /**
      * Update a document by its unique ID. Using the patch method you can pass only specific fields that will get updated.
      *
@@ -748,26 +1050,84 @@ export class Databases {
      * @returns {Promise<Document>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    updateDocument<Document extends Models.Document = Models.DefaultDocument>(databaseId: string, collectionId: string, documentId: string, data?: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>, permissions?: string[], transactionId?: string): Promise<Document>;
     updateDocument<Document extends Models.Document = Models.DefaultDocument>(
-        paramsOrFirst: { databaseId: string, collectionId: string, documentId: string, data?: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>, permissions?: string[], transactionId?: string } | string,
-        ...rest: [(string)?, (string)?, (Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>)?, (string[])?, (string)?]    
+        databaseId: string,
+        collectionId: string,
+        documentId: string,
+        data?: Document extends Models.DefaultDocument
+            ? Partial<Models.Document> & Record<string, any>
+            : Partial<Models.Document> &
+                  Partial<Omit<Document, keyof Models.Document>>,
+        permissions?: string[],
+        transactionId?: string,
+    ): Promise<Document>;
+    updateDocument<Document extends Models.Document = Models.DefaultDocument>(
+        paramsOrFirst:
+            | {
+                  databaseId: string;
+                  collectionId: string;
+                  documentId: string;
+                  data?: Document extends Models.DefaultDocument
+                      ? Partial<Models.Document> & Record<string, any>
+                      : Partial<Models.Document> &
+                            Partial<Omit<Document, keyof Models.Document>>;
+                  permissions?: string[];
+                  transactionId?: string;
+              }
+            | string,
+        ...rest: [
+            string?,
+            string?,
+            (Document extends Models.DefaultDocument
+                ? Partial<Models.Document> & Record<string, any>
+                : Partial<Models.Document> &
+                      Partial<Omit<Document, keyof Models.Document>>)?,
+            string[]?,
+            string?,
+        ]
     ): Promise<Document> {
-        let params: { databaseId: string, collectionId: string, documentId: string, data?: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>, permissions?: string[], transactionId?: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { databaseId: string, collectionId: string, documentId: string, data?: Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>, permissions?: string[], transactionId?: string };
+        let params: {
+            databaseId: string;
+            collectionId: string;
+            documentId: string;
+            data?: Document extends Models.DefaultDocument
+                ? Partial<Models.Document> & Record<string, any>
+                : Partial<Models.Document> &
+                      Partial<Omit<Document, keyof Models.Document>>;
+            permissions?: string[];
+            transactionId?: string;
+        };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                databaseId: string;
+                collectionId: string;
+                documentId: string;
+                data?: Document extends Models.DefaultDocument
+                    ? Partial<Models.Document> & Record<string, any>
+                    : Partial<Models.Document> &
+                          Partial<Omit<Document, keyof Models.Document>>;
+                permissions?: string[];
+                transactionId?: string;
+            };
         } else {
             params = {
                 databaseId: paramsOrFirst as string,
                 collectionId: rest[0] as string,
                 documentId: rest[1] as string,
-                data: rest[2] as Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>,
+                data: rest[2] as Document extends Models.DefaultDocument
+                    ? Partial<Models.Document> & Record<string, any>
+                    : Partial<Models.Document> &
+                          Partial<Omit<Document, keyof Models.Document>>,
                 permissions: rest[3] as string[],
-                transactionId: rest[4] as string            
+                transactionId: rest[4] as string,
             };
         }
-        
+
         const databaseId = params.databaseId;
         const collectionId = params.collectionId;
         const documentId = params.documentId;
@@ -776,16 +1136,31 @@ export class Databases {
         const transactionId = params.transactionId;
 
         if (typeof databaseId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "databaseId"');
+            throw new AppwriteException(
+                'Missing required parameter: "databaseId"',
+            );
         }
         if (typeof collectionId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "collectionId"');
+            throw new AppwriteException(
+                'Missing required parameter: "collectionId"',
+            );
         }
         if (typeof documentId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "documentId"');
+            throw new AppwriteException(
+                'Missing required parameter: "documentId"',
+            );
         }
-
-        const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'.replace('{databaseId}', encodeURIComponent(String(databaseId))).replace('{collectionId}', encodeURIComponent(String(collectionId))).replace('{documentId}', encodeURIComponent(String(documentId)));
+        const apiPath =
+            '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'
+                .replace('{databaseId}', encodeURIComponent(String(databaseId)))
+                .replace(
+                    '{collectionId}',
+                    encodeURIComponent(String(collectionId)),
+                )
+                .replace(
+                    '{documentId}',
+                    encodeURIComponent(String(documentId)),
+                );
         const payload: Payload = {};
         if (typeof data !== 'undefined') {
             payload['data'] = data;
@@ -801,15 +1176,10 @@ export class Databases {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'patch',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('patch', uri, apiHeaders, payload);
     }
 
     /**
@@ -823,7 +1193,12 @@ export class Databases {
      * @returns {Promise<{}>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.deleteRow` instead.
      */
-    deleteDocument(params: { databaseId: string, collectionId: string, documentId: string, transactionId?: string }): Promise<{}>;
+    deleteDocument(params: {
+        databaseId: string;
+        collectionId: string;
+        documentId: string;
+        transactionId?: string;
+    }): Promise<{}>;
     /**
      * Delete a document by its unique ID.
      *
@@ -835,40 +1210,81 @@ export class Databases {
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    deleteDocument(databaseId: string, collectionId: string, documentId: string, transactionId?: string): Promise<{}>;
     deleteDocument(
-        paramsOrFirst: { databaseId: string, collectionId: string, documentId: string, transactionId?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?]    
+        databaseId: string,
+        collectionId: string,
+        documentId: string,
+        transactionId?: string,
+    ): Promise<{}>;
+    deleteDocument(
+        paramsOrFirst:
+            | {
+                  databaseId: string;
+                  collectionId: string;
+                  documentId: string;
+                  transactionId?: string;
+              }
+            | string,
+        ...rest: [string?, string?, string?]
     ): Promise<{}> {
-        let params: { databaseId: string, collectionId: string, documentId: string, transactionId?: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { databaseId: string, collectionId: string, documentId: string, transactionId?: string };
+        let params: {
+            databaseId: string;
+            collectionId: string;
+            documentId: string;
+            transactionId?: string;
+        };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                databaseId: string;
+                collectionId: string;
+                documentId: string;
+                transactionId?: string;
+            };
         } else {
             params = {
                 databaseId: paramsOrFirst as string,
                 collectionId: rest[0] as string,
                 documentId: rest[1] as string,
-                transactionId: rest[2] as string            
+                transactionId: rest[2] as string,
             };
         }
-        
+
         const databaseId = params.databaseId;
         const collectionId = params.collectionId;
         const documentId = params.documentId;
         const transactionId = params.transactionId;
 
         if (typeof databaseId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "databaseId"');
+            throw new AppwriteException(
+                'Missing required parameter: "databaseId"',
+            );
         }
         if (typeof collectionId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "collectionId"');
+            throw new AppwriteException(
+                'Missing required parameter: "collectionId"',
+            );
         }
         if (typeof documentId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "documentId"');
+            throw new AppwriteException(
+                'Missing required parameter: "documentId"',
+            );
         }
-
-        const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'.replace('{databaseId}', encodeURIComponent(String(databaseId))).replace('{collectionId}', encodeURIComponent(String(collectionId))).replace('{documentId}', encodeURIComponent(String(documentId)));
+        const apiPath =
+            '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'
+                .replace('{databaseId}', encodeURIComponent(String(databaseId)))
+                .replace(
+                    '{collectionId}',
+                    encodeURIComponent(String(collectionId)),
+                )
+                .replace(
+                    '{documentId}',
+                    encodeURIComponent(String(documentId)),
+                );
         const payload: Payload = {};
         if (typeof transactionId !== 'undefined') {
             payload['transactionId'] = transactionId;
@@ -878,14 +1294,9 @@ export class Databases {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-        }
+        };
 
-        return this.client.call(
-            'delete',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('delete', uri, apiHeaders, payload);
     }
 
     /**
@@ -902,7 +1313,17 @@ export class Databases {
      * @returns {Promise<Document>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.decrementRowColumn` instead.
      */
-    decrementDocumentAttribute<Document extends Models.Document = Models.DefaultDocument>(params: { databaseId: string, collectionId: string, documentId: string, attribute: string, value?: number, min?: number, transactionId?: string }): Promise<Document>;
+    decrementDocumentAttribute<
+        Document extends Models.Document = Models.DefaultDocument,
+    >(params: {
+        databaseId: string;
+        collectionId: string;
+        documentId: string;
+        attribute: string;
+        value?: number;
+        min?: number;
+        transactionId?: string;
+    }): Promise<Document>;
     /**
      * Decrement a specific attribute of a document by a given value.
      *
@@ -917,15 +1338,57 @@ export class Databases {
      * @returns {Promise<Document>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    decrementDocumentAttribute<Document extends Models.Document = Models.DefaultDocument>(databaseId: string, collectionId: string, documentId: string, attribute: string, value?: number, min?: number, transactionId?: string): Promise<Document>;
-    decrementDocumentAttribute<Document extends Models.Document = Models.DefaultDocument>(
-        paramsOrFirst: { databaseId: string, collectionId: string, documentId: string, attribute: string, value?: number, min?: number, transactionId?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+    decrementDocumentAttribute<
+        Document extends Models.Document = Models.DefaultDocument,
+    >(
+        databaseId: string,
+        collectionId: string,
+        documentId: string,
+        attribute: string,
+        value?: number,
+        min?: number,
+        transactionId?: string,
+    ): Promise<Document>;
+    decrementDocumentAttribute<
+        Document extends Models.Document = Models.DefaultDocument,
+    >(
+        paramsOrFirst:
+            | {
+                  databaseId: string;
+                  collectionId: string;
+                  documentId: string;
+                  attribute: string;
+                  value?: number;
+                  min?: number;
+                  transactionId?: string;
+              }
+            | string,
+        ...rest: [string?, string?, string?, number?, number?, string?]
     ): Promise<Document> {
-        let params: { databaseId: string, collectionId: string, documentId: string, attribute: string, value?: number, min?: number, transactionId?: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { databaseId: string, collectionId: string, documentId: string, attribute: string, value?: number, min?: number, transactionId?: string };
+        let params: {
+            databaseId: string;
+            collectionId: string;
+            documentId: string;
+            attribute: string;
+            value?: number;
+            min?: number;
+            transactionId?: string;
+        };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                databaseId: string;
+                collectionId: string;
+                documentId: string;
+                attribute: string;
+                value?: number;
+                min?: number;
+                transactionId?: string;
+            };
         } else {
             params = {
                 databaseId: paramsOrFirst as string,
@@ -934,10 +1397,10 @@ export class Databases {
                 attribute: rest[2] as string,
                 value: rest[3] as number,
                 min: rest[4] as number,
-                transactionId: rest[5] as string            
+                transactionId: rest[5] as string,
             };
         }
-        
+
         const databaseId = params.databaseId;
         const collectionId = params.collectionId;
         const documentId = params.documentId;
@@ -947,19 +1410,34 @@ export class Databases {
         const transactionId = params.transactionId;
 
         if (typeof databaseId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "databaseId"');
+            throw new AppwriteException(
+                'Missing required parameter: "databaseId"',
+            );
         }
         if (typeof collectionId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "collectionId"');
+            throw new AppwriteException(
+                'Missing required parameter: "collectionId"',
+            );
         }
         if (typeof documentId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "documentId"');
+            throw new AppwriteException(
+                'Missing required parameter: "documentId"',
+            );
         }
         if (typeof attribute === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "attribute"');
+            throw new AppwriteException(
+                'Missing required parameter: "attribute"',
+            );
         }
-
-        const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}/{attribute}/decrement'.replace('{databaseId}', encodeURIComponent(String(databaseId))).replace('{collectionId}', encodeURIComponent(String(collectionId))).replace('{documentId}', encodeURIComponent(String(documentId))).replace('{attribute}', encodeURIComponent(String(attribute)));
+        const apiPath =
+            '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}/{attribute}/decrement'
+                .replace('{databaseId}', encodeURIComponent(String(databaseId)))
+                .replace(
+                    '{collectionId}',
+                    encodeURIComponent(String(collectionId)),
+                )
+                .replace('{documentId}', encodeURIComponent(String(documentId)))
+                .replace('{attribute}', encodeURIComponent(String(attribute)));
         const payload: Payload = {};
         if (typeof value !== 'undefined') {
             payload['value'] = value;
@@ -975,15 +1453,10 @@ export class Databases {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'patch',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('patch', uri, apiHeaders, payload);
     }
 
     /**
@@ -1000,7 +1473,17 @@ export class Databases {
      * @returns {Promise<Document>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.incrementRowColumn` instead.
      */
-    incrementDocumentAttribute<Document extends Models.Document = Models.DefaultDocument>(params: { databaseId: string, collectionId: string, documentId: string, attribute: string, value?: number, max?: number, transactionId?: string }): Promise<Document>;
+    incrementDocumentAttribute<
+        Document extends Models.Document = Models.DefaultDocument,
+    >(params: {
+        databaseId: string;
+        collectionId: string;
+        documentId: string;
+        attribute: string;
+        value?: number;
+        max?: number;
+        transactionId?: string;
+    }): Promise<Document>;
     /**
      * Increment a specific attribute of a document by a given value.
      *
@@ -1015,15 +1498,57 @@ export class Databases {
      * @returns {Promise<Document>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    incrementDocumentAttribute<Document extends Models.Document = Models.DefaultDocument>(databaseId: string, collectionId: string, documentId: string, attribute: string, value?: number, max?: number, transactionId?: string): Promise<Document>;
-    incrementDocumentAttribute<Document extends Models.Document = Models.DefaultDocument>(
-        paramsOrFirst: { databaseId: string, collectionId: string, documentId: string, attribute: string, value?: number, max?: number, transactionId?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+    incrementDocumentAttribute<
+        Document extends Models.Document = Models.DefaultDocument,
+    >(
+        databaseId: string,
+        collectionId: string,
+        documentId: string,
+        attribute: string,
+        value?: number,
+        max?: number,
+        transactionId?: string,
+    ): Promise<Document>;
+    incrementDocumentAttribute<
+        Document extends Models.Document = Models.DefaultDocument,
+    >(
+        paramsOrFirst:
+            | {
+                  databaseId: string;
+                  collectionId: string;
+                  documentId: string;
+                  attribute: string;
+                  value?: number;
+                  max?: number;
+                  transactionId?: string;
+              }
+            | string,
+        ...rest: [string?, string?, string?, number?, number?, string?]
     ): Promise<Document> {
-        let params: { databaseId: string, collectionId: string, documentId: string, attribute: string, value?: number, max?: number, transactionId?: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { databaseId: string, collectionId: string, documentId: string, attribute: string, value?: number, max?: number, transactionId?: string };
+        let params: {
+            databaseId: string;
+            collectionId: string;
+            documentId: string;
+            attribute: string;
+            value?: number;
+            max?: number;
+            transactionId?: string;
+        };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                databaseId: string;
+                collectionId: string;
+                documentId: string;
+                attribute: string;
+                value?: number;
+                max?: number;
+                transactionId?: string;
+            };
         } else {
             params = {
                 databaseId: paramsOrFirst as string,
@@ -1032,10 +1557,10 @@ export class Databases {
                 attribute: rest[2] as string,
                 value: rest[3] as number,
                 max: rest[4] as number,
-                transactionId: rest[5] as string            
+                transactionId: rest[5] as string,
             };
         }
-        
+
         const databaseId = params.databaseId;
         const collectionId = params.collectionId;
         const documentId = params.documentId;
@@ -1045,19 +1570,34 @@ export class Databases {
         const transactionId = params.transactionId;
 
         if (typeof databaseId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "databaseId"');
+            throw new AppwriteException(
+                'Missing required parameter: "databaseId"',
+            );
         }
         if (typeof collectionId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "collectionId"');
+            throw new AppwriteException(
+                'Missing required parameter: "collectionId"',
+            );
         }
         if (typeof documentId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "documentId"');
+            throw new AppwriteException(
+                'Missing required parameter: "documentId"',
+            );
         }
         if (typeof attribute === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "attribute"');
+            throw new AppwriteException(
+                'Missing required parameter: "attribute"',
+            );
         }
-
-        const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}/{attribute}/increment'.replace('{databaseId}', encodeURIComponent(String(databaseId))).replace('{collectionId}', encodeURIComponent(String(collectionId))).replace('{documentId}', encodeURIComponent(String(documentId))).replace('{attribute}', encodeURIComponent(String(attribute)));
+        const apiPath =
+            '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}/{attribute}/increment'
+                .replace('{databaseId}', encodeURIComponent(String(databaseId)))
+                .replace(
+                    '{collectionId}',
+                    encodeURIComponent(String(collectionId)),
+                )
+                .replace('{documentId}', encodeURIComponent(String(documentId)))
+                .replace('{attribute}', encodeURIComponent(String(attribute)));
         const payload: Payload = {};
         if (typeof value !== 'undefined') {
             payload['value'] = value;
@@ -1073,14 +1613,9 @@ export class Databases {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'patch',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('patch', uri, apiHeaders, payload);
     }
 }

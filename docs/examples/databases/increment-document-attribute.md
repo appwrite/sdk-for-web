@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Databases } from "appwrite";
+import { Client, Databases } from 'appwrite';
 
 const client = new Client()
     .setEndpoint('https://<REGION>.cloud.appwrite.io/v1') // Your API Endpoint
@@ -11,10 +11,10 @@ const result = await databases.incrementDocumentAttribute({
     databaseId: '<DATABASE_ID>',
     collectionId: '<COLLECTION_ID>',
     documentId: '<DOCUMENT_ID>',
-    attribute: '',
-    value: null, // optional
-    max: null, // optional
-    transactionId: '<TRANSACTION_ID>' // optional
+    attribute: '<ATTRIBUTE>',
+    value: 1, // optional
+    max: 100, // optional
+    transactionId: '<TRANSACTION_ID>', // optional
 });
 
 console.log(result);

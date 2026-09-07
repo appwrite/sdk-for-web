@@ -14,7 +14,8 @@ export class ID {
         const msec = now.getMilliseconds();
 
         // Convert to hexadecimal
-        const hexTimestamp = sec.toString(16) + msec.toString(16).padStart(5, '0');
+        const hexTimestamp =
+            sec.toString(16) + msec.toString(16).padStart(5, '0');
         return hexTimestamp;
     }
 
@@ -25,12 +26,12 @@ export class ID {
      * @returns {string}
      */
     public static custom(id: string): string {
-        return id
+        return id;
     }
 
     /**
      * Have Appwrite generate a unique ID for you.
-     * 
+     *
      * @param {number} padding. Default is 7.
      * @returns {string}
      */

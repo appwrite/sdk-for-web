@@ -2,11 +2,10 @@ import { AppwriteException, Client, JSONbig } from '../client';
 import { Channel, ActionableChannel, ResolvedChannel } from '../channel';
 import { Query } from '../query';
 import { ID } from '../id';
-
 export type RealtimeSubscriptionUpdate = {
     channels?: (string | Channel<any> | ActionableChannel | ResolvedChannel)[];
     queries?: (string | Query)[];
-}
+};
 
 export type RealtimeSubscription = {
     /**
@@ -25,18 +24,18 @@ export type RealtimeSubscription = {
      * Prefer `unsubscribe()` for per-subscription teardown and `Realtime.disconnect()` for full shutdown.
      */
     close: () => Promise<void>;
-}
+};
 
 export type RealtimeCallback<T = any> = {
     channels: Set<string>;
     queries: string[]; // Array of query strings
     callback: (event: RealtimeResponseEvent<T>) => void;
-}
+};
 
 export type RealtimeResponse = {
     type: string;
     data?: any;
-}
+};
 
 export type RealtimeResponseEvent<T = any> = {
     events: string[];
@@ -44,17 +43,17 @@ export type RealtimeResponseEvent<T = any> = {
     timestamp: string;
     payload: T;
     subscriptions: string[]; // Backend-provided subscription IDs
-}
+};
 
 export type RealtimeResponseConnected = {
     channels: string[];
     user?: object;
-}
+};
 
 export type RealtimeRequest = {
     type: 'authentication' | 'subscribe' | 'unsubscribe' | 'presence';
     data: any;
-}
+};
 
 export type RealtimePresence = {
     $id: string;
@@ -67,25 +66,25 @@ export type RealtimePresence = {
     status?: string;
     source: string;
     metadata?: Record<string, any>;
-}
+};
 
 export type RealtimePresenceCreate = {
     status: string;
     presenceId: string;
     permissions?: string[];
     metadata?: Record<string, any>;
-}
+};
 
 type RealtimeRequestSubscribeRow = {
     subscriptionId?: string;
     channels: string[];
     queries: string[];
-}
+};
 
 export enum RealtimeCode {
     NORMAL_CLOSURE = 1000,
     POLICY_VIOLATION = 1008,
-    UNKNOWN_ERROR = -1
+    UNKNOWN_ERROR = -1,
 }
 
 export class Realtime {
@@ -113,7 +112,9 @@ export class Realtime {
     private connectionId = 0;
     private reconnect = true;
 
-    private onErrorCallbacks: Array<(error?: Error, statusCode?: number) => void> = [];
+    private onErrorCallbacks: Array<
+        (error?: Error, statusCode?: number) => void
+    > = [];
     private onCloseCallbacks: Array<() => void> = [];
     private onOpenCallbacks: Array<() => void> = [];
 
@@ -127,7 +128,9 @@ export class Realtime {
      * @param {Function} callback - Callback function to handle errors
      * @returns {void}
      */
-    public onError(callback: (error?: Error, statusCode?: number) => void): void {
+    public onError(
+        callback: (error?: Error, statusCode?: number) => void,
+    ): void {
         this.onErrorCallbacks.push(callback);
     }
 
@@ -211,7 +214,6 @@ export class Realtime {
         if (jwt) {
             queryParams += `&jwt=${encodeURIComponent(jwt)}`;
         }
-
         const endpoint =
             this.client.config.endpointRealtime !== ''
                 ? this.client.config.endpointRealtime
@@ -243,13 +245,12 @@ export class Realtime {
             try {
                 const connectionId = ++this.connectionId;
                 const socket = (this.socket = new WebSocket(url));
-
                 socket.addEventListener('open', () => {
                     if (connectionId !== this.connectionId) {
                         return;
                     }
                     this.reconnectAttempts = 0;
-                    this.onOpenCallbacks.forEach(callback => callback());
+                    this.onOpenCallbacks.forEach((callback) => callback());
                     this.startHeartbeat();
                     resolve();
                 });
@@ -259,7 +260,9 @@ export class Realtime {
                         return;
                     }
                     try {
-                        const message = JSONbig.parse(event.data) as RealtimeResponse;
+                        const message = JSONbig.parse(
+                            event.data,
+                        ) as RealtimeResponse;
                         this.handleMessage(message);
                     } catch (error) {
                         console.error('Failed to parse message:', error);
@@ -267,20 +270,28 @@ export class Realtime {
                 });
 
                 socket.addEventListener('close', async (event: CloseEvent) => {
-                    if (connectionId !== this.connectionId || socket !== this.socket) {
+                    if (
+                        connectionId !== this.connectionId ||
+                        socket !== this.socket
+                    ) {
                         return;
                     }
                     this.appConnected = false;
                     this.stopHeartbeat();
-                    this.onCloseCallbacks.forEach(callback => callback());
+                    this.onCloseCallbacks.forEach((callback) => callback());
 
-                    if (!this.reconnect || event.code === RealtimeCode.POLICY_VIOLATION) {
+                    if (
+                        !this.reconnect ||
+                        event.code === RealtimeCode.POLICY_VIOLATION
+                    ) {
                         this.reconnect = true;
                         return;
                     }
 
                     const timeout = this.getTimeout();
-                    console.log(`Realtime disconnected. Re-connecting in ${timeout / 1000} seconds.`);
+                    console.log(
+                        `Realtime disconnected. Re-connecting in ${timeout / 1000} seconds.`,
+                    );
 
                     await this.sleep(timeout);
                     this.reconnectAttempts++;
@@ -292,14 +303,19 @@ export class Realtime {
                     }
                 });
 
-                socket.addEventListener('error', (event: Event) => {
-                    if (connectionId !== this.connectionId || socket !== this.socket) {
+                socket.addEventListener('error', (_event: Event) => {
+                    if (
+                        connectionId !== this.connectionId ||
+                        socket !== this.socket
+                    ) {
                         return;
                     }
                     this.stopHeartbeat();
                     const error = new Error('WebSocket error');
                     console.error('WebSocket error:', error.message);
-                    this.onErrorCallbacks.forEach(callback => callback(error));
+                    this.onErrorCallbacks.forEach((callback) =>
+                        callback(error),
+                    );
                     reject(error);
                 });
             } catch (error) {
@@ -318,11 +334,17 @@ export class Realtime {
                     return;
                 }
 
-                if (this.socket.readyState === WebSocket.OPEN ||
-                    this.socket.readyState === WebSocket.CONNECTING) {
-                    this.socket.addEventListener('close', () => {
-                        resolve();
-                    }, { once: true });
+                if (
+                    this.socket.readyState === WebSocket.OPEN ||
+                    this.socket.readyState === WebSocket.CONNECTING
+                ) {
+                    this.socket.addEventListener(
+                        'close',
+                        () => {
+                            resolve();
+                        },
+                        { once: true },
+                    );
                     this.socket.close(RealtimeCode.NORMAL_CLOSURE);
                 } else {
                     resolve();
@@ -344,21 +366,25 @@ export class Realtime {
     }
 
     private sleep(ms: number): Promise<void> {
-        return new Promise(resolve => setTimeout(resolve, ms));
+        return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
     private sendUnsubscribeMessage(subscriptionIds: string[]): void {
-        const ids = subscriptionIds.filter(id => typeof id === 'string' && id.length > 0);
+        const ids = subscriptionIds.filter(
+            (id) => typeof id === 'string' && id.length > 0,
+        );
         if (ids.length === 0) {
             return;
         }
         if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
             return;
         }
-        this.socket.send(JSONbig.stringify(<RealtimeRequest>{
-            type: 'unsubscribe',
-            data: ids.map(subscriptionId => ({ subscriptionId }))
-        }));
+        this.socket.send(
+            JSONbig.stringify(<RealtimeRequest>{
+                type: 'unsubscribe',
+                data: ids.map((subscriptionId) => ({ subscriptionId })),
+            }),
+        );
     }
 
     private generateUniqueSubscriptionId(): string {
@@ -369,7 +395,9 @@ export class Realtime {
                 return id;
             }
         }
-        throw new AppwriteException('Failed to generate unique subscription id');
+        throw new AppwriteException(
+            'Failed to generate unique subscription id',
+        );
     }
 
     private enqueuePendingSubscribe(subscriptionId: string): void {
@@ -380,7 +408,7 @@ export class Realtime {
         this.pendingSubscribes.set(subscriptionId, {
             subscriptionId,
             channels: Array.from(subscription.channels),
-            queries: subscription.queries ?? []
+            queries: subscription.queries ?? [],
         });
     }
 
@@ -431,10 +459,12 @@ export class Realtime {
         const rows = Array.from(this.pendingSubscribes.values());
         this.pendingSubscribes.clear();
 
-        this.socket.send(JSONbig.stringify(<RealtimeRequest>{
-            type: 'subscribe',
-            data: rows
-        }));
+        this.socket.send(
+            JSONbig.stringify(<RealtimeRequest>{
+                type: 'subscribe',
+                data: rows,
+            }),
+        );
     }
 
     /**
@@ -444,12 +474,17 @@ export class Realtime {
      * @param {string | Channel<any> | ActionableChannel | ResolvedChannel} channel - Channel value (string or Channel builder instance)
      * @returns {string} Channel string representation
      */
-    private channelToString(channel: string | Channel<any> | ActionableChannel | ResolvedChannel): string {
+    private channelToString(
+        channel: string | Channel<any> | ActionableChannel | ResolvedChannel,
+    ): string {
         if (typeof channel === 'string') {
             return channel;
         }
         // All Channel instances have toString() method
-        if (channel && typeof (channel as Channel<any>).toString === 'function') {
+        if (
+            channel &&
+            typeof (channel as Channel<any>).toString === 'function'
+        ) {
             return (channel as Channel<any>).toString();
         }
         return String(channel);
@@ -465,7 +500,7 @@ export class Realtime {
     public async subscribe(
         channel: string | Channel<any> | ActionableChannel | ResolvedChannel,
         callback: (event: RealtimeResponseEvent<any>) => void,
-        queries?: (string | Query)[]
+        queries?: (string | Query)[],
     ): Promise<RealtimeSubscription>;
 
     /**
@@ -476,9 +511,11 @@ export class Realtime {
      * @returns {Promise<RealtimeSubscription>} Subscription object with close method
      */
     public async subscribe(
-        channels: (string | Channel<any> | ActionableChannel | ResolvedChannel)[],
+        channels: (
+            string | Channel<any> | ActionableChannel | ResolvedChannel
+        )[],
         callback: (event: RealtimeResponseEvent<any>) => void,
-        queries?: (string | Query)[]
+        queries?: (string | Query)[],
     ): Promise<RealtimeSubscription>;
 
     /**
@@ -491,7 +528,7 @@ export class Realtime {
     public async subscribe<T>(
         channel: string | Channel<any> | ActionableChannel | ResolvedChannel,
         callback: (event: RealtimeResponseEvent<T>) => void,
-        queries?: (string | Query)[]
+        queries?: (string | Query)[],
     ): Promise<RealtimeSubscription>;
 
     /**
@@ -502,32 +539,43 @@ export class Realtime {
      * @returns {Promise<RealtimeSubscription>} Subscription object with close method
      */
     public async subscribe<T>(
-        channels: (string | Channel<any> | ActionableChannel | ResolvedChannel)[],
+        channels: (
+            string | Channel<any> | ActionableChannel | ResolvedChannel
+        )[],
         callback: (event: RealtimeResponseEvent<T>) => void,
-        queries?: (string | Query)[]
+        queries?: (string | Query)[],
     ): Promise<RealtimeSubscription>;
 
     public async subscribe<T = any>(
-        channelsOrChannel: string | Channel<any> | ActionableChannel | ResolvedChannel | (string | Channel<any> | ActionableChannel | ResolvedChannel)[],
+        channelsOrChannel:
+            | string
+            | Channel<any>
+            | ActionableChannel
+            | ResolvedChannel
+            | (string | Channel<any> | ActionableChannel | ResolvedChannel)[],
         callback: (event: RealtimeResponseEvent<T>) => void,
-        queries: (string | Query)[] = []
+        queries: (string | Query)[] = [],
     ): Promise<RealtimeSubscription> {
         const channelArray = Array.isArray(channelsOrChannel)
             ? channelsOrChannel
             : [channelsOrChannel];
-        
+
         // Convert all channels to strings
-        const channelStrings = channelArray.map(ch => this.channelToString(ch));
+        const channelStrings = channelArray.map((ch) =>
+            this.channelToString(ch),
+        );
         const channels = new Set(channelStrings);
 
         // Convert queries to array of strings
         // Ensure each query is a separate string in the array
         const queryStrings: string[] = [];
-        for (const q of (queries ?? [])) {
+        for (const q of queries ?? []) {
             if (Array.isArray(q)) {
                 // Handle nested arrays: [[q1, q2]] -> [q1, q2]
                 for (const inner of q) {
-                    queryStrings.push(typeof inner === 'string' ? inner : inner.toString());
+                    queryStrings.push(
+                        typeof inner === 'string' ? inner : inner.toString(),
+                    );
                 }
             } else {
                 queryStrings.push(typeof q === 'string' ? q : q.toString());
@@ -539,7 +587,7 @@ export class Realtime {
         this.activeSubscriptions.set(subscriptionId, {
             channels,
             queries: queryStrings,
-            callback
+            callback,
         });
         this.enqueuePendingSubscribe(subscriptionId);
 
@@ -567,14 +615,18 @@ export class Realtime {
             this.sendUnsubscribeMessage([subscriptionId]);
         };
 
-        const update = async (changes: RealtimeSubscriptionUpdate): Promise<void> => {
+        const update = async (
+            changes: RealtimeSubscriptionUpdate,
+        ): Promise<void> => {
             const subscription = this.activeSubscriptions.get(subscriptionId);
             if (!subscription) {
                 return;
             }
 
             if (changes.channels !== undefined) {
-                const nextChannelStrings = changes.channels.map(ch => this.channelToString(ch));
+                const nextChannelStrings = changes.channels.map((ch) =>
+                    this.channelToString(ch),
+                );
                 subscription.channels = new Set(nextChannelStrings);
             }
 
@@ -583,10 +635,16 @@ export class Realtime {
                 for (const q of changes.queries) {
                     if (Array.isArray(q)) {
                         for (const inner of q) {
-                            nextQueries.push(typeof inner === 'string' ? inner : (inner as Query).toString());
+                            nextQueries.push(
+                                typeof inner === 'string'
+                                    ? inner
+                                    : (inner as Query).toString(),
+                            );
                         }
                     } else {
-                        nextQueries.push(typeof q === 'string' ? q : q.toString());
+                        nextQueries.push(
+                            typeof q === 'string' ? q : q.toString(),
+                        );
                     }
                 }
                 subscription.queries = nextQueries;
@@ -599,7 +657,10 @@ export class Realtime {
                 await this.sleep(this.DEBOUNCE_MS);
 
                 if (this.subCallDepth === 1) {
-                    if (!this.socket || this.socket.readyState > WebSocket.OPEN) {
+                    if (
+                        !this.socket ||
+                        this.socket.readyState > WebSocket.OPEN
+                    ) {
                         await this.createSocket();
                     } else if (this.socket.readyState === WebSocket.OPEN) {
                         this.sendPendingSubscribes();
@@ -655,7 +716,10 @@ export class Realtime {
         // payload is stored.
         if (!this.socket || this.socket.readyState >= WebSocket.CLOSING) {
             this.createSocket().catch((error) => {
-                console.error('Failed to open realtime socket for presence:', error);
+                console.error(
+                    'Failed to open realtime socket for presence:',
+                    error,
+                );
             });
         }
 
@@ -675,10 +739,12 @@ export class Realtime {
         if (!this.appConnected) {
             return;
         }
-        this.socket.send(JSONbig.stringify(<RealtimeRequest>{
-            type: 'presence',
-            data: this.pendingPresence
-        }));
+        this.socket.send(
+            JSONbig.stringify(<RealtimeRequest>{
+                type: 'presence',
+                data: this.pendingPresence,
+            }),
+        );
     }
 
     private handleMessage(message: RealtimeResponse): void {
@@ -712,7 +778,9 @@ export class Realtime {
         let session = this.client.config.session;
         if (!session) {
             try {
-                const cookie = JSONbig.parse(window.localStorage.getItem('cookieFallback') ?? '{}');
+                const cookie = JSONbig.parse(
+                    window.localStorage.getItem('cookieFallback') ?? '{}',
+                );
                 session = cookie?.[`a_session_${this.client.config.project}`];
             } catch (error) {
                 console.error('Failed to parse cookie fallback:', error);
@@ -720,12 +788,14 @@ export class Realtime {
         }
 
         if (session && !messageData.user) {
-            this.socket?.send(JSONbig.stringify(<RealtimeRequest>{
-                type: 'authentication',
-                data: {
-                    session
-                }
-            }));
+            this.socket?.send(
+                JSONbig.stringify(<RealtimeRequest>{
+                    type: 'authentication',
+                    data: {
+                        session,
+                    },
+                }),
+            );
         }
 
         for (const subscriptionId of this.activeSubscriptions.keys()) {
@@ -738,10 +808,12 @@ export class Realtime {
 
     private handleResponseError(message: RealtimeResponse): void {
         const error = new AppwriteException(
-            message.data?.message || 'Unknown error'
+            message.data?.message || 'Unknown error',
         );
         const statusCode = message.data?.code;
-        this.onErrorCallbacks.forEach(callback => callback(error, statusCode));
+        this.onErrorCallbacks.forEach((callback) =>
+            callback(error, statusCode),
+        );
     }
 
     private handleResponseEvent(message: RealtimeResponse): void {
@@ -756,7 +828,13 @@ export class Realtime {
         const timestamp = data.timestamp as string;
         const subscriptions = data.subscriptions as string[] | undefined;
 
-        if (!channels || !events || !payload || !subscriptions || subscriptions.length === 0) {
+        if (
+            !channels ||
+            !events ||
+            !payload ||
+            !subscriptions ||
+            subscriptions.length === 0
+        ) {
             return;
         }
 
@@ -770,7 +848,7 @@ export class Realtime {
                 channels,
                 timestamp,
                 payload,
-                subscriptions
+                subscriptions,
             });
         }
     }

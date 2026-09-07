@@ -1,5 +1,5 @@
 ```javascript
-import { Client, TablesDB } from "appwrite";
+import { Client, TablesDB } from 'appwrite';
 
 const client = new Client()
     .setEndpoint('https://<REGION>.cloud.appwrite.io/v1') // Your API Endpoint
@@ -13,7 +13,7 @@ const result = await tablesDB.listRows({
     queries: [], // optional
     transactionId: '<TRANSACTION_ID>', // optional
     total: false, // optional
-    ttl: 0 // optional
+    ttl: 0, // optional
 });
 
 console.log(result);

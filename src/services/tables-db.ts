@@ -1,7 +1,5 @@
-import { Service } from '../service';
-import { AppwriteException, Client, type Payload, UploadProgress } from '../client';
+import { AppwriteException, Client, type Payload } from '../client';
 import type { Models } from '../models';
-
 
 export class TablesDB {
     client: Client;
@@ -17,7 +15,9 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Models.TransactionList>}
      */
-    listTransactions(params?: { queries?: string[] }): Promise<Models.TransactionList>;
+    listTransactions(params?: {
+        queries?: string[];
+    }): Promise<Models.TransactionList>;
     /**
      * List transactions across all databases.
      *
@@ -28,20 +28,24 @@ export class TablesDB {
      */
     listTransactions(queries?: string[]): Promise<Models.TransactionList>;
     listTransactions(
-        paramsOrFirst?: { queries?: string[] } | string[]    
+        paramsOrFirst?: { queries?: string[] } | string[],
     ): Promise<Models.TransactionList> {
         let params: { queries?: string[] };
-        
-        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+
+        if (
+            !paramsOrFirst ||
+            (paramsOrFirst &&
+                typeof paramsOrFirst === 'object' &&
+                !Array.isArray(paramsOrFirst))
+        ) {
             params = (paramsOrFirst || {}) as { queries?: string[] };
         } else {
             params = {
-                queries: paramsOrFirst as string[]            
+                queries: paramsOrFirst as string[],
             };
         }
-        
-        const queries = params.queries;
 
+        const queries = params.queries;
 
         const apiPath = '/tablesdb/transactions';
         const payload: Payload = {};
@@ -52,15 +56,10 @@ export class TablesDB {
 
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('get', uri, apiHeaders, payload);
     }
 
     /**
@@ -81,20 +80,24 @@ export class TablesDB {
      */
     createTransaction(ttl?: number): Promise<Models.Transaction>;
     createTransaction(
-        paramsOrFirst?: { ttl?: number } | number    
+        paramsOrFirst?: { ttl?: number } | number,
     ): Promise<Models.Transaction> {
         let params: { ttl?: number };
-        
-        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+
+        if (
+            !paramsOrFirst ||
+            (paramsOrFirst &&
+                typeof paramsOrFirst === 'object' &&
+                !Array.isArray(paramsOrFirst))
+        ) {
             params = (paramsOrFirst || {}) as { ttl?: number };
         } else {
             params = {
-                ttl: paramsOrFirst as number            
+                ttl: paramsOrFirst as number,
             };
         }
-        
-        const ttl = params.ttl;
 
+        const ttl = params.ttl;
 
         const apiPath = '/tablesdb/transactions';
         const payload: Payload = {};
@@ -106,15 +109,10 @@ export class TablesDB {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'post',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('post', uri, apiHeaders, payload);
     }
 
     /**
@@ -124,7 +122,9 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Transaction>}
      */
-    getTransaction(params: { transactionId: string }): Promise<Models.Transaction>;
+    getTransaction(params: {
+        transactionId: string;
+    }): Promise<Models.Transaction>;
     /**
      * Get a transaction by its unique ID.
      *
@@ -135,39 +135,42 @@ export class TablesDB {
      */
     getTransaction(transactionId: string): Promise<Models.Transaction>;
     getTransaction(
-        paramsOrFirst: { transactionId: string } | string    
+        paramsOrFirst: { transactionId: string } | string,
     ): Promise<Models.Transaction> {
         let params: { transactionId: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
             params = (paramsOrFirst || {}) as { transactionId: string };
         } else {
             params = {
-                transactionId: paramsOrFirst as string            
+                transactionId: paramsOrFirst as string,
             };
         }
-        
+
         const transactionId = params.transactionId;
 
         if (typeof transactionId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "transactionId"');
+            throw new AppwriteException(
+                'Missing required parameter: "transactionId"',
+            );
         }
-
-        const apiPath = '/tablesdb/transactions/{transactionId}'.replace('{transactionId}', encodeURIComponent(String(transactionId)));
+        const apiPath = '/tablesdb/transactions/{transactionId}'.replace(
+            '{transactionId}',
+            encodeURIComponent(String(transactionId)),
+        );
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('get', uri, apiHeaders, payload);
     }
 
     /**
@@ -179,7 +182,11 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Transaction>}
      */
-    updateTransaction(params: { transactionId: string, commit?: boolean, rollback?: boolean }): Promise<Models.Transaction>;
+    updateTransaction(params: {
+        transactionId: string;
+        commit?: boolean;
+        rollback?: boolean;
+    }): Promise<Models.Transaction>;
     /**
      * Update a transaction, to either commit or roll back its operations.
      *
@@ -190,32 +197,54 @@ export class TablesDB {
      * @returns {Promise<Models.Transaction>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    updateTransaction(transactionId: string, commit?: boolean, rollback?: boolean): Promise<Models.Transaction>;
     updateTransaction(
-        paramsOrFirst: { transactionId: string, commit?: boolean, rollback?: boolean } | string,
-        ...rest: [(boolean)?, (boolean)?]    
+        transactionId: string,
+        commit?: boolean,
+        rollback?: boolean,
+    ): Promise<Models.Transaction>;
+    updateTransaction(
+        paramsOrFirst:
+            | { transactionId: string; commit?: boolean; rollback?: boolean }
+            | string,
+        ...rest: [boolean?, boolean?]
     ): Promise<Models.Transaction> {
-        let params: { transactionId: string, commit?: boolean, rollback?: boolean };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { transactionId: string, commit?: boolean, rollback?: boolean };
+        let params: {
+            transactionId: string;
+            commit?: boolean;
+            rollback?: boolean;
+        };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                transactionId: string;
+                commit?: boolean;
+                rollback?: boolean;
+            };
         } else {
             params = {
                 transactionId: paramsOrFirst as string,
                 commit: rest[0] as boolean,
-                rollback: rest[1] as boolean            
+                rollback: rest[1] as boolean,
             };
         }
-        
+
         const transactionId = params.transactionId;
         const commit = params.commit;
         const rollback = params.rollback;
 
         if (typeof transactionId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "transactionId"');
+            throw new AppwriteException(
+                'Missing required parameter: "transactionId"',
+            );
         }
-
-        const apiPath = '/tablesdb/transactions/{transactionId}'.replace('{transactionId}', encodeURIComponent(String(transactionId)));
+        const apiPath = '/tablesdb/transactions/{transactionId}'.replace(
+            '{transactionId}',
+            encodeURIComponent(String(transactionId)),
+        );
         const payload: Payload = {};
         if (typeof commit !== 'undefined') {
             payload['commit'] = commit;
@@ -228,15 +257,10 @@ export class TablesDB {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'patch',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('patch', uri, apiHeaders, payload);
     }
 
     /**
@@ -257,39 +281,42 @@ export class TablesDB {
      */
     deleteTransaction(transactionId: string): Promise<{}>;
     deleteTransaction(
-        paramsOrFirst: { transactionId: string } | string    
+        paramsOrFirst: { transactionId: string } | string,
     ): Promise<{}> {
         let params: { transactionId: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
             params = (paramsOrFirst || {}) as { transactionId: string };
         } else {
             params = {
-                transactionId: paramsOrFirst as string            
+                transactionId: paramsOrFirst as string,
             };
         }
-        
+
         const transactionId = params.transactionId;
 
         if (typeof transactionId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "transactionId"');
+            throw new AppwriteException(
+                'Missing required parameter: "transactionId"',
+            );
         }
-
-        const apiPath = '/tablesdb/transactions/{transactionId}'.replace('{transactionId}', encodeURIComponent(String(transactionId)));
+        const apiPath = '/tablesdb/transactions/{transactionId}'.replace(
+            '{transactionId}',
+            encodeURIComponent(String(transactionId)),
+        );
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-        }
+        };
 
-        return this.client.call(
-            'delete',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('delete', uri, apiHeaders, payload);
     }
 
     /**
@@ -300,7 +327,10 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Models.Transaction>}
      */
-    createOperations(params: { transactionId: string, operations?: object[] }): Promise<Models.Transaction>;
+    createOperations(params: {
+        transactionId: string;
+        operations?: object[];
+    }): Promise<Models.Transaction>;
     /**
      * Create multiple operations in a single transaction.
      *
@@ -310,30 +340,46 @@ export class TablesDB {
      * @returns {Promise<Models.Transaction>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    createOperations(transactionId: string, operations?: object[]): Promise<Models.Transaction>;
     createOperations(
-        paramsOrFirst: { transactionId: string, operations?: object[] } | string,
-        ...rest: [(object[])?]    
+        transactionId: string,
+        operations?: object[],
+    ): Promise<Models.Transaction>;
+    createOperations(
+        paramsOrFirst:
+            { transactionId: string; operations?: object[] } | string,
+        ...rest: [object[]?]
     ): Promise<Models.Transaction> {
-        let params: { transactionId: string, operations?: object[] };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { transactionId: string, operations?: object[] };
+        let params: { transactionId: string; operations?: object[] };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                transactionId: string;
+                operations?: object[];
+            };
         } else {
             params = {
                 transactionId: paramsOrFirst as string,
-                operations: rest[0] as object[]            
+                operations: rest[0] as object[],
             };
         }
-        
+
         const transactionId = params.transactionId;
         const operations = params.operations;
 
         if (typeof transactionId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "transactionId"');
+            throw new AppwriteException(
+                'Missing required parameter: "transactionId"',
+            );
         }
-
-        const apiPath = '/tablesdb/transactions/{transactionId}/operations'.replace('{transactionId}', encodeURIComponent(String(transactionId)));
+        const apiPath =
+            '/tablesdb/transactions/{transactionId}/operations'.replace(
+                '{transactionId}',
+                encodeURIComponent(String(transactionId)),
+            );
         const payload: Payload = {};
         if (typeof operations !== 'undefined') {
             payload['operations'] = operations;
@@ -343,15 +389,10 @@ export class TablesDB {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'post',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('post', uri, apiHeaders, payload);
     }
 
     /**
@@ -366,7 +407,14 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Models.RowList<Row>>}
      */
-    listRows<Row extends Models.Row = Models.DefaultRow>(params: { databaseId: string, tableId: string, queries?: string[], transactionId?: string, total?: boolean, ttl?: number }): Promise<Models.RowList<Row>>;
+    listRows<Row extends Models.Row = Models.DefaultRow>(params: {
+        databaseId: string;
+        tableId: string;
+        queries?: string[];
+        transactionId?: string;
+        total?: boolean;
+        ttl?: number;
+    }): Promise<Models.RowList<Row>>;
     /**
      * Get a list of all the user's rows in a given table. You can use the query params to filter your results.
      *
@@ -380,15 +428,49 @@ export class TablesDB {
      * @returns {Promise<Models.RowList<Row>>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    listRows<Row extends Models.Row = Models.DefaultRow>(databaseId: string, tableId: string, queries?: string[], transactionId?: string, total?: boolean, ttl?: number): Promise<Models.RowList<Row>>;
     listRows<Row extends Models.Row = Models.DefaultRow>(
-        paramsOrFirst: { databaseId: string, tableId: string, queries?: string[], transactionId?: string, total?: boolean, ttl?: number } | string,
-        ...rest: [(string)?, (string[])?, (string)?, (boolean)?, (number)?]    
+        databaseId: string,
+        tableId: string,
+        queries?: string[],
+        transactionId?: string,
+        total?: boolean,
+        ttl?: number,
+    ): Promise<Models.RowList<Row>>;
+    listRows<Row extends Models.Row = Models.DefaultRow>(
+        paramsOrFirst:
+            | {
+                  databaseId: string;
+                  tableId: string;
+                  queries?: string[];
+                  transactionId?: string;
+                  total?: boolean;
+                  ttl?: number;
+              }
+            | string,
+        ...rest: [string?, string[]?, string?, boolean?, number?]
     ): Promise<Models.RowList<Row>> {
-        let params: { databaseId: string, tableId: string, queries?: string[], transactionId?: string, total?: boolean, ttl?: number };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { databaseId: string, tableId: string, queries?: string[], transactionId?: string, total?: boolean, ttl?: number };
+        let params: {
+            databaseId: string;
+            tableId: string;
+            queries?: string[];
+            transactionId?: string;
+            total?: boolean;
+            ttl?: number;
+        };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                databaseId: string;
+                tableId: string;
+                queries?: string[];
+                transactionId?: string;
+                total?: boolean;
+                ttl?: number;
+            };
         } else {
             params = {
                 databaseId: paramsOrFirst as string,
@@ -396,10 +478,10 @@ export class TablesDB {
                 queries: rest[1] as string[],
                 transactionId: rest[2] as string,
                 total: rest[3] as boolean,
-                ttl: rest[4] as number            
+                ttl: rest[4] as number,
             };
         }
-        
+
         const databaseId = params.databaseId;
         const tableId = params.tableId;
         const queries = params.queries;
@@ -408,13 +490,18 @@ export class TablesDB {
         const ttl = params.ttl;
 
         if (typeof databaseId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "databaseId"');
+            throw new AppwriteException(
+                'Missing required parameter: "databaseId"',
+            );
         }
         if (typeof tableId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "tableId"');
+            throw new AppwriteException(
+                'Missing required parameter: "tableId"',
+            );
         }
-
-        const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows'.replace('{databaseId}', encodeURIComponent(String(databaseId))).replace('{tableId}', encodeURIComponent(String(tableId)));
+        const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows'
+            .replace('{databaseId}', encodeURIComponent(String(databaseId)))
+            .replace('{tableId}', encodeURIComponent(String(tableId)));
         const payload: Payload = {};
         if (typeof queries !== 'undefined') {
             payload['queries'] = queries;
@@ -432,15 +519,10 @@ export class TablesDB {
 
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('get', uri, apiHeaders, payload);
     }
 
     /**
@@ -455,7 +537,16 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Row>}
      */
-    createRow<Row extends Models.Row = Models.DefaultRow>(params: { databaseId: string, tableId: string, rowId: string, data: Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Omit<Row, keyof Models.Row>, permissions?: string[], transactionId?: string }): Promise<Row>;
+    createRow<Row extends Models.Row = Models.DefaultRow>(params: {
+        databaseId: string;
+        tableId: string;
+        rowId: string;
+        data: Row extends Models.DefaultRow
+            ? Partial<Models.Row> & Record<string, any>
+            : Partial<Models.Row> & Omit<Row, keyof Models.Row>;
+        permissions?: string[];
+        transactionId?: string;
+    }): Promise<Row>;
     /**
      * Create a new Row. Before using this route, you should create a new table resource using either a [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.
      *
@@ -469,26 +560,78 @@ export class TablesDB {
      * @returns {Promise<Row>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    createRow<Row extends Models.Row = Models.DefaultRow>(databaseId: string, tableId: string, rowId: string, data: Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Omit<Row, keyof Models.Row>, permissions?: string[], transactionId?: string): Promise<Row>;
     createRow<Row extends Models.Row = Models.DefaultRow>(
-        paramsOrFirst: { databaseId: string, tableId: string, rowId: string, data: Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Omit<Row, keyof Models.Row>, permissions?: string[], transactionId?: string } | string,
-        ...rest: [(string)?, (string)?, (Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Omit<Row, keyof Models.Row>)?, (string[])?, (string)?]    
+        databaseId: string,
+        tableId: string,
+        rowId: string,
+        data: Row extends Models.DefaultRow
+            ? Partial<Models.Row> & Record<string, any>
+            : Partial<Models.Row> & Omit<Row, keyof Models.Row>,
+        permissions?: string[],
+        transactionId?: string,
+    ): Promise<Row>;
+    createRow<Row extends Models.Row = Models.DefaultRow>(
+        paramsOrFirst:
+            | {
+                  databaseId: string;
+                  tableId: string;
+                  rowId: string;
+                  data: Row extends Models.DefaultRow
+                      ? Partial<Models.Row> & Record<string, any>
+                      : Partial<Models.Row> & Omit<Row, keyof Models.Row>;
+                  permissions?: string[];
+                  transactionId?: string;
+              }
+            | string,
+        ...rest: [
+            string?,
+            string?,
+            (Row extends Models.DefaultRow
+                ? Partial<Models.Row> & Record<string, any>
+                : Partial<Models.Row> & Omit<Row, keyof Models.Row>)?,
+            string[]?,
+            string?,
+        ]
     ): Promise<Row> {
-        let params: { databaseId: string, tableId: string, rowId: string, data: Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Omit<Row, keyof Models.Row>, permissions?: string[], transactionId?: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { databaseId: string, tableId: string, rowId: string, data: Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Omit<Row, keyof Models.Row>, permissions?: string[], transactionId?: string };
+        let params: {
+            databaseId: string;
+            tableId: string;
+            rowId: string;
+            data: Row extends Models.DefaultRow
+                ? Partial<Models.Row> & Record<string, any>
+                : Partial<Models.Row> & Omit<Row, keyof Models.Row>;
+            permissions?: string[];
+            transactionId?: string;
+        };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                databaseId: string;
+                tableId: string;
+                rowId: string;
+                data: Row extends Models.DefaultRow
+                    ? Partial<Models.Row> & Record<string, any>
+                    : Partial<Models.Row> & Omit<Row, keyof Models.Row>;
+                permissions?: string[];
+                transactionId?: string;
+            };
         } else {
             params = {
                 databaseId: paramsOrFirst as string,
                 tableId: rest[0] as string,
                 rowId: rest[1] as string,
-                data: rest[2] as Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Omit<Row, keyof Models.Row>,
+                data: rest[2] as Row extends Models.DefaultRow
+                    ? Partial<Models.Row> & Record<string, any>
+                    : Partial<Models.Row> & Omit<Row, keyof Models.Row>,
                 permissions: rest[3] as string[],
-                transactionId: rest[4] as string            
+                transactionId: rest[4] as string,
             };
         }
-        
+
         const databaseId = params.databaseId;
         const tableId = params.tableId;
         const rowId = params.rowId;
@@ -497,10 +640,14 @@ export class TablesDB {
         const transactionId = params.transactionId;
 
         if (typeof databaseId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "databaseId"');
+            throw new AppwriteException(
+                'Missing required parameter: "databaseId"',
+            );
         }
         if (typeof tableId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "tableId"');
+            throw new AppwriteException(
+                'Missing required parameter: "tableId"',
+            );
         }
         if (typeof rowId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "rowId"');
@@ -508,8 +655,9 @@ export class TablesDB {
         if (typeof data === 'undefined') {
             throw new AppwriteException('Missing required parameter: "data"');
         }
-
-        const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows'.replace('{databaseId}', encodeURIComponent(String(databaseId))).replace('{tableId}', encodeURIComponent(String(tableId)));
+        const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows'
+            .replace('{databaseId}', encodeURIComponent(String(databaseId)))
+            .replace('{tableId}', encodeURIComponent(String(tableId)));
         const payload: Payload = {};
         if (typeof rowId !== 'undefined') {
             payload['rowId'] = rowId;
@@ -528,15 +676,10 @@ export class TablesDB {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'post',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('post', uri, apiHeaders, payload);
     }
 
     /**
@@ -550,7 +693,13 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Row>}
      */
-    getRow<Row extends Models.Row = Models.DefaultRow>(params: { databaseId: string, tableId: string, rowId: string, queries?: string[], transactionId?: string }): Promise<Row>;
+    getRow<Row extends Models.Row = Models.DefaultRow>(params: {
+        databaseId: string;
+        tableId: string;
+        rowId: string;
+        queries?: string[];
+        transactionId?: string;
+    }): Promise<Row>;
     /**
      * Get a row by its unique ID. This endpoint response returns a JSON object with the row data.
      *
@@ -563,25 +712,55 @@ export class TablesDB {
      * @returns {Promise<Row>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    getRow<Row extends Models.Row = Models.DefaultRow>(databaseId: string, tableId: string, rowId: string, queries?: string[], transactionId?: string): Promise<Row>;
     getRow<Row extends Models.Row = Models.DefaultRow>(
-        paramsOrFirst: { databaseId: string, tableId: string, rowId: string, queries?: string[], transactionId?: string } | string,
-        ...rest: [(string)?, (string)?, (string[])?, (string)?]    
+        databaseId: string,
+        tableId: string,
+        rowId: string,
+        queries?: string[],
+        transactionId?: string,
+    ): Promise<Row>;
+    getRow<Row extends Models.Row = Models.DefaultRow>(
+        paramsOrFirst:
+            | {
+                  databaseId: string;
+                  tableId: string;
+                  rowId: string;
+                  queries?: string[];
+                  transactionId?: string;
+              }
+            | string,
+        ...rest: [string?, string?, string[]?, string?]
     ): Promise<Row> {
-        let params: { databaseId: string, tableId: string, rowId: string, queries?: string[], transactionId?: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { databaseId: string, tableId: string, rowId: string, queries?: string[], transactionId?: string };
+        let params: {
+            databaseId: string;
+            tableId: string;
+            rowId: string;
+            queries?: string[];
+            transactionId?: string;
+        };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                databaseId: string;
+                tableId: string;
+                rowId: string;
+                queries?: string[];
+                transactionId?: string;
+            };
         } else {
             params = {
                 databaseId: paramsOrFirst as string,
                 tableId: rest[0] as string,
                 rowId: rest[1] as string,
                 queries: rest[2] as string[],
-                transactionId: rest[3] as string            
+                transactionId: rest[3] as string,
             };
         }
-        
+
         const databaseId = params.databaseId;
         const tableId = params.tableId;
         const rowId = params.rowId;
@@ -589,16 +768,22 @@ export class TablesDB {
         const transactionId = params.transactionId;
 
         if (typeof databaseId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "databaseId"');
+            throw new AppwriteException(
+                'Missing required parameter: "databaseId"',
+            );
         }
         if (typeof tableId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "tableId"');
+            throw new AppwriteException(
+                'Missing required parameter: "tableId"',
+            );
         }
         if (typeof rowId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "rowId"');
         }
-
-        const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows/{rowId}'.replace('{databaseId}', encodeURIComponent(String(databaseId))).replace('{tableId}', encodeURIComponent(String(tableId))).replace('{rowId}', encodeURIComponent(String(rowId)));
+        const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows/{rowId}'
+            .replace('{databaseId}', encodeURIComponent(String(databaseId)))
+            .replace('{tableId}', encodeURIComponent(String(tableId)))
+            .replace('{rowId}', encodeURIComponent(String(rowId)));
         const payload: Payload = {};
         if (typeof queries !== 'undefined') {
             payload['queries'] = queries;
@@ -610,15 +795,10 @@ export class TablesDB {
 
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('get', uri, apiHeaders, payload);
     }
 
     /**
@@ -633,7 +813,16 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Row>}
      */
-    upsertRow<Row extends Models.Row = Models.DefaultRow>(params: { databaseId: string, tableId: string, rowId: string, data?: Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>, permissions?: string[], transactionId?: string }): Promise<Row>;
+    upsertRow<Row extends Models.Row = Models.DefaultRow>(params: {
+        databaseId: string;
+        tableId: string;
+        rowId: string;
+        data?: Row extends Models.DefaultRow
+            ? Partial<Models.Row> & Record<string, any>
+            : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>;
+        permissions?: string[];
+        transactionId?: string;
+    }): Promise<Row>;
     /**
      * Create or update a Row. Before using this route, you should create a new table resource using either a [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.
      *
@@ -647,26 +836,81 @@ export class TablesDB {
      * @returns {Promise<Row>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    upsertRow<Row extends Models.Row = Models.DefaultRow>(databaseId: string, tableId: string, rowId: string, data?: Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>, permissions?: string[], transactionId?: string): Promise<Row>;
     upsertRow<Row extends Models.Row = Models.DefaultRow>(
-        paramsOrFirst: { databaseId: string, tableId: string, rowId: string, data?: Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>, permissions?: string[], transactionId?: string } | string,
-        ...rest: [(string)?, (string)?, (Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>)?, (string[])?, (string)?]    
+        databaseId: string,
+        tableId: string,
+        rowId: string,
+        data?: Row extends Models.DefaultRow
+            ? Partial<Models.Row> & Record<string, any>
+            : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>,
+        permissions?: string[],
+        transactionId?: string,
+    ): Promise<Row>;
+    upsertRow<Row extends Models.Row = Models.DefaultRow>(
+        paramsOrFirst:
+            | {
+                  databaseId: string;
+                  tableId: string;
+                  rowId: string;
+                  data?: Row extends Models.DefaultRow
+                      ? Partial<Models.Row> & Record<string, any>
+                      : Partial<Models.Row> &
+                            Partial<Omit<Row, keyof Models.Row>>;
+                  permissions?: string[];
+                  transactionId?: string;
+              }
+            | string,
+        ...rest: [
+            string?,
+            string?,
+            (Row extends Models.DefaultRow
+                ? Partial<Models.Row> & Record<string, any>
+                : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>)?,
+            string[]?,
+            string?,
+        ]
     ): Promise<Row> {
-        let params: { databaseId: string, tableId: string, rowId: string, data?: Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>, permissions?: string[], transactionId?: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { databaseId: string, tableId: string, rowId: string, data?: Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>, permissions?: string[], transactionId?: string };
+        let params: {
+            databaseId: string;
+            tableId: string;
+            rowId: string;
+            data?: Row extends Models.DefaultRow
+                ? Partial<Models.Row> & Record<string, any>
+                : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>;
+            permissions?: string[];
+            transactionId?: string;
+        };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                databaseId: string;
+                tableId: string;
+                rowId: string;
+                data?: Row extends Models.DefaultRow
+                    ? Partial<Models.Row> & Record<string, any>
+                    : Partial<Models.Row> &
+                          Partial<Omit<Row, keyof Models.Row>>;
+                permissions?: string[];
+                transactionId?: string;
+            };
         } else {
             params = {
                 databaseId: paramsOrFirst as string,
                 tableId: rest[0] as string,
                 rowId: rest[1] as string,
-                data: rest[2] as Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>,
+                data: rest[2] as Row extends Models.DefaultRow
+                    ? Partial<Models.Row> & Record<string, any>
+                    : Partial<Models.Row> &
+                          Partial<Omit<Row, keyof Models.Row>>,
                 permissions: rest[3] as string[],
-                transactionId: rest[4] as string            
+                transactionId: rest[4] as string,
             };
         }
-        
+
         const databaseId = params.databaseId;
         const tableId = params.tableId;
         const rowId = params.rowId;
@@ -675,16 +919,22 @@ export class TablesDB {
         const transactionId = params.transactionId;
 
         if (typeof databaseId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "databaseId"');
+            throw new AppwriteException(
+                'Missing required parameter: "databaseId"',
+            );
         }
         if (typeof tableId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "tableId"');
+            throw new AppwriteException(
+                'Missing required parameter: "tableId"',
+            );
         }
         if (typeof rowId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "rowId"');
         }
-
-        const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows/{rowId}'.replace('{databaseId}', encodeURIComponent(String(databaseId))).replace('{tableId}', encodeURIComponent(String(tableId))).replace('{rowId}', encodeURIComponent(String(rowId)));
+        const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows/{rowId}'
+            .replace('{databaseId}', encodeURIComponent(String(databaseId)))
+            .replace('{tableId}', encodeURIComponent(String(tableId)))
+            .replace('{rowId}', encodeURIComponent(String(rowId)));
         const payload: Payload = {};
         if (typeof data !== 'undefined') {
             payload['data'] = data;
@@ -700,15 +950,10 @@ export class TablesDB {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'put',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('put', uri, apiHeaders, payload);
     }
 
     /**
@@ -723,7 +968,16 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Row>}
      */
-    updateRow<Row extends Models.Row = Models.DefaultRow>(params: { databaseId: string, tableId: string, rowId: string, data?: Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>, permissions?: string[], transactionId?: string }): Promise<Row>;
+    updateRow<Row extends Models.Row = Models.DefaultRow>(params: {
+        databaseId: string;
+        tableId: string;
+        rowId: string;
+        data?: Row extends Models.DefaultRow
+            ? Partial<Models.Row> & Record<string, any>
+            : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>;
+        permissions?: string[];
+        transactionId?: string;
+    }): Promise<Row>;
     /**
      * Update a row by its unique ID. Using the patch method you can pass only specific fields that will get updated.
      *
@@ -737,26 +991,81 @@ export class TablesDB {
      * @returns {Promise<Row>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    updateRow<Row extends Models.Row = Models.DefaultRow>(databaseId: string, tableId: string, rowId: string, data?: Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>, permissions?: string[], transactionId?: string): Promise<Row>;
     updateRow<Row extends Models.Row = Models.DefaultRow>(
-        paramsOrFirst: { databaseId: string, tableId: string, rowId: string, data?: Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>, permissions?: string[], transactionId?: string } | string,
-        ...rest: [(string)?, (string)?, (Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>)?, (string[])?, (string)?]    
+        databaseId: string,
+        tableId: string,
+        rowId: string,
+        data?: Row extends Models.DefaultRow
+            ? Partial<Models.Row> & Record<string, any>
+            : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>,
+        permissions?: string[],
+        transactionId?: string,
+    ): Promise<Row>;
+    updateRow<Row extends Models.Row = Models.DefaultRow>(
+        paramsOrFirst:
+            | {
+                  databaseId: string;
+                  tableId: string;
+                  rowId: string;
+                  data?: Row extends Models.DefaultRow
+                      ? Partial<Models.Row> & Record<string, any>
+                      : Partial<Models.Row> &
+                            Partial<Omit<Row, keyof Models.Row>>;
+                  permissions?: string[];
+                  transactionId?: string;
+              }
+            | string,
+        ...rest: [
+            string?,
+            string?,
+            (Row extends Models.DefaultRow
+                ? Partial<Models.Row> & Record<string, any>
+                : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>)?,
+            string[]?,
+            string?,
+        ]
     ): Promise<Row> {
-        let params: { databaseId: string, tableId: string, rowId: string, data?: Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>, permissions?: string[], transactionId?: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { databaseId: string, tableId: string, rowId: string, data?: Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>, permissions?: string[], transactionId?: string };
+        let params: {
+            databaseId: string;
+            tableId: string;
+            rowId: string;
+            data?: Row extends Models.DefaultRow
+                ? Partial<Models.Row> & Record<string, any>
+                : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>;
+            permissions?: string[];
+            transactionId?: string;
+        };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                databaseId: string;
+                tableId: string;
+                rowId: string;
+                data?: Row extends Models.DefaultRow
+                    ? Partial<Models.Row> & Record<string, any>
+                    : Partial<Models.Row> &
+                          Partial<Omit<Row, keyof Models.Row>>;
+                permissions?: string[];
+                transactionId?: string;
+            };
         } else {
             params = {
                 databaseId: paramsOrFirst as string,
                 tableId: rest[0] as string,
                 rowId: rest[1] as string,
-                data: rest[2] as Row extends Models.DefaultRow ? Partial<Models.Row> & Record<string, any> : Partial<Models.Row> & Partial<Omit<Row, keyof Models.Row>>,
+                data: rest[2] as Row extends Models.DefaultRow
+                    ? Partial<Models.Row> & Record<string, any>
+                    : Partial<Models.Row> &
+                          Partial<Omit<Row, keyof Models.Row>>,
                 permissions: rest[3] as string[],
-                transactionId: rest[4] as string            
+                transactionId: rest[4] as string,
             };
         }
-        
+
         const databaseId = params.databaseId;
         const tableId = params.tableId;
         const rowId = params.rowId;
@@ -765,16 +1074,22 @@ export class TablesDB {
         const transactionId = params.transactionId;
 
         if (typeof databaseId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "databaseId"');
+            throw new AppwriteException(
+                'Missing required parameter: "databaseId"',
+            );
         }
         if (typeof tableId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "tableId"');
+            throw new AppwriteException(
+                'Missing required parameter: "tableId"',
+            );
         }
         if (typeof rowId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "rowId"');
         }
-
-        const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows/{rowId}'.replace('{databaseId}', encodeURIComponent(String(databaseId))).replace('{tableId}', encodeURIComponent(String(tableId))).replace('{rowId}', encodeURIComponent(String(rowId)));
+        const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows/{rowId}'
+            .replace('{databaseId}', encodeURIComponent(String(databaseId)))
+            .replace('{tableId}', encodeURIComponent(String(tableId)))
+            .replace('{rowId}', encodeURIComponent(String(rowId)));
         const payload: Payload = {};
         if (typeof data !== 'undefined') {
             payload['data'] = data;
@@ -790,15 +1105,10 @@ export class TablesDB {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'patch',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('patch', uri, apiHeaders, payload);
     }
 
     /**
@@ -811,7 +1121,12 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<{}>}
      */
-    deleteRow(params: { databaseId: string, tableId: string, rowId: string, transactionId?: string }): Promise<{}>;
+    deleteRow(params: {
+        databaseId: string;
+        tableId: string;
+        rowId: string;
+        transactionId?: string;
+    }): Promise<{}>;
     /**
      * Delete a row by its unique ID.
      *
@@ -823,40 +1138,72 @@ export class TablesDB {
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    deleteRow(databaseId: string, tableId: string, rowId: string, transactionId?: string): Promise<{}>;
     deleteRow(
-        paramsOrFirst: { databaseId: string, tableId: string, rowId: string, transactionId?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?]    
+        databaseId: string,
+        tableId: string,
+        rowId: string,
+        transactionId?: string,
+    ): Promise<{}>;
+    deleteRow(
+        paramsOrFirst:
+            | {
+                  databaseId: string;
+                  tableId: string;
+                  rowId: string;
+                  transactionId?: string;
+              }
+            | string,
+        ...rest: [string?, string?, string?]
     ): Promise<{}> {
-        let params: { databaseId: string, tableId: string, rowId: string, transactionId?: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { databaseId: string, tableId: string, rowId: string, transactionId?: string };
+        let params: {
+            databaseId: string;
+            tableId: string;
+            rowId: string;
+            transactionId?: string;
+        };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                databaseId: string;
+                tableId: string;
+                rowId: string;
+                transactionId?: string;
+            };
         } else {
             params = {
                 databaseId: paramsOrFirst as string,
                 tableId: rest[0] as string,
                 rowId: rest[1] as string,
-                transactionId: rest[2] as string            
+                transactionId: rest[2] as string,
             };
         }
-        
+
         const databaseId = params.databaseId;
         const tableId = params.tableId;
         const rowId = params.rowId;
         const transactionId = params.transactionId;
 
         if (typeof databaseId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "databaseId"');
+            throw new AppwriteException(
+                'Missing required parameter: "databaseId"',
+            );
         }
         if (typeof tableId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "tableId"');
+            throw new AppwriteException(
+                'Missing required parameter: "tableId"',
+            );
         }
         if (typeof rowId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "rowId"');
         }
-
-        const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows/{rowId}'.replace('{databaseId}', encodeURIComponent(String(databaseId))).replace('{tableId}', encodeURIComponent(String(tableId))).replace('{rowId}', encodeURIComponent(String(rowId)));
+        const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows/{rowId}'
+            .replace('{databaseId}', encodeURIComponent(String(databaseId)))
+            .replace('{tableId}', encodeURIComponent(String(tableId)))
+            .replace('{rowId}', encodeURIComponent(String(rowId)));
         const payload: Payload = {};
         if (typeof transactionId !== 'undefined') {
             payload['transactionId'] = transactionId;
@@ -866,14 +1213,9 @@ export class TablesDB {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-        }
+        };
 
-        return this.client.call(
-            'delete',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('delete', uri, apiHeaders, payload);
     }
 
     /**
@@ -889,7 +1231,15 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Row>}
      */
-    decrementRowColumn<Row extends Models.Row = Models.DefaultRow>(params: { databaseId: string, tableId: string, rowId: string, column: string, value?: number, min?: number, transactionId?: string }): Promise<Row>;
+    decrementRowColumn<Row extends Models.Row = Models.DefaultRow>(params: {
+        databaseId: string;
+        tableId: string;
+        rowId: string;
+        column: string;
+        value?: number;
+        min?: number;
+        transactionId?: string;
+    }): Promise<Row>;
     /**
      * Decrement a specific column of a row by a given value.
      *
@@ -904,15 +1254,53 @@ export class TablesDB {
      * @returns {Promise<Row>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    decrementRowColumn<Row extends Models.Row = Models.DefaultRow>(databaseId: string, tableId: string, rowId: string, column: string, value?: number, min?: number, transactionId?: string): Promise<Row>;
     decrementRowColumn<Row extends Models.Row = Models.DefaultRow>(
-        paramsOrFirst: { databaseId: string, tableId: string, rowId: string, column: string, value?: number, min?: number, transactionId?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+        databaseId: string,
+        tableId: string,
+        rowId: string,
+        column: string,
+        value?: number,
+        min?: number,
+        transactionId?: string,
+    ): Promise<Row>;
+    decrementRowColumn<Row extends Models.Row = Models.DefaultRow>(
+        paramsOrFirst:
+            | {
+                  databaseId: string;
+                  tableId: string;
+                  rowId: string;
+                  column: string;
+                  value?: number;
+                  min?: number;
+                  transactionId?: string;
+              }
+            | string,
+        ...rest: [string?, string?, string?, number?, number?, string?]
     ): Promise<Row> {
-        let params: { databaseId: string, tableId: string, rowId: string, column: string, value?: number, min?: number, transactionId?: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { databaseId: string, tableId: string, rowId: string, column: string, value?: number, min?: number, transactionId?: string };
+        let params: {
+            databaseId: string;
+            tableId: string;
+            rowId: string;
+            column: string;
+            value?: number;
+            min?: number;
+            transactionId?: string;
+        };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                databaseId: string;
+                tableId: string;
+                rowId: string;
+                column: string;
+                value?: number;
+                min?: number;
+                transactionId?: string;
+            };
         } else {
             params = {
                 databaseId: paramsOrFirst as string,
@@ -921,10 +1309,10 @@ export class TablesDB {
                 column: rest[2] as string,
                 value: rest[3] as number,
                 min: rest[4] as number,
-                transactionId: rest[5] as string            
+                transactionId: rest[5] as string,
             };
         }
-        
+
         const databaseId = params.databaseId;
         const tableId = params.tableId;
         const rowId = params.rowId;
@@ -934,10 +1322,14 @@ export class TablesDB {
         const transactionId = params.transactionId;
 
         if (typeof databaseId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "databaseId"');
+            throw new AppwriteException(
+                'Missing required parameter: "databaseId"',
+            );
         }
         if (typeof tableId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "tableId"');
+            throw new AppwriteException(
+                'Missing required parameter: "tableId"',
+            );
         }
         if (typeof rowId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "rowId"');
@@ -945,8 +1337,12 @@ export class TablesDB {
         if (typeof column === 'undefined') {
             throw new AppwriteException('Missing required parameter: "column"');
         }
-
-        const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows/{rowId}/{column}/decrement'.replace('{databaseId}', encodeURIComponent(String(databaseId))).replace('{tableId}', encodeURIComponent(String(tableId))).replace('{rowId}', encodeURIComponent(String(rowId))).replace('{column}', encodeURIComponent(String(column)));
+        const apiPath =
+            '/tablesdb/{databaseId}/tables/{tableId}/rows/{rowId}/{column}/decrement'
+                .replace('{databaseId}', encodeURIComponent(String(databaseId)))
+                .replace('{tableId}', encodeURIComponent(String(tableId)))
+                .replace('{rowId}', encodeURIComponent(String(rowId)))
+                .replace('{column}', encodeURIComponent(String(column)));
         const payload: Payload = {};
         if (typeof value !== 'undefined') {
             payload['value'] = value;
@@ -962,15 +1358,10 @@ export class TablesDB {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'patch',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('patch', uri, apiHeaders, payload);
     }
 
     /**
@@ -986,7 +1377,15 @@ export class TablesDB {
      * @throws {AppwriteException}
      * @returns {Promise<Row>}
      */
-    incrementRowColumn<Row extends Models.Row = Models.DefaultRow>(params: { databaseId: string, tableId: string, rowId: string, column: string, value?: number, max?: number, transactionId?: string }): Promise<Row>;
+    incrementRowColumn<Row extends Models.Row = Models.DefaultRow>(params: {
+        databaseId: string;
+        tableId: string;
+        rowId: string;
+        column: string;
+        value?: number;
+        max?: number;
+        transactionId?: string;
+    }): Promise<Row>;
     /**
      * Increment a specific column of a row by a given value.
      *
@@ -1001,15 +1400,53 @@ export class TablesDB {
      * @returns {Promise<Row>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    incrementRowColumn<Row extends Models.Row = Models.DefaultRow>(databaseId: string, tableId: string, rowId: string, column: string, value?: number, max?: number, transactionId?: string): Promise<Row>;
     incrementRowColumn<Row extends Models.Row = Models.DefaultRow>(
-        paramsOrFirst: { databaseId: string, tableId: string, rowId: string, column: string, value?: number, max?: number, transactionId?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+        databaseId: string,
+        tableId: string,
+        rowId: string,
+        column: string,
+        value?: number,
+        max?: number,
+        transactionId?: string,
+    ): Promise<Row>;
+    incrementRowColumn<Row extends Models.Row = Models.DefaultRow>(
+        paramsOrFirst:
+            | {
+                  databaseId: string;
+                  tableId: string;
+                  rowId: string;
+                  column: string;
+                  value?: number;
+                  max?: number;
+                  transactionId?: string;
+              }
+            | string,
+        ...rest: [string?, string?, string?, number?, number?, string?]
     ): Promise<Row> {
-        let params: { databaseId: string, tableId: string, rowId: string, column: string, value?: number, max?: number, transactionId?: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { databaseId: string, tableId: string, rowId: string, column: string, value?: number, max?: number, transactionId?: string };
+        let params: {
+            databaseId: string;
+            tableId: string;
+            rowId: string;
+            column: string;
+            value?: number;
+            max?: number;
+            transactionId?: string;
+        };
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as {
+                databaseId: string;
+                tableId: string;
+                rowId: string;
+                column: string;
+                value?: number;
+                max?: number;
+                transactionId?: string;
+            };
         } else {
             params = {
                 databaseId: paramsOrFirst as string,
@@ -1018,10 +1455,10 @@ export class TablesDB {
                 column: rest[2] as string,
                 value: rest[3] as number,
                 max: rest[4] as number,
-                transactionId: rest[5] as string            
+                transactionId: rest[5] as string,
             };
         }
-        
+
         const databaseId = params.databaseId;
         const tableId = params.tableId;
         const rowId = params.rowId;
@@ -1031,10 +1468,14 @@ export class TablesDB {
         const transactionId = params.transactionId;
 
         if (typeof databaseId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "databaseId"');
+            throw new AppwriteException(
+                'Missing required parameter: "databaseId"',
+            );
         }
         if (typeof tableId === 'undefined') {
-            throw new AppwriteException('Missing required parameter: "tableId"');
+            throw new AppwriteException(
+                'Missing required parameter: "tableId"',
+            );
         }
         if (typeof rowId === 'undefined') {
             throw new AppwriteException('Missing required parameter: "rowId"');
@@ -1042,8 +1483,12 @@ export class TablesDB {
         if (typeof column === 'undefined') {
             throw new AppwriteException('Missing required parameter: "column"');
         }
-
-        const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows/{rowId}/{column}/increment'.replace('{databaseId}', encodeURIComponent(String(databaseId))).replace('{tableId}', encodeURIComponent(String(tableId))).replace('{rowId}', encodeURIComponent(String(rowId))).replace('{column}', encodeURIComponent(String(column)));
+        const apiPath =
+            '/tablesdb/{databaseId}/tables/{tableId}/rows/{rowId}/{column}/increment'
+                .replace('{databaseId}', encodeURIComponent(String(databaseId)))
+                .replace('{tableId}', encodeURIComponent(String(tableId)))
+                .replace('{rowId}', encodeURIComponent(String(rowId)))
+                .replace('{column}', encodeURIComponent(String(column)));
         const payload: Payload = {};
         if (typeof value !== 'undefined') {
             payload['value'] = value;
@@ -1059,14 +1504,9 @@ export class TablesDB {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'patch',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('patch', uri, apiHeaders, payload);
     }
 }

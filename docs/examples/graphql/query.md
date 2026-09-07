@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Graphql } from "appwrite";
+import { Client, Graphql } from 'appwrite';
 
 const client = new Client()
     .setEndpoint('https://<REGION>.cloud.appwrite.io/v1') // Your API Endpoint
@@ -8,7 +8,7 @@ const client = new Client()
 const graphql = new Graphql(client);
 
 const result = await graphql.query({
-    query: {}
+    query: {},
 });
 
 console.log(result);

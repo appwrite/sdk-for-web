@@ -10,7 +10,7 @@ export class Permission {
      */
     static read = (role: string): string => {
         return `read("${role}")`;
-    }
+    };
 
     /**
      * Generate write permission string for the provided role.
@@ -23,7 +23,7 @@ export class Permission {
      */
     static write = (role: string): string => {
         return `write("${role}")`;
-    }
+    };
 
     /**
      * Generate create permission string for the provided role.
@@ -33,7 +33,7 @@ export class Permission {
      */
     static create = (role: string): string => {
         return `create("${role}")`;
-    }
+    };
 
     /**
      * Generate update permission string for the provided role.
@@ -43,7 +43,7 @@ export class Permission {
      */
     static update = (role: string): string => {
         return `update("${role}")`;
-    }
+    };
 
     /**
      * Generate delete permission string for the provided role.
@@ -53,5 +53,5 @@ export class Permission {
      */
     static delete = (role: string): string => {
         return `delete("${role}")`;
-    }
+    };
 }

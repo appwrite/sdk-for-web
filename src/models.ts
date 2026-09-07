@@ -1,11 +1,11 @@
-import { ExecutionTrigger } from "./enums/execution-trigger"
-import { ExecutionStatus } from "./enums/execution-status"
+import { ExecutionResourceType } from './enums/execution-resource-type';
+import { ExecutionTrigger } from './enums/execution-trigger';
+import { ExecutionStatus } from './enums/execution-status';
 
 /**
  * Appwrite Models
  */
 export namespace Models {
-
     declare const __default: unique symbol;
 
     /**
@@ -20,12 +20,14 @@ export namespace Models {
          * List of rows.
          */
         rows: Row[];
-    }
+    };
 
     /**
      * Documents List
      */
-    export type DocumentList<Document extends Models.Document = Models.DefaultDocument> = {
+    export type DocumentList<
+        Document extends Models.Document = Models.DefaultDocument,
+    > = {
         /**
          * Total number of documents that matched your query.
          */
@@ -34,7 +36,7 @@ export namespace Models {
          * List of documents.
          */
         documents: Document[];
-    }
+    };
 
     /**
      * Presences List
@@ -48,7 +50,7 @@ export namespace Models {
          * List of presences.
          */
         presences: Presence[];
-    }
+    };
 
     /**
      * Sessions List
@@ -62,7 +64,7 @@ export namespace Models {
          * List of sessions.
          */
         sessions: Session[];
-    }
+    };
 
     /**
      * Identities List
@@ -76,7 +78,7 @@ export namespace Models {
          * List of identities.
          */
         identities: Identity[];
-    }
+    };
 
     /**
      * Logs List
@@ -90,7 +92,7 @@ export namespace Models {
          * List of logs.
          */
         logs: Log[];
-    }
+    };
 
     /**
      * Files List
@@ -104,12 +106,14 @@ export namespace Models {
          * List of files.
          */
         files: File[];
-    }
+    };
 
     /**
      * Teams List
      */
-    export type TeamList<Preferences extends Models.Preferences = Models.DefaultPreferences> = {
+    export type TeamList<
+        Preferences extends Models.Preferences = Models.DefaultPreferences,
+    > = {
         /**
          * Total number of teams that matched your query.
          */
@@ -118,7 +122,7 @@ export namespace Models {
          * List of teams.
          */
         teams: Team<Preferences>[];
-    }
+    };
 
     /**
      * Memberships List
@@ -132,7 +136,7 @@ export namespace Models {
          * List of memberships.
          */
         memberships: Membership[];
-    }
+    };
 
     /**
      * Executions List
@@ -146,7 +150,7 @@ export namespace Models {
          * List of executions.
          */
         executions: Execution[];
-    }
+    };
 
     /**
      * Countries List
@@ -160,7 +164,7 @@ export namespace Models {
          * List of countries.
          */
         countries: Country[];
-    }
+    };
 
     /**
      * Continents List
@@ -174,7 +178,7 @@ export namespace Models {
          * List of continents.
          */
         continents: Continent[];
-    }
+    };
 
     /**
      * Languages List
@@ -188,7 +192,7 @@ export namespace Models {
          * List of languages.
          */
         languages: Language[];
-    }
+    };
 
     /**
      * Currencies List
@@ -202,7 +206,7 @@ export namespace Models {
          * List of currencies.
          */
         currencies: Currency[];
-    }
+    };
 
     /**
      * Phones List
@@ -216,7 +220,7 @@ export namespace Models {
          * List of phones.
          */
         phones: Phone[];
-    }
+    };
 
     /**
      * Locale codes list
@@ -230,7 +234,7 @@ export namespace Models {
          * List of localeCodes.
          */
         localeCodes: LocaleCode[];
-    }
+    };
 
     /**
      * Transaction List
@@ -244,7 +248,7 @@ export namespace Models {
          * List of transactions.
          */
         transactions: Transaction[];
-    }
+    };
 
     /**
      * Row
@@ -278,7 +282,7 @@ export namespace Models {
          * Row permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).
          */
         $permissions: string[];
-    }
+    };
 
     export type DefaultRow = Row & {
         [key: string]: any;
@@ -317,7 +321,7 @@ export namespace Models {
          * Document permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).
          */
         $permissions: string[];
-    }
+    };
 
     export type DefaultDocument = Document & {
         [key: string]: any;
@@ -364,7 +368,7 @@ export namespace Models {
          * Presence metadata.
          */
         metadata?: object;
-    }
+    };
 
     /**
      * Log
@@ -458,12 +462,14 @@ export namespace Models {
          * Country name.
          */
         countryName: string;
-    }
+    };
 
     /**
      * User
      */
-    export type User<Preferences extends Models.Preferences = Models.DefaultPreferences> = {
+    export type User<
+        Preferences extends Models.Preferences = Models.DefaultPreferences,
+    > = {
         /**
          * User ID.
          */
@@ -568,7 +574,7 @@ export namespace Models {
          * ID of the original actor performing the impersonation. Present only when the current request is impersonating another user. Internal audit logs attribute the action to this user, while the impersonated target is recorded only in internal audit payload data.
          */
         impersonatorUserId?: string;
-    }
+    };
 
     /**
      * AlgoMD5
@@ -578,7 +584,7 @@ export namespace Models {
          * Algo type.
          */
         type: string;
-    }
+    };
 
     /**
      * AlgoSHA
@@ -588,7 +594,7 @@ export namespace Models {
          * Algo type.
          */
         type: string;
-    }
+    };
 
     /**
      * AlgoPHPass
@@ -598,7 +604,7 @@ export namespace Models {
          * Algo type.
          */
         type: string;
-    }
+    };
 
     /**
      * AlgoBcrypt
@@ -608,7 +614,7 @@ export namespace Models {
          * Algo type.
          */
         type: string;
-    }
+    };
 
     /**
      * AlgoScrypt
@@ -634,7 +640,7 @@ export namespace Models {
          * Length used to compute hash.
          */
         length: number;
-    }
+    };
 
     /**
      * AlgoScryptModified
@@ -656,7 +662,7 @@ export namespace Models {
          * Key used to compute hash.
          */
         signerKey: string;
-    }
+    };
 
     /**
      * AlgoArgon2
@@ -678,13 +684,12 @@ export namespace Models {
          * Number of threads used to compute hash.
          */
         threads: number;
-    }
+    };
 
     /**
      * Preferences
      */
-    export type Preferences = {
-    }
+    export type Preferences = {};
 
     export type DefaultPreferences = Preferences & {
         [key: string]: any;
@@ -811,7 +816,7 @@ export namespace Models {
          * Most recent date in ISO 8601 format when the session successfully passed MFA challenge.
          */
         mfaUpdatedAt: string;
-    }
+    };
 
     /**
      * Identity
@@ -857,7 +862,7 @@ export namespace Models {
          * Identity Provider Refresh Token.
          */
         providerRefreshToken: string;
-    }
+    };
 
     /**
      * Token
@@ -887,7 +892,7 @@ export namespace Models {
          * Security phrase of a token. Empty if security phrase was not requested when creating a token. It includes randomly generated phrase which is also sent in the external resource such as email.
          */
         phrase: string;
-    }
+    };
 
     /**
      * JWT
@@ -897,7 +902,7 @@ export namespace Models {
          * JWT encoded string.
          */
         jwt: string;
-    }
+    };
 
     /**
      * Locale
@@ -975,7 +980,7 @@ export namespace Models {
          * Registered organization of the IP
          */
         connectionOrganization?: string;
-    }
+    };
 
     /**
      * LocaleCode
@@ -989,7 +994,7 @@ export namespace Models {
          * Locale name
          */
         name: string;
-    }
+    };
 
     /**
      * File
@@ -1019,6 +1024,14 @@ export namespace Models {
          * File name.
          */
         name: string;
+        /**
+         * Virtual folder containing the file, with a trailing slash. Empty for the bucket root.
+         */
+        folder: string;
+        /**
+         * Full virtual path of the file: the folder followed by the file name.
+         */
+        key: string;
         /**
          * File MD5 signature.
          */
@@ -1051,12 +1064,14 @@ export namespace Models {
          * Compression algorithm used for the file. Will be one of none, [gzip](https://en.wikipedia.org/wiki/Gzip), or [zstd](https://en.wikipedia.org/wiki/Zstd).
          */
         compression: string;
-    }
+    };
 
     /**
      * Team
      */
-    export type Team<Preferences extends Models.Preferences = Models.DefaultPreferences> = {
+    export type Team<
+        Preferences extends Models.Preferences = Models.DefaultPreferences,
+    > = {
         /**
          * Team ID.
          */
@@ -1081,7 +1096,7 @@ export namespace Models {
          * Team preferences as a key-value object
          */
         prefs: Preferences;
-    }
+    };
 
     /**
      * Membership
@@ -1147,7 +1162,7 @@ export namespace Models {
          * User list of roles
          */
         roles: string[];
-    }
+    };
 
     /**
      * Execution
@@ -1170,19 +1185,23 @@ export namespace Models {
          */
         $permissions: string[];
         /**
-         * Function ID.
+         * Function or site ID.
          */
-        functionId: string;
+        resourceId: string;
         /**
-         * Function's deployment ID used to create the execution.
+         * Execution resource type.
+         */
+        resourceType: ExecutionResourceType;
+        /**
+         * Deployment ID used to create the execution.
          */
         deploymentId: string;
         /**
-         * The trigger that caused the function to execute. Possible values can be: `http`, `schedule`, or `event`.
+         * The trigger that caused the resource to execute. Possible values can be: `http`, `schedule`, or `event`.
          */
         trigger: ExecutionTrigger;
         /**
-         * The status of the function execution. Possible values can be: `waiting`, `processing`, `completed`, `failed`, or `scheduled`.
+         * The status of the resource execution. Possible values can be: `waiting`, `processing`, `completed`, `failed`, or `scheduled`.
          */
         status: ExecutionStatus;
         /**
@@ -1210,11 +1229,11 @@ export namespace Models {
          */
         responseHeaders: Headers[];
         /**
-         * Function logs. Includes the last 4,000 characters. This will return an empty string unless the response is returned using an API key or as part of a webhook payload.
+         * Resource logs. Includes the last 4,000 characters. This will return an empty string unless the response is returned using an API key or as part of a webhook payload.
          */
         logs: string;
         /**
-         * Function errors. Includes the last 4,000 characters. This will return an empty string unless the response is returned using an API key or as part of a webhook payload.
+         * Resource errors. Includes the last 4,000 characters. This will return an empty string unless the response is returned using an API key or as part of a webhook payload.
          */
         errors: string;
         /**
@@ -1225,7 +1244,7 @@ export namespace Models {
          * The scheduled time for execution. If left empty, execution will be queued immediately.
          */
         scheduledAt?: string;
-    }
+    };
 
     /**
      * Country
@@ -1239,7 +1258,7 @@ export namespace Models {
          * Country two-character ISO 3166-1 alpha code.
          */
         code: string;
-    }
+    };
 
     /**
      * Continent
@@ -1253,7 +1272,7 @@ export namespace Models {
          * Continent two letter code.
          */
         code: string;
-    }
+    };
 
     /**
      * Language
@@ -1271,7 +1290,7 @@ export namespace Models {
          * Language native name.
          */
         nativeName: string;
-    }
+    };
 
     /**
      * Currency
@@ -1305,7 +1324,7 @@ export namespace Models {
          * Currency plural name
          */
         namePlural: string;
-    }
+    };
 
     /**
      * Phone
@@ -1323,7 +1342,7 @@ export namespace Models {
          * Country name.
          */
         countryName: string;
-    }
+    };
 
     /**
      * Headers
@@ -1337,7 +1356,7 @@ export namespace Models {
          * Header value.
          */
         value: string;
-    }
+    };
 
     /**
      * MFA Challenge
@@ -1359,7 +1378,7 @@ export namespace Models {
          * Token expiration date in ISO 8601 format.
          */
         expire: string;
-    }
+    };
 
     /**
      * MFA Recovery Codes
@@ -1369,7 +1388,7 @@ export namespace Models {
          * Recovery codes.
          */
         recoveryCodes: string[];
-    }
+    };
 
     /**
      * MFAType
@@ -1383,7 +1402,7 @@ export namespace Models {
          * URI for authenticator apps.
          */
         uri: string;
-    }
+    };
 
     /**
      * MFAFactors
@@ -1405,7 +1424,11 @@ export namespace Models {
          * Can recovery code be used for MFA challenge for this account.
          */
         recoveryCode: boolean;
-    }
+        /**
+         * Can custom factor be used for MFA challenge for this account.
+         */
+        custom: boolean;
+    };
 
     /**
      * Transaction
@@ -1435,7 +1458,7 @@ export namespace Models {
          * Expiration time in ISO 8601 format.
          */
         expiresAt: string;
-    }
+    };
 
     /**
      * Subscriber
@@ -1477,7 +1500,7 @@ export namespace Models {
          * The target provider type. Can be one of the following: `email`, `sms` or `push`.
          */
         providerType: string;
-    }
+    };
 
     /**
      * Target
@@ -1519,5 +1542,189 @@ export namespace Models {
          * Is the target expired.
          */
         expired: boolean;
-    }
+    };
+
+    /**
+     * AppInstallation
+     */
+    export type AppInstallation = {
+        /**
+         * Installation ID.
+         */
+        $id: string;
+        /**
+         * Installation creation time in ISO 8601 format.
+         */
+        $createdAt: string;
+        /**
+         * Installation update time in ISO 8601 format.
+         */
+        $updatedAt: string;
+        /**
+         * ID of the installed application.
+         */
+        appId: string;
+        /**
+         * ID of the team the application is installed on.
+         */
+        teamId: string;
+        /**
+         * Scopes granted to the application. Snapshot of the application's installation scopes taken when the installation was created or last updated.
+         */
+        scopes: string[];
+        /**
+         * Authorization details granted to the application. Rich authorization request (RFC 9396) style entries; the Appwrite Console stores authorized project IDs here.
+         */
+        authorizationDetails: Record<string, any>[];
+        /**
+         * ID of the user who created the installation.
+         */
+        createdById: string;
+        /**
+         * Name of the user who created the installation.
+         */
+        createdByName: string;
+        /**
+         * Time an access token was last issued for the installation in ISO 8601 format. Null if never used.
+         */
+        lastAccessedAt?: string;
+    };
+
+    /**
+     * OAuth2 Consent
+     */
+    export type Oauth2Consent = {
+        /**
+         * Consent ID.
+         */
+        $id: string;
+        /**
+         * Consent creation time in ISO 8601 format.
+         */
+        $createdAt: string;
+        /**
+         * Consent update date in ISO 8601 format.
+         */
+        $updatedAt: string;
+        /**
+         * ID of the user the consent belongs to.
+         */
+        userId: string;
+        /**
+         * ID of the registered app the consent was given to. Empty for URL-form (CIMD) clients.
+         */
+        appId: string;
+        /**
+         * Client ID metadata document URL of the client the consent was given to. Empty for registered apps.
+         */
+        cimdUrl: string;
+        /**
+         * OAuth2 scopes the user consented to.
+         */
+        scopes: string[];
+        /**
+         * RFC 8707 resource indicators the user consented to.
+         */
+        resources: string[];
+        /**
+         * Authorization details the user consented to, as a JSON string. Each entry has a `type` plus project-defined fields.
+         */
+        authorizationDetails: string;
+        /**
+         * Consent expiration time in ISO 8601 format. Empty when the consent has no token-bound expiry yet.
+         */
+        expire: string;
+    };
+
+    /**
+     * OAuth2 Consent Token
+     */
+    export type Oauth2ConsentToken = {
+        /**
+         * Token family ID.
+         */
+        $id: string;
+        /**
+         * Token creation time in ISO 8601 format.
+         */
+        $createdAt: string;
+        /**
+         * Token update date in ISO 8601 format. Refreshing the token family updates this.
+         */
+        $updatedAt: string;
+        /**
+         * ID of the consent the token family was issued under.
+         */
+        consentId: string;
+        /**
+         * ID of the user the token family belongs to.
+         */
+        userId: string;
+        /**
+         * ID of the registered app the token family was issued to. Empty for URL-form (CIMD) clients.
+         */
+        appId: string;
+        /**
+         * Client ID metadata document URL of the client the token family was issued to. Empty for registered apps.
+         */
+        cimdUrl: string;
+        /**
+         * OAuth2 scopes granted on the token family.
+         */
+        scopes: string[];
+        /**
+         * RFC 8707 resource indicators granted on the token family.
+         */
+        resources: string[];
+        /**
+         * Authorization details granted on the token family, as a JSON string. Each entry has a `type` plus project-defined fields.
+         */
+        authorizationDetails: string;
+        /**
+         * Expiration time of the current access token of this family in ISO 8601 format.
+         */
+        expire: string;
+    };
+
+    /**
+     * OAuth2 consents list
+     */
+    export type Oauth2ConsentList = {
+        /**
+         * Total number of consents that matched your query.
+         */
+        total: number;
+        /**
+         * List of consents.
+         */
+        consents: Oauth2Consent[];
+    };
+
+    /**
+     * OAuth2 consent tokens list
+     */
+    export type Oauth2ConsentTokenList = {
+        /**
+         * Total number of tokens that matched your query.
+         */
+        total: number;
+        /**
+         * List of tokens.
+         */
+        tokens: Oauth2ConsentToken[];
+    };
+
+    /**
+     * App installations list
+     */
+    export type AppInstallationList = {
+        /**
+         * Total number of installations that matched your query.
+         */
+        total: number;
+        /**
+         * List of installations.
+         */
+        installations: AppInstallation[];
+    };
 }

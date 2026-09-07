@@ -12,12 +12,14 @@ const MAX_INT64 = BigInt('9223372036854775807');
 const MIN_INT64 = BigInt('-9223372036854775808');
 
 function isBigNumber(value: any): boolean {
-    return value !== null
-        && typeof value === 'object'
-        && value._isBigNumber === true
-        && typeof value.isInteger === 'function'
-        && typeof value.toFixed === 'function'
-        && typeof value.toNumber === 'function';
+    return (
+        value !== null &&
+        typeof value === 'object' &&
+        value._isBigNumber === true &&
+        typeof value.isInteger === 'function' &&
+        typeof value.toFixed === 'function' &&
+        typeof value.toNumber === 'function'
+    );
 }
 
 function reviver(_key: string, value: any): any {
@@ -40,7 +42,7 @@ function reviver(_key: string, value: any): any {
 
 export const JSONbig = {
     parse: (text: string) => JSONbigParser.parse(text, reviver),
-    stringify: JSONbigSerializer.stringify
+    stringify: JSONbigSerializer.stringify,
 };
 
 /**
@@ -48,14 +50,14 @@ export const JSONbig = {
  */
 type Payload = {
     [key: string]: any;
-}
+};
 
 /**
  * Headers type representing a key-value pair with string keys and string values.
  */
 type Headers = {
     [key: string]: string;
-}
+};
 
 /**
  * Realtime response structure with different types.
@@ -69,8 +71,13 @@ type RealtimeResponse = {
     /**
      * Data associated with the response based on the response type.
      */
-    data: RealtimeResponseAuthenticated | RealtimeResponseConnected | RealtimeResponseError | RealtimeResponseEvent<unknown> | undefined;
-}
+    data:
+        | RealtimeResponseAuthenticated
+        | RealtimeResponseConnected
+        | RealtimeResponseError
+        | RealtimeResponseEvent<unknown>
+        | undefined;
+};
 
 /**
  * Realtime request structure for authentication.
@@ -85,18 +92,18 @@ type RealtimeRequest = {
      * Data required for authentication.
      */
     data: RealtimeRequestAuthenticate | RealtimeRequestSubscribe[];
-}
+};
 
 type RealtimeRequestSubscribe = {
     subscriptionId: string;
     channels: string[];
     queries: string[];
-}
+};
 
 /**
  * Realtime event response structure with generic payload type.
  */
-type RealtimeResponseEvent<T extends unknown> = {
+type RealtimeResponseEvent<T> = {
     /**
      * List of event names associated with the response.
      */
@@ -121,7 +128,7 @@ type RealtimeResponseEvent<T extends unknown> = {
      * Subscription IDs this event matches (from backend, optional).
      */
     subscriptions?: string[];
-}
+};
 
 /**
  * Realtime response structure for errors.
@@ -136,7 +143,7 @@ type RealtimeResponseError = {
      * Error message describing the encountered error.
      */
     message: string;
-}
+};
 
 /**
  * Realtime response structure for a successful connection.
@@ -151,7 +158,7 @@ type RealtimeResponseConnected = {
      * User object representing the connected user (optional).
      */
     user?: object;
-}
+};
 
 /**
  * Realtime response structure for authenticated connections.
@@ -171,7 +178,7 @@ type RealtimeResponseAuthenticated = {
      * User object representing the authenticated user.
      */
     user: object;
-}
+};
 
 /**
  * Realtime request structure for authentication.
@@ -181,7 +188,7 @@ type RealtimeRequestAuthenticate = {
      * Session identifier for authentication.
      */
     session: string;
-}
+};
 
 type TimeoutHandle = ReturnType<typeof setTimeout> | number;
 
@@ -201,7 +208,7 @@ type Realtime = {
 
     /**
      * Heartbeat interval for the realtime connection.
-    */
+     */
     heartbeat?: TimeoutHandle;
 
     /**
@@ -222,11 +229,14 @@ type Realtime = {
     /**
      * Map of subscriptions keyed by client-generated subscriptionId.
      */
-    subscriptions: Map<string, {
-        channels: string[];
-        queries: string[];
-        callback: (payload: RealtimeResponseEvent<any>) => void
-    }>;
+    subscriptions: Map<
+        string,
+        {
+            channels: string[];
+            queries: string[];
+            callback: (payload: RealtimeResponseEvent<any>) => void;
+        }
+    >;
 
     /**
      * Pending subscribe rows keyed by subscriptionId. Flushed and cleared on each send.
@@ -271,7 +281,7 @@ type Realtime = {
      * @param {MessageEvent} event - Event containing the received message.
      */
     onMessage: (event: MessageEvent) => void;
-}
+};
 
 /**
  * Type representing upload progress information.
@@ -301,7 +311,7 @@ type UploadProgress = {
      * Number of chunks that have been successfully uploaded.
      */
     chunksUploaded: number;
-}
+};
 
 /**
  * Exception thrown by the  package
@@ -331,7 +341,12 @@ class AppwriteException extends Error {
      * @param {string} type - The error type. Default is an empty string.
      * @param {string} response - The response string. Default is an empty string.
      */
-    constructor(message: string, code: number = 0, type: string = '', response: string = '') {
+    constructor(
+        message: string,
+        code: number = 0,
+        type: string = '',
+        response: string = '',
+    ) {
         super(message);
         this.name = 'AppwriteException';
         this.message = message;
@@ -384,8 +399,8 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '26.2.0',
-        'X-Appwrite-Response-Format': '1.9.5',
+        'x-sdk-version': '27.0.0',
+        'X-Appwrite-Response-Format': '2.0.0',
     };
 
     /**
@@ -414,12 +429,17 @@ class Client {
             throw new AppwriteException('Endpoint must be a valid string');
         }
 
-        if (!endpoint.startsWith('http://') && !endpoint.startsWith('https://')) {
+        if (
+            !endpoint.startsWith('http://') &&
+            !endpoint.startsWith('https://')
+        ) {
             throw new AppwriteException('Invalid endpoint URL: ' + endpoint);
         }
 
         this.config.endpoint = endpoint;
-        this.config.endpointRealtime = endpoint.replace('https://', 'wss://').replace('http://', 'ws://');
+        this.config.endpointRealtime = endpoint
+            .replace('https://', 'wss://')
+            .replace('http://', 'ws://');
 
         return this;
     }
@@ -436,8 +456,13 @@ class Client {
             throw new AppwriteException('Endpoint must be a valid string');
         }
 
-        if (!endpointRealtime.startsWith('ws://') && !endpointRealtime.startsWith('wss://')) {
-            throw new AppwriteException('Invalid realtime endpoint URL: ' + endpointRealtime);
+        if (
+            !endpointRealtime.startsWith('ws://') &&
+            !endpointRealtime.startsWith('wss://')
+        ) {
+            throw new AppwriteException(
+                'Invalid realtime endpoint URL: ' + endpointRealtime,
+            );
         }
 
         this.config.endpointRealtime = endpointRealtime;
@@ -617,9 +642,11 @@ class Client {
             }
 
             this.realtime.heartbeat = window?.setInterval(() => {
-                this.realtime.socket?.send(JSONbig.stringify({
-                    type: 'ping'
-                }));
+                this.realtime.socket?.send(
+                    JSONbig.stringify({
+                        type: 'ping',
+                    }),
+                );
             }, 20_000);
         },
         createSocket: () => {
@@ -629,15 +656,19 @@ class Client {
                 return;
             }
 
-            const encodedProject = encodeURIComponent((this.config.project as string) ?? '');
+            const encodedProject = encodeURIComponent(
+                (this.config.project as string) ?? '',
+            );
             // URL carries only the project; channels/queries are sent via subscribe message.
             let queryParams = 'project=' + encodedProject;
 
             if (this.config.jwt) {
-                queryParams += '&jwt=' + encodeURIComponent(this.config.jwt as string);
+                queryParams +=
+                    '&jwt=' + encodeURIComponent(this.config.jwt as string);
             }
 
-            const url = this.config.endpointRealtime + '/realtime?' + queryParams;
+            const url =
+                this.config.endpointRealtime + '/realtime?' + queryParams;
 
             if (
                 url !== this.realtime.url || // Check if URL is present
@@ -654,37 +685,46 @@ class Client {
 
                 this.realtime.url = url;
                 this.realtime.socket = new WebSocket(url);
-                this.realtime.socket.addEventListener('message', this.realtime.onMessage);
-                this.realtime.socket.addEventListener('open', _event => {
+                this.realtime.socket.addEventListener(
+                    'message',
+                    this.realtime.onMessage,
+                );
+                this.realtime.socket.addEventListener('open', (_event) => {
                     this.realtime.reconnectAttempts = 0;
                     this.realtime.createHeartbeat();
                 });
-                this.realtime.socket.addEventListener('close', event => {
+                this.realtime.socket.addEventListener('close', (event) => {
                     if (
                         !this.realtime.reconnect ||
-                        (
-                            this.realtime?.lastMessage?.type === 'error' && // Check if last message was of type error
-                            (<RealtimeResponseError>this.realtime?.lastMessage.data).code === 1008 // Check for policy violation 1008
-                        )
+                        (this.realtime?.lastMessage?.type === 'error' && // Check if last message was of type error
+                            (<RealtimeResponseError>(
+                                this.realtime?.lastMessage.data
+                            )).code === 1008) // Check for policy violation 1008
                     ) {
                         this.realtime.reconnect = true;
                         return;
                     }
 
                     const timeout = this.realtime.getTimeout();
-                    console.error(`Realtime got disconnected. Reconnect will be attempted in ${timeout / 1000} seconds.`, event.reason);
+                    console.error(
+                        `Realtime got disconnected. Reconnect will be attempted in ${timeout / 1000} seconds.`,
+                        event.reason,
+                    );
 
                     setTimeout(() => {
                         this.realtime.reconnectAttempts++;
                         this.realtime.createSocket();
                     }, timeout);
-                })
+                });
             } else if (this.realtime.socket?.readyState === WebSocket.OPEN) {
                 this.realtime.sendPendingSubscribes();
             }
         },
         sendPendingSubscribes: () => {
-            if (!this.realtime.socket || this.realtime.socket.readyState !== WebSocket.OPEN) {
+            if (
+                !this.realtime.socket ||
+                this.realtime.socket.readyState !== WebSocket.OPEN
+            ) {
                 return;
             }
 
@@ -695,10 +735,12 @@ class Client {
             const rows = Array.from(this.realtime.pendingSubscribes.values());
             this.realtime.pendingSubscribes.clear();
 
-            this.realtime.socket.send(JSONbig.stringify(<RealtimeRequest>{
-                type: 'subscribe',
-                data: rows
-            }));
+            this.realtime.socket.send(
+                JSONbig.stringify(<RealtimeRequest>{
+                    type: 'subscribe',
+                    data: rows,
+                }),
+            );
         },
         onMessage: (event) => {
             try {
@@ -706,29 +748,42 @@ class Client {
                 this.realtime.lastMessage = message;
                 switch (message.type) {
                     case 'connected': {
-                        const messageData = <RealtimeResponseConnected>message.data;
+                        const messageData = <RealtimeResponseConnected>(
+                            message.data
+                        );
 
                         let session = this.config.session;
                         if (!session) {
-                            const cookie = JSONbig.parse(window.localStorage.getItem('cookieFallback') ?? '{}');
-                            session = cookie?.[`a_session_${this.config.project}`];
+                            const cookie = JSONbig.parse(
+                                window.localStorage.getItem('cookieFallback') ??
+                                    '{}',
+                            );
+                            session =
+                                cookie?.[`a_session_${this.config.project}`];
                         }
                         if (session && !messageData?.user) {
-                            this.realtime.socket?.send(JSONbig.stringify(<RealtimeRequest>{
-                                type: 'authentication',
-                                data: {
-                                    session
-                                }
-                            }));
+                            this.realtime.socket?.send(
+                                JSONbig.stringify(<RealtimeRequest>{
+                                    type: 'authentication',
+                                    data: {
+                                        session,
+                                    },
+                                }),
+                            );
                         }
 
-                        this.realtime.subscriptions.forEach((sub, subscriptionId) => {
-                            this.realtime.pendingSubscribes.set(subscriptionId, {
-                                subscriptionId,
-                                channels: sub.channels,
-                                queries: sub.queries ?? []
-                            });
-                        });
+                        this.realtime.subscriptions.forEach(
+                            (sub, subscriptionId) => {
+                                this.realtime.pendingSubscribes.set(
+                                    subscriptionId,
+                                    {
+                                        subscriptionId,
+                                        channels: sub.channels,
+                                        queries: sub.queries ?? [],
+                                    },
+                                );
+                            },
+                        );
                         this.realtime.sendPendingSubscribes();
                         break;
                     }
@@ -738,25 +793,44 @@ class Client {
                         // the SDK needs to reconcile.
                         break;
                     case 'event': {
-                        const data = <RealtimeResponseEvent<unknown>>message.data;
+                        const data = <RealtimeResponseEvent<unknown>>(
+                            message.data
+                        );
                         if (!data?.channels) break;
 
                         const eventSubIds = data.subscriptions;
                         if (eventSubIds && eventSubIds.length > 0) {
                             for (const subscriptionId of eventSubIds) {
-                                const subscription = this.realtime.subscriptions.get(subscriptionId);
+                                const subscription =
+                                    this.realtime.subscriptions.get(
+                                        subscriptionId,
+                                    );
                                 if (subscription) {
-                                    setTimeout(() => subscription.callback(data));
+                                    setTimeout(() =>
+                                        subscription.callback(data),
+                                    );
                                 }
                             }
                         } else {
-                            const isSubscribed = data.channels.some(channel => this.realtime.channels.has(channel));
+                            const isSubscribed = data.channels.some((channel) =>
+                                this.realtime.channels.has(channel),
+                            );
                             if (!isSubscribed) break;
-                            this.realtime.subscriptions.forEach(subscription => {
-                                if (data.channels.some(channel => subscription.channels.includes(channel))) {
-                                    setTimeout(() => subscription.callback(data));
-                                }
-                            });
+                            this.realtime.subscriptions.forEach(
+                                (subscription) => {
+                                    if (
+                                        data.channels.some((channel) =>
+                                            subscription.channels.includes(
+                                                channel,
+                                            ),
+                                        )
+                                    ) {
+                                        setTimeout(() =>
+                                            subscription.callback(data),
+                                        );
+                                    }
+                                },
+                            );
                         }
                         break;
                     }
@@ -770,8 +844,8 @@ class Client {
             } catch (e) {
                 console.error(e);
             }
-        }
-    }
+        },
+    };
 
     /**
      * Subscribes to Appwrite events and passes you the payload in realtime.
@@ -798,7 +872,7 @@ class Client {
      * - teams.[ID]
      * - memberships
      * - memberships.[ID]
-     * 
+     *
      * You can also use Channel builders:
      * - Channel.database('db').collection('col').document('doc').create()
      * - Channel.bucket('bucket').file('file').update()
@@ -808,14 +882,20 @@ class Client {
      * @param {(payload: RealtimeMessage) => void} callback Is called on every realtime update.
      * @returns {() => void} Unsubscribes from events.
      */
-    subscribe<T extends unknown>(
-        channels: string | string[] | Channel<any> | ActionableChannel | ResolvedChannel | (Channel<any> | ActionableChannel | ResolvedChannel)[],
+    subscribe<T>(
+        channels:
+            | string
+            | string[]
+            | Channel<any>
+            | ActionableChannel
+            | ResolvedChannel
+            | (Channel<any> | ActionableChannel | ResolvedChannel)[],
         callback: (payload: RealtimeResponseEvent<T>) => void,
-        queries: (string | Query)[] = []
+        queries: (string | Query)[] = [],
     ): () => void {
         const channelArray = Array.isArray(channels) ? channels : [channels];
         // Convert Channel instances to strings
-        const channelStrings = channelArray.map(ch => {
+        const channelStrings = channelArray.map((ch) => {
             if (typeof ch === 'string') {
                 return ch;
             }
@@ -826,9 +906,13 @@ class Client {
             // Fallback to generic string conversion
             return String(ch);
         });
-        channelStrings.forEach(channel => this.realtime.channels.add(channel));
+        channelStrings.forEach((channel) =>
+            this.realtime.channels.add(channel),
+        );
 
-        const queryStrings = (queries ?? []).map(q => typeof q === 'string' ? q : q.toString());
+        const queryStrings = (queries ?? []).map((q) =>
+            typeof q === 'string' ? q : q.toString(),
+        );
 
         let subscriptionId = '';
         const attempts = this.realtime.subscriptions.size + 1;
@@ -840,17 +924,19 @@ class Client {
             }
         }
         if (subscriptionId === '') {
-            throw new AppwriteException('Failed to generate unique subscription id');
+            throw new AppwriteException(
+                'Failed to generate unique subscription id',
+            );
         }
         this.realtime.subscriptions.set(subscriptionId, {
             channels: channelStrings,
             queries: queryStrings,
-            callback
+            callback,
         });
         this.realtime.pendingSubscribes.set(subscriptionId, {
             subscriptionId,
             channels: channelStrings,
-            queries: queryStrings
+            queries: queryStrings,
         });
 
         this.realtime.connect();
@@ -859,31 +945,37 @@ class Client {
             this.realtime.subscriptions.delete(subscriptionId);
             this.realtime.pendingSubscribes.delete(subscriptionId);
             const stillUsed = new Set<string>();
-            this.realtime.subscriptions.forEach(sub => {
-                sub.channels.forEach(channel => stillUsed.add(channel));
+            this.realtime.subscriptions.forEach((sub) => {
+                sub.channels.forEach((channel) => stillUsed.add(channel));
             });
-            this.realtime.channels.forEach(channel => {
+            this.realtime.channels.forEach((channel) => {
                 if (!stillUsed.has(channel)) {
                     this.realtime.channels.delete(channel);
                 }
             });
             this.realtime.connect();
-        }
+        };
     }
 
-    prepareRequest(method: string, url: URL, headers: Headers = {}, params: Payload = {}): { uri: string, options: RequestInit } {
+    prepareRequest(
+        method: string,
+        url: URL,
+        headers: Headers = {},
+        params: Payload = {},
+    ): { uri: string; options: RequestInit } {
         method = method.toUpperCase();
 
         headers = Object.assign({}, this.headers, headers);
 
         if (typeof window !== 'undefined' && window.localStorage) {
-            const cookieFallback = window.localStorage.getItem('cookieFallback');
+            const cookieFallback =
+                window.localStorage.getItem('cookieFallback');
             if (cookieFallback) {
                 headers['X-Fallback-Cookies'] = cookieFallback;
             }
         }
 
-        let options: RequestInit = {
+        const options: RequestInit = {
             method,
             headers,
         };
@@ -902,7 +994,7 @@ class Client {
                     options.body = JSONbig.stringify(params);
                     break;
 
-                case 'multipart/form-data':
+                case 'multipart/form-data': {
                     const formData = new FormData();
 
                     for (const [key, value] of Object.entries(params)) {
@@ -920,14 +1012,24 @@ class Client {
                     options.body = formData;
                     delete headers['content-type'];
                     break;
+                }
             }
         }
 
         return { uri: url.toString(), options };
     }
 
-    async chunkedUpload(method: string, url: URL, headers: Headers = {}, originalPayload: Payload = {}, onProgress: (progress: UploadProgress) => void) {
-        const [fileParam, file] = Object.entries(originalPayload).find(([_, value]) => value instanceof File) ?? [];
+    async chunkedUpload(
+        method: string,
+        url: URL,
+        headers: Headers = {},
+        originalPayload: Payload = {},
+        onProgress: (progress: UploadProgress) => void,
+    ) {
+        const [fileParam, file] =
+            Object.entries(originalPayload).find(
+                ([_, value]) => value instanceof File,
+            ) ?? [];
 
         if (!file || !fileParam) {
             throw new Error('File not found in payload');
@@ -941,12 +1043,20 @@ class Client {
 
         // Upload first chunk alone to get the upload ID
         const firstChunkEnd = Math.min(Client.CHUNK_SIZE, file.size);
-        const firstChunkHeaders = { ...headers, 'content-range': `bytes 0-${firstChunkEnd - 1}/${file.size}` };
+        const firstChunkHeaders = {
+            ...headers,
+            'content-range': `bytes 0-${firstChunkEnd - 1}/${file.size}`,
+        };
         const firstChunk = file.slice(0, firstChunkEnd);
         const firstPayload = { ...originalPayload };
         firstPayload[fileParam] = new File([firstChunk], file.name);
 
-        let response = await this.call(method, url, firstChunkHeaders, firstPayload);
+        const response = await this.call(
+            method,
+            url,
+            firstChunkHeaders,
+            firstPayload,
+        );
         const uploadId = response?.$id;
 
         if (onProgress && typeof onProgress === 'function') {
@@ -955,7 +1065,7 @@ class Client {
                 progress: Math.round((firstChunkEnd / file.size) * 100),
                 sizeUploaded: firstChunkEnd,
                 chunksTotal: totalChunks,
-                chunksUploaded: 1
+                chunksUploaded: 1,
             });
         }
 
@@ -982,29 +1092,39 @@ class Client {
         const isUploadComplete = (chunkResponse: any) => {
             const chunksUploaded = chunkResponse?.chunksUploaded;
             const chunksTotal = chunkResponse?.chunksTotal ?? totalChunks;
-            return typeof chunksUploaded === 'number' && typeof chunksTotal === 'number' && chunksUploaded >= chunksTotal;
+            return (
+                typeof chunksUploaded === 'number' &&
+                typeof chunksTotal === 'number' &&
+                chunksUploaded >= chunksTotal
+            );
         };
 
-        const uploadChunk = async (chunk: typeof chunks[0]) => {
+        const uploadChunk = async (chunk: (typeof chunks)[0]) => {
             const chunkHeaders = { ...headers };
             if (uploadId) {
                 chunkHeaders['x-appwrite-id'] = uploadId;
             }
-            chunkHeaders['content-range'] = `bytes ${chunk.start}-${chunk.end - 1}/${file.size}`;
-            
+            chunkHeaders['content-range'] =
+                `bytes ${chunk.start}-${chunk.end - 1}/${file.size}`;
+
             const chunkBlob = file.slice(chunk.start, chunk.end);
             const chunkPayload = { ...originalPayload };
             chunkPayload[fileParam] = new File([chunkBlob], file.name);
 
-            const chunkResponse = await this.call(method, url, chunkHeaders, chunkPayload);
+            const chunkResponse = await this.call(
+                method,
+                url,
+                chunkHeaders,
+                chunkPayload,
+            );
 
             if (rejected) {
                 return chunkResponse;
             }
-            
+
             completedCount++;
-            uploadedBytes += (chunk.end - chunk.start);
-            
+            uploadedBytes += chunk.end - chunk.start;
+
             lastResponse = chunkResponse;
             if (isUploadComplete(chunkResponse)) {
                 finalResponse = chunkResponse;
@@ -1016,7 +1136,7 @@ class Client {
                     progress: Math.round((uploadedBytes / file.size) * 100),
                     sizeUploaded: uploadedBytes,
                     chunksTotal: totalChunks,
-                    chunksUploaded: completedCount
+                    chunksUploaded: completedCount,
                 });
             }
 
@@ -1064,12 +1184,23 @@ class Client {
     async ping(): Promise<unknown> {
         return this.call('GET', new URL(this.config.endpoint + '/ping'), {
             'X-Appwrite-Project': this.config.project,
-            'accept': 'application/json',
+            accept: 'application/json',
         });
     }
 
-    async call(method: string, url: URL, headers: Headers = {}, params: Payload = {}, responseType = 'json'): Promise<any> {
-        const { uri, options } = this.prepareRequest(method, url, headers, params);
+    async call(
+        method: string,
+        url: URL,
+        headers: Headers = {},
+        params: Payload = {},
+        responseType = 'json',
+    ): Promise<any> {
+        const { uri, options } = this.prepareRequest(
+            method,
+            url,
+            headers,
+            params,
+        );
 
         let data: any = null;
 
@@ -1080,40 +1211,62 @@ class Client {
             throw new AppwriteException(
                 `Invalid Origin. Register your new client (${window.location.host}) as a new Web platform on your project console dashboard`,
                 403,
-                "forbidden",
-                ""
+                'forbidden',
+                '',
             );
         }
 
         const warnings = response.headers.get('x-appwrite-warning');
         if (warnings) {
-            warnings.split(';').forEach((warning: string) => console.warn('Warning: ' + warning));
+            warnings
+                .split(';')
+                .forEach((warning: string) =>
+                    console.warn('Warning: ' + warning),
+                );
         }
 
-        if (response.headers.get('content-type')?.includes('application/json')) {
+        if (
+            response.headers.get('content-type')?.includes('application/json')
+        ) {
             data = JSONbig.parse(await response.text());
         } else if (responseType === 'arrayBuffer') {
             data = await response.arrayBuffer();
         } else {
             data = {
-                message: await response.text()
+                message: await response.text(),
             };
         }
 
         if (400 <= response.status) {
-            let responseText = '';
-            if (response.headers.get('content-type')?.includes('application/json') || responseType === 'arrayBuffer') {
+            let responseText: string;
+            if (
+                response.headers
+                    .get('content-type')
+                    ?.includes('application/json') ||
+                responseType === 'arrayBuffer'
+            ) {
                 responseText = JSONbig.stringify(data);
             } else {
                 responseText = data?.message;
             }
-            throw new AppwriteException(data?.message ?? responseText, response.status, data?.type, responseText);
+            throw new AppwriteException(
+                data?.message ?? responseText,
+                response.status,
+                data?.type,
+                responseText,
+            );
         }
 
         const cookieFallback = response.headers.get('X-Fallback-Cookies');
 
-        if (typeof window !== 'undefined' && window.localStorage && cookieFallback) {
-            window.console.warn('Appwrite is using localStorage for session management. Increase your security by adding a custom domain as your API endpoint.');
+        if (
+            typeof window !== 'undefined' &&
+            window.localStorage &&
+            cookieFallback
+        ) {
+            window.console.warn(
+                'Appwrite is using localStorage for session management. Increase your security by adding a custom domain as your API endpoint.',
+            );
             window.localStorage.setItem('cookieFallback', cookieFallback);
         }
 
@@ -1133,7 +1286,7 @@ class Client {
         let output: Payload = {};
 
         for (const [key, value] of Object.entries(data)) {
-            let finalKey = prefix ? prefix + '[' + key +']' : key;
+            const finalKey = prefix ? prefix + '[' + key + ']' : key;
             if (Array.isArray(value)) {
                 output = { ...output, ...Client.flatten(value, finalKey) };
             } else {

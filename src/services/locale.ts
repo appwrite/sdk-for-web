@@ -1,7 +1,5 @@
-import { Service } from '../service';
-import { AppwriteException, Client, type Payload, UploadProgress } from '../client';
+import { Client, type Payload } from '../client';
 import type { Models } from '../models';
-
 
 export class Locale {
     client: Client;
@@ -12,29 +10,23 @@ export class Locale {
 
     /**
      * Get the current user location based on IP. Returns an object with user country code, country name, continent name, continent code, ip address and suggested currency. You can use the locale header to get the data in a supported language.
-     * 
+     *
      * ([IP Geolocation by DB-IP](https://db-ip.com))
      *
      * @throws {AppwriteException}
      * @returns {Promise<Models.Locale>}
      */
     get(): Promise<Models.Locale> {
-
         const apiPath = '/locale';
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('get', uri, apiHeaders, payload);
     }
 
     /**
@@ -44,22 +36,16 @@ export class Locale {
      * @returns {Promise<Models.LocaleCodeList>}
      */
     listCodes(): Promise<Models.LocaleCodeList> {
-
         const apiPath = '/locale/codes';
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('get', uri, apiHeaders, payload);
     }
 
     /**
@@ -69,22 +55,16 @@ export class Locale {
      * @returns {Promise<Models.ContinentList>}
      */
     listContinents(): Promise<Models.ContinentList> {
-
         const apiPath = '/locale/continents';
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('get', uri, apiHeaders, payload);
     }
 
     /**
@@ -94,22 +74,16 @@ export class Locale {
      * @returns {Promise<Models.CountryList>}
      */
     listCountries(): Promise<Models.CountryList> {
-
         const apiPath = '/locale/countries';
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('get', uri, apiHeaders, payload);
     }
 
     /**
@@ -119,22 +93,16 @@ export class Locale {
      * @returns {Promise<Models.CountryList>}
      */
     listCountriesEU(): Promise<Models.CountryList> {
-
         const apiPath = '/locale/countries/eu';
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('get', uri, apiHeaders, payload);
     }
 
     /**
@@ -144,22 +112,16 @@ export class Locale {
      * @returns {Promise<Models.PhoneList>}
      */
     listCountriesPhones(): Promise<Models.PhoneList> {
-
         const apiPath = '/locale/countries/phones';
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('get', uri, apiHeaders, payload);
     }
 
     /**
@@ -169,22 +131,16 @@ export class Locale {
      * @returns {Promise<Models.CurrencyList>}
      */
     listCurrencies(): Promise<Models.CurrencyList> {
-
         const apiPath = '/locale/currencies';
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('get', uri, apiHeaders, payload);
     }
 
     /**
@@ -194,21 +150,15 @@ export class Locale {
      * @returns {Promise<Models.LanguageList>}
      */
     listLanguages(): Promise<Models.LanguageList> {
-
         const apiPath = '/locale/languages';
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
-            'accept': 'application/json',
-        }
+            accept: 'application/json',
+        };
 
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
+        return this.client.call('get', uri, apiHeaders, payload);
     }
 }

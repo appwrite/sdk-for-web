@@ -153,7 +153,7 @@ export class TablesDB {
 
         const transactionId = params.transactionId;
 
-        if (typeof transactionId === 'undefined') {
+        if (typeof transactionId === 'undefined' || transactionId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "transactionId"',
             );
@@ -236,7 +236,7 @@ export class TablesDB {
         const commit = params.commit;
         const rollback = params.rollback;
 
-        if (typeof transactionId === 'undefined') {
+        if (typeof transactionId === 'undefined' || transactionId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "transactionId"',
             );
@@ -299,7 +299,7 @@ export class TablesDB {
 
         const transactionId = params.transactionId;
 
-        if (typeof transactionId === 'undefined') {
+        if (typeof transactionId === 'undefined' || transactionId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "transactionId"',
             );
@@ -314,6 +314,7 @@ export class TablesDB {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
+            accept: 'application/json',
         };
 
         return this.client.call('delete', uri, apiHeaders, payload);
@@ -370,7 +371,7 @@ export class TablesDB {
         const transactionId = params.transactionId;
         const operations = params.operations;
 
-        if (typeof transactionId === 'undefined') {
+        if (typeof transactionId === 'undefined' || transactionId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "transactionId"',
             );
@@ -489,12 +490,12 @@ export class TablesDB {
         const total = params.total;
         const ttl = params.ttl;
 
-        if (typeof databaseId === 'undefined') {
+        if (typeof databaseId === 'undefined' || databaseId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "databaseId"',
             );
         }
-        if (typeof tableId === 'undefined') {
+        if (typeof tableId === 'undefined' || tableId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "tableId"',
             );
@@ -639,12 +640,12 @@ export class TablesDB {
         const permissions = params.permissions;
         const transactionId = params.transactionId;
 
-        if (typeof databaseId === 'undefined') {
+        if (typeof databaseId === 'undefined' || databaseId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "databaseId"',
             );
         }
-        if (typeof tableId === 'undefined') {
+        if (typeof tableId === 'undefined' || tableId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "tableId"',
             );
@@ -767,17 +768,17 @@ export class TablesDB {
         const queries = params.queries;
         const transactionId = params.transactionId;
 
-        if (typeof databaseId === 'undefined') {
+        if (typeof databaseId === 'undefined' || databaseId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "databaseId"',
             );
         }
-        if (typeof tableId === 'undefined') {
+        if (typeof tableId === 'undefined' || tableId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "tableId"',
             );
         }
-        if (typeof rowId === 'undefined') {
+        if (typeof rowId === 'undefined' || rowId === '') {
             throw new AppwriteException('Missing required parameter: "rowId"');
         }
         const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows/{rowId}'
@@ -918,17 +919,17 @@ export class TablesDB {
         const permissions = params.permissions;
         const transactionId = params.transactionId;
 
-        if (typeof databaseId === 'undefined') {
+        if (typeof databaseId === 'undefined' || databaseId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "databaseId"',
             );
         }
-        if (typeof tableId === 'undefined') {
+        if (typeof tableId === 'undefined' || tableId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "tableId"',
             );
         }
-        if (typeof rowId === 'undefined') {
+        if (typeof rowId === 'undefined' || rowId === '') {
             throw new AppwriteException('Missing required parameter: "rowId"');
         }
         const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows/{rowId}'
@@ -1073,17 +1074,17 @@ export class TablesDB {
         const permissions = params.permissions;
         const transactionId = params.transactionId;
 
-        if (typeof databaseId === 'undefined') {
+        if (typeof databaseId === 'undefined' || databaseId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "databaseId"',
             );
         }
-        if (typeof tableId === 'undefined') {
+        if (typeof tableId === 'undefined' || tableId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "tableId"',
             );
         }
-        if (typeof rowId === 'undefined') {
+        if (typeof rowId === 'undefined' || rowId === '') {
             throw new AppwriteException('Missing required parameter: "rowId"');
         }
         const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows/{rowId}'
@@ -1187,17 +1188,17 @@ export class TablesDB {
         const rowId = params.rowId;
         const transactionId = params.transactionId;
 
-        if (typeof databaseId === 'undefined') {
+        if (typeof databaseId === 'undefined' || databaseId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "databaseId"',
             );
         }
-        if (typeof tableId === 'undefined') {
+        if (typeof tableId === 'undefined' || tableId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "tableId"',
             );
         }
-        if (typeof rowId === 'undefined') {
+        if (typeof rowId === 'undefined' || rowId === '') {
             throw new AppwriteException('Missing required parameter: "rowId"');
         }
         const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows/{rowId}'
@@ -1213,6 +1214,7 @@ export class TablesDB {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
+            accept: 'application/json',
         };
 
         return this.client.call('delete', uri, apiHeaders, payload);
@@ -1321,20 +1323,20 @@ export class TablesDB {
         const min = params.min;
         const transactionId = params.transactionId;
 
-        if (typeof databaseId === 'undefined') {
+        if (typeof databaseId === 'undefined' || databaseId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "databaseId"',
             );
         }
-        if (typeof tableId === 'undefined') {
+        if (typeof tableId === 'undefined' || tableId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "tableId"',
             );
         }
-        if (typeof rowId === 'undefined') {
+        if (typeof rowId === 'undefined' || rowId === '') {
             throw new AppwriteException('Missing required parameter: "rowId"');
         }
-        if (typeof column === 'undefined') {
+        if (typeof column === 'undefined' || column === '') {
             throw new AppwriteException('Missing required parameter: "column"');
         }
         const apiPath =
@@ -1467,20 +1469,20 @@ export class TablesDB {
         const max = params.max;
         const transactionId = params.transactionId;
 
-        if (typeof databaseId === 'undefined') {
+        if (typeof databaseId === 'undefined' || databaseId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "databaseId"',
             );
         }
-        if (typeof tableId === 'undefined') {
+        if (typeof tableId === 'undefined' || tableId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "tableId"',
             );
         }
-        if (typeof rowId === 'undefined') {
+        if (typeof rowId === 'undefined' || rowId === '') {
             throw new AppwriteException('Missing required parameter: "rowId"');
         }
-        if (typeof column === 'undefined') {
+        if (typeof column === 'undefined' || column === '') {
             throw new AppwriteException('Missing required parameter: "column"');
         }
         const apiPath =

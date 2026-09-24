@@ -218,7 +218,7 @@ export class Teams {
 
         const teamId = params.teamId;
 
-        if (typeof teamId === 'undefined') {
+        if (typeof teamId === 'undefined' || teamId === '') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
         const apiPath = '/teams/{teamId}'.replace(
@@ -286,7 +286,7 @@ export class Teams {
         const teamId = params.teamId;
         const name = params.name;
 
-        if (typeof teamId === 'undefined') {
+        if (typeof teamId === 'undefined' || teamId === '') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
         if (typeof name === 'undefined') {
@@ -345,7 +345,7 @@ export class Teams {
 
         const teamId = params.teamId;
 
-        if (typeof teamId === 'undefined') {
+        if (typeof teamId === 'undefined' || teamId === '') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
         const apiPath = '/teams/{teamId}'.replace(
@@ -358,6 +358,7 @@ export class Teams {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
+            accept: 'application/json',
         };
 
         return this.client.call('delete', uri, apiHeaders, payload);
@@ -421,7 +422,7 @@ export class Teams {
         const queries = params.queries;
         const total = params.total;
 
-        if (typeof teamId === 'undefined') {
+        if (typeof teamId === 'undefined' || teamId === '') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
         const apiPath = '/teams/{teamId}/installations'.replace(
@@ -508,7 +509,7 @@ export class Teams {
         const appId = params.appId;
         const authorizationDetails = params.authorizationDetails;
 
-        if (typeof teamId === 'undefined') {
+        if (typeof teamId === 'undefined' || teamId === '') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
         if (typeof appId === 'undefined') {
@@ -586,10 +587,10 @@ export class Teams {
         const teamId = params.teamId;
         const installationId = params.installationId;
 
-        if (typeof teamId === 'undefined') {
+        if (typeof teamId === 'undefined' || teamId === '') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
-        if (typeof installationId === 'undefined') {
+        if (typeof installationId === 'undefined' || installationId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "installationId"',
             );
@@ -678,10 +679,10 @@ export class Teams {
         const installationId = params.installationId;
         const authorizationDetails = params.authorizationDetails;
 
-        if (typeof teamId === 'undefined') {
+        if (typeof teamId === 'undefined' || teamId === '') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
-        if (typeof installationId === 'undefined') {
+        if (typeof installationId === 'undefined' || installationId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "installationId"',
             );
@@ -754,10 +755,10 @@ export class Teams {
         const teamId = params.teamId;
         const installationId = params.installationId;
 
-        if (typeof teamId === 'undefined') {
+        if (typeof teamId === 'undefined' || teamId === '') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
-        if (typeof installationId === 'undefined') {
+        if (typeof installationId === 'undefined' || installationId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "installationId"',
             );
@@ -856,7 +857,7 @@ export class Teams {
         const search = params.search;
         const total = params.total;
 
-        if (typeof teamId === 'undefined') {
+        if (typeof teamId === 'undefined' || teamId === '') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
         const apiPath = '/teams/{teamId}/memberships'.replace(
@@ -1000,7 +1001,7 @@ export class Teams {
         const url = params.url;
         const name = params.name;
 
-        if (typeof teamId === 'undefined') {
+        if (typeof teamId === 'undefined' || teamId === '') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
         if (typeof roles === 'undefined') {
@@ -1090,10 +1091,10 @@ export class Teams {
         const teamId = params.teamId;
         const membershipId = params.membershipId;
 
-        if (typeof teamId === 'undefined') {
+        if (typeof teamId === 'undefined' || teamId === '') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
-        if (typeof membershipId === 'undefined') {
+        if (typeof membershipId === 'undefined' || membershipId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "membershipId"',
             );
@@ -1175,10 +1176,10 @@ export class Teams {
         const membershipId = params.membershipId;
         const roles = params.roles;
 
-        if (typeof teamId === 'undefined') {
+        if (typeof teamId === 'undefined' || teamId === '') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
-        if (typeof membershipId === 'undefined') {
+        if (typeof membershipId === 'undefined' || membershipId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "membershipId"',
             );
@@ -1254,10 +1255,10 @@ export class Teams {
         const teamId = params.teamId;
         const membershipId = params.membershipId;
 
-        if (typeof teamId === 'undefined') {
+        if (typeof teamId === 'undefined' || teamId === '') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
-        if (typeof membershipId === 'undefined') {
+        if (typeof membershipId === 'undefined' || membershipId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "membershipId"',
             );
@@ -1274,6 +1275,7 @@ export class Teams {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
+            accept: 'application/json',
         };
 
         return this.client.call('delete', uri, apiHeaders, payload);
@@ -1361,10 +1363,10 @@ export class Teams {
         const userId = params.userId;
         const secret = params.secret;
 
-        if (typeof teamId === 'undefined') {
+        if (typeof teamId === 'undefined' || teamId === '') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
-        if (typeof membershipId === 'undefined') {
+        if (typeof membershipId === 'undefined' || membershipId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "membershipId"',
             );
@@ -1439,7 +1441,7 @@ export class Teams {
 
         const teamId = params.teamId;
 
-        if (typeof teamId === 'undefined') {
+        if (typeof teamId === 'undefined' || teamId === '') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
         const apiPath = '/teams/{teamId}/prefs'.replace(
@@ -1504,7 +1506,7 @@ export class Teams {
         const teamId = params.teamId;
         const prefs = params.prefs;
 
-        if (typeof teamId === 'undefined') {
+        if (typeof teamId === 'undefined' || teamId === '') {
             throw new AppwriteException('Missing required parameter: "teamId"');
         }
         if (typeof prefs === 'undefined') {

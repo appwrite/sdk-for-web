@@ -1,7 +1,7 @@
 /**
  * Appwrite Web SDK
  *
- * This SDK targets Appwrite server version 2.0.x as shipped on Appwrite Cloud.
+ * This SDK targets Appwrite server version 2.3.x as shipped on Appwrite Cloud.
  * Self-hosted releases can lag behind Cloud — if you run an older self-hosted
  * build, use a matching older SDK from
  * [previous releases](https://github.com/appwrite/sdk-for-web/releases)
@@ -38,6 +38,7 @@ export { Channel } from './channel';
 export { Operator, Condition } from './operator';
 export { AuthenticatorType } from './enums/authenticator-type';
 export { AuthenticationFactor } from './enums/authentication-factor';
+export { IdTokenProvider } from './enums/id-token-provider';
 export { OAuthProvider } from './enums/o-auth-provider';
 export { Browser } from './enums/browser';
 export { CreditCard } from './enums/credit-card';

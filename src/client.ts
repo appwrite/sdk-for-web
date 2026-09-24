@@ -373,7 +373,6 @@ class Client {
         bearer: string;
         locale: string;
         session: string;
-        devkey: string;
         cookie: string;
         impersonateuserid: string;
         impersonateuseremail: string;
@@ -386,7 +385,6 @@ class Client {
         bearer: '',
         locale: '',
         session: '',
-        devkey: '',
         cookie: '',
         impersonateuserid: '',
         impersonateuseremail: '',
@@ -399,8 +397,8 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '27.0.0',
-        'X-Appwrite-Response-Format': '2.0.0',
+        'x-sdk-version': '28.0.0',
+        'X-Appwrite-Response-Format': '2.3.0',
     };
 
     /**
@@ -534,20 +532,6 @@ class Client {
     setSession(value: string): this {
         this.headers['X-Appwrite-Session'] = value;
         this.config.session = value;
-        return this;
-    }
-    /**
-     * Set DevKey
-     *
-     * Your secret dev API key
-     *
-     * @param value string
-     *
-     * @return {this}
-     */
-    setDevKey(value: string): this {
-        this.headers['X-Appwrite-Dev-Key'] = value;
-        this.config.devkey = value;
         return this;
     }
     /**
@@ -978,11 +962,8 @@ class Client {
         const options: RequestInit = {
             method,
             headers,
+            credentials: 'include',
         };
-
-        if (headers['X-Appwrite-Dev-Key'] === undefined) {
-            options.credentials = 'include';
-        }
 
         if (method === 'GET') {
             for (const [key, value] of Object.entries(Client.flatten(params))) {

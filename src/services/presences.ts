@@ -128,7 +128,7 @@ export class Presences {
 
         const presenceId = params.presenceId;
 
-        if (typeof presenceId === 'undefined') {
+        if (typeof presenceId === 'undefined' || presenceId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "presenceId"',
             );
@@ -235,7 +235,7 @@ export class Presences {
         const expiresAt = params.expiresAt;
         const metadata = params.metadata;
 
-        if (typeof presenceId === 'undefined') {
+        if (typeof presenceId === 'undefined' || presenceId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "presenceId"',
             );
@@ -367,7 +367,7 @@ export class Presences {
         const permissions = params.permissions;
         const purge = params.purge;
 
-        if (typeof presenceId === 'undefined') {
+        if (typeof presenceId === 'undefined' || presenceId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "presenceId"',
             );
@@ -439,7 +439,7 @@ export class Presences {
 
         const presenceId = params.presenceId;
 
-        if (typeof presenceId === 'undefined') {
+        if (typeof presenceId === 'undefined' || presenceId === '') {
             throw new AppwriteException(
                 'Missing required parameter: "presenceId"',
             );
@@ -454,6 +454,7 @@ export class Presences {
         const apiHeaders: { [header: string]: string } = {
             'X-Appwrite-Project': this.client.config.project,
             'content-type': 'application/json',
+            accept: 'application/json',
         };
 
         return this.client.call('delete', uri, apiHeaders, payload);

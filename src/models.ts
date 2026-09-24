@@ -81,20 +81,6 @@ export namespace Models {
     };
 
     /**
-     * Logs List
-     */
-    export type LogList = {
-        /**
-         * Total number of logs that matched your query.
-         */
-        total: number;
-        /**
-         * List of logs.
-         */
-        logs: Log[];
-    };
-
-    /**
      * Files List
      */
     export type FileList = {
@@ -371,100 +357,6 @@ export namespace Models {
     };
 
     /**
-     * Log
-     */
-    export type Log = {
-        /**
-         * Event name.
-         */
-        event: string;
-        /**
-         * User ID of the actor recorded for this log. During impersonation, this is the original impersonator, not the impersonated target user.
-         */
-        userId: string;
-        /**
-         * User email of the actor recorded for this log. During impersonation, this is the original impersonator.
-         */
-        userEmail: string;
-        /**
-         * User name of the actor recorded for this log. During impersonation, this is the original impersonator.
-         */
-        userName: string;
-        /**
-         * API mode when event triggered.
-         */
-        mode: string;
-        /**
-         * User type who triggered the audit log. Possible values: user, admin, guest, hidden, keyProject, keyAccount, keyOrganization.
-         */
-        userType: string;
-        /**
-         * IP session in use when the session was created.
-         */
-        ip: string;
-        /**
-         * Log creation date in ISO 8601 format.
-         */
-        time: string;
-        /**
-         * Operating system code name. View list of [available options](https://github.com/appwrite/appwrite/blob/master/docs/lists/os.json).
-         */
-        osCode: string;
-        /**
-         * Operating system name.
-         */
-        osName: string;
-        /**
-         * Operating system version.
-         */
-        osVersion: string;
-        /**
-         * Client type.
-         */
-        clientType: string;
-        /**
-         * Client code name. View list of [available options](https://github.com/appwrite/appwrite/blob/master/docs/lists/clients.json).
-         */
-        clientCode: string;
-        /**
-         * Client name.
-         */
-        clientName: string;
-        /**
-         * Client version.
-         */
-        clientVersion: string;
-        /**
-         * Client engine name.
-         */
-        clientEngine: string;
-        /**
-         * Client engine name.
-         */
-        clientEngineVersion: string;
-        /**
-         * Device name.
-         */
-        deviceName: string;
-        /**
-         * Device brand name.
-         */
-        deviceBrand: string;
-        /**
-         * Device model name.
-         */
-        deviceModel: string;
-        /**
-         * Country two-character ISO 3166-1 alpha code.
-         */
-        countryCode: string;
-        /**
-         * Country name.
-         */
-        countryName: string;
-    };
-
-    /**
      * User
      */
     export type User<
@@ -546,6 +438,10 @@ export namespace Models {
          * Whether the user email is in its canonical form.
          */
         emailIsCanonical?: boolean;
+        /**
+         * Whether the password was found in a known data breach the last time it was checked. Null when the password has never been checked.
+         */
+        passwordPwned?: boolean;
         /**
          * Phone verification status.
          */
@@ -862,6 +758,10 @@ export namespace Models {
          * Identity Provider Refresh Token.
          */
         providerRefreshToken: string;
+        /**
+         * Identity Provider ID token (JWT) from the most recent native sign-in. Empty for identities created through the browser OAuth2 flow.
+         */
+        providerIdToken: string;
     };
 
     /**
@@ -1237,7 +1137,7 @@ export namespace Models {
          */
         errors: string;
         /**
-         * Resource(function/site) execution duration in seconds.
+         * Total time the resource(function/site) took to respond, in seconds.
          */
         duration: number;
         /**

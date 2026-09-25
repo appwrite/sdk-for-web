@@ -1445,6 +1445,226 @@ export namespace Models {
     };
 
     /**
+     * App
+     */
+    export type App = {
+        /**
+         * App ID.
+         */
+        $id: string;
+        /**
+         * App creation time in ISO 8601 format.
+         */
+        $createdAt: string;
+        /**
+         * App update date in ISO 8601 format.
+         */
+        $updatedAt: string;
+        /**
+         * Application name.
+         */
+        name: string;
+        /**
+         * Application description shown to users during OAuth2 consent.
+         */
+        description: string;
+        /**
+         * Application homepage URL shown to users during OAuth2 consent.
+         */
+        clientUri: string;
+        /**
+         * Application logo URL shown to users during OAuth2 consent.
+         */
+        logoUri: string;
+        /**
+         * Application privacy policy URL shown to users during OAuth2 consent.
+         */
+        privacyPolicyUrl: string;
+        /**
+         * Application terms of service URL shown to users during OAuth2 consent.
+         */
+        termsUrl: string;
+        /**
+         * Application support or security contact emails.
+         */
+        contacts: string[];
+        /**
+         * Application tagline shown to users during OAuth2 consent.
+         */
+        tagline: string;
+        /**
+         * Application tags shown to users during OAuth2 consent.
+         */
+        tags: string[];
+        /**
+         * Application labels. Read-only for clients; only a server SDK using a project API key can update them.
+         */
+        labels: string[];
+        /**
+         * Application image URLs shown to users during OAuth2 consent.
+         */
+        images: string[];
+        /**
+         * Application support URL shown to users during OAuth2 consent.
+         */
+        supportUrl: string;
+        /**
+         * Application data deletion URL shown to users during OAuth2 consent.
+         */
+        dataDeletionUrl: string;
+        /**
+         * List of authorized redirect URIs. These URIs can be used to redirect users after they authenticate.
+         */
+        redirectUris: string[];
+        /**
+         * List of authorized post-logout redirect URIs for OpenID Connect RP-Initiated Logout. The logout endpoint only redirects users to URIs in this list after ending their session.
+         */
+        postLogoutRedirectUris: string[];
+        /**
+         * Whether the app is enabled or not.
+         */
+        enabled: boolean;
+        /**
+         * OAuth2 client type. `public` for SPAs, mobile, and native apps that cannot keep a client secret (PKCE required); `confidential` for server-side clients that authenticate with a client secret.
+         */
+        type: string;
+        /**
+         * Whether this client may use the OAuth2 Device Authorization Grant (RFC 8628).
+         */
+        deviceFlow: boolean;
+        /**
+         * ID of team that owns the application, if owned by team. Otherwise, user ID will be used.
+         */
+        teamId: string;
+        /**
+         * ID of user who owns the application, if owned by user. Otherwise, team ID will be used.
+         */
+        userId: string;
+        /**
+         * Scopes the application requests when installed on a team. Organization-level and project-level scopes only.
+         */
+        installationScopes: string[];
+        /**
+         * URL users are redirected to after creating or updating an installation of this application. Empty for no redirect.
+         */
+        installationRedirectUrl: string;
+        /**
+         * List of application secrets.
+         */
+        secrets: AppSecret[];
+    };
+
+    /**
+     * AppSecret
+     */
+    export type AppSecret = {
+        /**
+         * Secret ID.
+         */
+        $id: string;
+        /**
+         * Secret creation time in ISO 8601 format.
+         */
+        $createdAt: string;
+        /**
+         * Secret update time in ISO 8601 format.
+         */
+        $updatedAt: string;
+        /**
+         * Application ID this secret belongs to.
+         */
+        appId: string;
+        /**
+         * Always empty. The application client secret is returned only once, in the response of the createSecret method.
+         */
+        secret: string;
+        /**
+         * Last few characters of the client secret, used to help identify it.
+         */
+        hint: string;
+        /**
+         * ID of the user who created the secret.
+         */
+        createdById: string;
+        /**
+         * Name of the user who created the secret.
+         */
+        createdByName: string;
+        /**
+         * Time the secret was last used for authentication in ISO 8601 format. Null if never used.
+         */
+        lastAccessedAt?: string;
+    };
+
+    /**
+     * AppSecretPlaintext
+     */
+    export type AppSecretPlaintext = {
+        /**
+         * Secret ID.
+         */
+        $id: string;
+        /**
+         * Secret creation time in ISO 8601 format.
+         */
+        $createdAt: string;
+        /**
+         * Secret update time in ISO 8601 format.
+         */
+        $updatedAt: string;
+        /**
+         * Application ID this secret belongs to.
+         */
+        appId: string;
+        /**
+         * Application client secret. Returned only when the secret is created; subsequent reads always return an empty value.
+         */
+        secret: string;
+        /**
+         * Last few characters of the client secret, used to help identify it.
+         */
+        hint: string;
+        /**
+         * ID of the user who created the secret.
+         */
+        createdById: string;
+        /**
+         * Name of the user who created the secret.
+         */
+        createdByName: string;
+        /**
+         * Time the secret was last used for authentication in ISO 8601 format. Null if never used.
+         */
+        lastAccessedAt?: string;
+    };
+
+    /**
+     * AppScope
+     */
+    export type AppScope = {
+        /**
+         * Scope value as requested by apps.
+         */
+        value: string;
+        /**
+         * Human-readable description of what the scope grants.
+         */
+        description: string;
+        /**
+         * What the scope grants access to. One of `account`, `project`, or `organization`. Only `project` and `organization` scopes are installable.
+         */
+        type: string;
+        /**
+         * Scope category, used to group scopes on consent and installation screens.
+         */
+        category: string;
+        /**
+         * Whether the scope is deprecated. Deprecated scopes can still be requested but should not be offered for new grants.
+         */
+        deprecated: boolean;
+    };
+
+    /**
      * AppInstallation
      */
     export type AppInstallation = {
@@ -1488,6 +1708,214 @@ export namespace Models {
          * Time an access token was last issued for the installation in ISO 8601 format. Null if never used.
          */
         lastAccessedAt?: string;
+    };
+
+    /**
+     * AppKey
+     */
+    export type AppKey = {
+        /**
+         * App key ID.
+         */
+        $id: string;
+        /**
+         * App key creation time in ISO 8601 format.
+         */
+        $createdAt: string;
+        /**
+         * App key update time in ISO 8601 format.
+         */
+        $updatedAt: string;
+        /**
+         * Application ID this app key belongs to.
+         */
+        appId: string;
+        /**
+         * App key secret.
+         */
+        secret: string;
+        /**
+         * Last few characters of the app key secret, used to help identify it.
+         */
+        hint: string;
+        /**
+         * ID of the user who created the app key.
+         */
+        createdById: string;
+        /**
+         * Name of the user who created the app key.
+         */
+        createdByName: string;
+        /**
+         * Time the app key was last used for authentication in ISO 8601 format. Null if never used.
+         */
+        lastAccessedAt?: string;
+    };
+
+    /**
+     * OAuth2 Authorize
+     */
+    export type Oauth2Authorize = {
+        /**
+         * OAuth2 grant ID. Set when the user must give explicit consent; pass it to the approve or reject endpoint. Empty when a redirect URL is returned instead.
+         */
+        grantId: string;
+        /**
+         * URL the end user should be redirected to when the flow can complete without consent. Empty when consent is still required.
+         */
+        redirectUrl: string;
+    };
+
+    /**
+     * OAuth2 Approve
+     */
+    export type Oauth2Approve = {
+        /**
+         * URL the end user should be redirected to after the grant is approved, carrying the authorization `code` and/or `id_token` along with the original `state`.
+         */
+        redirectUrl: string;
+    };
+
+    /**
+     * OAuth2 Reject
+     */
+    export type Oauth2Reject = {
+        /**
+         * URL the end user should be redirected to after the grant is rejected, carrying an `access_denied` error.
+         */
+        redirectUrl: string;
+    };
+
+    /**
+     * OAuth2 Grant
+     */
+    export type Oauth2Grant = {
+        /**
+         * Grant ID.
+         */
+        $id: string;
+        /**
+         * Grant creation time in ISO 8601 format.
+         */
+        $createdAt: string;
+        /**
+         * Grant update date in ISO 8601 format.
+         */
+        $updatedAt: string;
+        /**
+         * ID of the user the grant belongs to.
+         */
+        userId: string;
+        /**
+         * ID of the OAuth2 client (app) the grant was requested for.
+         */
+        appId: string;
+        /**
+         * Requested OAuth2 scopes the user is being asked to consent to.
+         */
+        scopes: string[];
+        /**
+         * Requested RFC 8707 resource indicators the user is being asked to consent to.
+         */
+        resources: string[];
+        /**
+         * Requested authorization_details the user is being asked to consent to, as a JSON string. Each entry has a `type` plus project-defined fields.
+         */
+        authorizationDetails: string;
+        /**
+         * OIDC prompt directive the consent screen should honor. Space-separated list of: login, consent, select_account.
+         */
+        prompt: string;
+        /**
+         * Redirect URI the user will be sent to after the flow completes.
+         */
+        redirectUri: string;
+        /**
+         * Unix timestamp of when the user last authenticated.
+         */
+        authTime: number;
+        /**
+         * Grant expiration time in ISO 8601 format.
+         */
+        expire: string;
+    };
+
+    /**
+     * OAuth2 Device Authorization
+     */
+    export type Oauth2DeviceAuthorization = {
+        /**
+         * Device verification code used by the client to poll the token endpoint.
+         */
+        device_code: string;
+        /**
+         * Short code the end user enters on the verification page.
+         */
+        user_code: string;
+        /**
+         * URL where the end user enters the user code.
+         */
+        verification_uri: string;
+        /**
+         * Verification URL with the user code prefilled as a query parameter.
+         */
+        verification_uri_complete: string;
+        /**
+         * Lifetime of the device code and user code in seconds.
+         */
+        expires_in: number;
+        /**
+         * Minimum polling interval for the token endpoint in seconds.
+         */
+        interval: number;
+    };
+
+    /**
+     * OAuth2 PAR
+     */
+    export type Oauth2PAR = {
+        /**
+         * Authorization request handle to pass to the authorize endpoint.
+         */
+        request_uri: string;
+        /**
+         * Lifetime of the authorization request handle in seconds.
+         */
+        expires_in: number;
+    };
+
+    /**
+     * OAuth2 Token
+     */
+    export type Oauth2Token = {
+        /**
+         * OAuth2 access token.
+         */
+        access_token: string;
+        /**
+         * OAuth2 token type.
+         */
+        token_type: string;
+        /**
+         * Access token lifetime in seconds.
+         */
+        expires_in: number;
+        /**
+         * OAuth2 refresh token.
+         */
+        refresh_token: string;
+        /**
+         * Space-separated scopes granted to the access token.
+         */
+        scope: string;
+        /**
+         * Granted RFC 9396 authorization details as a JSON string.
+         */
+        authorization_details?: string;
+        /**
+         * OpenID Connect ID token. Returned when the `openid` scope is granted.
+         */
+        id_token?: string;
     };
 
     /**
@@ -1587,6 +2015,62 @@ export namespace Models {
     };
 
     /**
+     * OAuth2 Project
+     */
+    export type Oauth2Project = {
+        /**
+         * Project ID.
+         */
+        $id: string;
+        /**
+         * Region ID the project is deployed in.
+         */
+        region: string;
+        /**
+         * API endpoint of the region the project is deployed in. Empty when the region has no public hostname configured.
+         */
+        endpoint: string;
+    };
+
+    /**
+     * OAuth2 Organization
+     */
+    export type Oauth2Organization = {
+        /**
+         * Organization ID.
+         */
+        $id: string;
+    };
+
+    /**
+     * OAuth2 accessible projects list
+     */
+    export type Oauth2ProjectList = {
+        /**
+         * Total number of projects that matched your query.
+         */
+        total: number;
+        /**
+         * List of projects.
+         */
+        projects: Oauth2Project[];
+    };
+
+    /**
+     * OAuth2 accessible organizations list
+     */
+    export type Oauth2OrganizationList = {
+        /**
+         * Total number of organizations that matched your query.
+         */
+        total: number;
+        /**
+         * List of organizations.
+         */
+        organizations: Oauth2Organization[];
+    };
+
+    /**
      * OAuth2 consents list
      */
     export type Oauth2ConsentList = {
@@ -1615,6 +2099,48 @@ export namespace Models {
     };
 
     /**
+     * Apps list
+     */
+    export type AppsList = {
+        /**
+         * Total number of apps that matched your query.
+         */
+        total: number;
+        /**
+         * List of apps.
+         */
+        apps: App[];
+    };
+
+    /**
+     * App secrets list
+     */
+    export type AppSecretList = {
+        /**
+         * Total number of secrets that matched your query.
+         */
+        total: number;
+        /**
+         * List of secrets.
+         */
+        secrets: AppSecret[];
+    };
+
+    /**
+     * App scopes list
+     */
+    export type AppScopeList = {
+        /**
+         * Total number of scopes that matched your query.
+         */
+        total: number;
+        /**
+         * List of scopes.
+         */
+        scopes: AppScope[];
+    };
+
+    /**
      * App installations list
      */
     export type AppInstallationList = {
@@ -1626,5 +2152,19 @@ export namespace Models {
          * List of installations.
          */
         installations: AppInstallation[];
+    };
+
+    /**
+     * App keys list
+     */
+    export type AppKeyList = {
+        /**
+         * Total number of keys that matched your query.
+         */
+        total: number;
+        /**
+         * List of keys.
+         */
+        keys: AppKey[];
     };
 }

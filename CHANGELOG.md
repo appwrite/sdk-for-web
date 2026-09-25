@@ -1,5 +1,11 @@
 # Change Log
 
+## 28.1.0
+
+* Added: `Apps` service to create and manage OAuth2 apps, their secrets, keys, and installations
+* Added: `Oauth2` service for authorization, consent, device, PAR, and token flows
+* Added: `App`, `AppSecret`, `AppKey`, `AppScope` and `Oauth2*` response models
+
 ## 28.0.0
 
 * Breaking: removed `Account.listLogs` and the `Log`, `LogList` models

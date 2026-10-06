@@ -86,12 +86,12 @@ export class Messaging {
             '{topicId}',
             encodeURIComponent(String(topicId)),
         );
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof subscriberId !== 'undefined') {
-            payload['subscriberId'] = subscriberId;
+            apiPayload['subscriberId'] = subscriberId;
         }
         if (typeof targetId !== 'undefined') {
-            payload['targetId'] = targetId;
+            apiPayload['targetId'] = targetId;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -101,7 +101,7 @@ export class Messaging {
             accept: 'application/json',
         };
 
-        return this.client.call('post', uri, apiHeaders, payload);
+        return this.client.call('post', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -167,7 +167,7 @@ export class Messaging {
                 '{subscriberId}',
                 encodeURIComponent(String(subscriberId)),
             );
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -176,6 +176,6 @@ export class Messaging {
             accept: 'application/json',
         };
 
-        return this.client.call('delete', uri, apiHeaders, payload);
+        return this.client.call('delete', uri, apiHeaders, apiPayload);
     }
 }

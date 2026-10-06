@@ -1,5 +1,10 @@
-import { Service } from '../service';
-import { AppwriteException, Client, type Payload } from '../client';
+import {
+    AppwriteException,
+    Client,
+    type Payload,
+    UploadProgress,
+} from '../client';
+import type { Models } from '../models';
 
 import { Browser } from '../enums/browser';
 import { CreditCard } from '../enums/credit-card';
@@ -106,22 +111,22 @@ export class Avatars {
             '{code}',
             encodeURIComponent(String(code)),
         );
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof width !== 'undefined') {
-            payload['width'] = width;
+            apiPayload['width'] = width;
         }
         if (typeof height !== 'undefined') {
-            payload['height'] = height;
+            apiPayload['height'] = height;
         }
         if (typeof quality !== 'undefined') {
-            payload['quality'] = quality;
+            apiPayload['quality'] = quality;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
-        payload['project'] = this.client.config.project;
-        payload['impersonateuserid'] = this.client.config.impersonateuserid;
+        apiPayload['project'] = this.client.config.project;
+        apiPayload['impersonateuserid'] = this.client.config.impersonateuserid;
 
-        for (const [key, value] of Object.entries(Service.flatten(payload))) {
+        for (const [key, value] of Object.entries(Client.flatten(apiPayload))) {
             uri.searchParams.append(key, value);
         }
 
@@ -221,22 +226,22 @@ export class Avatars {
             '{code}',
             encodeURIComponent(String(code)),
         );
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof width !== 'undefined') {
-            payload['width'] = width;
+            apiPayload['width'] = width;
         }
         if (typeof height !== 'undefined') {
-            payload['height'] = height;
+            apiPayload['height'] = height;
         }
         if (typeof quality !== 'undefined') {
-            payload['quality'] = quality;
+            apiPayload['quality'] = quality;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
-        payload['project'] = this.client.config.project;
-        payload['impersonateuserid'] = this.client.config.impersonateuserid;
+        apiPayload['project'] = this.client.config.project;
+        apiPayload['impersonateuserid'] = this.client.config.impersonateuserid;
 
-        for (const [key, value] of Object.entries(Service.flatten(payload))) {
+        for (const [key, value] of Object.entries(Client.flatten(apiPayload))) {
             uri.searchParams.append(key, value);
         }
 
@@ -285,16 +290,16 @@ export class Avatars {
             throw new AppwriteException('Missing required parameter: "url"');
         }
         const apiPath = '/avatars/favicon';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof url !== 'undefined') {
-            payload['url'] = url;
+            apiPayload['url'] = url;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
-        payload['project'] = this.client.config.project;
-        payload['impersonateuserid'] = this.client.config.impersonateuserid;
+        apiPayload['project'] = this.client.config.project;
+        apiPayload['impersonateuserid'] = this.client.config.impersonateuserid;
 
-        for (const [key, value] of Object.entries(Service.flatten(payload))) {
+        for (const [key, value] of Object.entries(Client.flatten(apiPayload))) {
             uri.searchParams.append(key, value);
         }
 
@@ -389,22 +394,22 @@ export class Avatars {
             '{code}',
             encodeURIComponent(String(code)),
         );
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof width !== 'undefined') {
-            payload['width'] = width;
+            apiPayload['width'] = width;
         }
         if (typeof height !== 'undefined') {
-            payload['height'] = height;
+            apiPayload['height'] = height;
         }
         if (typeof quality !== 'undefined') {
-            payload['quality'] = quality;
+            apiPayload['quality'] = quality;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
-        payload['project'] = this.client.config.project;
-        payload['impersonateuserid'] = this.client.config.impersonateuserid;
+        apiPayload['project'] = this.client.config.project;
+        apiPayload['impersonateuserid'] = this.client.config.impersonateuserid;
 
-        for (const [key, value] of Object.entries(Service.flatten(payload))) {
+        for (const [key, value] of Object.entries(Client.flatten(apiPayload))) {
             uri.searchParams.append(key, value);
         }
 
@@ -473,22 +478,22 @@ export class Avatars {
             throw new AppwriteException('Missing required parameter: "url"');
         }
         const apiPath = '/avatars/image';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof url !== 'undefined') {
-            payload['url'] = url;
+            apiPayload['url'] = url;
         }
         if (typeof width !== 'undefined') {
-            payload['width'] = width;
+            apiPayload['width'] = width;
         }
         if (typeof height !== 'undefined') {
-            payload['height'] = height;
+            apiPayload['height'] = height;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
-        payload['project'] = this.client.config.project;
-        payload['impersonateuserid'] = this.client.config.impersonateuserid;
+        apiPayload['project'] = this.client.config.project;
+        apiPayload['impersonateuserid'] = this.client.config.impersonateuserid;
 
-        for (const [key, value] of Object.entries(Service.flatten(payload))) {
+        for (const [key, value] of Object.entries(Client.flatten(apiPayload))) {
             uri.searchParams.append(key, value);
         }
 
@@ -583,25 +588,25 @@ export class Avatars {
         const background = params.background;
 
         const apiPath = '/avatars/initials';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof name !== 'undefined') {
-            payload['name'] = name;
+            apiPayload['name'] = name;
         }
         if (typeof width !== 'undefined') {
-            payload['width'] = width;
+            apiPayload['width'] = width;
         }
         if (typeof height !== 'undefined') {
-            payload['height'] = height;
+            apiPayload['height'] = height;
         }
         if (typeof background !== 'undefined') {
-            payload['background'] = background;
+            apiPayload['background'] = background;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
-        payload['project'] = this.client.config.project;
-        payload['impersonateuserid'] = this.client.config.impersonateuserid;
+        apiPayload['project'] = this.client.config.project;
+        apiPayload['impersonateuserid'] = this.client.config.impersonateuserid;
 
-        for (const [key, value] of Object.entries(Service.flatten(payload))) {
+        for (const [key, value] of Object.entries(Client.flatten(apiPayload))) {
             uri.searchParams.append(key, value);
         }
 
@@ -609,7 +614,7 @@ export class Avatars {
     }
 
     /**
-     * Returns the best available profile photo for a user. The endpoint tries each source in priority order and returns the first successful result: OAuth2 identity photo, Gravatar, Libravatar, Appwrite Initials, built-in static fallback.
+     * Returns the best available profile photo for a user. The endpoint tries each source in priority order and returns the first successful result: a custom uploaded photo (see avatars.updatePhoto), OAuth2 identity photo, Gravatar, Libravatar, Appwrite Initials, built-in static fallback.
      *
      * Passing `userId` — `current()` for the authenticated user — resolves the photo from everything known about that user: identity photos, email, and name. An explicit `emailHash` or `name` then overrides just that value, and the user's remaining sources stay in the chain. Without `userId`, passing `emailHash` and/or `name` resolves the avatar from those values alone: the hash is looked up on Gravatar and Libravatar, the name is rendered as initials, and the session user stays out of the chain so their own photo never shadows the avatar being asked for. When nothing is passed, the photo resolves for the currently authenticated user. Emails are only ever accepted pre-hashed, so no address ends up in a URL.
      *
@@ -635,7 +640,7 @@ export class Avatars {
         name?: string;
     }): string;
     /**
-     * Returns the best available profile photo for a user. The endpoint tries each source in priority order and returns the first successful result: OAuth2 identity photo, Gravatar, Libravatar, Appwrite Initials, built-in static fallback.
+     * Returns the best available profile photo for a user. The endpoint tries each source in priority order and returns the first successful result: a custom uploaded photo (see avatars.updatePhoto), OAuth2 identity photo, Gravatar, Libravatar, Appwrite Initials, built-in static fallback.
      *
      * Passing `userId` — `current()` for the authenticated user — resolves the photo from everything known about that user: identity photos, email, and name. An explicit `emailHash` or `name` then overrides just that value, and the user's remaining sources stay in the chain. Without `userId`, passing `emailHash` and/or `name` resolves the avatar from those values alone: the hash is looked up on Gravatar and Libravatar, the name is rendered as initials, and the session user stays out of the chain so their own photo never shadows the avatar being asked for. When nothing is passed, the photo resolves for the currently authenticated user. Emails are only ever accepted pre-hashed, so no address ends up in a URL.
      *
@@ -726,41 +731,143 @@ export class Avatars {
         const name = params.name;
 
         const apiPath = '/avatars/photo';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof width !== 'undefined') {
-            payload['width'] = width;
+            apiPayload['width'] = width;
         }
         if (typeof height !== 'undefined') {
-            payload['height'] = height;
+            apiPayload['height'] = height;
         }
         if (typeof quality !== 'undefined') {
-            payload['quality'] = quality;
+            apiPayload['quality'] = quality;
         }
         if (typeof output !== 'undefined') {
-            payload['output'] = output;
+            apiPayload['output'] = output;
         }
         if (typeof rating !== 'undefined') {
-            payload['rating'] = rating;
+            apiPayload['rating'] = rating;
         }
         if (typeof userId !== 'undefined') {
-            payload['userId'] = userId;
+            apiPayload['userId'] = userId;
         }
         if (typeof emailHash !== 'undefined') {
-            payload['emailHash'] = emailHash;
+            apiPayload['emailHash'] = emailHash;
         }
         if (typeof name !== 'undefined') {
-            payload['name'] = name;
+            apiPayload['name'] = name;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
-        payload['project'] = this.client.config.project;
-        payload['impersonateuserid'] = this.client.config.impersonateuserid;
+        apiPayload['project'] = this.client.config.project;
+        apiPayload['impersonateuserid'] = this.client.config.impersonateuserid;
 
-        for (const [key, value] of Object.entries(Service.flatten(payload))) {
+        for (const [key, value] of Object.entries(Client.flatten(apiPayload))) {
             uri.searchParams.append(key, value);
         }
 
         return uri.toString();
+    }
+
+    /**
+     * Update the profile photo of the currently authenticated user. The uploaded image takes priority over every other photo source, including OAuth2 identity photos, Gravatar, and Libravatar. Updating an already customized photo replaces it. The image must be at most 5MB and is sent in a single request.
+     *
+     * @param {File} params.file - Binary image file of at most 5MB. Allowed file types are png, jpg, jpeg, and webp.
+     * @throws {AppwriteException}
+     * @returns {Promise<Models.Account<Preferences>>}
+     */
+    updatePhoto<
+        Preferences extends Models.Preferences = Models.DefaultPreferences,
+    >(params: {
+        file: File;
+        onProgress?: (progress: UploadProgress) => void;
+    }): Promise<Models.Account<Preferences>>;
+    /**
+     * Update the profile photo of the currently authenticated user. The uploaded image takes priority over every other photo source, including OAuth2 identity photos, Gravatar, and Libravatar. Updating an already customized photo replaces it. The image must be at most 5MB and is sent in a single request.
+     *
+     * @param {File} file - Binary image file of at most 5MB. Allowed file types are png, jpg, jpeg, and webp.
+     * @throws {AppwriteException}
+     * @returns {Promise<Models.Account<Preferences>>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    updatePhoto<
+        Preferences extends Models.Preferences = Models.DefaultPreferences,
+    >(
+        file: File,
+        onProgress?: (progress: UploadProgress) => void,
+    ): Promise<Models.Account<Preferences>>;
+    updatePhoto<
+        Preferences extends Models.Preferences = Models.DefaultPreferences,
+    >(
+        paramsOrFirst:
+            | { file: File; onProgress?: (progress: UploadProgress) => void }
+            | File,
+        ...rest: [((progress: UploadProgress) => void)?]
+    ): Promise<Models.Account<Preferences>> {
+        let params: { file: File };
+        let onProgress: (progress: UploadProgress) => void;
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst) &&
+            ('file' in paramsOrFirst || 'onProgress' in paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as { file: File };
+            onProgress = paramsOrFirst?.onProgress as (
+                progress: UploadProgress,
+            ) => void;
+        } else {
+            params = {
+                file: paramsOrFirst as File,
+            };
+            onProgress = rest[0] as (progress: UploadProgress) => void;
+        }
+
+        const file = params.file;
+
+        if (typeof file === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "file"');
+        }
+        const apiPath = '/avatars/photo';
+        const apiPayload: Payload = {};
+        if (typeof file !== 'undefined') {
+            apiPayload['file'] = file;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'X-Appwrite-Project': this.client.config.project,
+            'content-type': 'multipart/form-data',
+            accept: 'application/json',
+        };
+
+        return this.client.chunkedUpload(
+            'put',
+            uri,
+            apiHeaders,
+            apiPayload,
+            onProgress,
+        );
+    }
+
+    /**
+     * Delete the profile photo of the currently authenticated user and store the built-in static placeholder in its place. The placeholder is the user's photo from then on, so it takes priority over every other photo source — OAuth2 identity photos, Gravatar, Libravatar, and initials — until a new photo is uploaded with avatars.updatePhoto.
+     *
+     * @throws {AppwriteException}
+     * @returns {Promise<{}>}
+     */
+    deletePhoto(): Promise<{}> {
+        const apiPath = '/avatars/photo';
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'X-Appwrite-Project': this.client.config.project,
+            'content-type': 'application/json',
+            accept: 'application/json',
+        };
+
+        return this.client.call('delete', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -845,25 +952,25 @@ export class Avatars {
             throw new AppwriteException('Missing required parameter: "text"');
         }
         const apiPath = '/avatars/qr';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof text !== 'undefined') {
-            payload['text'] = text;
+            apiPayload['text'] = text;
         }
         if (typeof size !== 'undefined') {
-            payload['size'] = size;
+            apiPayload['size'] = size;
         }
         if (typeof margin !== 'undefined') {
-            payload['margin'] = margin;
+            apiPayload['margin'] = margin;
         }
         if (typeof download !== 'undefined') {
-            payload['download'] = download;
+            apiPayload['download'] = download;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
-        payload['project'] = this.client.config.project;
-        payload['impersonateuserid'] = this.client.config.impersonateuserid;
+        apiPayload['project'] = this.client.config.project;
+        apiPayload['impersonateuserid'] = this.client.config.impersonateuserid;
 
-        for (const [key, value] of Object.entries(Service.flatten(payload))) {
+        for (const [key, value] of Object.entries(Client.flatten(apiPayload))) {
             uri.searchParams.append(key, value);
         }
 
@@ -878,7 +985,7 @@ export class Avatars {
      * When width and height are specified, the image is resized accordingly. If both dimensions are 0, the API provides an image at original size. If dimensions are not specified, the default viewport size is 1280x720px.
      *
      * @param {string} params.url - Website URL which you want to capture.
-     * @param {object} params.headers - HTTP headers to send with the browser request. Defaults to empty.
+     * @param {object} params.headers - HTTP headers to send with the browser request. Only Accept and Accept-Language are allowed. Defaults to empty.
      * @param {number} params.viewportWidth - Browser viewport width. Pass an integer between 1 to 1920. Defaults to 1280.
      * @param {number} params.viewportHeight - Browser viewport height. Pass an integer between 1 to 1080. Defaults to 720.
      * @param {number} params.scale - Browser scale factor. Pass a number between 0.1 to 3. Defaults to 1.
@@ -930,7 +1037,7 @@ export class Avatars {
      * When width and height are specified, the image is resized accordingly. If both dimensions are 0, the API provides an image at original size. If dimensions are not specified, the default viewport size is 1280x720px.
      *
      * @param {string} url - Website URL which you want to capture.
-     * @param {object} headers - HTTP headers to send with the browser request. Defaults to empty.
+     * @param {object} headers - HTTP headers to send with the browser request. Only Accept and Accept-Language are allowed. Defaults to empty.
      * @param {number} viewportWidth - Browser viewport width. Pass an integer between 1 to 1920. Defaults to 1280.
      * @param {number} viewportHeight - Browser viewport height. Pass an integer between 1 to 1080. Defaults to 720.
      * @param {number} scale - Browser scale factor. Pass a number between 0.1 to 3. Defaults to 1.
@@ -1122,73 +1229,73 @@ export class Avatars {
             throw new AppwriteException('Missing required parameter: "url"');
         }
         const apiPath = '/avatars/screenshots';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof url !== 'undefined') {
-            payload['url'] = url;
+            apiPayload['url'] = url;
         }
         if (typeof headers !== 'undefined') {
-            payload['headers'] = headers;
+            apiPayload['headers'] = headers;
         }
         if (typeof viewportWidth !== 'undefined') {
-            payload['viewportWidth'] = viewportWidth;
+            apiPayload['viewportWidth'] = viewportWidth;
         }
         if (typeof viewportHeight !== 'undefined') {
-            payload['viewportHeight'] = viewportHeight;
+            apiPayload['viewportHeight'] = viewportHeight;
         }
         if (typeof scale !== 'undefined') {
-            payload['scale'] = scale;
+            apiPayload['scale'] = scale;
         }
         if (typeof theme !== 'undefined') {
-            payload['theme'] = theme;
+            apiPayload['theme'] = theme;
         }
         if (typeof userAgent !== 'undefined') {
-            payload['userAgent'] = userAgent;
+            apiPayload['userAgent'] = userAgent;
         }
         if (typeof fullpage !== 'undefined') {
-            payload['fullpage'] = fullpage;
+            apiPayload['fullpage'] = fullpage;
         }
         if (typeof locale !== 'undefined') {
-            payload['locale'] = locale;
+            apiPayload['locale'] = locale;
         }
         if (typeof timezone !== 'undefined') {
-            payload['timezone'] = timezone;
+            apiPayload['timezone'] = timezone;
         }
         if (typeof latitude !== 'undefined') {
-            payload['latitude'] = latitude;
+            apiPayload['latitude'] = latitude;
         }
         if (typeof longitude !== 'undefined') {
-            payload['longitude'] = longitude;
+            apiPayload['longitude'] = longitude;
         }
         if (typeof accuracy !== 'undefined') {
-            payload['accuracy'] = accuracy;
+            apiPayload['accuracy'] = accuracy;
         }
         if (typeof touch !== 'undefined') {
-            payload['touch'] = touch;
+            apiPayload['touch'] = touch;
         }
         if (typeof permissions !== 'undefined') {
-            payload['permissions'] = permissions;
+            apiPayload['permissions'] = permissions;
         }
         if (typeof sleep !== 'undefined') {
-            payload['sleep'] = sleep;
+            apiPayload['sleep'] = sleep;
         }
         if (typeof width !== 'undefined') {
-            payload['width'] = width;
+            apiPayload['width'] = width;
         }
         if (typeof height !== 'undefined') {
-            payload['height'] = height;
+            apiPayload['height'] = height;
         }
         if (typeof quality !== 'undefined') {
-            payload['quality'] = quality;
+            apiPayload['quality'] = quality;
         }
         if (typeof output !== 'undefined') {
-            payload['output'] = output;
+            apiPayload['output'] = output;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
-        payload['project'] = this.client.config.project;
-        payload['impersonateuserid'] = this.client.config.impersonateuserid;
+        apiPayload['project'] = this.client.config.project;
+        apiPayload['impersonateuserid'] = this.client.config.impersonateuserid;
 
-        for (const [key, value] of Object.entries(Service.flatten(payload))) {
+        for (const [key, value] of Object.entries(Client.flatten(apiPayload))) {
             uri.searchParams.append(key, value);
         }
 

@@ -368,6 +368,8 @@ class Client {
     config: {
         endpoint: string;
         endpointRealtime: string;
+        endpointPush: string;
+        pushClientId: string;
         project: string;
         jwt: string;
         bearer: string;
@@ -380,6 +382,8 @@ class Client {
     } = {
         endpoint: 'https://cloud.appwrite.io/v1',
         endpointRealtime: '',
+        endpointPush: '',
+        pushClientId: '',
         project: '',
         jwt: '',
         bearer: '',
@@ -397,7 +401,7 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '28.1.0',
+        'x-sdk-version': '28.2.0-rc.1',
         'X-Appwrite-Response-Format': '2.3.0',
     };
 
@@ -464,6 +468,56 @@ class Client {
         }
 
         this.config.endpointRealtime = endpointRealtime;
+        return this;
+    }
+
+    /**
+     * Set Push Endpoint
+     *
+     * The MQTT-over-WebSocket URL the AppwritePush service connects to.
+     *
+     * @param {string} endpointPush
+     *
+     * @returns {this}
+     */
+    setPushEndpoint(endpointPush: string): this {
+        if (!endpointPush || typeof endpointPush !== 'string') {
+            throw new AppwriteException('Endpoint must be a valid string');
+        }
+
+        if (
+            !endpointPush.startsWith('ws://') &&
+            !endpointPush.startsWith('wss://')
+        ) {
+            throw new AppwriteException(
+                'Invalid push endpoint URL: ' + endpointPush,
+            );
+        }
+
+        this.config.endpointPush = endpointPush;
+        return this;
+    }
+
+    /**
+     * Set Push Client Id
+     *
+     * A stable client id for the AppwritePush service. The broker keys its
+     * offline-replay cursor on this id, so pass a stable value to resume replay across
+     * reloads/restarts. Defaults, when unset, to one per user and tab: stable across reloads of
+     * the tab, different in every other tab, and distinct for each connection open at the same
+     * time, so no two connections take over each other's session. An explicit id shared by
+     * several tabs or connections makes them do that.
+     *
+     * @param {string} pushClientId
+     *
+     * @returns {this}
+     */
+    setPushClientId(pushClientId: string): this {
+        if (!pushClientId || typeof pushClientId !== 'string') {
+            throw new AppwriteException('Client id must be a valid string');
+        }
+
+        this.config.pushClientId = pushClientId;
         return this;
     }
 
@@ -985,6 +1039,11 @@ class Client {
                             for (const nestedValue of value) {
                                 formData.append(`${key}[]`, nestedValue);
                             }
+                        } else if (
+                            value !== null &&
+                            typeof value === 'object'
+                        ) {
+                            formData.append(key, JSONbig.stringify(value));
                         } else {
                             formData.append(key, value);
                         }
@@ -1006,6 +1065,7 @@ class Client {
         headers: Headers = {},
         originalPayload: Payload = {},
         onProgress: (progress: UploadProgress) => void,
+        responseType = 'json',
     ) {
         const [fileParam, file] =
             Object.entries(originalPayload).find(
@@ -1013,11 +1073,23 @@ class Client {
             ) ?? [];
 
         if (!file || !fileParam) {
-            throw new Error('File not found in payload');
+            return await this.call(
+                method,
+                url,
+                headers,
+                originalPayload,
+                responseType,
+            );
         }
 
-        if (file.size <= Client.CHUNK_SIZE) {
-            return await this.call(method, url, headers, originalPayload);
+        if (file.size <= Client.CHUNK_SIZE || responseType === 'text') {
+            return await this.call(
+                method,
+                url,
+                headers,
+                originalPayload,
+                responseType,
+            );
         }
 
         const totalChunks = Math.ceil(file.size / Client.CHUNK_SIZE);
@@ -1037,6 +1109,7 @@ class Client {
             url,
             firstChunkHeaders,
             firstPayload,
+            responseType,
         );
         const uploadId = response?.$id;
 
@@ -1097,6 +1170,7 @@ class Client {
                 url,
                 chunkHeaders,
                 chunkPayload,
+                responseType,
             );
 
             if (rejected) {
@@ -1206,7 +1280,9 @@ class Client {
                 );
         }
 
-        if (
+        if (responseType === 'text' && response.status < 400) {
+            data = await response.text();
+        } else if (
             response.headers.get('content-type')?.includes('application/json')
         ) {
             data = JSONbig.parse(await response.text());

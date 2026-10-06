@@ -80,15 +80,15 @@ export class Oauth2 {
             '{project_id}',
             encodeURIComponent(String(this.client.config.project)),
         );
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof grantId !== 'undefined') {
-            payload['grant_id'] = grantId;
+            apiPayload['grant_id'] = grantId;
         }
         if (typeof authorizationDetails !== 'undefined') {
-            payload['authorization_details'] = authorizationDetails;
+            apiPayload['authorization_details'] = authorizationDetails;
         }
         if (typeof scope !== 'undefined') {
-            payload['scope'] = scope;
+            apiPayload['scope'] = scope;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -97,7 +97,7 @@ export class Oauth2 {
             accept: 'application/json',
         };
 
-        return this.client.call('post', uri, apiHeaders, payload);
+        return this.client.call('post', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -285,48 +285,48 @@ export class Oauth2 {
             '{project_id}',
             encodeURIComponent(String(this.client.config.project)),
         );
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof clientId !== 'undefined') {
-            payload['client_id'] = clientId;
+            apiPayload['client_id'] = clientId;
         }
         if (typeof redirectUri !== 'undefined') {
-            payload['redirect_uri'] = redirectUri;
+            apiPayload['redirect_uri'] = redirectUri;
         }
         if (typeof responseType !== 'undefined') {
-            payload['response_type'] = responseType;
+            apiPayload['response_type'] = responseType;
         }
         if (typeof scope !== 'undefined') {
-            payload['scope'] = scope;
+            apiPayload['scope'] = scope;
         }
         if (typeof state !== 'undefined') {
-            payload['state'] = state;
+            apiPayload['state'] = state;
         }
         if (typeof nonce !== 'undefined') {
-            payload['nonce'] = nonce;
+            apiPayload['nonce'] = nonce;
         }
         if (typeof codeChallenge !== 'undefined') {
-            payload['code_challenge'] = codeChallenge;
+            apiPayload['code_challenge'] = codeChallenge;
         }
         if (typeof codeChallengeMethod !== 'undefined') {
-            payload['code_challenge_method'] = codeChallengeMethod;
+            apiPayload['code_challenge_method'] = codeChallengeMethod;
         }
         if (typeof prompt !== 'undefined') {
-            payload['prompt'] = prompt;
+            apiPayload['prompt'] = prompt;
         }
         if (typeof maxAge !== 'undefined') {
-            payload['max_age'] = maxAge;
+            apiPayload['max_age'] = maxAge;
         }
         if (typeof authorizationDetails !== 'undefined') {
-            payload['authorization_details'] = authorizationDetails;
+            apiPayload['authorization_details'] = authorizationDetails;
         }
         if (typeof resource !== 'undefined') {
-            payload['resource'] = resource;
+            apiPayload['resource'] = resource;
         }
         if (typeof audience !== 'undefined') {
-            payload['audience'] = audience;
+            apiPayload['audience'] = audience;
         }
         if (typeof requestUri !== 'undefined') {
-            payload['request_uri'] = requestUri;
+            apiPayload['request_uri'] = requestUri;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -334,7 +334,7 @@ export class Oauth2 {
             accept: 'application/json',
         };
 
-        return this.client.call('get', uri, apiHeaders, payload);
+        return this.client.call('get', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -522,48 +522,48 @@ export class Oauth2 {
             '{project_id}',
             encodeURIComponent(String(this.client.config.project)),
         );
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof clientId !== 'undefined') {
-            payload['client_id'] = clientId;
+            apiPayload['client_id'] = clientId;
         }
         if (typeof redirectUri !== 'undefined') {
-            payload['redirect_uri'] = redirectUri;
+            apiPayload['redirect_uri'] = redirectUri;
         }
         if (typeof responseType !== 'undefined') {
-            payload['response_type'] = responseType;
+            apiPayload['response_type'] = responseType;
         }
         if (typeof scope !== 'undefined') {
-            payload['scope'] = scope;
+            apiPayload['scope'] = scope;
         }
         if (typeof state !== 'undefined') {
-            payload['state'] = state;
+            apiPayload['state'] = state;
         }
         if (typeof nonce !== 'undefined') {
-            payload['nonce'] = nonce;
+            apiPayload['nonce'] = nonce;
         }
         if (typeof codeChallenge !== 'undefined') {
-            payload['code_challenge'] = codeChallenge;
+            apiPayload['code_challenge'] = codeChallenge;
         }
         if (typeof codeChallengeMethod !== 'undefined') {
-            payload['code_challenge_method'] = codeChallengeMethod;
+            apiPayload['code_challenge_method'] = codeChallengeMethod;
         }
         if (typeof prompt !== 'undefined') {
-            payload['prompt'] = prompt;
+            apiPayload['prompt'] = prompt;
         }
         if (typeof maxAge !== 'undefined') {
-            payload['max_age'] = maxAge;
+            apiPayload['max_age'] = maxAge;
         }
         if (typeof authorizationDetails !== 'undefined') {
-            payload['authorization_details'] = authorizationDetails;
+            apiPayload['authorization_details'] = authorizationDetails;
         }
         if (typeof resource !== 'undefined') {
-            payload['resource'] = resource;
+            apiPayload['resource'] = resource;
         }
         if (typeof audience !== 'undefined') {
-            payload['audience'] = audience;
+            apiPayload['audience'] = audience;
         }
         if (typeof requestUri !== 'undefined') {
-            payload['request_uri'] = requestUri;
+            apiPayload['request_uri'] = requestUri;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -572,7 +572,7 @@ export class Oauth2 {
             accept: 'application/json',
         };
 
-        return this.client.call('post', uri, apiHeaders, payload);
+        return this.client.call('post', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -665,21 +665,21 @@ export class Oauth2 {
             '{project_id}',
             encodeURIComponent(String(this.client.config.project)),
         );
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof clientId !== 'undefined') {
-            payload['client_id'] = clientId;
+            apiPayload['client_id'] = clientId;
         }
         if (typeof scope !== 'undefined') {
-            payload['scope'] = scope;
+            apiPayload['scope'] = scope;
         }
         if (typeof authorizationDetails !== 'undefined') {
-            payload['authorization_details'] = authorizationDetails;
+            apiPayload['authorization_details'] = authorizationDetails;
         }
         if (typeof resource !== 'undefined') {
-            payload['resource'] = resource;
+            apiPayload['resource'] = resource;
         }
         if (typeof audience !== 'undefined') {
-            payload['audience'] = audience;
+            apiPayload['audience'] = audience;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -688,7 +688,7 @@ export class Oauth2 {
             accept: 'application/json',
         };
 
-        return this.client.call('post', uri, apiHeaders, payload);
+        return this.client.call('post', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -736,9 +736,9 @@ export class Oauth2 {
             '{project_id}',
             encodeURIComponent(String(this.client.config.project)),
         );
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof userCode !== 'undefined') {
-            payload['user_code'] = userCode;
+            apiPayload['user_code'] = userCode;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -747,7 +747,7 @@ export class Oauth2 {
             accept: 'application/json',
         };
 
-        return this.client.call('post', uri, apiHeaders, payload);
+        return this.client.call('post', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -797,14 +797,14 @@ export class Oauth2 {
                 encodeURIComponent(String(this.client.config.project)),
             )
             .replace('{grant_id}', encodeURIComponent(String(grantId)));
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
             accept: 'application/json',
         };
 
-        return this.client.call('get', uri, apiHeaders, payload);
+        return this.client.call('get', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -906,24 +906,24 @@ export class Oauth2 {
             '{project_id}',
             encodeURIComponent(String(this.client.config.project)),
         );
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof idTokenHint !== 'undefined') {
-            payload['id_token_hint'] = idTokenHint;
+            apiPayload['id_token_hint'] = idTokenHint;
         }
         if (typeof logoutHint !== 'undefined') {
-            payload['logout_hint'] = logoutHint;
+            apiPayload['logout_hint'] = logoutHint;
         }
         if (typeof clientId !== 'undefined') {
-            payload['client_id'] = clientId;
+            apiPayload['client_id'] = clientId;
         }
         if (typeof postLogoutRedirectUri !== 'undefined') {
-            payload['post_logout_redirect_uri'] = postLogoutRedirectUri;
+            apiPayload['post_logout_redirect_uri'] = postLogoutRedirectUri;
         }
         if (typeof state !== 'undefined') {
-            payload['state'] = state;
+            apiPayload['state'] = state;
         }
         if (typeof uiLocales !== 'undefined') {
-            payload['ui_locales'] = uiLocales;
+            apiPayload['ui_locales'] = uiLocales;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -931,7 +931,7 @@ export class Oauth2 {
             accept: 'application/json',
         };
 
-        return this.client.call('get', uri, apiHeaders, payload);
+        return this.client.call('get', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -1033,24 +1033,24 @@ export class Oauth2 {
             '{project_id}',
             encodeURIComponent(String(this.client.config.project)),
         );
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof idTokenHint !== 'undefined') {
-            payload['id_token_hint'] = idTokenHint;
+            apiPayload['id_token_hint'] = idTokenHint;
         }
         if (typeof logoutHint !== 'undefined') {
-            payload['logout_hint'] = logoutHint;
+            apiPayload['logout_hint'] = logoutHint;
         }
         if (typeof clientId !== 'undefined') {
-            payload['client_id'] = clientId;
+            apiPayload['client_id'] = clientId;
         }
         if (typeof postLogoutRedirectUri !== 'undefined') {
-            payload['post_logout_redirect_uri'] = postLogoutRedirectUri;
+            apiPayload['post_logout_redirect_uri'] = postLogoutRedirectUri;
         }
         if (typeof state !== 'undefined') {
-            payload['state'] = state;
+            apiPayload['state'] = state;
         }
         if (typeof uiLocales !== 'undefined') {
-            payload['ui_locales'] = uiLocales;
+            apiPayload['ui_locales'] = uiLocales;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1059,7 +1059,7 @@ export class Oauth2 {
             accept: 'application/json',
         };
 
-        return this.client.call('post', uri, apiHeaders, payload);
+        return this.client.call('post', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -1125,15 +1125,15 @@ export class Oauth2 {
             '{project_id}',
             encodeURIComponent(String(this.client.config.project)),
         );
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof limit !== 'undefined') {
-            payload['limit'] = limit;
+            apiPayload['limit'] = limit;
         }
         if (typeof offset !== 'undefined') {
-            payload['offset'] = offset;
+            apiPayload['offset'] = offset;
         }
         if (typeof search !== 'undefined') {
-            payload['search'] = search;
+            apiPayload['search'] = search;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1141,7 +1141,7 @@ export class Oauth2 {
             accept: 'application/json',
         };
 
-        return this.client.call('get', uri, apiHeaders, payload);
+        return this.client.call('get', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -1333,45 +1333,45 @@ export class Oauth2 {
             '{project_id}',
             encodeURIComponent(String(this.client.config.project)),
         );
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof clientId !== 'undefined') {
-            payload['client_id'] = clientId;
+            apiPayload['client_id'] = clientId;
         }
         if (typeof redirectUri !== 'undefined') {
-            payload['redirect_uri'] = redirectUri;
+            apiPayload['redirect_uri'] = redirectUri;
         }
         if (typeof responseType !== 'undefined') {
-            payload['response_type'] = responseType;
+            apiPayload['response_type'] = responseType;
         }
         if (typeof scope !== 'undefined') {
-            payload['scope'] = scope;
+            apiPayload['scope'] = scope;
         }
         if (typeof state !== 'undefined') {
-            payload['state'] = state;
+            apiPayload['state'] = state;
         }
         if (typeof nonce !== 'undefined') {
-            payload['nonce'] = nonce;
+            apiPayload['nonce'] = nonce;
         }
         if (typeof codeChallenge !== 'undefined') {
-            payload['code_challenge'] = codeChallenge;
+            apiPayload['code_challenge'] = codeChallenge;
         }
         if (typeof codeChallengeMethod !== 'undefined') {
-            payload['code_challenge_method'] = codeChallengeMethod;
+            apiPayload['code_challenge_method'] = codeChallengeMethod;
         }
         if (typeof prompt !== 'undefined') {
-            payload['prompt'] = prompt;
+            apiPayload['prompt'] = prompt;
         }
         if (typeof maxAge !== 'undefined') {
-            payload['max_age'] = maxAge;
+            apiPayload['max_age'] = maxAge;
         }
         if (typeof authorizationDetails !== 'undefined') {
-            payload['authorization_details'] = authorizationDetails;
+            apiPayload['authorization_details'] = authorizationDetails;
         }
         if (typeof resource !== 'undefined') {
-            payload['resource'] = resource;
+            apiPayload['resource'] = resource;
         }
         if (typeof audience !== 'undefined') {
-            payload['audience'] = audience;
+            apiPayload['audience'] = audience;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1380,7 +1380,7 @@ export class Oauth2 {
             accept: 'application/json',
         };
 
-        return this.client.call('post', uri, apiHeaders, payload);
+        return this.client.call('post', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -1446,15 +1446,15 @@ export class Oauth2 {
             '{project_id}',
             encodeURIComponent(String(this.client.config.project)),
         );
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof limit !== 'undefined') {
-            payload['limit'] = limit;
+            apiPayload['limit'] = limit;
         }
         if (typeof offset !== 'undefined') {
-            payload['offset'] = offset;
+            apiPayload['offset'] = offset;
         }
         if (typeof search !== 'undefined') {
-            payload['search'] = search;
+            apiPayload['search'] = search;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1462,7 +1462,7 @@ export class Oauth2 {
             accept: 'application/json',
         };
 
-        return this.client.call('get', uri, apiHeaders, payload);
+        return this.client.call('get', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -1510,9 +1510,9 @@ export class Oauth2 {
             '{project_id}',
             encodeURIComponent(String(this.client.config.project)),
         );
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof grantId !== 'undefined') {
-            payload['grant_id'] = grantId;
+            apiPayload['grant_id'] = grantId;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1521,7 +1521,7 @@ export class Oauth2 {
             accept: 'application/json',
         };
 
-        return this.client.call('post', uri, apiHeaders, payload);
+        return this.client.call('post', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -1607,18 +1607,18 @@ export class Oauth2 {
             '{project_id}',
             encodeURIComponent(String(this.client.config.project)),
         );
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof token !== 'undefined') {
-            payload['token'] = token;
+            apiPayload['token'] = token;
         }
         if (typeof tokenTypeHint !== 'undefined') {
-            payload['token_type_hint'] = tokenTypeHint;
+            apiPayload['token_type_hint'] = tokenTypeHint;
         }
         if (typeof clientId !== 'undefined') {
-            payload['client_id'] = clientId;
+            apiPayload['client_id'] = clientId;
         }
         if (typeof clientSecret !== 'undefined') {
-            payload['client_secret'] = clientSecret;
+            apiPayload['client_secret'] = clientSecret;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1627,7 +1627,7 @@ export class Oauth2 {
             accept: 'application/json',
         };
 
-        return this.client.call('post', uri, apiHeaders, payload);
+        return this.client.call('post', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -1779,36 +1779,36 @@ export class Oauth2 {
             '{project_id}',
             encodeURIComponent(String(this.client.config.project)),
         );
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof grantType !== 'undefined') {
-            payload['grant_type'] = grantType;
+            apiPayload['grant_type'] = grantType;
         }
         if (typeof code !== 'undefined') {
-            payload['code'] = code;
+            apiPayload['code'] = code;
         }
         if (typeof refreshToken !== 'undefined') {
-            payload['refresh_token'] = refreshToken;
+            apiPayload['refresh_token'] = refreshToken;
         }
         if (typeof deviceCode !== 'undefined') {
-            payload['device_code'] = deviceCode;
+            apiPayload['device_code'] = deviceCode;
         }
         if (typeof clientId !== 'undefined') {
-            payload['client_id'] = clientId;
+            apiPayload['client_id'] = clientId;
         }
         if (typeof clientSecret !== 'undefined') {
-            payload['client_secret'] = clientSecret;
+            apiPayload['client_secret'] = clientSecret;
         }
         if (typeof codeVerifier !== 'undefined') {
-            payload['code_verifier'] = codeVerifier;
+            apiPayload['code_verifier'] = codeVerifier;
         }
         if (typeof redirectUri !== 'undefined') {
-            payload['redirect_uri'] = redirectUri;
+            apiPayload['redirect_uri'] = redirectUri;
         }
         if (typeof resource !== 'undefined') {
-            payload['resource'] = resource;
+            apiPayload['resource'] = resource;
         }
         if (typeof audience !== 'undefined') {
-            payload['audience'] = audience;
+            apiPayload['audience'] = audience;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1817,6 +1817,6 @@ export class Oauth2 {
             accept: 'application/json',
         };
 
-        return this.client.call('post', uri, apiHeaders, payload);
+        return this.client.call('post', uri, apiHeaders, apiPayload);
     }
 }

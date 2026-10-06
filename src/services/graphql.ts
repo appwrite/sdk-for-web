@@ -46,9 +46,9 @@ export class Graphql {
             throw new AppwriteException('Missing required parameter: "query"');
         }
         const apiPath = '/graphql';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof query !== 'undefined') {
-            payload['query'] = query;
+            apiPayload['query'] = query;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -59,7 +59,7 @@ export class Graphql {
             accept: 'application/json',
         };
 
-        return this.client.call('post', uri, apiHeaders, payload);
+        return this.client.call('post', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -101,9 +101,9 @@ export class Graphql {
             throw new AppwriteException('Missing required parameter: "query"');
         }
         const apiPath = '/graphql/mutation';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof query !== 'undefined') {
-            payload['query'] = query;
+            apiPayload['query'] = query;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -114,6 +114,6 @@ export class Graphql {
             accept: 'application/json',
         };
 
-        return this.client.call('post', uri, apiHeaders, payload);
+        return this.client.call('post', uri, apiHeaders, apiPayload);
     }
 }

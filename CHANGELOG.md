@@ -1,5 +1,18 @@
 # Change Log
 
+## 28.2.0-rc.1
+
+* Added: `Analytics` service with `createEvent` for sending tracking events
+* Added: `AnalyticsTracking` helper with `track`, `pageview` and `enableAuto*`/`disableAuto*` pairs for pageviews, outbound links, downloads, scroll depth and engagement time
+* Added: `Push` service for MQTT-over-WebSocket subscriptions, plus the `Topic` and `ResolvedTopic` builders
+* Added: `Client.setPushEndpoint` and `Client.setPushClientId` to configure `Push`
+* Added: `Avatars.updatePhoto` and `Avatars.deletePhoto`, and the `Account` model
+* Added: optional `total` on `Account.listSessions`, the `Locale.list*` methods and `listTransactions` across the database services
+* Added: optional `current` on `Account.deleteSessions` and optional `duration` on `Account.createEmailPasswordSession`
+* Added: `OAuthProvider.Webflow`
+* Updated: `Client` now supports text responses and exposes a static `Client.flatten`
+* Updated: added the `mqtt` and `buffer` dependencies; `mqtt` is lazy-loaded on the first `Push` connect
+
 ## 28.1.0
 
 * Added: `Apps` service to create and manage OAuth2 apps, their secrets, keys, and installations

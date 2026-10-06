@@ -1,5 +1,15 @@
 # Change Log
 
+## 28.2.0-rc.0
+
+* Added: `Push` service for MQTT realtime push messages
+* Added: `Topic` and `ResolvedTopic` builders for push topic filters
+* Added: `Client.setPushEndpoint()` and `Client.setPushClientId()`
+* Added: `Avatars.deletePhoto()` method
+* Added: `Models.Account` type
+* Added: `Webflow` to the `OAuthProvider` enum
+* Updated: `Client.chunkedUpload()` accepts a `responseType`, supports `text`, and falls back without a file
+
 ## 28.1.0
 
 * Added: `Apps` service to create and manage OAuth2 apps, their secrets, keys, and installations

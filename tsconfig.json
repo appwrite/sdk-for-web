@@ -9,6 +9,7 @@
         "lib": ["ESNext", "DOM"],
         "listEmittedFiles": false,
         "listFiles": false,
+        "module": "ES2020",
         "moduleResolution": "node",
         "noFallthroughCasesInSwitch": true,
         "pretty": true,

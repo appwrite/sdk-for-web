@@ -77,12 +77,12 @@ export class Functions {
             '{functionId}',
             encodeURIComponent(String(functionId)),
         );
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof queries !== 'undefined') {
-            payload['queries'] = queries;
+            apiPayload['queries'] = queries;
         }
         if (typeof total !== 'undefined') {
-            payload['total'] = total;
+            apiPayload['total'] = total;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -91,7 +91,7 @@ export class Functions {
             accept: 'application/json',
         };
 
-        return this.client.call('get', uri, apiHeaders, payload);
+        return this.client.call('get', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -213,24 +213,24 @@ export class Functions {
             '{functionId}',
             encodeURIComponent(String(functionId)),
         );
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof body !== 'undefined') {
-            payload['body'] = body;
+            apiPayload['body'] = body;
         }
         if (typeof async !== 'undefined') {
-            payload['async'] = async;
+            apiPayload['async'] = async;
         }
         if (typeof xpath !== 'undefined') {
-            payload['path'] = xpath;
+            apiPayload['path'] = xpath;
         }
         if (typeof method !== 'undefined') {
-            payload['method'] = method;
+            apiPayload['method'] = method;
         }
         if (typeof headers !== 'undefined') {
-            payload['headers'] = headers;
+            apiPayload['headers'] = headers;
         }
         if (typeof scheduledAt !== 'undefined') {
-            payload['scheduledAt'] = scheduledAt;
+            apiPayload['scheduledAt'] = scheduledAt;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -240,7 +240,7 @@ export class Functions {
             accept: 'application/json',
         };
 
-        return this.client.call('post', uri, apiHeaders, payload);
+        return this.client.call('post', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -306,7 +306,7 @@ export class Functions {
         const apiPath = '/functions/{functionId}/executions/{executionId}'
             .replace('{functionId}', encodeURIComponent(String(functionId)))
             .replace('{executionId}', encodeURIComponent(String(executionId)));
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -314,6 +314,6 @@ export class Functions {
             accept: 'application/json',
         };
 
-        return this.client.call('get', uri, apiHeaders, payload);
+        return this.client.call('get', uri, apiHeaders, apiPayload);
     }
 }

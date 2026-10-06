@@ -401,7 +401,7 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '28.2.0-rc.0',
+        'x-sdk-version': '28.2.0-rc.2',
         'X-Appwrite-Response-Format': '2.3.0',
     };
 

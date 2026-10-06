@@ -1,6 +1,6 @@
 # Change Log
 
-## 28.2.0-rc.0
+## 28.2.0-rc.2
 
 * Added: `Push` service for MQTT realtime push messages
 * Added: `Topic` and `ResolvedTopic` builders for push topic filters

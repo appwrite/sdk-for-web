@@ -817,15 +817,20 @@ export class Push {
             payload,
             qos: packet.qos,
         };
+        const content = notificationContent(message);
+        const titles = new Set<string>();
         for (const sub of this.subscriptions.values()) {
             if (matches(sub.topic, message.topic)) {
                 await sub.callback(message);
-                // Notification is per-subscription: only subs that opted in post one,
-                // each with its own title.
+                // Notification is per-subscription: only subs that opted in post one, each
+                // with its own title. A title the server sent replaces theirs, so one posts.
                 if (sub.background) {
-                    this.notify(message, sub.title);
+                    titles.add(content.title ?? sub.title ?? message.topic);
                 }
             }
+        }
+        for (const title of titles) {
+            this.notify(message, title, content);
         }
     }
 
@@ -841,17 +846,26 @@ export class Push {
     }
 
     /** Post a browser notification for a message a background subscription matched. */
-    private notify(message: PushMessage, title?: string): void {
+    private notify(
+        message: PushMessage,
+        title: string,
+        content: NotificationContent,
+    ): void {
         if (
             typeof Notification === 'undefined' ||
             Notification.permission !== 'granted'
         ) {
             return;
         }
+        const raw = !content.present;
+        // `image` is not in the DOM typings, but Chromium-based browsers show it.
+        const options: NotificationOptions & { image?: string } = {
+            body: content.body ?? (raw ? message.data : undefined),
+            image: content.image,
+            data: { topic: message.topic, payload: message.data },
+        };
         try {
-            new Notification(title ?? message.topic, {
-                body: message.data,
-            });
+            new Notification(title, options);
         } catch {
             // Some browsers only allow notifications from a service worker; ignore.
         }
@@ -862,6 +876,39 @@ class SupersededError extends Error {
     constructor() {
         super('The push connection was superseded');
     }
+}
+
+/** What a message's `notification` block asks a background notification to show. */
+interface NotificationContent {
+    /** Whether the message has a `notification` block at all. */
+    present: boolean;
+    title?: string;
+    body?: string;
+    image?: string;
+}
+
+/** The server's `notification` block in a message; empty when the payload has none or is not JSON. */
+function notificationContent(message: PushMessage): NotificationContent {
+    let notification: unknown;
+    try {
+        notification = (JSON.parse(message.data) as { notification?: unknown })
+            ?.notification;
+    } catch {
+        return { present: false };
+    }
+    if (typeof notification !== 'object' || notification === null) {
+        return { present: false };
+    }
+    const field = (name: string): string | undefined => {
+        const value = (notification as Record<string, unknown>)[name];
+        return typeof value === 'string' && value !== '' ? value : undefined;
+    };
+    return {
+        present: true,
+        title: field('title'),
+        body: field('body'),
+        image: field('image'),
+    };
 }
 
 /** Normalize anything thrown or passed to an error handler into an `Error`. */

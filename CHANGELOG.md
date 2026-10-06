@@ -1,5 +1,12 @@
 # Change Log
 
+## 28.2.0-rc.3
+
+* Added: background push notifications render the server `notification` title, body, and image
+* Added: notification `data` now carries `topic` and `payload`
+* Fixed: a server-sent title dedupes to one notification per topic instead of one per subscription
+* Fixed: malformed push payloads no longer break notification rendering
+
 ## 28.2.0-rc.2
 
 * Added: `Push` service for MQTT realtime push messages

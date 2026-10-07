@@ -20,6 +20,17 @@ export interface PushMessage {
 
 export type MessageCallback = (message: PushMessage) => void | Promise<void>;
 
+/** A background notification the user tapped. */
+export interface PushNotificationOpened {
+    /** The topic the message was published to. */
+    topic: string;
+    /** The `data` sent with the message (e.g. `createPush`), parsed; `{}` when it had none. */
+    data: Record<string, unknown>;
+}
+
+// Taps on the notifications this page shows, reported to every onNotificationOpened.
+const openedListeners = new Set<(opened: PushNotificationOpened) => void>();
+
 /** Per-subscription options passed to `subscribe` and `PushSubscription.update`. */
 export interface SubscribeOptions {
     /**
@@ -189,11 +200,13 @@ export class Push {
      * the session, which could belong to a different user), else the session.
      */
     private userTopic(): string {
-        const { jwt, session } = this.client.config;
-        const userId = jwt ? userIdFromJwt(jwt) : userIdFromSession(session);
+        const { jwt } = this.client.config;
+        const userId = jwt
+            ? userIdFromJwt(jwt)
+            : userIdFromSession(clientSession(this.client));
         if (!userId) {
             throw new Error(
-                'subscribe() without a topic needs a signed-in user: set a JWT or session on the client',
+                'subscribe() without a topic needs a signed-in user: sign in with this client, or set a JWT or session on it',
             );
         }
         return `users/${userId}`;
@@ -471,6 +484,32 @@ export class Push {
         return { unsubscribe, update };
     }
 
+    /**
+     * The background notification whose tap launched the app, or null. A page shows its
+     * notifications itself, so a tap only reaches it while it is open (see
+     * {@link onNotificationOpened}): on the web this always resolves null.
+     */
+    async getInitialNotification(): Promise<PushNotificationOpened | null> {
+        return null;
+    }
+
+    /**
+     * Call `callback` each time the user taps a notification this page showed while it is open;
+     * the tap also focuses the page. Returns a function that stops listening.
+     *
+     * ```ts
+     * const stop = push.onNotificationOpened(({ data }) => openSale(data.saleId));
+     * ```
+     */
+    onNotificationOpened(
+        callback: (opened: PushNotificationOpened) => void,
+    ): () => void {
+        openedListeners.add(callback);
+        return () => {
+            openedListeners.delete(callback);
+        };
+    }
+
     /** Tear down the connection and drop all active subscriptions. */
     close(): void {
         if (this.mqtt) {
@@ -552,14 +591,15 @@ export class Push {
                 credential: this.client.config.jwt,
             };
         }
-        if (this.client.config.session) {
+        const session = clientSession(this.client);
+        if (session) {
             return {
                 authMethod: 'appwrite-session',
-                credential: this.client.config.session,
+                credential: session,
             };
         }
         throw new Error(
-            'No credential set on the client; call Client.setJWT() or Client.setSession() first.',
+            'No credential: sign in with this client, or call Client.setJWT() or Client.setSession() first.',
         );
     }
 
@@ -818,19 +858,18 @@ export class Push {
             qos: packet.qos,
         };
         const content = notificationContent(message);
-        const titles = new Set<string>();
+        const postedTitles = new Set<string>();
         for (const sub of this.subscriptions.values()) {
             if (matches(sub.topic, message.topic)) {
                 await sub.callback(message);
                 // Notification is per-subscription: only subs that opted in post one, each
-                // with its own title. A title the server sent replaces theirs, so one posts.
-                if (sub.background) {
-                    titles.add(content.title ?? sub.title ?? message.topic);
+                // title once. A title the server sent replaces theirs, so it posts once.
+                const title = content.title ?? sub.title ?? message.topic;
+                if (sub.background && !postedTitles.has(title)) {
+                    postedTitles.add(title);
+                    this.notify(message, title, content);
                 }
             }
-        }
-        for (const title of titles) {
-            this.notify(message, title, content);
         }
     }
 
@@ -865,11 +904,33 @@ export class Push {
             data: { topic: message.topic, payload: message.data },
         };
         try {
-            new Notification(title, options);
+            const notification = new Notification(title, options);
+            notification.onclick = () => {
+                window.focus();
+                notification.close();
+                const opened = toOpened(message.topic, message.data);
+                openedListeners.forEach((listener) => listener(opened));
+            };
         } catch {
             // Some browsers only allow notifications from a service worker; ignore.
         }
     }
+}
+
+function toOpened(topic: string, payload: string): PushNotificationOpened {
+    let data: unknown;
+    try {
+        data = (JSON.parse(payload) as { data?: unknown })?.data;
+    } catch {
+        data = undefined;
+    }
+    return {
+        topic,
+        data:
+            typeof data === 'object' && data !== null && !Array.isArray(data)
+                ? (data as Record<string, unknown>)
+                : {},
+    };
 }
 
 class SupersededError extends Error {
@@ -934,6 +995,25 @@ function userIdFromJwt(jwt?: string): string {
             decodeBase64(parts[1].replace(/-/g, '+').replace(/_/g, '/')),
         );
         return typeof payload.userId === 'string' ? payload.userId : '';
+    } catch {
+        return '';
+    }
+}
+
+/**
+ * The session set on the client, else the one it signed in with when the browser keeps it in
+ * localStorage (`cookieFallback`), as realtime reads it.
+ */
+function clientSession(client: Client): string {
+    if (client.config.session) {
+        return client.config.session;
+    }
+    try {
+        const fallback = JSON.parse(
+            window.localStorage.getItem('cookieFallback') ?? '{}',
+        ) as Record<string, unknown>;
+        const session = fallback[`a_session_${client.config.project}`];
+        return typeof session === 'string' ? session : '';
     } catch {
         return '';
     }

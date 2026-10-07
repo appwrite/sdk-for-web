@@ -1,5 +1,18 @@
 # Change Log
 
+## 28.2.0-rc.6
+
+* Added: `Push.onNotificationOpened()` fires when a user taps a shown notification
+* Added: `Push.getInitialNotification()` (returns `null` on web) and the `PushNotificationOpened` type
+* Added: tapping a push notification focuses then closes the page
+* Fixed: `subscribe()` resolves the signed-in user from `cookieFallback`, not just an explicit session
+* Fixed: background notifications de-duplicate by title, so each distinct title posts once
+* Updated: clearer error messages for missing credentials in push
+
+## 28.2.0-rc.5
+
+* Updated: regenerated with sdk-generator 5.5.0; no SDK code changes
+
 ## 28.2.0-rc.3
 
 * Added: background push notifications render the server `notification` title, body, and image

@@ -35,6 +35,7 @@ export type {
 export type { RealtimeSubscription } from './services/realtime';
 export type {
     PushMessage,
+    PushNotificationOpened,
     PushSubscription,
     SubscribeOptions,
     MessageCallback,

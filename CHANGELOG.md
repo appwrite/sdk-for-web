@@ -1,5 +1,11 @@
 # Change Log
 
+
+## 28.2.0-rc.4
+
+* Added: `Analytics` service with `createEvent` for sending tracking events
+* Added: `AnalyticsTracking` helper with `track`, `pageview` and `enableAuto*`/`disableAuto*` pairs for pageviews, outbound links, downloads, scroll depth and engagement time
+
 ## 28.2.0-rc.3
 
 * Added: background push notifications render the server `notification` title, body, and image
@@ -228,4 +234,5 @@
 
 * Fix pong response & chunked upload
 * Add `ping` support to `Realtime` service
+
 

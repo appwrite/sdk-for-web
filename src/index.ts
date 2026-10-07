@@ -9,6 +9,7 @@
  */
 export { Client, Query, AppwriteException } from './client';
 export { Account } from './services/account';
+export { Analytics } from './services/analytics';
 export { Apps } from './services/apps';
 export { Avatars } from './services/avatars';
 export { Databases } from './services/databases';
@@ -26,6 +27,7 @@ export { Teams } from './services/teams';
 export { VectorsDB } from './services/vectors-db';
 export { Realtime } from './services/realtime';
 export { Push } from './services/push';
+export { AnalyticsTracking } from './services/analytics-tracking';
 export type {
     Models,
     Payload,
@@ -39,6 +41,13 @@ export type {
     SubscribeOptions,
     MessageCallback,
 } from './services/push';
+export type {
+    AnalyticsEventEmitter,
+    AnalyticsEventOptions,
+    AnalyticsTrackingOptions,
+    DownloadTrackingOptions,
+    OutboundTrackingOptions,
+} from './services/analytics-tracking';
 export type { QueryTypes, QueryTypesList } from './query';
 export { Permission } from './permission';
 export { Role } from './role';

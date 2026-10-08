@@ -1,5 +1,13 @@
 # Change Log
 
+
+## 28.2.0-rc.7
+
+* Added: `Analytics` service and the `Tracking` auto-tracking helper, which were missing from `28.2.0-rc.5` and `rc.6`
+* Changed: `Tracking` takes `new Analytics(client)` and a property id instead of an emitter callback; the adapter to `createEvent` now lives inside the SDK
+* Changed: `enableAllAutoTracking()` is now `start()`
+* Removed: `AnalyticsEventEmitter`; the option types are now `TrackingEventOptions` and `TrackingOptions`
+
 ## 28.2.0-rc.6
 
 * Added: `Push.onNotificationOpened()` fires when a user taps a shown notification
@@ -241,4 +249,5 @@
 
 * Fix pong response & chunked upload
 * Add `ping` support to `Realtime` service
+
 

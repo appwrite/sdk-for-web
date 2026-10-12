@@ -3,7 +3,6 @@ import {
     Client,
     type Payload,
     UploadProgress,
-    applyDefaults,
 } from '../client';
 import type { Models } from '../models';
 

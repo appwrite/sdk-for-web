@@ -10,7 +10,7 @@ export class Analytics {
     /**
      * Send a tracking event from a browser, native app, or server-side SDK.
      *
-     * @param {string} params.propertyId - Analytics property ID.
+     * @param {string} params.propertyId - Analytics property ID or snippet ID identifying the property.
      * @param {string} params.name - Event name. "pageview" is just a conventional event name; events are not modeled specially.
      * @param {string} params.url - Full page URL or screen identifier.
      * @param {string} params.domain - Hostname (e.g. example.com).
@@ -44,7 +44,7 @@ export class Analytics {
     /**
      * Send a tracking event from a browser, native app, or server-side SDK.
      *
-     * @param {string} propertyId - Analytics property ID.
+     * @param {string} propertyId - Analytics property ID or snippet ID identifying the property.
      * @param {string} name - Event name. "pageview" is just a conventional event name; events are not modeled specially.
      * @param {string} url - Full page URL or screen identifier.
      * @param {string} domain - Hostname (e.g. example.com).

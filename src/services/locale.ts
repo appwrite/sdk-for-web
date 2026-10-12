@@ -1,4 +1,4 @@
-import { Client, type Payload, applyDefaults } from '../client';
+import { Client, type Payload } from '../client';
 import type { Models } from '../models';
 
 export class Locale {
@@ -26,25 +26,7 @@ export class Locale {
             accept: 'application/json',
         };
 
-        const request = this.client.call('get', uri, apiHeaders, apiPayload);
-        const defaults = {
-            root: 'locale',
-            models: {
-                locale: {
-                    defaults: {
-                        ip: '',
-                        countryCode: '',
-                        country: '',
-                        continentCode: '',
-                        continent: '',
-                        eu: false,
-                        currency: '',
-                    },
-                },
-            },
-        };
-
-        return request.then((response) => applyDefaults(response, defaults));
+        return this.client.call('get', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -96,30 +78,7 @@ export class Locale {
             accept: 'application/json',
         };
 
-        const request = this.client.call('get', uri, apiHeaders, apiPayload);
-        const defaults = {
-            root: 'localeCodeList',
-            models: {
-                localeCodeList: {
-                    defaults: {
-                        total: 0,
-                    },
-                    properties: {
-                        localeCodes: {
-                            items: 'localeCode',
-                        },
-                    },
-                },
-                localeCode: {
-                    defaults: {
-                        code: '',
-                        name: '',
-                    },
-                },
-            },
-        };
-
-        return request.then((response) => applyDefaults(response, defaults));
+        return this.client.call('get', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -171,30 +130,7 @@ export class Locale {
             accept: 'application/json',
         };
 
-        const request = this.client.call('get', uri, apiHeaders, apiPayload);
-        const defaults = {
-            root: 'continentList',
-            models: {
-                continentList: {
-                    defaults: {
-                        total: 0,
-                    },
-                    properties: {
-                        continents: {
-                            items: 'continent',
-                        },
-                    },
-                },
-                continent: {
-                    defaults: {
-                        name: '',
-                        code: '',
-                    },
-                },
-            },
-        };
-
-        return request.then((response) => applyDefaults(response, defaults));
+        return this.client.call('get', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -246,30 +182,7 @@ export class Locale {
             accept: 'application/json',
         };
 
-        const request = this.client.call('get', uri, apiHeaders, apiPayload);
-        const defaults = {
-            root: 'countryList',
-            models: {
-                countryList: {
-                    defaults: {
-                        total: 0,
-                    },
-                    properties: {
-                        countries: {
-                            items: 'country',
-                        },
-                    },
-                },
-                country: {
-                    defaults: {
-                        name: '',
-                        code: '',
-                    },
-                },
-            },
-        };
-
-        return request.then((response) => applyDefaults(response, defaults));
+        return this.client.call('get', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -321,30 +234,7 @@ export class Locale {
             accept: 'application/json',
         };
 
-        const request = this.client.call('get', uri, apiHeaders, apiPayload);
-        const defaults = {
-            root: 'countryList',
-            models: {
-                countryList: {
-                    defaults: {
-                        total: 0,
-                    },
-                    properties: {
-                        countries: {
-                            items: 'country',
-                        },
-                    },
-                },
-                country: {
-                    defaults: {
-                        name: '',
-                        code: '',
-                    },
-                },
-            },
-        };
-
-        return request.then((response) => applyDefaults(response, defaults));
+        return this.client.call('get', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -398,31 +288,7 @@ export class Locale {
             accept: 'application/json',
         };
 
-        const request = this.client.call('get', uri, apiHeaders, apiPayload);
-        const defaults = {
-            root: 'phoneList',
-            models: {
-                phoneList: {
-                    defaults: {
-                        total: 0,
-                    },
-                    properties: {
-                        phones: {
-                            items: 'phone',
-                        },
-                    },
-                },
-                phone: {
-                    defaults: {
-                        code: '',
-                        countryCode: '',
-                        countryName: '',
-                    },
-                },
-            },
-        };
-
-        return request.then((response) => applyDefaults(response, defaults));
+        return this.client.call('get', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -474,35 +340,7 @@ export class Locale {
             accept: 'application/json',
         };
 
-        const request = this.client.call('get', uri, apiHeaders, apiPayload);
-        const defaults = {
-            root: 'currencyList',
-            models: {
-                currencyList: {
-                    defaults: {
-                        total: 0,
-                    },
-                    properties: {
-                        currencies: {
-                            items: 'currency',
-                        },
-                    },
-                },
-                currency: {
-                    defaults: {
-                        symbol: '',
-                        name: '',
-                        symbolNative: '',
-                        decimalDigits: 0,
-                        rounding: 0,
-                        code: '',
-                        namePlural: '',
-                    },
-                },
-            },
-        };
-
-        return request.then((response) => applyDefaults(response, defaults));
+        return this.client.call('get', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -554,30 +392,6 @@ export class Locale {
             accept: 'application/json',
         };
 
-        const request = this.client.call('get', uri, apiHeaders, apiPayload);
-        const defaults = {
-            root: 'languageList',
-            models: {
-                languageList: {
-                    defaults: {
-                        total: 0,
-                    },
-                    properties: {
-                        languages: {
-                            items: 'language',
-                        },
-                    },
-                },
-                language: {
-                    defaults: {
-                        name: '',
-                        code: '',
-                        nativeName: '',
-                    },
-                },
-            },
-        };
-
-        return request.then((response) => applyDefaults(response, defaults));
+        return this.client.call('get', uri, apiHeaders, apiPayload);
     }
 }

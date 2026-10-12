@@ -1,9 +1,4 @@
-import {
-    AppwriteException,
-    Client,
-    type Payload,
-    applyDefaults,
-} from '../client';
+import { AppwriteException, Client, type Payload } from '../client';
 import type { Models } from '../models';
 
 export class Presences {
@@ -92,33 +87,7 @@ export class Presences {
             accept: 'application/json',
         };
 
-        const request = this.client.call('get', uri, apiHeaders, apiPayload);
-        const defaults = {
-            root: 'presenceList',
-            models: {
-                presenceList: {
-                    defaults: {
-                        total: 0,
-                    },
-                    properties: {
-                        presences: {
-                            items: 'presence',
-                        },
-                    },
-                },
-                presence: {
-                    defaults: {
-                        $id: '',
-                        $createdAt: '',
-                        $updatedAt: '',
-                        userId: '',
-                        source: '',
-                    },
-                },
-            },
-        };
-
-        return request.then((response) => applyDefaults(response, defaults));
+        return this.client.call('get', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -176,23 +145,7 @@ export class Presences {
             accept: 'application/json',
         };
 
-        const request = this.client.call('get', uri, apiHeaders, apiPayload);
-        const defaults = {
-            root: 'presence',
-            models: {
-                presence: {
-                    defaults: {
-                        $id: '',
-                        $createdAt: '',
-                        $updatedAt: '',
-                        userId: '',
-                        source: '',
-                    },
-                },
-            },
-        };
-
-        return request.then((response) => applyDefaults(response, defaults));
+        return this.client.call('get', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -315,23 +268,7 @@ export class Presences {
             accept: 'application/json',
         };
 
-        const request = this.client.call('put', uri, apiHeaders, apiPayload);
-        const defaults = {
-            root: 'presence',
-            models: {
-                presence: {
-                    defaults: {
-                        $id: '',
-                        $createdAt: '',
-                        $updatedAt: '',
-                        userId: '',
-                        source: '',
-                    },
-                },
-            },
-        };
-
-        return request.then((response) => applyDefaults(response, defaults));
+        return this.client.call('put', uri, apiHeaders, apiPayload);
     }
 
     /**
@@ -463,23 +400,7 @@ export class Presences {
             accept: 'application/json',
         };
 
-        const request = this.client.call('patch', uri, apiHeaders, apiPayload);
-        const defaults = {
-            root: 'presence',
-            models: {
-                presence: {
-                    defaults: {
-                        $id: '',
-                        $createdAt: '',
-                        $updatedAt: '',
-                        userId: '',
-                        source: '',
-                    },
-                },
-            },
-        };
-
-        return request.then((response) => applyDefaults(response, defaults));
+        return this.client.call('patch', uri, apiHeaders, apiPayload);
     }
 
     /**

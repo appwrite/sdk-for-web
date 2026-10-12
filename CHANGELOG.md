@@ -1,28 +1,42 @@
 # Change Log
 
-## 29.0.0
 
-* Breaking: `Oauth2` `resource` parameter is now `string[]` instead of `string`
-* Breaking: `Teams.createMembership` takes `membershipId` after `roles`; positional callers must update
-* Added: `Account.listPasskeys`, `createPasskey`, `getPasskey`, `updatePasskey` and `deletePasskey`
-* Added: `Account.updatePasskeyVerification` to finish registering a passkey
-* Added: `Account.createPasskeyToken` and `Account.updatePasskeyToken` for passkey sign-in
-* Added: `Passkey`, `PasskeyList`, `PasskeyChallenge` and `TokenSecret` models
-* Added: `Push` service for MQTT realtime push, with `Topic` and `ResolvedTopic` builders
-* Added: `Client.setPushEndpoint()` and `Client.setPushClientId()`
+## 28.2.0-rc.7
+
+* Added: `Analytics` service and the `Tracking` auto-tracking helper, which were missing from `28.2.0-rc.5` and `rc.6`
+* Changed: `Tracking` takes `new Analytics(client)` and a property id instead of an emitter callback; the adapter to `createEvent` now lives inside the SDK
+* Changed: `enableAllAutoTracking()` is now `start()`
+* Removed: `AnalyticsEventEmitter`; the option types are now `TrackingEventOptions` and `TrackingOptions`
+
+## 28.2.0-rc.6
+
+* Added: `Push.onNotificationOpened()` fires when a user taps a shown notification
+* Added: `Push.getInitialNotification()` (returns `null` on web) and the `PushNotificationOpened` type
+* Added: tapping a push notification focuses then closes the page
+* Fixed: `subscribe()` resolves the signed-in user from `cookieFallback`, not just an explicit session
+* Fixed: background notifications de-duplicate by title, so each distinct title posts once
+* Updated: clearer error messages for missing credentials in push
+
+## 28.2.0-rc.5
+
+* Updated: regenerated with sdk-generator 5.5.0; no SDK code changes
+
+## 28.2.0-rc.3
+
 * Added: background push notifications render the server `notification` title, body, and image
-* Added: `Push.onNotificationOpened()`, `Push.getInitialNotification()` and the `PushNotificationOpened` type
-* Added: `Analytics` service with `createEvent`
-* Added: `Tracking` helper for automatic pageviews, outbound links, downloads, scroll depth and engagement
-* Added: `Avatars.updatePhoto()` and `Avatars.deletePhoto()` methods, and the `Models.Account` type
-* Added: `state` parameter to `Account.createOAuth2Session` and `Account.createOAuth2Token`
-* Added: `duration` parameter to `Account.createEmailPasswordSession`
-* Added: `current` parameter to `Account.deleteSessions`
-* Added: `total` parameter to `Account.listSessions`, `Locale` list methods and `listTransactions`
+* Added: notification `data` now carries `topic` and `payload`
+* Fixed: a server-sent title dedupes to one notification per topic instead of one per subscription
+* Fixed: malformed push payloads no longer break notification rendering
+
+## 28.2.0-rc.2
+
+* Added: `Push` service for MQTT realtime push messages
+* Added: `Topic` and `ResolvedTopic` builders for push topic filters
+* Added: `Client.setPushEndpoint()` and `Client.setPushClientId()`
+* Added: `Avatars.deletePhoto()` method
+* Added: `Models.Account` type
 * Added: `Webflow` to the `OAuthProvider` enum
-* Fixed: response models fill missing fields from spec defaults instead of throwing
 * Updated: `Client.chunkedUpload()` accepts a `responseType`, supports `text`, and falls back without a file
-* Updated: SDK now targets Appwrite 2.4 (`X-Appwrite-Response-Format: 2.4.0`)
 
 ## 28.1.0
 
@@ -235,4 +249,5 @@
 
 * Fix pong response & chunked upload
 * Add `ping` support to `Realtime` service
+
 

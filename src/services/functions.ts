@@ -1,4 +1,9 @@
-import { AppwriteException, Client, type Payload } from '../client';
+import {
+    AppwriteException,
+    Client,
+    type Payload,
+    applyDefaults,
+} from '../client';
 import type { Models } from '../models';
 
 import { ExecutionMethod } from '../enums/execution-method';
@@ -91,7 +96,55 @@ export class Functions {
             accept: 'application/json',
         };
 
-        return this.client.call('get', uri, apiHeaders, apiPayload);
+        const request = this.client.call('get', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'executionList',
+            models: {
+                executionList: {
+                    defaults: {
+                        total: 0,
+                    },
+                    properties: {
+                        executions: {
+                            items: 'execution',
+                        },
+                    },
+                },
+                execution: {
+                    defaults: {
+                        $id: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        resourceId: '',
+                        resourceType: 'functions',
+                        deploymentId: '',
+                        requestMethod: '',
+                        requestPath: '',
+                        responseStatusCode: 0,
+                        responseBody: '',
+                        logs: '',
+                        errors: '',
+                        duration: 0,
+                    },
+                    properties: {
+                        requestHeaders: {
+                            items: 'headers',
+                        },
+                        responseHeaders: {
+                            items: 'headers',
+                        },
+                    },
+                },
+                headers: {
+                    defaults: {
+                        name: '',
+                        value: '',
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -240,7 +293,45 @@ export class Functions {
             accept: 'application/json',
         };
 
-        return this.client.call('post', uri, apiHeaders, apiPayload);
+        const request = this.client.call('post', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'execution',
+            models: {
+                execution: {
+                    defaults: {
+                        $id: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        resourceId: '',
+                        resourceType: 'functions',
+                        deploymentId: '',
+                        requestMethod: '',
+                        requestPath: '',
+                        responseStatusCode: 0,
+                        responseBody: '',
+                        logs: '',
+                        errors: '',
+                        duration: 0,
+                    },
+                    properties: {
+                        requestHeaders: {
+                            items: 'headers',
+                        },
+                        responseHeaders: {
+                            items: 'headers',
+                        },
+                    },
+                },
+                headers: {
+                    defaults: {
+                        name: '',
+                        value: '',
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -314,6 +405,44 @@ export class Functions {
             accept: 'application/json',
         };
 
-        return this.client.call('get', uri, apiHeaders, apiPayload);
+        const request = this.client.call('get', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'execution',
+            models: {
+                execution: {
+                    defaults: {
+                        $id: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        resourceId: '',
+                        resourceType: 'functions',
+                        deploymentId: '',
+                        requestMethod: '',
+                        requestPath: '',
+                        responseStatusCode: 0,
+                        responseBody: '',
+                        logs: '',
+                        errors: '',
+                        duration: 0,
+                    },
+                    properties: {
+                        requestHeaders: {
+                            items: 'headers',
+                        },
+                        responseHeaders: {
+                            items: 'headers',
+                        },
+                    },
+                },
+                headers: {
+                    defaults: {
+                        name: '',
+                        value: '',
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 }

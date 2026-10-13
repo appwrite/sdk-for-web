@@ -1,5 +1,11 @@
 import { Service } from '../service';
-import { AppwriteException, Client, type Payload } from '../client';
+import {
+    AppwriteException,
+    Client,
+    type Payload,
+    UploadProgress,
+} from '../client';
+import type { Models } from '../models';
 
 import { Browser } from '../enums/browser';
 import { CreditCard } from '../enums/credit-card';
@@ -761,6 +767,108 @@ export class Avatars {
         }
 
         return uri.toString();
+    }
+
+    /**
+     * Update the profile photo of the currently authenticated user. The uploaded image takes priority over every other photo source, including OAuth2 identity photos, Gravatar, and Libravatar. Updating an already customized photo replaces it. The image must be at most 5MB and is sent in a single request.
+     *
+     * @param {File} params.file - Binary image file of at most 5MB. Allowed file types are png, jpg, jpeg, and webp.
+     * @throws {AppwriteException}
+     * @returns {Promise<Models.Account<Preferences>>}
+     */
+    updatePhoto<
+        Preferences extends Models.Preferences = Models.DefaultPreferences,
+    >(params: {
+        file: File;
+        onProgress?: (progress: UploadProgress) => void;
+    }): Promise<Models.Account<Preferences>>;
+    /**
+     * Update the profile photo of the currently authenticated user. The uploaded image takes priority over every other photo source, including OAuth2 identity photos, Gravatar, and Libravatar. Updating an already customized photo replaces it. The image must be at most 5MB and is sent in a single request.
+     *
+     * @param {File} file - Binary image file of at most 5MB. Allowed file types are png, jpg, jpeg, and webp.
+     * @throws {AppwriteException}
+     * @returns {Promise<Models.Account<Preferences>>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    updatePhoto<
+        Preferences extends Models.Preferences = Models.DefaultPreferences,
+    >(
+        file: File,
+        onProgress?: (progress: UploadProgress) => void,
+    ): Promise<Models.Account<Preferences>>;
+    updatePhoto<
+        Preferences extends Models.Preferences = Models.DefaultPreferences,
+    >(
+        paramsOrFirst:
+            | { file: File; onProgress?: (progress: UploadProgress) => void }
+            | File,
+        ...rest: [((progress: UploadProgress) => void)?]
+    ): Promise<Models.Account<Preferences>> {
+        let params: { file: File };
+        let onProgress: (progress: UploadProgress) => void;
+
+        if (
+            paramsOrFirst &&
+            typeof paramsOrFirst === 'object' &&
+            !Array.isArray(paramsOrFirst) &&
+            ('file' in paramsOrFirst || 'onProgress' in paramsOrFirst)
+        ) {
+            params = (paramsOrFirst || {}) as { file: File };
+            onProgress = paramsOrFirst?.onProgress as (
+                progress: UploadProgress,
+            ) => void;
+        } else {
+            params = {
+                file: paramsOrFirst as File,
+            };
+            onProgress = rest[0] as (progress: UploadProgress) => void;
+        }
+
+        const file = params.file;
+
+        if (typeof file === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "file"');
+        }
+        const apiPath = '/avatars/photo';
+        const apiPayload: Payload = {};
+        if (typeof file !== 'undefined') {
+            apiPayload['file'] = file;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'X-Appwrite-Project': this.client.config.project,
+            'content-type': 'multipart/form-data',
+            accept: 'application/json',
+        };
+
+        return this.client.chunkedUpload(
+            'put',
+            uri,
+            apiHeaders,
+            apiPayload,
+            onProgress,
+        );
+    }
+
+    /**
+     * Delete the profile photo of the currently authenticated user and store the built-in static placeholder in its place. The placeholder is the user's photo from then on, so it takes priority over every other photo source — OAuth2 identity photos, Gravatar, Libravatar, and initials — until a new photo is uploaded with avatars.updatePhoto.
+     *
+     * @throws {AppwriteException}
+     * @returns {Promise<{}>}
+     */
+    deletePhoto(): Promise<{}> {
+        const apiPath = '/avatars/photo';
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'X-Appwrite-Project': this.client.config.project,
+            'content-type': 'application/json',
+            accept: 'application/json',
+        };
+
+        return this.client.call('delete', uri, apiHeaders, apiPayload);
     }
 
     /**

@@ -635,27 +635,27 @@ export namespace Models {
         /**
          * Canonical form of the user email address.
          */
-        emailCanonical?: string;
+        emailCanonical?: string | null;
         /**
          * Whether the user email is from a free email provider.
          */
-        emailIsFree?: boolean;
+        emailIsFree?: boolean | null;
         /**
          * Whether the user email is from a disposable email provider.
          */
-        emailIsDisposable?: boolean;
+        emailIsDisposable?: boolean | null;
         /**
          * Whether the user email is from a corporate domain.
          */
-        emailIsCorporate?: boolean;
+        emailIsCorporate?: boolean | null;
         /**
          * Whether the user email is in its canonical form.
          */
-        emailIsCanonical?: boolean;
+        emailIsCanonical?: boolean | null;
         /**
          * Whether the password was found in a known data breach the last time it was checked. Null when the password has never been checked.
          */
-        passwordPwned?: boolean;
+        passwordPwned?: boolean | null;
         /**
          * Phone verification status.
          */
@@ -679,11 +679,11 @@ export namespace Models {
         /**
          * Whether the user can impersonate other users.
          */
-        impersonator?: boolean;
+        impersonator?: boolean | null;
         /**
          * ID of the original actor performing the impersonation. Present only when the current request is impersonating another user. Internal audit logs attribute the action to this user, while the impersonated target is recorded only in internal audit payload data.
          */
-        impersonatorUserId?: string;
+        impersonatorUserId?: string | null;
     };
 
     /**

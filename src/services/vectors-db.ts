@@ -1,4 +1,9 @@
-import { AppwriteException, Client, type Payload } from '../client';
+import {
+    AppwriteException,
+    Client,
+    type Payload,
+    applyDefaults,
+} from '../client';
 import type { Models } from '../models';
 
 export class VectorsDB {
@@ -74,7 +79,35 @@ export class VectorsDB {
             accept: 'application/json',
         };
 
-        return this.client.call('get', uri, apiHeaders, apiPayload);
+        const request = this.client.call('get', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'transactionList',
+            models: {
+                transactionList: {
+                    defaults: {
+                        total: 0,
+                        transactions: [],
+                    },
+                    properties: {
+                        transactions: {
+                            items: 'transaction',
+                        },
+                    },
+                },
+                transaction: {
+                    defaults: {
+                        $id: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        status: 'pending',
+                        operations: 0,
+                        expiresAt: '',
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -127,7 +160,24 @@ export class VectorsDB {
             accept: 'application/json',
         };
 
-        return this.client.call('post', uri, apiHeaders, apiPayload);
+        const request = this.client.call('post', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'transaction',
+            models: {
+                transaction: {
+                    defaults: {
+                        $id: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        status: 'pending',
+                        operations: 0,
+                        expiresAt: '',
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -185,7 +235,24 @@ export class VectorsDB {
             accept: 'application/json',
         };
 
-        return this.client.call('get', uri, apiHeaders, apiPayload);
+        const request = this.client.call('get', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'transaction',
+            models: {
+                transaction: {
+                    defaults: {
+                        $id: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        status: 'pending',
+                        operations: 0,
+                        expiresAt: '',
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -275,7 +342,24 @@ export class VectorsDB {
             accept: 'application/json',
         };
 
-        return this.client.call('patch', uri, apiHeaders, apiPayload);
+        const request = this.client.call('patch', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'transaction',
+            models: {
+                transaction: {
+                    defaults: {
+                        $id: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        status: 'pending',
+                        operations: 0,
+                        expiresAt: '',
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -408,7 +492,24 @@ export class VectorsDB {
             accept: 'application/json',
         };
 
-        return this.client.call('post', uri, apiHeaders, apiPayload);
+        const request = this.client.call('post', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'transaction',
+            models: {
+                transaction: {
+                    defaults: {
+                        $id: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        status: 'pending',
+                        operations: 0,
+                        expiresAt: '',
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -544,7 +645,36 @@ export class VectorsDB {
             accept: 'application/json',
         };
 
-        return this.client.call('get', uri, apiHeaders, apiPayload);
+        const request = this.client.call('get', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'documentList',
+            models: {
+                documentList: {
+                    defaults: {
+                        total: 0,
+                        documents: [],
+                    },
+                    properties: {
+                        documents: {
+                            items: 'document',
+                        },
+                    },
+                },
+                document: {
+                    defaults: {
+                        $id: '',
+                        $sequence: '',
+                        $collectionId: '',
+                        $databaseId: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        $permissions: [],
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -714,7 +844,25 @@ export class VectorsDB {
             accept: 'application/json',
         };
 
-        return this.client.call('post', uri, apiHeaders, apiPayload);
+        const request = this.client.call('post', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'document',
+            models: {
+                document: {
+                    defaults: {
+                        $id: '',
+                        $sequence: '',
+                        $collectionId: '',
+                        $databaseId: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        $permissions: [],
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -853,7 +1001,36 @@ export class VectorsDB {
             accept: 'application/json',
         };
 
-        return this.client.call('post', uri, apiHeaders, apiPayload);
+        const request = this.client.call('post', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'documentList',
+            models: {
+                documentList: {
+                    defaults: {
+                        total: 0,
+                        documents: [],
+                    },
+                    properties: {
+                        documents: {
+                            items: 'document',
+                        },
+                    },
+                },
+                document: {
+                    defaults: {
+                        $id: '',
+                        $sequence: '',
+                        $collectionId: '',
+                        $databaseId: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        $permissions: [],
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -983,7 +1160,25 @@ export class VectorsDB {
             accept: 'application/json',
         };
 
-        return this.client.call('get', uri, apiHeaders, apiPayload);
+        const request = this.client.call('get', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'document',
+            models: {
+                document: {
+                    defaults: {
+                        $id: '',
+                        $sequence: '',
+                        $collectionId: '',
+                        $databaseId: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        $permissions: [],
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -1153,7 +1348,25 @@ export class VectorsDB {
             accept: 'application/json',
         };
 
-        return this.client.call('put', uri, apiHeaders, apiPayload);
+        const request = this.client.call('put', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'document',
+            models: {
+                document: {
+                    defaults: {
+                        $id: '',
+                        $sequence: '',
+                        $collectionId: '',
+                        $databaseId: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        $permissions: [],
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -1323,7 +1536,25 @@ export class VectorsDB {
             accept: 'application/json',
         };
 
-        return this.client.call('patch', uri, apiHeaders, apiPayload);
+        const request = this.client.call('patch', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'document',
+            models: {
+                document: {
+                    defaults: {
+                        $id: '',
+                        $sequence: '',
+                        $collectionId: '',
+                        $databaseId: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        $permissions: [],
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**

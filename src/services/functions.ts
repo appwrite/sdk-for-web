@@ -1,4 +1,9 @@
-import { AppwriteException, Client, type Payload } from '../client';
+import {
+    AppwriteException,
+    Client,
+    type Payload,
+    applyDefaults,
+} from '../client';
 import type { Models } from '../models';
 
 import { ExecutionMethod } from '../enums/execution-method';
@@ -91,7 +96,59 @@ export class Functions {
             accept: 'application/json',
         };
 
-        return this.client.call('get', uri, apiHeaders, apiPayload);
+        const request = this.client.call('get', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'executionList',
+            models: {
+                executionList: {
+                    defaults: {
+                        total: 0,
+                        executions: [],
+                    },
+                    properties: {
+                        executions: {
+                            items: 'execution',
+                        },
+                    },
+                },
+                execution: {
+                    defaults: {
+                        $id: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        $permissions: [],
+                        resourceId: '',
+                        resourceType: 'functions',
+                        deploymentId: '',
+                        requestMethod: '',
+                        requestPath: '',
+                        requestHeaders: [],
+                        responseStatusCode: 0,
+                        responseBody: '',
+                        responseHeaders: [],
+                        logs: '',
+                        errors: '',
+                        duration: 0,
+                    },
+                    properties: {
+                        requestHeaders: {
+                            items: 'headers',
+                        },
+                        responseHeaders: {
+                            items: 'headers',
+                        },
+                    },
+                },
+                headers: {
+                    defaults: {
+                        name: '',
+                        value: '',
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -103,7 +160,7 @@ export class Functions {
      * @param {string} params.xpath - HTTP path of execution. Path can include query params. Default value is /
      * @param {ExecutionMethod} params.method - HTTP method of execution. Default value is POST.
      * @param {object} params.headers - HTTP headers of execution. Defaults to empty.
-     * @param {string} params.scheduledAt - Scheduled execution time in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future with precision in minutes.
+     * @param {string | null} params.scheduledAt - Scheduled execution time in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future with precision in minutes.
      * @throws {AppwriteException}
      * @returns {Promise<Models.Execution>}
      */
@@ -114,7 +171,7 @@ export class Functions {
         xpath?: string;
         method?: ExecutionMethod;
         headers?: object;
-        scheduledAt?: string;
+        scheduledAt?: string | null;
     }): Promise<Models.Execution>;
     /**
      * Trigger a function execution. The returned object will return you the current execution status. You can ping the `Get Execution` endpoint to get updates on the current execution status. Once this endpoint is called, your function execution process will start asynchronously.
@@ -125,7 +182,7 @@ export class Functions {
      * @param {string} xpath - HTTP path of execution. Path can include query params. Default value is /
      * @param {ExecutionMethod} method - HTTP method of execution. Default value is POST.
      * @param {object} headers - HTTP headers of execution. Defaults to empty.
-     * @param {string} scheduledAt - Scheduled execution time in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future with precision in minutes.
+     * @param {string | null} scheduledAt - Scheduled execution time in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future with precision in minutes.
      * @throws {AppwriteException}
      * @returns {Promise<Models.Execution>}
      * @deprecated Use the object parameter style method for a better developer experience.
@@ -137,7 +194,7 @@ export class Functions {
         xpath?: string,
         method?: ExecutionMethod,
         headers?: object,
-        scheduledAt?: string,
+        scheduledAt?: string | null,
     ): Promise<Models.Execution>;
     createExecution(
         paramsOrFirst:
@@ -148,7 +205,7 @@ export class Functions {
                   xpath?: string;
                   method?: ExecutionMethod;
                   headers?: object;
-                  scheduledAt?: string;
+                  scheduledAt?: string | null;
               }
             | string,
         ...rest: [
@@ -157,7 +214,7 @@ export class Functions {
             string?,
             ExecutionMethod?,
             object?,
-            string?,
+            (string | null)?,
         ]
     ): Promise<Models.Execution> {
         let params: {
@@ -167,7 +224,7 @@ export class Functions {
             xpath?: string;
             method?: ExecutionMethod;
             headers?: object;
-            scheduledAt?: string;
+            scheduledAt?: string | null;
         };
 
         if (
@@ -182,7 +239,7 @@ export class Functions {
                 xpath?: string;
                 method?: ExecutionMethod;
                 headers?: object;
-                scheduledAt?: string;
+                scheduledAt?: string | null;
             };
         } else {
             params = {
@@ -192,7 +249,7 @@ export class Functions {
                 xpath: rest[2] as string,
                 method: rest[3] as ExecutionMethod,
                 headers: rest[4] as object,
-                scheduledAt: rest[5] as string,
+                scheduledAt: rest[5] as string | null,
             };
         }
 
@@ -240,7 +297,48 @@ export class Functions {
             accept: 'application/json',
         };
 
-        return this.client.call('post', uri, apiHeaders, apiPayload);
+        const request = this.client.call('post', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'execution',
+            models: {
+                execution: {
+                    defaults: {
+                        $id: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        $permissions: [],
+                        resourceId: '',
+                        resourceType: 'functions',
+                        deploymentId: '',
+                        requestMethod: '',
+                        requestPath: '',
+                        requestHeaders: [],
+                        responseStatusCode: 0,
+                        responseBody: '',
+                        responseHeaders: [],
+                        logs: '',
+                        errors: '',
+                        duration: 0,
+                    },
+                    properties: {
+                        requestHeaders: {
+                            items: 'headers',
+                        },
+                        responseHeaders: {
+                            items: 'headers',
+                        },
+                    },
+                },
+                headers: {
+                    defaults: {
+                        name: '',
+                        value: '',
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -314,6 +412,47 @@ export class Functions {
             accept: 'application/json',
         };
 
-        return this.client.call('get', uri, apiHeaders, apiPayload);
+        const request = this.client.call('get', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'execution',
+            models: {
+                execution: {
+                    defaults: {
+                        $id: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        $permissions: [],
+                        resourceId: '',
+                        resourceType: 'functions',
+                        deploymentId: '',
+                        requestMethod: '',
+                        requestPath: '',
+                        requestHeaders: [],
+                        responseStatusCode: 0,
+                        responseBody: '',
+                        responseHeaders: [],
+                        logs: '',
+                        errors: '',
+                        duration: 0,
+                    },
+                    properties: {
+                        requestHeaders: {
+                            items: 'headers',
+                        },
+                        responseHeaders: {
+                            items: 'headers',
+                        },
+                    },
+                },
+                headers: {
+                    defaults: {
+                        name: '',
+                        value: '',
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 }

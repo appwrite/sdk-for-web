@@ -45,6 +45,59 @@ export const JSONbig = {
     stringify: JSONbigSerializer.stringify,
 };
 
+type DefaultsShape = string | { items: DefaultsShape };
+
+type DefaultsModel = {
+    defaults?: Record<string, unknown>;
+    properties?: Record<string, DefaultsShape>;
+};
+
+type Defaults = {
+    root: DefaultsShape;
+    models: Record<string, DefaultsModel>;
+};
+
+export function applyDefaults<T>(value: T, tree: Defaults): T {
+    return fillDefaults(value, tree.root, tree.models) as T;
+}
+
+function fillDefaults(
+    value: unknown,
+    shape: DefaultsShape,
+    models: Record<string, DefaultsModel>,
+): unknown {
+    if (typeof shape !== 'string') {
+        if (!Array.isArray(value)) {
+            return value;
+        }
+        const items = shape.items;
+        return value.map((item) => fillDefaults(item, items, models));
+    }
+    const model = models[shape];
+    if (!model || typeof value !== 'object' || value === null) {
+        return value;
+    }
+    if (Array.isArray(value)) {
+        return value;
+    }
+    const result: Record<string, unknown> = { ...model.defaults, ...value };
+    for (const [key, child] of Object.entries(model.properties ?? {})) {
+        if (key in result) {
+            result[key] = fillDefaults(result[key], child, models);
+        }
+    }
+    // The spread drops the non-enumerable JSON toString that Client.call attaches.
+    if (Object.prototype.hasOwnProperty.call(value, 'toString')) {
+        Object.defineProperty(result, 'toString', {
+            value: () => JSONbig.stringify(result),
+            writable: true,
+            enumerable: false,
+            configurable: true,
+        });
+    }
+    return result;
+}
+
 /**
  * Payload type representing a key-value pair with string keys and any values.
  */
@@ -368,8 +421,6 @@ class Client {
     config: {
         endpoint: string;
         endpointRealtime: string;
-        endpointPush: string;
-        pushClientId: string;
         project: string;
         jwt: string;
         bearer: string;
@@ -382,8 +433,6 @@ class Client {
     } = {
         endpoint: 'https://cloud.appwrite.io/v1',
         endpointRealtime: '',
-        endpointPush: '',
-        pushClientId: '',
         project: '',
         jwt: '',
         bearer: '',
@@ -401,8 +450,8 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '28.2.0-rc.7',
-        'X-Appwrite-Response-Format': '2.3.0',
+        'x-sdk-version': '29.0.0',
+        'X-Appwrite-Response-Format': '2.5.0',
     };
 
     /**
@@ -468,56 +517,6 @@ class Client {
         }
 
         this.config.endpointRealtime = endpointRealtime;
-        return this;
-    }
-
-    /**
-     * Set Push Endpoint
-     *
-     * The MQTT-over-WebSocket URL the AppwritePush service connects to.
-     *
-     * @param {string} endpointPush
-     *
-     * @returns {this}
-     */
-    setPushEndpoint(endpointPush: string): this {
-        if (!endpointPush || typeof endpointPush !== 'string') {
-            throw new AppwriteException('Endpoint must be a valid string');
-        }
-
-        if (
-            !endpointPush.startsWith('ws://') &&
-            !endpointPush.startsWith('wss://')
-        ) {
-            throw new AppwriteException(
-                'Invalid push endpoint URL: ' + endpointPush,
-            );
-        }
-
-        this.config.endpointPush = endpointPush;
-        return this;
-    }
-
-    /**
-     * Set Push Client Id
-     *
-     * A stable client id for the AppwritePush service. The broker keys its
-     * offline-replay cursor on this id, so pass a stable value to resume replay across
-     * reloads/restarts. Defaults, when unset, to one per user and tab: stable across reloads of
-     * the tab, different in every other tab, and distinct for each connection open at the same
-     * time, so no two connections take over each other's session. An explicit id shared by
-     * several tabs or connections makes them do that.
-     *
-     * @param {string} pushClientId
-     *
-     * @returns {this}
-     */
-    setPushClientId(pushClientId: string): this {
-        if (!pushClientId || typeof pushClientId !== 'string') {
-            throw new AppwriteException('Client id must be a valid string');
-        }
-
-        this.config.pushClientId = pushClientId;
         return this;
     }
 

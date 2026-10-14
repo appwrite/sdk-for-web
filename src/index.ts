@@ -1,7 +1,7 @@
 /**
  * Appwrite Web SDK
  *
- * This SDK targets Appwrite server version 2.3.x as shipped on Appwrite Cloud.
+ * This SDK targets Appwrite server version 2.5.x as shipped on Appwrite Cloud.
  * Self-hosted releases can lag behind Cloud — if you run an older self-hosted
  * build, use a matching older SDK from
  * [previous releases](https://github.com/appwrite/sdk-for-web/releases)
@@ -26,7 +26,6 @@ export { TablesDB } from './services/tables-db';
 export { Teams } from './services/teams';
 export { VectorsDB } from './services/vectors-db';
 export { Realtime } from './services/realtime';
-export { Push } from './services/push';
 export { Tracking } from './services/analytics-tracking';
 export type {
     Models,
@@ -35,13 +34,6 @@ export type {
     UploadProgress,
 } from './client';
 export type { RealtimeSubscription } from './services/realtime';
-export type {
-    PushMessage,
-    PushNotificationOpened,
-    PushSubscription,
-    SubscribeOptions,
-    MessageCallback,
-} from './services/push';
 export type {
     DownloadTrackingOptions,
     OutboundTrackingOptions,
@@ -52,7 +44,6 @@ export type { QueryTypes, QueryTypesList } from './query';
 export { Permission } from './permission';
 export { Role } from './role';
 export { ID } from './id';
-export { Topic, ResolvedTopic } from './topic';
 export { Channel } from './channel';
 export { Operator, Condition } from './operator';
 export { AuthenticatorType } from './enums/authenticator-type';

@@ -1,4 +1,9 @@
-import { AppwriteException, Client, type Payload } from '../client';
+import {
+    AppwriteException,
+    Client,
+    type Payload,
+    applyDefaults,
+} from '../client';
 import type { Models } from '../models';
 
 export class Databases {
@@ -75,7 +80,35 @@ export class Databases {
             accept: 'application/json',
         };
 
-        return this.client.call('get', uri, apiHeaders, apiPayload);
+        const request = this.client.call('get', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'transactionList',
+            models: {
+                transactionList: {
+                    defaults: {
+                        total: 0,
+                        transactions: [],
+                    },
+                    properties: {
+                        transactions: {
+                            items: 'transaction',
+                        },
+                    },
+                },
+                transaction: {
+                    defaults: {
+                        $id: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        status: 'pending',
+                        operations: 0,
+                        expiresAt: '',
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -129,7 +162,24 @@ export class Databases {
             accept: 'application/json',
         };
 
-        return this.client.call('post', uri, apiHeaders, apiPayload);
+        const request = this.client.call('post', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'transaction',
+            models: {
+                transaction: {
+                    defaults: {
+                        $id: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        status: 'pending',
+                        operations: 0,
+                        expiresAt: '',
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -188,7 +238,24 @@ export class Databases {
             accept: 'application/json',
         };
 
-        return this.client.call('get', uri, apiHeaders, apiPayload);
+        const request = this.client.call('get', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'transaction',
+            models: {
+                transaction: {
+                    defaults: {
+                        $id: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        status: 'pending',
+                        operations: 0,
+                        expiresAt: '',
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -279,7 +346,24 @@ export class Databases {
             accept: 'application/json',
         };
 
-        return this.client.call('patch', uri, apiHeaders, apiPayload);
+        const request = this.client.call('patch', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'transaction',
+            models: {
+                transaction: {
+                    defaults: {
+                        $id: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        status: 'pending',
+                        operations: 0,
+                        expiresAt: '',
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -414,7 +498,24 @@ export class Databases {
             accept: 'application/json',
         };
 
-        return this.client.call('post', uri, apiHeaders, apiPayload);
+        const request = this.client.call('post', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'transaction',
+            models: {
+                transaction: {
+                    defaults: {
+                        $id: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        status: 'pending',
+                        operations: 0,
+                        expiresAt: '',
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -551,7 +652,36 @@ export class Databases {
             accept: 'application/json',
         };
 
-        return this.client.call('get', uri, apiHeaders, apiPayload);
+        const request = this.client.call('get', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'documentList',
+            models: {
+                documentList: {
+                    defaults: {
+                        total: 0,
+                        documents: [],
+                    },
+                    properties: {
+                        documents: {
+                            items: 'document',
+                        },
+                    },
+                },
+                document: {
+                    defaults: {
+                        $id: '',
+                        $sequence: '',
+                        $collectionId: '',
+                        $databaseId: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        $permissions: [],
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -561,8 +691,8 @@ export class Databases {
      * @param {string} params.collectionId - Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection). Make sure to define attributes before creating documents.
      * @param {string} params.documentId - Document ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.
      * @param {Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Omit<Document, keyof Models.Document>} params.data - Document data as JSON object.
-     * @param {string[]} params.permissions - An array of permissions strings. By default, only the current user is granted all permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).
-     * @param {string} params.transactionId - Transaction ID for staging the operation.
+     * @param {string[] | null} params.permissions - An array of permissions strings. By default, only the current user is granted all permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).
+     * @param {string | null} params.transactionId - Transaction ID for staging the operation.
      * @throws {AppwriteException}
      * @returns {Promise<Document>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.createRow` instead.
@@ -576,8 +706,8 @@ export class Databases {
         data: Document extends Models.DefaultDocument
             ? Partial<Models.Document> & Record<string, any>
             : Partial<Models.Document> & Omit<Document, keyof Models.Document>;
-        permissions?: string[];
-        transactionId?: string;
+        permissions?: string[] | null;
+        transactionId?: string | null;
     }): Promise<Document>;
     /**
      * Create a new Document. Before using this route, you should create a new collection resource using either a [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.
@@ -586,8 +716,8 @@ export class Databases {
      * @param {string} collectionId - Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection). Make sure to define attributes before creating documents.
      * @param {string} documentId - Document ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.
      * @param {Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Omit<Document, keyof Models.Document>} data - Document data as JSON object.
-     * @param {string[]} permissions - An array of permissions strings. By default, only the current user is granted all permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).
-     * @param {string} transactionId - Transaction ID for staging the operation.
+     * @param {string[] | null} permissions - An array of permissions strings. By default, only the current user is granted all permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).
+     * @param {string | null} transactionId - Transaction ID for staging the operation.
      * @throws {AppwriteException}
      * @returns {Promise<Document>}
      * @deprecated Use the object parameter style method for a better developer experience.
@@ -599,8 +729,8 @@ export class Databases {
         data: Document extends Models.DefaultDocument
             ? Partial<Models.Document> & Record<string, any>
             : Partial<Models.Document> & Omit<Document, keyof Models.Document>,
-        permissions?: string[],
-        transactionId?: string,
+        permissions?: string[] | null,
+        transactionId?: string | null,
     ): Promise<Document>;
     createDocument<Document extends Models.Document = Models.DefaultDocument>(
         paramsOrFirst:
@@ -612,8 +742,8 @@ export class Databases {
                       ? Partial<Models.Document> & Record<string, any>
                       : Partial<Models.Document> &
                             Omit<Document, keyof Models.Document>;
-                  permissions?: string[];
-                  transactionId?: string;
+                  permissions?: string[] | null;
+                  transactionId?: string | null;
               }
             | string,
         ...rest: [
@@ -623,8 +753,8 @@ export class Databases {
                 ? Partial<Models.Document> & Record<string, any>
                 : Partial<Models.Document> &
                       Omit<Document, keyof Models.Document>)?,
-            string[]?,
-            string?,
+            (string[] | null)?,
+            (string | null)?,
         ]
     ): Promise<Document> {
         let params: {
@@ -635,8 +765,8 @@ export class Databases {
                 ? Partial<Models.Document> & Record<string, any>
                 : Partial<Models.Document> &
                       Omit<Document, keyof Models.Document>;
-            permissions?: string[];
-            transactionId?: string;
+            permissions?: string[] | null;
+            transactionId?: string | null;
         };
 
         if (
@@ -652,8 +782,8 @@ export class Databases {
                     ? Partial<Models.Document> & Record<string, any>
                     : Partial<Models.Document> &
                           Omit<Document, keyof Models.Document>;
-                permissions?: string[];
-                transactionId?: string;
+                permissions?: string[] | null;
+                transactionId?: string | null;
             };
         } else {
             params = {
@@ -664,8 +794,8 @@ export class Databases {
                     ? Partial<Models.Document> & Record<string, any>
                     : Partial<Models.Document> &
                           Omit<Document, keyof Models.Document>,
-                permissions: rest[3] as string[],
-                transactionId: rest[4] as string,
+                permissions: rest[3] as string[] | null,
+                transactionId: rest[4] as string | null,
             };
         }
 
@@ -722,7 +852,25 @@ export class Databases {
             accept: 'application/json',
         };
 
-        return this.client.call('post', uri, apiHeaders, apiPayload);
+        const request = this.client.call('post', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'document',
+            models: {
+                document: {
+                    defaults: {
+                        $id: '',
+                        $sequence: '',
+                        $collectionId: '',
+                        $databaseId: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        $permissions: [],
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -853,7 +1001,25 @@ export class Databases {
             accept: 'application/json',
         };
 
-        return this.client.call('get', uri, apiHeaders, apiPayload);
+        const request = this.client.call('get', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'document',
+            models: {
+                document: {
+                    defaults: {
+                        $id: '',
+                        $sequence: '',
+                        $collectionId: '',
+                        $databaseId: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        $permissions: [],
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -863,8 +1029,8 @@ export class Databases {
      * @param {string} params.collectionId - Collection ID.
      * @param {string} params.documentId - Document ID.
      * @param {Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>} params.data - Document data as JSON object. Include all required attributes of the document to be created or updated.
-     * @param {string[]} params.permissions - An array of permissions strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).
-     * @param {string} params.transactionId - Transaction ID for staging the operation.
+     * @param {string[] | null} params.permissions - An array of permissions strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).
+     * @param {string | null} params.transactionId - Transaction ID for staging the operation.
      * @throws {AppwriteException}
      * @returns {Promise<Document>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.upsertRow` instead.
@@ -879,8 +1045,8 @@ export class Databases {
             ? Partial<Models.Document> & Record<string, any>
             : Partial<Models.Document> &
                   Partial<Omit<Document, keyof Models.Document>>;
-        permissions?: string[];
-        transactionId?: string;
+        permissions?: string[] | null;
+        transactionId?: string | null;
     }): Promise<Document>;
     /**
      * Create or update a Document. Before using this route, you should create a new collection resource using either a [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.
@@ -889,8 +1055,8 @@ export class Databases {
      * @param {string} collectionId - Collection ID.
      * @param {string} documentId - Document ID.
      * @param {Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>} data - Document data as JSON object. Include all required attributes of the document to be created or updated.
-     * @param {string[]} permissions - An array of permissions strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).
-     * @param {string} transactionId - Transaction ID for staging the operation.
+     * @param {string[] | null} permissions - An array of permissions strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).
+     * @param {string | null} transactionId - Transaction ID for staging the operation.
      * @throws {AppwriteException}
      * @returns {Promise<Document>}
      * @deprecated Use the object parameter style method for a better developer experience.
@@ -903,8 +1069,8 @@ export class Databases {
             ? Partial<Models.Document> & Record<string, any>
             : Partial<Models.Document> &
                   Partial<Omit<Document, keyof Models.Document>>,
-        permissions?: string[],
-        transactionId?: string,
+        permissions?: string[] | null,
+        transactionId?: string | null,
     ): Promise<Document>;
     upsertDocument<Document extends Models.Document = Models.DefaultDocument>(
         paramsOrFirst:
@@ -916,8 +1082,8 @@ export class Databases {
                       ? Partial<Models.Document> & Record<string, any>
                       : Partial<Models.Document> &
                             Partial<Omit<Document, keyof Models.Document>>;
-                  permissions?: string[];
-                  transactionId?: string;
+                  permissions?: string[] | null;
+                  transactionId?: string | null;
               }
             | string,
         ...rest: [
@@ -927,8 +1093,8 @@ export class Databases {
                 ? Partial<Models.Document> & Record<string, any>
                 : Partial<Models.Document> &
                       Partial<Omit<Document, keyof Models.Document>>)?,
-            string[]?,
-            string?,
+            (string[] | null)?,
+            (string | null)?,
         ]
     ): Promise<Document> {
         let params: {
@@ -939,8 +1105,8 @@ export class Databases {
                 ? Partial<Models.Document> & Record<string, any>
                 : Partial<Models.Document> &
                       Partial<Omit<Document, keyof Models.Document>>;
-            permissions?: string[];
-            transactionId?: string;
+            permissions?: string[] | null;
+            transactionId?: string | null;
         };
 
         if (
@@ -956,8 +1122,8 @@ export class Databases {
                     ? Partial<Models.Document> & Record<string, any>
                     : Partial<Models.Document> &
                           Partial<Omit<Document, keyof Models.Document>>;
-                permissions?: string[];
-                transactionId?: string;
+                permissions?: string[] | null;
+                transactionId?: string | null;
             };
         } else {
             params = {
@@ -968,8 +1134,8 @@ export class Databases {
                     ? Partial<Models.Document> & Record<string, any>
                     : Partial<Models.Document> &
                           Partial<Omit<Document, keyof Models.Document>>,
-                permissions: rest[3] as string[],
-                transactionId: rest[4] as string,
+                permissions: rest[3] as string[] | null,
+                transactionId: rest[4] as string | null,
             };
         }
 
@@ -1024,7 +1190,25 @@ export class Databases {
             accept: 'application/json',
         };
 
-        return this.client.call('put', uri, apiHeaders, apiPayload);
+        const request = this.client.call('put', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'document',
+            models: {
+                document: {
+                    defaults: {
+                        $id: '',
+                        $sequence: '',
+                        $collectionId: '',
+                        $databaseId: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        $permissions: [],
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -1034,8 +1218,8 @@ export class Databases {
      * @param {string} params.collectionId - Collection ID.
      * @param {string} params.documentId - Document ID.
      * @param {Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>} params.data - Document data as JSON object. Include only attribute and value pairs to be updated.
-     * @param {string[]} params.permissions - An array of permissions strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).
-     * @param {string} params.transactionId - Transaction ID for staging the operation.
+     * @param {string[] | null} params.permissions - An array of permissions strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).
+     * @param {string | null} params.transactionId - Transaction ID for staging the operation.
      * @throws {AppwriteException}
      * @returns {Promise<Document>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.updateRow` instead.
@@ -1050,8 +1234,8 @@ export class Databases {
             ? Partial<Models.Document> & Record<string, any>
             : Partial<Models.Document> &
                   Partial<Omit<Document, keyof Models.Document>>;
-        permissions?: string[];
-        transactionId?: string;
+        permissions?: string[] | null;
+        transactionId?: string | null;
     }): Promise<Document>;
     /**
      * Update a document by its unique ID. Using the patch method you can pass only specific fields that will get updated.
@@ -1060,8 +1244,8 @@ export class Databases {
      * @param {string} collectionId - Collection ID.
      * @param {string} documentId - Document ID.
      * @param {Document extends Models.DefaultDocument ? Partial<Models.Document> & Record<string, any> : Partial<Models.Document> & Partial<Omit<Document, keyof Models.Document>>} data - Document data as JSON object. Include only attribute and value pairs to be updated.
-     * @param {string[]} permissions - An array of permissions strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).
-     * @param {string} transactionId - Transaction ID for staging the operation.
+     * @param {string[] | null} permissions - An array of permissions strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).
+     * @param {string | null} transactionId - Transaction ID for staging the operation.
      * @throws {AppwriteException}
      * @returns {Promise<Document>}
      * @deprecated Use the object parameter style method for a better developer experience.
@@ -1074,8 +1258,8 @@ export class Databases {
             ? Partial<Models.Document> & Record<string, any>
             : Partial<Models.Document> &
                   Partial<Omit<Document, keyof Models.Document>>,
-        permissions?: string[],
-        transactionId?: string,
+        permissions?: string[] | null,
+        transactionId?: string | null,
     ): Promise<Document>;
     updateDocument<Document extends Models.Document = Models.DefaultDocument>(
         paramsOrFirst:
@@ -1087,8 +1271,8 @@ export class Databases {
                       ? Partial<Models.Document> & Record<string, any>
                       : Partial<Models.Document> &
                             Partial<Omit<Document, keyof Models.Document>>;
-                  permissions?: string[];
-                  transactionId?: string;
+                  permissions?: string[] | null;
+                  transactionId?: string | null;
               }
             | string,
         ...rest: [
@@ -1098,8 +1282,8 @@ export class Databases {
                 ? Partial<Models.Document> & Record<string, any>
                 : Partial<Models.Document> &
                       Partial<Omit<Document, keyof Models.Document>>)?,
-            string[]?,
-            string?,
+            (string[] | null)?,
+            (string | null)?,
         ]
     ): Promise<Document> {
         let params: {
@@ -1110,8 +1294,8 @@ export class Databases {
                 ? Partial<Models.Document> & Record<string, any>
                 : Partial<Models.Document> &
                       Partial<Omit<Document, keyof Models.Document>>;
-            permissions?: string[];
-            transactionId?: string;
+            permissions?: string[] | null;
+            transactionId?: string | null;
         };
 
         if (
@@ -1127,8 +1311,8 @@ export class Databases {
                     ? Partial<Models.Document> & Record<string, any>
                     : Partial<Models.Document> &
                           Partial<Omit<Document, keyof Models.Document>>;
-                permissions?: string[];
-                transactionId?: string;
+                permissions?: string[] | null;
+                transactionId?: string | null;
             };
         } else {
             params = {
@@ -1139,8 +1323,8 @@ export class Databases {
                     ? Partial<Models.Document> & Record<string, any>
                     : Partial<Models.Document> &
                           Partial<Omit<Document, keyof Models.Document>>,
-                permissions: rest[3] as string[],
-                transactionId: rest[4] as string,
+                permissions: rest[3] as string[] | null,
+                transactionId: rest[4] as string | null,
             };
         }
 
@@ -1195,7 +1379,25 @@ export class Databases {
             accept: 'application/json',
         };
 
-        return this.client.call('patch', uri, apiHeaders, apiPayload);
+        const request = this.client.call('patch', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'document',
+            models: {
+                document: {
+                    defaults: {
+                        $id: '',
+                        $sequence: '',
+                        $collectionId: '',
+                        $databaseId: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        $permissions: [],
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -1324,8 +1526,8 @@ export class Databases {
      * @param {string} params.documentId - Document ID.
      * @param {string} params.attribute - Attribute key.
      * @param {number} params.value - Value to increment the attribute by. The value must be a number.
-     * @param {number} params.min - Minimum value for the attribute. If the current value is lesser than this value, an exception will be thrown.
-     * @param {string} params.transactionId - Transaction ID for staging the operation.
+     * @param {number | null} params.min - Minimum value for the attribute. If the current value is lesser than this value, an exception will be thrown.
+     * @param {string | null} params.transactionId - Transaction ID for staging the operation.
      * @throws {AppwriteException}
      * @returns {Promise<Document>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.decrementRowColumn` instead.
@@ -1338,8 +1540,8 @@ export class Databases {
         documentId: string;
         attribute: string;
         value?: number;
-        min?: number;
-        transactionId?: string;
+        min?: number | null;
+        transactionId?: string | null;
     }): Promise<Document>;
     /**
      * Decrement a specific attribute of a document by a given value.
@@ -1349,8 +1551,8 @@ export class Databases {
      * @param {string} documentId - Document ID.
      * @param {string} attribute - Attribute key.
      * @param {number} value - Value to increment the attribute by. The value must be a number.
-     * @param {number} min - Minimum value for the attribute. If the current value is lesser than this value, an exception will be thrown.
-     * @param {string} transactionId - Transaction ID for staging the operation.
+     * @param {number | null} min - Minimum value for the attribute. If the current value is lesser than this value, an exception will be thrown.
+     * @param {string | null} transactionId - Transaction ID for staging the operation.
      * @throws {AppwriteException}
      * @returns {Promise<Document>}
      * @deprecated Use the object parameter style method for a better developer experience.
@@ -1363,8 +1565,8 @@ export class Databases {
         documentId: string,
         attribute: string,
         value?: number,
-        min?: number,
-        transactionId?: string,
+        min?: number | null,
+        transactionId?: string | null,
     ): Promise<Document>;
     decrementDocumentAttribute<
         Document extends Models.Document = Models.DefaultDocument,
@@ -1376,11 +1578,18 @@ export class Databases {
                   documentId: string;
                   attribute: string;
                   value?: number;
-                  min?: number;
-                  transactionId?: string;
+                  min?: number | null;
+                  transactionId?: string | null;
               }
             | string,
-        ...rest: [string?, string?, string?, number?, number?, string?]
+        ...rest: [
+            string?,
+            string?,
+            string?,
+            number?,
+            (number | null)?,
+            (string | null)?,
+        ]
     ): Promise<Document> {
         let params: {
             databaseId: string;
@@ -1388,8 +1597,8 @@ export class Databases {
             documentId: string;
             attribute: string;
             value?: number;
-            min?: number;
-            transactionId?: string;
+            min?: number | null;
+            transactionId?: string | null;
         };
 
         if (
@@ -1403,8 +1612,8 @@ export class Databases {
                 documentId: string;
                 attribute: string;
                 value?: number;
-                min?: number;
-                transactionId?: string;
+                min?: number | null;
+                transactionId?: string | null;
             };
         } else {
             params = {
@@ -1413,8 +1622,8 @@ export class Databases {
                 documentId: rest[1] as string,
                 attribute: rest[2] as string,
                 value: rest[3] as number,
-                min: rest[4] as number,
-                transactionId: rest[5] as string,
+                min: rest[4] as number | null,
+                transactionId: rest[5] as string | null,
             };
         }
 
@@ -1473,7 +1682,25 @@ export class Databases {
             accept: 'application/json',
         };
 
-        return this.client.call('patch', uri, apiHeaders, apiPayload);
+        const request = this.client.call('patch', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'document',
+            models: {
+                document: {
+                    defaults: {
+                        $id: '',
+                        $sequence: '',
+                        $collectionId: '',
+                        $databaseId: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        $permissions: [],
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 
     /**
@@ -1484,8 +1711,8 @@ export class Databases {
      * @param {string} params.documentId - Document ID.
      * @param {string} params.attribute - Attribute key.
      * @param {number} params.value - Value to increment the attribute by. The value must be a number.
-     * @param {number} params.max - Maximum value for the attribute. If the current value is greater than this value, an error will be thrown.
-     * @param {string} params.transactionId - Transaction ID for staging the operation.
+     * @param {number | null} params.max - Maximum value for the attribute. If the current value is greater than this value, an error will be thrown.
+     * @param {string | null} params.transactionId - Transaction ID for staging the operation.
      * @throws {AppwriteException}
      * @returns {Promise<Document>}
      * @deprecated This API has been deprecated since 1.8.0. Please use `TablesDB.incrementRowColumn` instead.
@@ -1498,8 +1725,8 @@ export class Databases {
         documentId: string;
         attribute: string;
         value?: number;
-        max?: number;
-        transactionId?: string;
+        max?: number | null;
+        transactionId?: string | null;
     }): Promise<Document>;
     /**
      * Increment a specific attribute of a document by a given value.
@@ -1509,8 +1736,8 @@ export class Databases {
      * @param {string} documentId - Document ID.
      * @param {string} attribute - Attribute key.
      * @param {number} value - Value to increment the attribute by. The value must be a number.
-     * @param {number} max - Maximum value for the attribute. If the current value is greater than this value, an error will be thrown.
-     * @param {string} transactionId - Transaction ID for staging the operation.
+     * @param {number | null} max - Maximum value for the attribute. If the current value is greater than this value, an error will be thrown.
+     * @param {string | null} transactionId - Transaction ID for staging the operation.
      * @throws {AppwriteException}
      * @returns {Promise<Document>}
      * @deprecated Use the object parameter style method for a better developer experience.
@@ -1523,8 +1750,8 @@ export class Databases {
         documentId: string,
         attribute: string,
         value?: number,
-        max?: number,
-        transactionId?: string,
+        max?: number | null,
+        transactionId?: string | null,
     ): Promise<Document>;
     incrementDocumentAttribute<
         Document extends Models.Document = Models.DefaultDocument,
@@ -1536,11 +1763,18 @@ export class Databases {
                   documentId: string;
                   attribute: string;
                   value?: number;
-                  max?: number;
-                  transactionId?: string;
+                  max?: number | null;
+                  transactionId?: string | null;
               }
             | string,
-        ...rest: [string?, string?, string?, number?, number?, string?]
+        ...rest: [
+            string?,
+            string?,
+            string?,
+            number?,
+            (number | null)?,
+            (string | null)?,
+        ]
     ): Promise<Document> {
         let params: {
             databaseId: string;
@@ -1548,8 +1782,8 @@ export class Databases {
             documentId: string;
             attribute: string;
             value?: number;
-            max?: number;
-            transactionId?: string;
+            max?: number | null;
+            transactionId?: string | null;
         };
 
         if (
@@ -1563,8 +1797,8 @@ export class Databases {
                 documentId: string;
                 attribute: string;
                 value?: number;
-                max?: number;
-                transactionId?: string;
+                max?: number | null;
+                transactionId?: string | null;
             };
         } else {
             params = {
@@ -1573,8 +1807,8 @@ export class Databases {
                 documentId: rest[1] as string,
                 attribute: rest[2] as string,
                 value: rest[3] as number,
-                max: rest[4] as number,
-                transactionId: rest[5] as string,
+                max: rest[4] as number | null,
+                transactionId: rest[5] as string | null,
             };
         }
 
@@ -1633,6 +1867,24 @@ export class Databases {
             accept: 'application/json',
         };
 
-        return this.client.call('patch', uri, apiHeaders, apiPayload);
+        const request = this.client.call('patch', uri, apiHeaders, apiPayload);
+        const defaults = {
+            root: 'document',
+            models: {
+                document: {
+                    defaults: {
+                        $id: '',
+                        $sequence: '',
+                        $collectionId: '',
+                        $databaseId: '',
+                        $createdAt: '',
+                        $updatedAt: '',
+                        $permissions: [],
+                    },
+                },
+            },
+        };
+
+        return request.then((response) => applyDefaults(response, defaults));
     }
 }

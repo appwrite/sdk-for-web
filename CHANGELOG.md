@@ -1,42 +1,36 @@
 # Change Log
 
+## 29.0.0
 
-## 28.2.0-rc.7
+* Breaking: requests send `X-Appwrite-Response-Format: 2.5.0`; responses follow the 2.5 shapes
+* Breaking: missing response fields are filled with their documented defaults
+* Breaking: `oauth2` `resource` params now take `string[]` on `authorize`, `authorizePost`, `createDeviceAuthorization`, `createPAR` and `createToken`
+* Breaking: nullable model fields are typed `T | null`, such as `Locale.city`, `Presence.status` and `Execution.scheduledAt`
+* Added: `Push` service with `subscribe`, `unsubscribe`, `onNotificationOpened` and `close` for web push
+* Added: `Topic` helper
+* Added: `Query` aggregates (`count`, `countDistinct`, `sum`, `avg`, `min`, `max` and more), `groupBy`, `having`, `distinct`, joins, `relationship`, `covers`, `spatialEquals` and `page`
+* Added: `Query.builder()` to chain queries; realtime subscriptions accept a builder for `queries`
+* Added: `ExecutionTrigger.Email`
+* Updated: nullable request params accept `null`, such as `account.createEmailPasswordSession` `duration`
+* Fixed: list and object defaults filled into a response are copied per model, and object defaults are `{}` instead of `[]`
 
-* Added: `Analytics` service and the `Tracking` auto-tracking helper, which were missing from `28.2.0-rc.5` and `rc.6`
-* Changed: `Tracking` takes `new Analytics(client)` and a property id instead of an emitter callback; the adapter to `createEvent` now lives inside the SDK
-* Changed: `enableAllAutoTracking()` is now `start()`
-* Removed: `AnalyticsEventEmitter`; the option types are now `TrackingEventOptions` and `TrackingOptions`
+## 28.3.0
 
-## 28.2.0-rc.6
-
-* Added: `Push.onNotificationOpened()` fires when a user taps a shown notification
-* Added: `Push.getInitialNotification()` (returns `null` on web) and the `PushNotificationOpened` type
-* Added: tapping a push notification focuses then closes the page
-* Fixed: `subscribe()` resolves the signed-in user from `cookieFallback`, not just an explicit session
-* Fixed: background notifications de-duplicate by title, so each distinct title posts once
-* Updated: clearer error messages for missing credentials in push
-
-## 28.2.0-rc.5
-
-* Updated: regenerated with sdk-generator 5.5.0; no SDK code changes
-
-## 28.2.0-rc.3
-
-* Added: background push notifications render the server `notification` title, body, and image
-* Added: notification `data` now carries `topic` and `payload`
-* Fixed: a server-sent title dedupes to one notification per topic instead of one per subscription
-* Fixed: malformed push payloads no longer break notification rendering
-
-## 28.2.0-rc.2
-
-* Added: `Push` service for MQTT realtime push messages
-* Added: `Topic` and `ResolvedTopic` builders for push topic filters
-* Added: `Client.setPushEndpoint()` and `Client.setPushClientId()`
-* Added: `Avatars.deletePhoto()` method
-* Added: `Models.Account` type
+* Added: `analytics.createEvent` in a new `Analytics` service to send tracking events
+* Added: `Tracking` helper that auto-tracks pageviews, outbound links, downloads, scroll depth and engagement time
+* Added: `avatars.updatePhoto` and `avatars.deletePhoto` to manage the user's custom profile photo, and the `Account` model
 * Added: `Webflow` to the `OAuthProvider` enum
-* Updated: `Client.chunkedUpload()` accepts a `responseType`, supports `text`, and falls back without a file
+* Added: optional `state` on `account.createOAuth2Session` and `account.createOAuth2Token`, returned unchanged on the success and failure URLs
+* Added: optional `duration` on `account.createEmailPasswordSession` to set the session length
+* Added: optional `current` on `account.deleteSessions` to keep the current session signed in
+* Added: optional `membershipId` on `teams.createMembership`
+* Added: optional `total` on `account.listSessions`, the `locale` list methods and `listTransactions`
+
+## 28.2.0
+
+* Added: `account` passkey methods `listPasskeys`, `createPasskey`, `getPasskey`, `updatePasskey`, `deletePasskey` and `updatePasskeyVerification`
+* Added: `account.createPasskeyToken` and `account.updatePasskeyToken` for passkey sign-in
+* Added: `Passkey`, `PasskeyList`, `PasskeyChallenge` and `TokenSecret` models
 
 ## 28.1.0
 
@@ -249,5 +243,4 @@
 
 * Fix pong response & chunked upload
 * Add `ping` support to `Realtime` service
-
 

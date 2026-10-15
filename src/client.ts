@@ -1,6 +1,6 @@
 import { Models } from './models';
 import { Channel, ActionableChannel, ResolvedChannel } from './channel';
-import { Query } from './query';
+import { flattenParam, normalizeQueries, type QueryInput } from './query';
 import { ID } from './id';
 import JSONbigModule from 'json-bigint';
 const JSONbigParser = JSONbigModule({ storeAsString: false });
@@ -44,6 +44,79 @@ export const JSONbig = {
     parse: (text: string) => JSONbigParser.parse(text, reviver),
     stringify: JSONbigSerializer.stringify,
 };
+
+type DefaultsShape = string | { items: DefaultsShape };
+
+type DefaultsModel = {
+    defaults?: Record<string, unknown>;
+    properties?: Record<string, DefaultsShape>;
+};
+
+type Defaults = {
+    root: DefaultsShape;
+    models: Record<string, DefaultsModel>;
+};
+
+export function applyDefaults<T>(value: T, tree: Defaults): T {
+    return fillDefaults(value, tree.root, tree.models) as T;
+}
+
+function cloneDefault(value: unknown): unknown {
+    if (Array.isArray(value)) {
+        return value.map(cloneDefault);
+    }
+    if (typeof value === 'object' && value !== null) {
+        const copy: Record<string, unknown> = {};
+        for (const [key, member] of Object.entries(value)) {
+            copy[key] = cloneDefault(member);
+        }
+        return copy;
+    }
+    return value;
+}
+
+function fillDefaults(
+    value: unknown,
+    shape: DefaultsShape,
+    models: Record<string, DefaultsModel>,
+): unknown {
+    if (typeof shape !== 'string') {
+        if (!Array.isArray(value)) {
+            return value;
+        }
+        const items = shape.items;
+        return value.map((item) => fillDefaults(item, items, models));
+    }
+    const model = models[shape];
+    if (!model || typeof value !== 'object' || value === null) {
+        return value;
+    }
+    if (Array.isArray(value)) {
+        return value;
+    }
+    const result: Record<string, unknown> = { ...model.defaults, ...value };
+    // Each item gets its own copy of a filled-in list or object, so mutating one doesn't change the rest
+    for (const key of Object.keys(model.defaults ?? {})) {
+        if (!Object.prototype.hasOwnProperty.call(value, key)) {
+            result[key] = cloneDefault(result[key]);
+        }
+    }
+    for (const [key, child] of Object.entries(model.properties ?? {})) {
+        if (key in result) {
+            result[key] = fillDefaults(result[key], child, models);
+        }
+    }
+    // The spread drops the non-enumerable JSON toString that Client.call attaches.
+    if (Object.prototype.hasOwnProperty.call(value, 'toString')) {
+        Object.defineProperty(result, 'toString', {
+            value: () => JSONbig.stringify(result),
+            writable: true,
+            enumerable: false,
+            configurable: true,
+        });
+    }
+    return result;
+}
 
 /**
  * Payload type representing a key-value pair with string keys and any values.
@@ -401,8 +474,8 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '28.2.0-rc.7',
-        'X-Appwrite-Response-Format': '2.3.0',
+        'x-sdk-version': '29.0.0',
+        'X-Appwrite-Response-Format': '2.5.0',
     };
 
     /**
@@ -929,7 +1002,7 @@ class Client {
             | ResolvedChannel
             | (Channel<any> | ActionableChannel | ResolvedChannel)[],
         callback: (payload: RealtimeResponseEvent<T>) => void,
-        queries: (string | Query)[] = [],
+        queries: QueryInput = [],
     ): () => void {
         const channelArray = Array.isArray(channels) ? channels : [channels];
         // Convert Channel instances to strings
@@ -948,9 +1021,7 @@ class Client {
             this.realtime.channels.add(channel),
         );
 
-        const queryStrings = (queries ?? []).map((q) =>
-            typeof q === 'string' ? q : q.toString(),
-        );
+        const queryStrings = normalizeQueries(queries);
 
         let subscriptionId = '';
         const attempts = this.realtime.subscriptions.size + 1;
@@ -1002,6 +1073,10 @@ class Client {
         params: Payload = {},
     ): { uri: string; options: RequestInit } {
         method = method.toUpperCase();
+
+        for (const key of Object.keys(params)) {
+            params[key] = flattenParam(params[key]);
+        }
 
         headers = Object.assign({}, this.headers, headers);
 
@@ -1295,7 +1370,7 @@ class Client {
         }
 
         if (400 <= response.status) {
-            let responseText: string;
+            let responseText;
             if (
                 response.headers
                     .get('content-type')
@@ -1356,7 +1431,7 @@ class Client {
 }
 
 export { Client, AppwriteException };
-export { Query } from './query';
+export { Query, QueryBuilder, flattenParam } from './query';
 export type { Models, Payload, UploadProgress };
 export type { RealtimeResponseEvent };
-export type { QueryTypes, QueryTypesList } from './query';
+export type { QueryTypes, QueryTypesList, QueryInput } from './query';

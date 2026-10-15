@@ -6,7 +6,7 @@ import type {
 } from 'mqtt';
 
 import { Client } from '../client';
-import type { ResolvedTopic, Topic } from '../topic';
+import type { Topic } from '../topic';
 
 /** A message delivered on a subscribed topic (the MQTT analog of a Realtime event). */
 export interface PushMessage {
@@ -253,7 +253,7 @@ export class Push {
      * Subscribe to one or more topics. Resolves to a {@link PushSubscription} handle.
      *
      * Each topic is a string or a `Topic` builder, e.g.
-     * `Topic.path(['user', userId]).all()`.
+     * `Topic.path(['user', userId])`.
      *
      * Called with only a callback, `subscribe((message) => {...}, options)` subscribes to the
      * signed-in user's own topic, `users/<userId>`, like FCM/APNs delivery to a device. The
@@ -275,18 +275,12 @@ export class Push {
         options?: SubscribeOptions,
     ): Promise<PushSubscription>;
     subscribe(
-        topics:
-            string | Topic | ResolvedTopic | (string | Topic | ResolvedTopic)[],
+        topics: string | Topic | (string | Topic)[],
         callback: MessageCallback,
         options?: SubscribeOptions,
     ): Promise<PushSubscription>;
     async subscribe(
-        topicsOrCallback:
-            | string
-            | Topic
-            | ResolvedTopic
-            | (string | Topic | ResolvedTopic)[]
-            | MessageCallback,
+        topicsOrCallback: string | Topic | (string | Topic)[] | MessageCallback,
         callbackOrOptions?: MessageCallback | SubscribeOptions,
         topicOptions: SubscribeOptions = {},
     ): Promise<PushSubscription> {
@@ -303,12 +297,7 @@ export class Push {
     }
 
     private async subscribeWith(
-        topicsOrCallback:
-            | string
-            | Topic
-            | ResolvedTopic
-            | (string | Topic | ResolvedTopic)[]
-            | MessageCallback,
+        topicsOrCallback: string | Topic | (string | Topic)[] | MessageCallback,
         callbackOrOptions: MessageCallback | SubscribeOptions | undefined,
         topicOptions: SubscribeOptions,
     ): Promise<PushSubscription> {
@@ -884,22 +873,25 @@ export class Push {
         }
     }
 
-    /** Post a browser notification for a message a background subscription matched. */
+    /**
+     * Post a browser notification for a message a background subscription matched. A data-only
+     * message, an envelope without a notification title or body, posts none.
+     */
     private notify(
         message: PushMessage,
         title: string,
         content: NotificationContent,
     ): void {
         if (
+            !content.visible ||
             typeof Notification === 'undefined' ||
             Notification.permission !== 'granted'
         ) {
             return;
         }
-        const raw = !content.present;
         // `image` is not in the DOM typings, but Chromium-based browsers show it.
         const options: NotificationOptions & { image?: string } = {
-            body: content.body ?? (raw ? message.data : undefined),
+            body: content.body ?? (content.raw ? message.data : undefined),
             image: content.image,
             data: { topic: message.topic, payload: message.data },
         };
@@ -941,33 +933,51 @@ class SupersededError extends Error {
 
 /** What a message's `notification` block asks a background notification to show. */
 interface NotificationContent {
-    /** Whether the message has a `notification` block at all. */
-    present: boolean;
+    /** Whether the payload is not a JSON object, so it is shown as it is. */
+    raw: boolean;
+    /** Whether a notification is posted: raw, or an envelope with a title or body. */
+    visible: boolean;
     title?: string;
     body?: string;
     image?: string;
 }
 
-/** The server's `notification` block in a message; empty when the payload has none or is not JSON. */
-function notificationContent(message: PushMessage): NotificationContent {
-    let notification: unknown;
+/** The server's `notification` block in a payload, or null when the payload is not a JSON object. */
+function notificationBlock(data: string): Record<string, unknown> | null {
+    let envelope: unknown;
     try {
-        notification = (JSON.parse(message.data) as { notification?: unknown })
-            ?.notification;
+        envelope = JSON.parse(data);
     } catch {
-        return { present: false };
+        return null;
     }
-    if (typeof notification !== 'object' || notification === null) {
-        return { present: false };
+    if (
+        typeof envelope !== 'object' ||
+        envelope === null ||
+        Array.isArray(envelope)
+    ) {
+        return null;
     }
+    const notification = (envelope as { notification?: unknown }).notification;
+    return typeof notification === 'object' && notification !== null
+        ? (notification as Record<string, unknown>)
+        : {};
+}
+
+/** What a message asks a background notification to show; raw when it is not a JSON object. */
+function notificationContent(message: PushMessage): NotificationContent {
+    const block = notificationBlock(message.data);
+    const raw = block === null;
     const field = (name: string): string | undefined => {
-        const value = (notification as Record<string, unknown>)[name];
+        const value = block?.[name];
         return typeof value === 'string' && value !== '' ? value : undefined;
     };
+    const title = field('title');
+    const body = field('body');
     return {
-        present: true,
-        title: field('title'),
-        body: field('body'),
+        raw,
+        visible: raw || title !== undefined || body !== undefined,
+        title,
+        body,
         image: field('image'),
     };
 }

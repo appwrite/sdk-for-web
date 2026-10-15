@@ -1,13 +1,19 @@
 /**
  * Appwrite Web SDK
  *
- * This SDK targets Appwrite server version 2.3.x as shipped on Appwrite Cloud.
+ * This SDK targets Appwrite server version 2.5.x as shipped on Appwrite Cloud.
  * Self-hosted releases can lag behind Cloud — if you run an older self-hosted
  * build, use a matching older SDK from
  * [previous releases](https://github.com/appwrite/sdk-for-web/releases)
  * when APIs differ.
  */
-export { Client, Query, AppwriteException } from './client';
+export {
+    Client,
+    Query,
+    QueryBuilder,
+    flattenParam,
+    AppwriteException,
+} from './client';
 export { Account } from './services/account';
 export { Analytics } from './services/analytics';
 export { Apps } from './services/apps';
@@ -48,11 +54,11 @@ export type {
     TrackingEventOptions,
     TrackingOptions,
 } from './services/analytics-tracking';
-export type { QueryTypes, QueryTypesList } from './query';
+export type { QueryTypes, QueryTypesList, QueryInput } from './query';
 export { Permission } from './permission';
 export { Role } from './role';
 export { ID } from './id';
-export { Topic, ResolvedTopic } from './topic';
+export { Topic } from './topic';
 export { Channel } from './channel';
 export { Operator, Condition } from './operator';
 export { AuthenticatorType } from './enums/authenticator-type';

@@ -13,7 +13,7 @@ const result = await analytics.createEvent({
     url: 'https://example.com',
     domain: '<DOMAIN>', // optional
     referrer: '<REFERRER>', // optional
-    screenWidth: null, // optional
+    screenWidth: 0, // optional
     sessionHash: '<SESSION_HASH>', // optional
     scrollDepth: 0, // optional
     engagementTime: 0, // optional

@@ -213,6 +213,7 @@ export class Tracking {
                     name,
                     url: options.url ?? this.currentPageUrl(),
                     referrer: options.referrer,
+                    screenWidth: this.viewportWidth(),
                     scrollDepth: options.scrollDepth,
                     engagementTime: options.engagementTime,
                     // The endpoint takes props as a flat alternating key/value list.
@@ -634,6 +635,15 @@ export class Tracking {
             return '';
         }
         return window.location.href;
+    }
+
+    // The endpoint buckets this as viewport width in CSS pixels, so it is
+    // `innerWidth` rather than `screen.width` scaled by devicePixelRatio.
+    private viewportWidth(): number | undefined {
+        if (typeof window === 'undefined' || !window.innerWidth) {
+            return undefined;
+        }
+        return window.innerWidth;
     }
 
     private findAnchor(target: EventTarget | null): HTMLAnchorElement | null {

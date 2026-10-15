@@ -1,12 +1,12 @@
 # Appwrite Web SDK
 
 ![License](https://img.shields.io/github/license/appwrite/sdk-for-web.svg?style=flat-square)
-![Version](https://img.shields.io/badge/api%20version-2.3.0-blue.svg?style=flat-square)
+![Version](https://img.shields.io/badge/api%20version-2.5.0-blue.svg?style=flat-square)
 [![Build Status](https://img.shields.io/travis/com/appwrite/sdk-generator?style=flat-square)](https://travis-ci.com/appwrite/sdk-generator)
 [![Twitter Account](https://img.shields.io/twitter/follow/appwrite?color=00acee&label=twitter&style=flat-square)](https://twitter.com/appwrite)
 [![Discord](https://img.shields.io/discord/564160730845151244?label=discord&style=flat-square)](https://appwrite.io/discord)
 
-**This SDK targets Appwrite server version 2.3.x as shipped on Appwrite Cloud.** Self-hosted releases can lag behind Cloud — if you run an older self-hosted build, use a matching older SDK from [previous releases](https://github.com/appwrite/sdk-for-web/releases) when APIs differ.
+**This SDK targets Appwrite server version 2.5.x as shipped on Appwrite Cloud.** Self-hosted releases can lag behind Cloud — if you run an older self-hosted build, use a matching older SDK from [previous releases](https://github.com/appwrite/sdk-for-web/releases) when APIs differ.
 
 Appwrite is an open-source backend as a service server that abstracts and simplifies complex and repetitive development tasks behind a very simple to use REST API. Appwrite aims to help you develop your apps faster and in a more secure way. Use the Web SDK to integrate your app with the Appwrite server to easily start interacting with all of Appwrite backend APIs and tools. For full API documentation and tutorials go to [https://appwrite.io/docs](https://appwrite.io/docs)
 
@@ -33,7 +33,7 @@ import { Client, Account } from 'appwrite';
 To install with a CDN (content delivery network) add the following scripts to the bottom of your <body> tag, but before you use any Appwrite services:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/appwrite@28.2.0-rc.7"></script>
+<script src="https://cdn.jsdelivr.net/npm/appwrite@29.0.0"></script>
 ```
 
 ## Getting Started
@@ -66,7 +66,12 @@ Once your SDK object is set, access any of the Appwrite services and choose any 
 const account = new Account(client);
 
 // Register User
-account.create(ID.unique(), "email@example.com", "password", "Walter O'Brien")
+account.create({
+    userId: ID.unique(),
+    email: "email@example.com",
+    password: "password",
+    name: "Walter O'Brien"
+})
     .then(function (response) {
         console.log(response);
     }, function (error) {
@@ -89,7 +94,12 @@ client
 const account = new Account(client);
 
 // Register User
-account.create(ID.unique(), "email@example.com", "password", "Walter O'Brien")
+account.create({
+    userId: ID.unique(),
+    email: "email@example.com",
+    password: "password",
+    name: "Walter O'Brien"
+})
     .then(function (response) {
         console.log(response);
     }, function (error) {
@@ -99,11 +109,11 @@ account.create(ID.unique(), "email@example.com", "password", "Walter O'Brien")
 
 ### Type Safety with Models
 
-The Appwrite Web SDK provides type safety when working with database documents through generic methods. Methods like `listDocuments`, `getDocument`, and others accept a generic type parameter that allows you to specify your custom model type for full type safety.
+The Appwrite Web SDK provides type safety when working with table rows through generic methods. Methods like `listRows`, `getRow`, and others accept a generic type parameter that allows you to specify your custom model type for full type safety.
 
 **TypeScript:**
 ```typescript
-interface Book {
+interface Book extends Models.Row {
     name: string;
     author: string;
     releaseYear?: string;
@@ -112,15 +122,15 @@ interface Book {
     isCheckedOut: boolean;
 }
 
-const databases = new Databases(client);
+const tablesDB = new TablesDB(client);
 
 try {
-    const documents = await databases.listDocuments<Book>(
-        'your-database-id',
-        'your-collection-id'
-    );
+    const result = await tablesDB.listRows<Book>({
+        databaseId: 'your-database-id',
+        tableId: 'your-table-id'
+    });
     
-    documents.documents.forEach(book => {
+    result.rows.forEach(book => {
         console.log(`Book: ${book.name} by ${book.author}`); // Now you have full type safety
     });
 } catch (error) {
@@ -140,16 +150,16 @@ try {
  * @property {boolean} isCheckedOut
  */
 
-const databases = new Databases(client);
+const tablesDB = new TablesDB(client);
 
 try {
-    /** @type {Models.DocumentList<Book>} */
-    const documents = await databases.listDocuments(
-        'your-database-id',
-        'your-collection-id'
-    );
+    /** @type {Models.RowList<Book>} */
+    const result = await tablesDB.listRows({
+        databaseId: 'your-database-id',
+        tableId: 'your-table-id'
+    });
     
-    documents.documents.forEach(book => {
+    result.rows.forEach(book => {
         console.log(`Book: ${book.name} by ${book.author}`); // Type hints available in IDE
     });
 } catch (error) {
@@ -165,7 +175,12 @@ The Appwrite Web SDK raises an `AppwriteException` object with `message`, `code`
 
 ```javascript
 try {
-    const user = await account.create(ID.unique(), "email@example.com", "password", "Walter O'Brien");
+    const user = await account.create({
+    userId: ID.unique(),
+    email: "email@example.com",
+    password: "password",
+    name: "Walter O'Brien"
+});
     console.log('User created:', user);
 } catch (error) {
     console.error('Appwrite error:', error.message);

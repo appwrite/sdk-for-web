@@ -27,13 +27,41 @@ import { Client, Account } from 'appwrite';
 
 ### CDN
 
+Every release is published to `https://sdk.appwrite.io/web/29.1.0/`.
+
+#### ES modules
+
+Each service, helper and enum is its own module, so the browser downloads only what you import. A service is served under its name in kebab case, such as `TablesDB` from `tables-db.js`, and enums under `enums/`, such as `OAuthProvider` from `enums/o-auth-provider.js`. `index.js` re-exports everything, so importing it loads every service:
+
+```html
+<script type="module">
+    import { Client } from 'https://sdk.appwrite.io/web/29.1.0/client.js';
+    import { Account } from 'https://sdk.appwrite.io/web/29.1.0/account.js';
+    import { OAuthProvider } from 'https://sdk.appwrite.io/web/29.1.0/enums/o-auth-provider.js';
+</script>
+```
+
+#### Script tag
+
 Add the script before any code that uses the SDK. It exposes every export on the global `Appwrite` object:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/appwrite@29.0.0"></script>
+<script src="https://sdk.appwrite.io/web/29.1.0/sdk.min.js"></script>
 <script>
     const { Client, Account } = Appwrite;
 </script>
+```
+
+#### Subresource integrity
+
+`integrity.json` in the same directory maps each `.js` file to its `sha384-` hash. An `integrity` attribute checks only the file it is set on. `sdk.min.js` is a single file, so its hash as the `integrity` attribute, together with `crossorigin="anonymous"`, covers the whole SDK. ES modules import other modules and shared chunks, so supply their hashes through the `integrity` field of an import map to cover those too.
+
+#### jsDelivr
+
+The script tag build is also available from jsDelivr:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/appwrite@29.1.0"></script>
 ```
 
 ## Getting started

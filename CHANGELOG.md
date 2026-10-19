@@ -1,5 +1,14 @@
 # Change Log
 
+## 29.1.0
+
+* Added: `account.listMemberships` to list the current user's team memberships
+* Added: `createQuery` on `databases`, `tablesDB` and `documentsDB` to send list queries in the request body
+* Added: optional `bundleId` and `environment` on `account.createPushTarget` to route APNs tokens
+* Added: per-service ES modules and a minified script on `sdk.appwrite.io/web/<version>/`
+* Updated: `dist/iife/sdk.js` is minified, so CDN script tags load about half the bytes
+* Updated: requires Node.js 20 or later to build
+
 ## 29.0.0
 
 * Breaking: requests send `X-Appwrite-Response-Format: 2.5.0`; responses follow the 2.5 shapes

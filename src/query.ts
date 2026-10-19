@@ -726,7 +726,7 @@ export class Query {
             alias !== '' ? alias : undefined,
         ).toString();
 
-    /** Standard deviation of `attribute`, optionally aliased. */
+    /** Population standard deviation of `attribute` (the same as stddevPop), optionally aliased. */
     static stddev = (attribute: string, alias: string = ''): string =>
         new Query(
             'stddev',
@@ -750,7 +750,7 @@ export class Query {
             alias !== '' ? alias : undefined,
         ).toString();
 
-    /** Variance of `attribute`, optionally aliased. */
+    /** Population variance of `attribute` (the same as varPop), optionally aliased. */
     static variance = (attribute: string, alias: string = ''): string =>
         new Query(
             'variance',
@@ -824,7 +824,7 @@ export class Query {
         new Query('on', undefined, [left, operator, right]).toString();
 
     /**
-     * Inner join. `table` is the joined collection/table ID.
+     * Inner join. `table` is the joined collection/table ID; without an alias the server names the join after it, if the ID is a valid alias, and otherwise rejects the query.
      */
     static join = (
         table: string,
@@ -842,7 +842,7 @@ export class Query {
             alias,
         );
 
-    /** Left join. `table` is the joined collection/table ID. */
+    /** Left join. `table` is the joined collection/table ID; without an alias the server names the join after it, if the ID is a valid alias, and otherwise rejects the query. */
     static leftJoin = (
         table: string,
         leftOrAliasOrOn: string | string[],
@@ -859,7 +859,7 @@ export class Query {
             alias,
         );
 
-    /** Right join. `table` is the joined collection/table ID. */
+    /** Right join. `table` is the joined collection/table ID; without an alias the server names the join after it, if the ID is a valid alias, and otherwise rejects the query. */
     static rightJoin = (
         table: string,
         leftOrAliasOrOn: string | string[],
@@ -876,7 +876,7 @@ export class Query {
             alias,
         );
 
-    /** Full outer join. `table` is the joined collection/table ID. */
+    /** Full outer join. `table` is the joined collection/table ID; without an alias the server names the join after it, if the ID is a valid alias, and otherwise rejects the query. */
     static fullOuterJoin = (
         table: string,
         leftOrAliasOrOn: string | string[],
@@ -893,7 +893,7 @@ export class Query {
             alias,
         );
 
-    /** Cross join. `table` is the joined collection/table ID. */
+    /** Cross join. `table` is the joined collection/table ID; without an alias the server names the join after it, if the ID is a valid alias, and otherwise rejects the query. */
     static crossJoin = (table: string, alias: string = ''): string =>
         new Query(
             'crossJoin',

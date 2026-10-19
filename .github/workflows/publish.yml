@@ -10,7 +10,74 @@ permissions:
   contents: read
 
 jobs:
+  cdn:
+    if: github.event_name == 'release' || github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: cdn
+    permissions:
+      contents: read
+    env:
+      VERSION: ${{ github.event.release.tag_name || github.ref_name }}
+
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+    - name: Use Node.js
+      uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      with:
+        node-version: '24.14.1'
+
+    - name: Validate version
+      run: |
+        if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+          echo "::error::$VERSION is not a semantic version"
+          exit 1
+        fi
+        PACKAGE_VERSION=$(node -p "require('./package.json').version")
+        if [[ "$VERSION" != "$PACKAGE_VERSION" ]]; then
+          echo "::error::$VERSION does not match package.json version $PACKAGE_VERSION"
+          exit 1
+        fi
+
+    - name: Install dependencies, audit, and build
+      run: |
+        npm ci
+        npm audit --audit-level=high --omit=dev
+        npm run build:cdn
+
+    - name: Write integrity hashes
+      run: |
+        node --input-type=module <<'EOF'
+        import { createHash } from 'node:crypto';
+        import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
+
+        const root = 'dist/cdn';
+        const integrity = Object.fromEntries(
+          readdirSync(root, { recursive: true })
+            .filter((path) => path.endsWith('.js'))
+            .sort()
+            .map((path) => [path, 'sha384-' + createHash('sha384').update(readFileSync(`${root}/${path}`)).digest('base64')]),
+        );
+        writeFileSync(`${root}/integrity.json`, JSON.stringify(integrity, null, 2) + '\n');
+        EOF
+
+    - name: Upload to the CDN
+      uses: docker://rclone/rclone@sha256:45401ad7410db1d67ffdb58e19059ad20b0d8e0285a60e38bbec55cc1019c7a5 # 1.75.1
+      with:
+        args: 'copy dist/cdn r2:appwrite-sdk/web/${{ env.VERSION }} --immutable --checksum --header-upload "Cache-Control: public, max-age=31536000, immutable"'
+      env:
+        RCLONE_CONFIG_R2_TYPE: s3
+        RCLONE_CONFIG_R2_PROVIDER: Cloudflare
+        RCLONE_CONFIG_R2_ENDPOINT: ${{ vars.R2_ENDPOINT }}
+        RCLONE_CONFIG_R2_REGION: auto
+        RCLONE_CONFIG_R2_NO_CHECK_BUCKET: 'true'
+        RCLONE_CONFIG_R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+        RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+
   publish:
+    needs: cdn
+    if: ${{ !failure() && !cancelled() }}
     runs-on: ubuntu-latest
 
     steps:
@@ -27,8 +94,10 @@ jobs:
 
     - name: Determine release tag
       id: release_tag
+      env:
+        REF: ${{ github.ref }}
       run: |
-        if [[ "${{ github.ref }}" == *"-rc"* ]] || [[ "${{ github.ref }}" == *"-RC"* ]]; then
+        if [[ "$REF" == *"-rc"* ]] || [[ "$REF" == *"-RC"* ]]; then
           echo "tag=next" >> "$GITHUB_OUTPUT"
         else
           echo "tag=latest" >> "$GITHUB_OUTPUT"

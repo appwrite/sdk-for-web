@@ -3,6 +3,7 @@ import {
     Client,
     type Payload,
     applyDefaults,
+    encodePath,
 } from '../client';
 import type { Models } from '../models';
 
@@ -251,7 +252,7 @@ export class Organization {
         }
         const apiPath = '/organization/installations/{installationId}'.replace(
             '{installationId}',
-            encodeURIComponent(String(installationId)),
+            encodePath(installationId),
         );
         const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
@@ -346,7 +347,7 @@ export class Organization {
         }
         const apiPath = '/organization/installations/{installationId}'.replace(
             '{installationId}',
-            encodeURIComponent(String(installationId)),
+            encodePath(installationId),
         );
         const apiPayload: Payload = {};
         if (typeof authorizationDetails !== 'undefined') {
@@ -426,7 +427,7 @@ export class Organization {
         }
         const apiPath = '/organization/installations/{installationId}'.replace(
             '{installationId}',
-            encodeURIComponent(String(installationId)),
+            encodePath(installationId),
         );
         const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);

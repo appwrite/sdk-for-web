@@ -706,6 +706,7 @@ export class Push {
             clean: false, // always keep the session so the broker can replay QoS-1 topics
             keepalive: KEEP_ALIVE_SECONDS,
             reconnectPeriod: RECONNECT_PERIOD_MS,
+            reconnectOnConnackError: true,
             manualConnect: true,
             // Enhanced auth carried in CONNECT properties.
             properties: {

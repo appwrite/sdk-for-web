@@ -3,6 +3,7 @@ import {
     Client,
     type Payload,
     applyDefaults,
+    encodePath,
 } from '../client';
 import type { Models } from '../models';
 
@@ -80,7 +81,7 @@ export class Functions {
         }
         const apiPath = '/functions/{functionId}/executions'.replace(
             '{functionId}',
-            encodeURIComponent(String(functionId)),
+            encodePath(functionId),
         );
         const apiPayload: Payload = {};
         if (typeof queries !== 'undefined') {
@@ -268,7 +269,7 @@ export class Functions {
         }
         const apiPath = '/functions/{functionId}/executions'.replace(
             '{functionId}',
-            encodeURIComponent(String(functionId)),
+            encodePath(functionId),
         );
         const apiPayload: Payload = {};
         if (typeof body !== 'undefined') {
@@ -402,8 +403,8 @@ export class Functions {
             );
         }
         const apiPath = '/functions/{functionId}/executions/{executionId}'
-            .replace('{functionId}', encodeURIComponent(String(functionId)))
-            .replace('{executionId}', encodeURIComponent(String(executionId)));
+            .replace('{functionId}', encodePath(functionId))
+            .replace('{executionId}', encodePath(executionId));
         const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 

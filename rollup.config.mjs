@@ -25,8 +25,8 @@ const minify = (ecma, options = {}) =>
         ...options,
     });
 
-const iife = (file, options, ecma) => ({
-    input: 'src/index.ts',
+const iife = (file, options, ecma, input = 'src/index.ts') => ({
+    input,
     plugins: browser(options),
     output: [
         {
@@ -73,7 +73,11 @@ const entries = (dir, prefix = '') =>
 
 const input = {};
 for (const [name, file] of [
-    ...entries('src').filter(([name]) => name !== 'models'),
+    // `tracker` is not an ES entry: a plain script tag loads it, so it ships
+    // as one self-contained file built by its own rule.
+    ...entries('src').filter(
+        ([name]) => name !== 'models' && name !== 'tracker',
+    ),
     ...entries('src/services'),
     ...entries('src/enums', 'enums/'),
 ]) {
@@ -99,6 +103,9 @@ const cdn = [
         },
     },
     iife('dist/cdn/sdk.min.js', modern, 2020),
+    // Every round trip before this one delays the first pageview, so the
+    // tracker inlines its dependencies instead of importing them.
+    iife('dist/cdn/tracker.js', modern, 2020, 'src/tracker.ts'),
 ];
 
 export default process.env.CDN ? cdn : libs;

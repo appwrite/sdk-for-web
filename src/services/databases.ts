@@ -3,6 +3,7 @@ import {
     Client,
     type Payload,
     applyDefaults,
+    encodePath,
 } from '../client';
 import type { Models } from '../models';
 
@@ -228,7 +229,7 @@ export class Databases {
         }
         const apiPath = '/databases/transactions/{transactionId}'.replace(
             '{transactionId}',
-            encodeURIComponent(String(transactionId)),
+            encodePath(transactionId),
         );
         const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
@@ -329,7 +330,7 @@ export class Databases {
         }
         const apiPath = '/databases/transactions/{transactionId}'.replace(
             '{transactionId}',
-            encodeURIComponent(String(transactionId)),
+            encodePath(transactionId),
         );
         const apiPayload: Payload = {};
         if (typeof commit !== 'undefined') {
@@ -410,7 +411,7 @@ export class Databases {
         }
         const apiPath = '/databases/transactions/{transactionId}'.replace(
             '{transactionId}',
-            encodeURIComponent(String(transactionId)),
+            encodePath(transactionId),
         );
         const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
@@ -484,7 +485,7 @@ export class Databases {
         const apiPath =
             '/databases/transactions/{transactionId}/operations'.replace(
                 '{transactionId}',
-                encodeURIComponent(String(transactionId)),
+                encodePath(transactionId),
             );
         const apiPayload: Payload = {};
         if (typeof operations !== 'undefined') {
@@ -521,7 +522,7 @@ export class Databases {
     /**
      * Get a list of all the user's documents in a given collection. You can use the query params to filter your results.
      *
-     * Documents returned by aggregate, groupBy or distinct queries hold only the attributes they select, group or aggregate, typed as a document types them, with a joined attribute named by its join alias (`alias.attribute`). They have no `$id`, `$sequence`, `$createdAt`, `$updatedAt`, `$permissions`, `$databaseId` or `$collectionId` unless they select or group it, and neither does a right or full join document that no document of this collection matched.
+     * Documents returned by aggregate, groupBy or distinct queries hold only the attributes they select, group or aggregate, typed as a document types them, with a joined attribute named by its join alias (`alias.attribute`). The response omits their `$id`, `$sequence`, `$createdAt`, `$updatedAt`, `$permissions`, `$databaseId` and `$collectionId` unless they select or group it, and those of a right or full join document that no document of this collection matched. SDK document models fill omitted system attributes with empty values.
      *
      * @param {string} params.databaseId - Database ID.
      * @param {string} params.collectionId - Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).
@@ -546,7 +547,7 @@ export class Databases {
     /**
      * Get a list of all the user's documents in a given collection. You can use the query params to filter your results.
      *
-     * Documents returned by aggregate, groupBy or distinct queries hold only the attributes they select, group or aggregate, typed as a document types them, with a joined attribute named by its join alias (`alias.attribute`). They have no `$id`, `$sequence`, `$createdAt`, `$updatedAt`, `$permissions`, `$databaseId` or `$collectionId` unless they select or group it, and neither does a right or full join document that no document of this collection matched.
+     * Documents returned by aggregate, groupBy or distinct queries hold only the attributes they select, group or aggregate, typed as a document types them, with a joined attribute named by its join alias (`alias.attribute`). The response omits their `$id`, `$sequence`, `$createdAt`, `$updatedAt`, `$permissions`, `$databaseId` and `$collectionId` unless they select or group it, and those of a right or full join document that no document of this collection matched. SDK document models fill omitted system attributes with empty values.
      *
      * @param {string} databaseId - Database ID.
      * @param {string} collectionId - Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).
@@ -631,11 +632,8 @@ export class Databases {
         }
         const apiPath =
             '/databases/{databaseId}/collections/{collectionId}/documents'
-                .replace('{databaseId}', encodeURIComponent(String(databaseId)))
-                .replace(
-                    '{collectionId}',
-                    encodeURIComponent(String(collectionId)),
-                );
+                .replace('{databaseId}', encodePath(databaseId))
+                .replace('{collectionId}', encodePath(collectionId));
         const apiPayload: Payload = {};
         if (typeof queries !== 'undefined') {
             apiPayload['queries'] = queries;
@@ -830,11 +828,8 @@ export class Databases {
         }
         const apiPath =
             '/databases/{databaseId}/collections/{collectionId}/documents'
-                .replace('{databaseId}', encodeURIComponent(String(databaseId)))
-                .replace(
-                    '{collectionId}',
-                    encodeURIComponent(String(collectionId)),
-                );
+                .replace('{databaseId}', encodePath(databaseId))
+                .replace('{collectionId}', encodePath(collectionId));
         const apiPayload: Payload = {};
         if (typeof documentId !== 'undefined') {
             apiPayload['documentId'] = documentId;
@@ -988,11 +983,8 @@ export class Databases {
         }
         const apiPath =
             '/databases/{databaseId}/collections/{collectionId}/documents/query'
-                .replace('{databaseId}', encodeURIComponent(String(databaseId)))
-                .replace(
-                    '{collectionId}',
-                    encodeURIComponent(String(collectionId)),
-                );
+                .replace('{databaseId}', encodePath(databaseId))
+                .replace('{collectionId}', encodePath(collectionId));
         const apiPayload: Payload = {};
         if (typeof queries !== 'undefined') {
             apiPayload['queries'] = queries;
@@ -1151,15 +1143,9 @@ export class Databases {
         }
         const apiPath =
             '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'
-                .replace('{databaseId}', encodeURIComponent(String(databaseId)))
-                .replace(
-                    '{collectionId}',
-                    encodeURIComponent(String(collectionId)),
-                )
-                .replace(
-                    '{documentId}',
-                    encodeURIComponent(String(documentId)),
-                );
+                .replace('{databaseId}', encodePath(databaseId))
+                .replace('{collectionId}', encodePath(collectionId))
+                .replace('{documentId}', encodePath(documentId));
         const apiPayload: Payload = {};
         if (typeof queries !== 'undefined') {
             apiPayload['queries'] = queries;
@@ -1336,15 +1322,9 @@ export class Databases {
         }
         const apiPath =
             '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'
-                .replace('{databaseId}', encodeURIComponent(String(databaseId)))
-                .replace(
-                    '{collectionId}',
-                    encodeURIComponent(String(collectionId)),
-                )
-                .replace(
-                    '{documentId}',
-                    encodeURIComponent(String(documentId)),
-                );
+                .replace('{databaseId}', encodePath(databaseId))
+                .replace('{collectionId}', encodePath(collectionId))
+                .replace('{documentId}', encodePath(documentId));
         const apiPayload: Payload = {};
         if (typeof data !== 'undefined') {
             apiPayload['data'] = data;
@@ -1525,15 +1505,9 @@ export class Databases {
         }
         const apiPath =
             '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'
-                .replace('{databaseId}', encodeURIComponent(String(databaseId)))
-                .replace(
-                    '{collectionId}',
-                    encodeURIComponent(String(collectionId)),
-                )
-                .replace(
-                    '{documentId}',
-                    encodeURIComponent(String(documentId)),
-                );
+                .replace('{databaseId}', encodePath(databaseId))
+                .replace('{collectionId}', encodePath(collectionId))
+                .replace('{documentId}', encodePath(documentId));
         const apiPayload: Payload = {};
         if (typeof data !== 'undefined') {
             apiPayload['data'] = data;
@@ -1667,15 +1641,9 @@ export class Databases {
         }
         const apiPath =
             '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'
-                .replace('{databaseId}', encodeURIComponent(String(databaseId)))
-                .replace(
-                    '{collectionId}',
-                    encodeURIComponent(String(collectionId)),
-                )
-                .replace(
-                    '{documentId}',
-                    encodeURIComponent(String(documentId)),
-                );
+                .replace('{databaseId}', encodePath(databaseId))
+                .replace('{collectionId}', encodePath(collectionId))
+                .replace('{documentId}', encodePath(documentId));
         const apiPayload: Payload = {};
         if (typeof transactionId !== 'undefined') {
             apiPayload['transactionId'] = transactionId;
@@ -1830,13 +1798,10 @@ export class Databases {
         }
         const apiPath =
             '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}/{attribute}/decrement'
-                .replace('{databaseId}', encodeURIComponent(String(databaseId)))
-                .replace(
-                    '{collectionId}',
-                    encodeURIComponent(String(collectionId)),
-                )
-                .replace('{documentId}', encodeURIComponent(String(documentId)))
-                .replace('{attribute}', encodeURIComponent(String(attribute)));
+                .replace('{databaseId}', encodePath(databaseId))
+                .replace('{collectionId}', encodePath(collectionId))
+                .replace('{documentId}', encodePath(documentId))
+                .replace('{attribute}', encodePath(attribute));
         const apiPayload: Payload = {};
         if (typeof value !== 'undefined') {
             apiPayload['value'] = value;
@@ -2015,13 +1980,10 @@ export class Databases {
         }
         const apiPath =
             '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}/{attribute}/increment'
-                .replace('{databaseId}', encodeURIComponent(String(databaseId)))
-                .replace(
-                    '{collectionId}',
-                    encodeURIComponent(String(collectionId)),
-                )
-                .replace('{documentId}', encodeURIComponent(String(documentId)))
-                .replace('{attribute}', encodeURIComponent(String(attribute)));
+                .replace('{databaseId}', encodePath(databaseId))
+                .replace('{collectionId}', encodePath(collectionId))
+                .replace('{documentId}', encodePath(documentId))
+                .replace('{attribute}', encodePath(attribute));
         const apiPayload: Payload = {};
         if (typeof value !== 'undefined') {
             apiPayload['value'] = value;

@@ -429,6 +429,14 @@ class AppwriteException extends Error {
     }
 }
 
+export function encodePath(value: unknown): string {
+    const segment = String(value);
+    if (segment === '.' || segment === '..') {
+        throw new AppwriteException('Path parameter cannot be "." or ".."');
+    }
+    return encodeURIComponent(segment);
+}
+
 /**
  * Client that handles requests to Appwrite
  */
@@ -474,8 +482,8 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '29.1.0',
-        'X-Appwrite-Response-Format': '2.5.0',
+        'x-sdk-version': '29.2.0',
+        'X-Appwrite-Response-Format': '2.6.2',
     };
 
     /**

@@ -3,6 +3,7 @@ import {
     Client,
     type Payload,
     applyDefaults,
+    encodePath,
 } from '../client';
 import type { Models } from '../models';
 
@@ -89,7 +90,7 @@ export class Messaging {
         }
         const apiPath = '/messaging/topics/{topicId}/subscribers'.replace(
             '{topicId}',
-            encodeURIComponent(String(topicId)),
+            encodePath(topicId),
         );
         const apiPayload: Payload = {};
         if (typeof subscriberId !== 'undefined') {
@@ -186,11 +187,8 @@ export class Messaging {
             );
         }
         const apiPath = '/messaging/topics/{topicId}/subscribers/{subscriberId}'
-            .replace('{topicId}', encodeURIComponent(String(topicId)))
-            .replace(
-                '{subscriberId}',
-                encodeURIComponent(String(subscriberId)),
-            );
+            .replace('{topicId}', encodePath(topicId))
+            .replace('{subscriberId}', encodePath(subscriberId));
         const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 

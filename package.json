@@ -2,7 +2,7 @@
     "name": "appwrite",
     "homepage": "https://appwrite.io/support",
     "description": "Appwrite is an open-source self-hosted backend server that abstracts and simplifies complex and repetitive development tasks behind a very simple REST API",
-    "version": "29.1.0",
+    "version": "29.2.0",
     "license": "BSD-3-Clause",
     "main": "dist/cjs/sdk.js",
     "exports": {
@@ -41,7 +41,7 @@
     "dependencies": {
         "buffer": "6.0.3",
         "json-bigint": "1.0.0",
-        "mqtt": "5.15.2"
+        "mqtt": "5.16.1"
     },
     "devDependencies": {
         "@eslint/js": "10.0.1",
@@ -50,15 +50,15 @@
         "@rollup/plugin-terser": "1.0.0",
         "@rollup/plugin-typescript": "12.3.0",
         "@types/json-bigint": "1.0.4",
-        "eslint": "10.10.0",
+        "eslint": "10.13.0",
         "playwright": "1.56.1",
-        "prettier": "3.9.6",
-        "rollup": "4.63.2",
+        "prettier": "3.9.10",
+        "rollup": "4.64.10",
         "rollup-plugin-polyfill-node": "0.13.0",
         "serve-handler": "6.1.7",
         "tslib": "2.8.1",
         "typescript": "5.9.3",
-        "typescript-eslint": "8.70.0"
+        "typescript-eslint": "8.71.2"
     },
     "overrides": {
         "brace-expansion": "5.0.12"

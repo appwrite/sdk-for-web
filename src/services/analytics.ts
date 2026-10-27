@@ -1,4 +1,4 @@
-import { AppwriteException, Client, type Payload } from '../client';
+import { AppwriteException, Client, type Payload, encodePath } from '../client';
 
 export class Analytics {
     client: Client;
@@ -11,7 +11,7 @@ export class Analytics {
      * Send a tracking event from a browser, native app, or server-side SDK.
      *
      * @param {string} params.propertyId - Analytics property ID.
-     * @param {string} params.name - Event name. "pageview" is just a conventional event name; events are not modeled specially.
+     * @param {string} params.name - Event name. "pageview" and "screen_view" are counted as views, every other name is a custom event.
      * @param {string} params.url - Full page URL or screen identifier.
      * @param {string} params.domain - Hostname (e.g. example.com).
      * @param {string} params.referrer - Referrer URL.
@@ -45,7 +45,7 @@ export class Analytics {
      * Send a tracking event from a browser, native app, or server-side SDK.
      *
      * @param {string} propertyId - Analytics property ID.
-     * @param {string} name - Event name. "pageview" is just a conventional event name; events are not modeled specially.
+     * @param {string} name - Event name. "pageview" and "screen_view" are counted as views, every other name is a custom event.
      * @param {string} url - Full page URL or screen identifier.
      * @param {string} domain - Hostname (e.g. example.com).
      * @param {string} referrer - Referrer URL.
@@ -190,7 +190,7 @@ export class Analytics {
         }
         const apiPath = '/analytics/properties/{propertyId}/events'.replace(
             '{propertyId}',
-            encodeURIComponent(String(propertyId)),
+            encodePath(propertyId),
         );
         const apiPayload: Payload = {};
         if (typeof name !== 'undefined') {

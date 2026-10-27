@@ -1,5 +1,12 @@
 # Change Log
 
+## 29.2.0
+
+* Updated: requests send `X-Appwrite-Response-Format: 2.6.2`; the SDK targets Appwrite 2.6.x
+* Updated: `mqtt` dependency to `5.16.1`; `Push` keeps reconnecting after the broker rejects a connection
+* Fixed: path parameters `.` and `..` throw `AppwriteException` instead of changing the request URL
+* Fixed: examples leave unset optional params `undefined` instead of passing empty strings
+
 ## 29.1.0
 
 * Added: `account.listMemberships` to list the current user's team memberships

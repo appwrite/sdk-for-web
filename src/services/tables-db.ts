@@ -3,6 +3,7 @@ import {
     Client,
     type Payload,
     applyDefaults,
+    encodePath,
 } from '../client';
 import type { Models } from '../models';
 
@@ -225,7 +226,7 @@ export class TablesDB {
         }
         const apiPath = '/tablesdb/transactions/{transactionId}'.replace(
             '{transactionId}',
-            encodeURIComponent(String(transactionId)),
+            encodePath(transactionId),
         );
         const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
@@ -325,7 +326,7 @@ export class TablesDB {
         }
         const apiPath = '/tablesdb/transactions/{transactionId}'.replace(
             '{transactionId}',
-            encodeURIComponent(String(transactionId)),
+            encodePath(transactionId),
         );
         const apiPayload: Payload = {};
         if (typeof commit !== 'undefined') {
@@ -405,7 +406,7 @@ export class TablesDB {
         }
         const apiPath = '/tablesdb/transactions/{transactionId}'.replace(
             '{transactionId}',
-            encodeURIComponent(String(transactionId)),
+            encodePath(transactionId),
         );
         const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
@@ -478,7 +479,7 @@ export class TablesDB {
         const apiPath =
             '/tablesdb/transactions/{transactionId}/operations'.replace(
                 '{transactionId}',
-                encodeURIComponent(String(transactionId)),
+                encodePath(transactionId),
             );
         const apiPayload: Payload = {};
         if (typeof operations !== 'undefined') {
@@ -515,7 +516,7 @@ export class TablesDB {
     /**
      * Get a list of all the user's rows in a given table. You can use the query params to filter your results.
      *
-     * Rows returned by aggregate, groupBy or distinct queries hold only the columns they select, group or aggregate, typed as a row types them, with a joined column named by its join alias (`alias.column`). They have no `$id`, `$sequence`, `$createdAt`, `$updatedAt`, `$permissions`, `$databaseId` or `$tableId` unless they select or group it, and neither does a right or full join row that no row of this table matched.
+     * Rows returned by aggregate, groupBy or distinct queries hold only the columns they select, group or aggregate, typed as a row types them, with a joined column named by its join alias (`alias.column`). The response omits their `$id`, `$sequence`, `$createdAt`, `$updatedAt`, `$permissions`, `$databaseId` and `$tableId` unless they select or group it, and those of a right or full join row that no row of this table matched. SDK row models fill omitted system columns with empty values.
      *
      * @param {string} params.databaseId - Database ID.
      * @param {string} params.tableId - Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/products/databases/tables#create-table).
@@ -537,7 +538,7 @@ export class TablesDB {
     /**
      * Get a list of all the user's rows in a given table. You can use the query params to filter your results.
      *
-     * Rows returned by aggregate, groupBy or distinct queries hold only the columns they select, group or aggregate, typed as a row types them, with a joined column named by its join alias (`alias.column`). They have no `$id`, `$sequence`, `$createdAt`, `$updatedAt`, `$permissions`, `$databaseId` or `$tableId` unless they select or group it, and neither does a right or full join row that no row of this table matched.
+     * Rows returned by aggregate, groupBy or distinct queries hold only the columns they select, group or aggregate, typed as a row types them, with a joined column named by its join alias (`alias.column`). The response omits their `$id`, `$sequence`, `$createdAt`, `$updatedAt`, `$permissions`, `$databaseId` and `$tableId` unless they select or group it, and those of a right or full join row that no row of this table matched. SDK row models fill omitted system columns with empty values.
      *
      * @param {string} databaseId - Database ID.
      * @param {string} tableId - Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/products/databases/tables#create-table).
@@ -621,8 +622,8 @@ export class TablesDB {
             );
         }
         const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows'
-            .replace('{databaseId}', encodeURIComponent(String(databaseId)))
-            .replace('{tableId}', encodeURIComponent(String(tableId)));
+            .replace('{databaseId}', encodePath(databaseId))
+            .replace('{tableId}', encodePath(tableId));
         const apiPayload: Payload = {};
         if (typeof queries !== 'undefined') {
             apiPayload['queries'] = queries;
@@ -806,8 +807,8 @@ export class TablesDB {
             throw new AppwriteException('Missing required parameter: "data"');
         }
         const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows'
-            .replace('{databaseId}', encodeURIComponent(String(databaseId)))
-            .replace('{tableId}', encodeURIComponent(String(tableId)));
+            .replace('{databaseId}', encodePath(databaseId))
+            .replace('{tableId}', encodePath(tableId));
         const apiPayload: Payload = {};
         if (typeof rowId !== 'undefined') {
             apiPayload['rowId'] = rowId;
@@ -957,8 +958,8 @@ export class TablesDB {
             );
         }
         const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows/query'
-            .replace('{databaseId}', encodeURIComponent(String(databaseId)))
-            .replace('{tableId}', encodeURIComponent(String(tableId)));
+            .replace('{databaseId}', encodePath(databaseId))
+            .replace('{tableId}', encodePath(tableId));
         const apiPayload: Payload = {};
         if (typeof queries !== 'undefined') {
             apiPayload['queries'] = queries;
@@ -1111,9 +1112,9 @@ export class TablesDB {
             throw new AppwriteException('Missing required parameter: "rowId"');
         }
         const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows/{rowId}'
-            .replace('{databaseId}', encodeURIComponent(String(databaseId)))
-            .replace('{tableId}', encodeURIComponent(String(tableId)))
-            .replace('{rowId}', encodeURIComponent(String(rowId)));
+            .replace('{databaseId}', encodePath(databaseId))
+            .replace('{tableId}', encodePath(tableId))
+            .replace('{rowId}', encodePath(rowId));
         const apiPayload: Payload = {};
         if (typeof queries !== 'undefined') {
             apiPayload['queries'] = queries;
@@ -1280,9 +1281,9 @@ export class TablesDB {
             throw new AppwriteException('Missing required parameter: "rowId"');
         }
         const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows/{rowId}'
-            .replace('{databaseId}', encodeURIComponent(String(databaseId)))
-            .replace('{tableId}', encodeURIComponent(String(tableId)))
-            .replace('{rowId}', encodeURIComponent(String(rowId)));
+            .replace('{databaseId}', encodePath(databaseId))
+            .replace('{tableId}', encodePath(tableId))
+            .replace('{rowId}', encodePath(rowId));
         const apiPayload: Payload = {};
         if (typeof data !== 'undefined') {
             apiPayload['data'] = data;
@@ -1453,9 +1454,9 @@ export class TablesDB {
             throw new AppwriteException('Missing required parameter: "rowId"');
         }
         const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows/{rowId}'
-            .replace('{databaseId}', encodeURIComponent(String(databaseId)))
-            .replace('{tableId}', encodeURIComponent(String(tableId)))
-            .replace('{rowId}', encodeURIComponent(String(rowId)));
+            .replace('{databaseId}', encodePath(databaseId))
+            .replace('{tableId}', encodePath(tableId))
+            .replace('{rowId}', encodePath(rowId));
         const apiPayload: Payload = {};
         if (typeof data !== 'undefined') {
             apiPayload['data'] = data;
@@ -1585,9 +1586,9 @@ export class TablesDB {
             throw new AppwriteException('Missing required parameter: "rowId"');
         }
         const apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows/{rowId}'
-            .replace('{databaseId}', encodeURIComponent(String(databaseId)))
-            .replace('{tableId}', encodeURIComponent(String(tableId)))
-            .replace('{rowId}', encodeURIComponent(String(rowId)));
+            .replace('{databaseId}', encodePath(databaseId))
+            .replace('{tableId}', encodePath(tableId))
+            .replace('{rowId}', encodePath(rowId));
         const apiPayload: Payload = {};
         if (typeof transactionId !== 'undefined') {
             apiPayload['transactionId'] = transactionId;
@@ -1731,10 +1732,10 @@ export class TablesDB {
         }
         const apiPath =
             '/tablesdb/{databaseId}/tables/{tableId}/rows/{rowId}/{column}/decrement'
-                .replace('{databaseId}', encodeURIComponent(String(databaseId)))
-                .replace('{tableId}', encodeURIComponent(String(tableId)))
-                .replace('{rowId}', encodeURIComponent(String(rowId)))
-                .replace('{column}', encodeURIComponent(String(column)));
+                .replace('{databaseId}', encodePath(databaseId))
+                .replace('{tableId}', encodePath(tableId))
+                .replace('{rowId}', encodePath(rowId))
+                .replace('{column}', encodePath(column));
         const apiPayload: Payload = {};
         if (typeof value !== 'undefined') {
             apiPayload['value'] = value;
@@ -1902,10 +1903,10 @@ export class TablesDB {
         }
         const apiPath =
             '/tablesdb/{databaseId}/tables/{tableId}/rows/{rowId}/{column}/increment'
-                .replace('{databaseId}', encodeURIComponent(String(databaseId)))
-                .replace('{tableId}', encodeURIComponent(String(tableId)))
-                .replace('{rowId}', encodeURIComponent(String(rowId)))
-                .replace('{column}', encodeURIComponent(String(column)));
+                .replace('{databaseId}', encodePath(databaseId))
+                .replace('{tableId}', encodePath(tableId))
+                .replace('{rowId}', encodePath(rowId))
+                .replace('{column}', encodePath(column));
         const apiPayload: Payload = {};
         if (typeof value !== 'undefined') {
             apiPayload['value'] = value;

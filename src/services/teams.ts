@@ -3,6 +3,7 @@ import {
     Client,
     type Payload,
     applyDefaults,
+    encodePath,
 } from '../client';
 import type { Models } from '../models';
 
@@ -271,7 +272,7 @@ export class Teams {
         }
         const apiPath = '/teams/{teamId}'.replace(
             '{teamId}',
-            encodeURIComponent(String(teamId)),
+            encodePath(teamId),
         );
         const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
@@ -358,7 +359,7 @@ export class Teams {
         }
         const apiPath = '/teams/{teamId}'.replace(
             '{teamId}',
-            encodeURIComponent(String(teamId)),
+            encodePath(teamId),
         );
         const apiPayload: Payload = {};
         if (typeof name !== 'undefined') {
@@ -430,7 +431,7 @@ export class Teams {
         }
         const apiPath = '/teams/{teamId}'.replace(
             '{teamId}',
-            encodeURIComponent(String(teamId)),
+            encodePath(teamId),
         );
         const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
@@ -507,7 +508,7 @@ export class Teams {
         }
         const apiPath = '/teams/{teamId}/installations'.replace(
             '{teamId}',
-            encodeURIComponent(String(teamId)),
+            encodePath(teamId),
         );
         const apiPayload: Payload = {};
         if (typeof queries !== 'undefined') {
@@ -628,7 +629,7 @@ export class Teams {
         }
         const apiPath = '/teams/{teamId}/installations'.replace(
             '{teamId}',
-            encodeURIComponent(String(teamId)),
+            encodePath(teamId),
         );
         const apiPayload: Payload = {};
         if (typeof appId !== 'undefined') {
@@ -727,11 +728,8 @@ export class Teams {
             );
         }
         const apiPath = '/teams/{teamId}/installations/{installationId}'
-            .replace('{teamId}', encodeURIComponent(String(teamId)))
-            .replace(
-                '{installationId}',
-                encodeURIComponent(String(installationId)),
-            );
+            .replace('{teamId}', encodePath(teamId))
+            .replace('{installationId}', encodePath(installationId));
         const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -839,11 +837,8 @@ export class Teams {
             );
         }
         const apiPath = '/teams/{teamId}/installations/{installationId}'
-            .replace('{teamId}', encodeURIComponent(String(teamId)))
-            .replace(
-                '{installationId}',
-                encodeURIComponent(String(installationId)),
-            );
+            .replace('{teamId}', encodePath(teamId))
+            .replace('{installationId}', encodePath(installationId));
         const apiPayload: Payload = {};
         if (typeof authorizationDetails !== 'undefined') {
             apiPayload['authorizationDetails'] = authorizationDetails;
@@ -935,11 +930,8 @@ export class Teams {
             );
         }
         const apiPath = '/teams/{teamId}/installations/{installationId}'
-            .replace('{teamId}', encodeURIComponent(String(teamId)))
-            .replace(
-                '{installationId}',
-                encodeURIComponent(String(installationId)),
-            );
+            .replace('{teamId}', encodePath(teamId))
+            .replace('{installationId}', encodePath(installationId));
         const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1033,7 +1025,7 @@ export class Teams {
         }
         const apiPath = '/teams/{teamId}/memberships'.replace(
             '{teamId}',
-            encodeURIComponent(String(teamId)),
+            encodePath(teamId),
         );
         const apiPayload: Payload = {};
         if (typeof queries !== 'undefined') {
@@ -1234,7 +1226,7 @@ export class Teams {
         }
         const apiPath = '/teams/{teamId}/memberships'.replace(
             '{teamId}',
-            encodeURIComponent(String(teamId)),
+            encodePath(teamId),
         );
         const apiPayload: Payload = {};
         if (typeof email !== 'undefined') {
@@ -1354,11 +1346,8 @@ export class Teams {
             );
         }
         const apiPath = '/teams/{teamId}/memberships/{membershipId}'
-            .replace('{teamId}', encodeURIComponent(String(teamId)))
-            .replace(
-                '{membershipId}',
-                encodeURIComponent(String(membershipId)),
-            );
+            .replace('{teamId}', encodePath(teamId))
+            .replace('{membershipId}', encodePath(membershipId));
         const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1468,11 +1457,8 @@ export class Teams {
             throw new AppwriteException('Missing required parameter: "roles"');
         }
         const apiPath = '/teams/{teamId}/memberships/{membershipId}'
-            .replace('{teamId}', encodeURIComponent(String(teamId)))
-            .replace(
-                '{membershipId}',
-                encodeURIComponent(String(membershipId)),
-            );
+            .replace('{teamId}', encodePath(teamId))
+            .replace('{membershipId}', encodePath(membershipId));
         const apiPayload: Payload = {};
         if (typeof roles !== 'undefined') {
             apiPayload['roles'] = roles;
@@ -1570,11 +1556,8 @@ export class Teams {
             );
         }
         const apiPath = '/teams/{teamId}/memberships/{membershipId}'
-            .replace('{teamId}', encodeURIComponent(String(teamId)))
-            .replace(
-                '{membershipId}',
-                encodeURIComponent(String(membershipId)),
-            );
+            .replace('{teamId}', encodePath(teamId))
+            .replace('{membershipId}', encodePath(membershipId));
         const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1684,11 +1667,8 @@ export class Teams {
             throw new AppwriteException('Missing required parameter: "secret"');
         }
         const apiPath = '/teams/{teamId}/memberships/{membershipId}/status'
-            .replace('{teamId}', encodeURIComponent(String(teamId)))
-            .replace(
-                '{membershipId}',
-                encodeURIComponent(String(membershipId)),
-            );
+            .replace('{teamId}', encodePath(teamId))
+            .replace('{membershipId}', encodePath(membershipId));
         const apiPayload: Payload = {};
         if (typeof userId !== 'undefined') {
             apiPayload['userId'] = userId;
@@ -1778,7 +1758,7 @@ export class Teams {
         }
         const apiPath = '/teams/{teamId}/prefs'.replace(
             '{teamId}',
-            encodeURIComponent(String(teamId)),
+            encodePath(teamId),
         );
         const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
@@ -1846,7 +1826,7 @@ export class Teams {
         }
         const apiPath = '/teams/{teamId}/prefs'.replace(
             '{teamId}',
-            encodeURIComponent(String(teamId)),
+            encodePath(teamId),
         );
         const apiPayload: Payload = {};
         if (typeof prefs !== 'undefined') {

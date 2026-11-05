@@ -30,6 +30,7 @@ export type TrackingEventOptions = {
     referrer?: string;
     scrollDepth?: number; // 0-100 percentage
     engagementTime?: number; // seconds since the previous flush
+    interactive?: boolean; // false keeps telemetry from ending a bounce
 };
 
 export type TrackingOptions = {
@@ -216,6 +217,7 @@ export class Tracking {
                     screenWidth: this.viewportWidth(),
                     scrollDepth: options.scrollDepth,
                     engagementTime: options.engagementTime,
+                    interactive: options.interactive,
                     // The endpoint takes props as a flat alternating key/value list.
                     props: options.props
                         ? Object.entries(options.props).flatMap(
@@ -723,6 +725,7 @@ export class Tracking {
         this.track('scroll_depth', {
             url,
             scrollDepth: this.maxScrollDepth,
+            interactive: false,
         });
         this.maxScrollDepth = 0;
     }
@@ -759,6 +762,7 @@ export class Tracking {
             this.track('engagement_time', {
                 url,
                 engagementTime: seconds,
+                interactive: false,
             });
         }
         // NOTE: intentionally do NOT call startEngagement() here. flushEngagement

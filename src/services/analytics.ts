@@ -20,7 +20,8 @@ export class Analytics {
      * @param {number} params.scrollDepth - Scroll depth percentage 0-100.
      * @param {number} params.engagementTime - Engagement time in seconds, 0-4294967295.
      * @param {string[]} params.props - Custom string properties as a flat key=value list (max 32 entries, alternating key,value).
-     * @param {string} params.userId - Override user ID. Requires API-key auth with analytics.write scope.
+     * @param {boolean | null} params.interactive - Whether this event is a visitor interaction that ends a bounce. Set false for telemetry such as heartbeats or background syncs. Defaults to true for custom events and false for the automatic engagement, scroll and app lifecycle events. Ignored for views.
+     * @param {string} params.userId - Override user ID. Pass an opaque ID, not personal data such as an email. Requires API-key auth with analytics.write scope.
      * @param {string} params.ip - Override IP address. Requires API-key auth with analytics.write scope.
      * @param {string} params.userAgent - Override user agent. Requires API-key auth with analytics.write scope.
      * @throws {AppwriteException}
@@ -37,6 +38,7 @@ export class Analytics {
         scrollDepth?: number;
         engagementTime?: number;
         props?: string[];
+        interactive?: boolean | null;
         userId?: string;
         ip?: string;
         userAgent?: string;
@@ -54,7 +56,8 @@ export class Analytics {
      * @param {number} scrollDepth - Scroll depth percentage 0-100.
      * @param {number} engagementTime - Engagement time in seconds, 0-4294967295.
      * @param {string[]} props - Custom string properties as a flat key=value list (max 32 entries, alternating key,value).
-     * @param {string} userId - Override user ID. Requires API-key auth with analytics.write scope.
+     * @param {boolean | null} interactive - Whether this event is a visitor interaction that ends a bounce. Set false for telemetry such as heartbeats or background syncs. Defaults to true for custom events and false for the automatic engagement, scroll and app lifecycle events. Ignored for views.
+     * @param {string} userId - Override user ID. Pass an opaque ID, not personal data such as an email. Requires API-key auth with analytics.write scope.
      * @param {string} ip - Override IP address. Requires API-key auth with analytics.write scope.
      * @param {string} userAgent - Override user agent. Requires API-key auth with analytics.write scope.
      * @throws {AppwriteException}
@@ -72,6 +75,7 @@ export class Analytics {
         scrollDepth?: number,
         engagementTime?: number,
         props?: string[],
+        interactive?: boolean | null,
         userId?: string,
         ip?: string,
         userAgent?: string,
@@ -89,6 +93,7 @@ export class Analytics {
                   scrollDepth?: number;
                   engagementTime?: number;
                   props?: string[];
+                  interactive?: boolean | null;
                   userId?: string;
                   ip?: string;
                   userAgent?: string;
@@ -104,6 +109,7 @@ export class Analytics {
             number?,
             number?,
             string[]?,
+            (boolean | null)?,
             string?,
             string?,
             string?,
@@ -120,6 +126,7 @@ export class Analytics {
             scrollDepth?: number;
             engagementTime?: number;
             props?: string[];
+            interactive?: boolean | null;
             userId?: string;
             ip?: string;
             userAgent?: string;
@@ -141,6 +148,7 @@ export class Analytics {
                 scrollDepth?: number;
                 engagementTime?: number;
                 props?: string[];
+                interactive?: boolean | null;
                 userId?: string;
                 ip?: string;
                 userAgent?: string;
@@ -157,9 +165,10 @@ export class Analytics {
                 scrollDepth: rest[6] as number,
                 engagementTime: rest[7] as number,
                 props: rest[8] as string[],
-                userId: rest[9] as string,
-                ip: rest[10] as string,
-                userAgent: rest[11] as string,
+                interactive: rest[9] as boolean | null,
+                userId: rest[10] as string,
+                ip: rest[11] as string,
+                userAgent: rest[12] as string,
             };
         }
 
@@ -173,6 +182,7 @@ export class Analytics {
         const scrollDepth = params.scrollDepth;
         const engagementTime = params.engagementTime;
         const props = params.props;
+        const interactive = params.interactive;
         const userId = params.userId;
         const ip = params.ip;
         const userAgent = params.userAgent;
@@ -219,6 +229,9 @@ export class Analytics {
         }
         if (typeof props !== 'undefined') {
             apiPayload['props'] = props;
+        }
+        if (typeof interactive !== 'undefined') {
+            apiPayload['interactive'] = interactive;
         }
         if (typeof userId !== 'undefined') {
             apiPayload['userId'] = userId;

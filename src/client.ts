@@ -455,6 +455,7 @@ class Client {
         jwt: string;
         bearer: string;
         locale: string;
+        environment: string;
         session: string;
         cookie: string;
         impersonateuserid: string;
@@ -469,6 +470,7 @@ class Client {
         jwt: '',
         bearer: '',
         locale: '',
+        environment: '',
         session: '',
         cookie: '',
         impersonateuserid: '',
@@ -482,8 +484,8 @@ class Client {
         'x-sdk-name': 'Web',
         'x-sdk-platform': 'client',
         'x-sdk-language': 'web',
-        'x-sdk-version': '29.2.0',
-        'X-Appwrite-Response-Format': '2.6.2',
+        'x-sdk-version': '29.3.0-rc.1',
+        'X-Appwrite-Response-Format': '2.7.0',
     };
 
     /**
@@ -656,6 +658,20 @@ class Client {
         return this;
     }
     /**
+     * Set Environment
+     *
+     * The ID of the project environment to act in, alongside the project ID. Used with Appwrite Cloud projects that have environments.
+     *
+     * @param value string
+     *
+     * @return {this}
+     */
+    setEnvironment(value: string): this {
+        this.headers['X-Appwrite-Environment'] = value;
+        this.config.environment = value;
+        return this;
+    }
+    /**
      * Set Session
      *
      * The user session to authenticate with
@@ -786,6 +802,12 @@ class Client {
                     '&jwt=' + encodeURIComponent(this.config.jwt as string);
             }
 
+            if (this.config.environment) {
+                queryParams +=
+                    '&environment=' +
+                    encodeURIComponent(this.config.environment);
+            }
+
             const url =
                 this.config.endpointRealtime + '/realtime?' + queryParams;
 
@@ -877,8 +899,12 @@ class Client {
                                 window.localStorage.getItem('cookieFallback') ??
                                     '{}',
                             );
-                            session =
-                                cookie?.[`a_session_${this.config.project}`];
+                            // An environment's session is named by its project and environment IDs.
+                            const { project, environment } = this.config;
+                            const name = environment
+                                ? `a_session_${project}_env_${environment}`
+                                : `a_session_${project}`;
+                            session = cookie?.[name];
                         }
                         if (session && !messageData?.user) {
                             this.realtime.socket?.send(

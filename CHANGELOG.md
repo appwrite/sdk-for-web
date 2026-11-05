@@ -1,5 +1,13 @@
 # Change Log
 
+## 29.3.0-rc.1
+
+* Added: optional `interactive` param on `analytics.createEvent` to mark an event as telemetry that does not end a bounce
+* Updated: the tracker sends `scroll_depth` and `engagement_time` with `interactive: false`
+* Added: `client.setEnvironment` to act in a project environment; realtime, file and avatar URLs carry it
+* Added: `OAuthProvider.Vipps`
+* Updated: requests send `X-Appwrite-Response-Format: 2.7.0`; the SDK targets Appwrite 2.7.x
+
 ## 29.2.0
 
 * Updated: requests send `X-Appwrite-Response-Format: 2.6.2`; the SDK targets Appwrite 2.6.x

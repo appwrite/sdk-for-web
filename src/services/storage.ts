@@ -693,7 +693,8 @@ export class Storage {
     }
 
     /**
-     * Get a file preview image. Currently, this method supports preview for image files (jpg, png, and gif), other supported formats, like pdf, docs, slides, and spreadsheets, will return the file icon image. You can also pass query string arguments for cutting and resizing your preview image. Preview is supported only for image files smaller than 10MB.
+     * Get a file preview image. Currently, this method supports preview for image files (jpg, png, and gif), other supported formats, like pdf, docs, slides, and spreadsheets, will return the file icon image. You can also pass query string arguments for cutting and resizing your preview image. Set `output` to `auto` to receive avif or webp when the client's `Accept` header supports it, falling back to the original image format. Preview is supported only for image files smaller than 10MB.
+     *
      *
      * @param {string} params.bucketId - Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).
      * @param {string} params.fileId - File ID
@@ -707,7 +708,7 @@ export class Storage {
      * @param {number} params.opacity - Preview image opacity. Only works with images having an alpha channel (like png). Pass a number between 0 to 1.
      * @param {number} params.rotation - Preview image rotation in degrees. Pass an integer between -360 and 360.
      * @param {string} params.background - Preview image background color. Only works with transparent images (png). Use a valid HEX color, no # is needed for prefix.
-     * @param {ImageFormat} params.output - Output format type (jpeg, jpg, png, gif and webp).
+     * @param {ImageFormat} params.output - Output format type (jpeg, jpg, png, gif, webp, heic and avif). Pass auto to serve avif or webp when the client's Accept header supports it, falling back to the original format.
      * @param {string} params.token - File token for accessing this file.
      * @throws {AppwriteException}
      * @returns {string}
@@ -729,7 +730,8 @@ export class Storage {
         token?: string;
     }): string;
     /**
-     * Get a file preview image. Currently, this method supports preview for image files (jpg, png, and gif), other supported formats, like pdf, docs, slides, and spreadsheets, will return the file icon image. You can also pass query string arguments for cutting and resizing your preview image. Preview is supported only for image files smaller than 10MB.
+     * Get a file preview image. Currently, this method supports preview for image files (jpg, png, and gif), other supported formats, like pdf, docs, slides, and spreadsheets, will return the file icon image. You can also pass query string arguments for cutting and resizing your preview image. Set `output` to `auto` to receive avif or webp when the client's `Accept` header supports it, falling back to the original image format. Preview is supported only for image files smaller than 10MB.
+     *
      *
      * @param {string} bucketId - Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).
      * @param {string} fileId - File ID
@@ -743,7 +745,7 @@ export class Storage {
      * @param {number} opacity - Preview image opacity. Only works with images having an alpha channel (like png). Pass a number between 0 to 1.
      * @param {number} rotation - Preview image rotation in degrees. Pass an integer between -360 and 360.
      * @param {string} background - Preview image background color. Only works with transparent images (png). Use a valid HEX color, no # is needed for prefix.
-     * @param {ImageFormat} output - Output format type (jpeg, jpg, png, gif and webp).
+     * @param {ImageFormat} output - Output format type (jpeg, jpg, png, gif, webp, heic and avif). Pass auto to serve avif or webp when the client's Accept header supports it, falling back to the original format.
      * @param {string} token - File token for accessing this file.
      * @throws {AppwriteException}
      * @returns {string}

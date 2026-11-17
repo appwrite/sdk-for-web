@@ -1,5 +1,10 @@
 # Change Log
 
+## 29.3.1
+
+* Fixed: `Tracking` records `outbound_link` and `file_download` events on the current page; the destination stays in the `hostname` and `href` props
+* Fixed: `Tracking` and `tracker.js` send no events from automated browsers (`navigator.webdriver`, PhantomJS, Nightmare, Cypress)
+
 ## 29.3.0
 
 * Added: `Account.createDevice`, `getDevice`, `deleteDevice` and `updateDeviceSession`, and the `Device` model

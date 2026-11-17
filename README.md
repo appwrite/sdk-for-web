@@ -27,7 +27,7 @@ import { Client, Account } from 'appwrite';
 
 ### CDN
 
-Every release is published to `https://sdk.appwrite.io/web/29.3.0/`.
+Every release is published to `https://sdk.appwrite.io/web/29.3.1/`.
 
 #### ES modules
 
@@ -35,9 +35,9 @@ Each service, helper and enum is its own module, so the browser downloads only w
 
 ```html
 <script type="module">
-    import { Client } from 'https://sdk.appwrite.io/web/29.3.0/client.js';
-    import { Account } from 'https://sdk.appwrite.io/web/29.3.0/account.js';
-    import { OAuthProvider } from 'https://sdk.appwrite.io/web/29.3.0/enums/o-auth-provider.js';
+    import { Client } from 'https://sdk.appwrite.io/web/29.3.1/client.js';
+    import { Account } from 'https://sdk.appwrite.io/web/29.3.1/account.js';
+    import { OAuthProvider } from 'https://sdk.appwrite.io/web/29.3.1/enums/o-auth-provider.js';
 </script>
 ```
 
@@ -46,7 +46,7 @@ Each service, helper and enum is its own module, so the browser downloads only w
 Add the script before any code that uses the SDK. It exposes every export on the global `Appwrite` object:
 
 ```html
-<script src="https://sdk.appwrite.io/web/29.3.0/sdk.min.js"></script>
+<script src="https://sdk.appwrite.io/web/29.3.1/sdk.min.js"></script>
 <script>
     const { Client, Account } = Appwrite;
 </script>
@@ -61,7 +61,7 @@ Add the script before any code that uses the SDK. It exposes every export on the
 The script tag build is also available from jsDelivr:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/appwrite@29.3.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/appwrite@29.3.1"></script>
 ```
 
 ## Getting started

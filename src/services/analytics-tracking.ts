@@ -11,7 +11,8 @@ import type { Analytics } from './analytics';
  * ```
  *
  * All helpers respect `navigator.doNotTrack === '1'` by default; opt out with
- * `respectDoNotTrack: false` in the constructor options.
+ * `respectDoNotTrack: false` in the constructor options. Automated browsers
+ * (`navigator.webdriver`, PhantomJS, Nightmare, Cypress) never send events.
  *
  * Engagement time follows Plausible's model: rather than one total at unload,
  * a delta is emitted at every natural checkpoint of the visit (tab hidden, SPA
@@ -358,7 +359,8 @@ export class Tracking {
     /**
      * Enable click-based outbound link tracking. Detects anchor clicks that
      * navigate to a different origin and fires an `outbound_link` event
-     * (with `hostname` and `href` props) before the browser navigates.
+     * before the browser navigates. The event is recorded on the current page;
+     * the destination goes in the `hostname` and `href` props.
      */
     public enableAutoOutboundTracking(
         options: OutboundTrackingOptions = {},
@@ -382,7 +384,6 @@ export class Tracking {
                 return;
             }
             this.track('outbound_link', {
-                url: target.href,
                 props: { hostname: target.hostname, href: target.href },
             });
         };
@@ -408,7 +409,8 @@ export class Tracking {
     /**
      * Enable click-based download tracking. Detects anchor clicks that point
      * at a file whose extension appears in the configured list and fires a
-     * `file_download` event with `filename`, `extension` and `href` props.
+     * `file_download` event on the current page, with `filename`, `extension`
+     * and `href` props.
      */
     public enableAutoDownloadTracking(
         options: DownloadTrackingOptions = {},
@@ -442,7 +444,6 @@ export class Tracking {
                 return;
             }
             this.track('file_download', {
-                url: url.href,
                 props: { filename, extension, href: url.href },
             });
         };
@@ -623,13 +624,21 @@ export class Tracking {
     }
 
     private canTrack(): boolean {
-        if (!this.respectDoNotTrack) {
-            return true;
-        }
         if (typeof navigator === 'undefined') {
             return true;
         }
-        return navigator.doNotTrack !== '1';
+        // Plausible's automation check: test runners and headless browsers are not visitors.
+        const scope = globalThis as Record<string, unknown>;
+        if (
+            navigator.webdriver ||
+            scope._phantom ||
+            scope.callPhantom ||
+            scope.__nightmare ||
+            scope.Cypress
+        ) {
+            return false;
+        }
+        return !this.respectDoNotTrack || navigator.doNotTrack !== '1';
     }
 
     private currentPageUrl(): string {

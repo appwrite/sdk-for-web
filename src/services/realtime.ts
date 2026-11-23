@@ -25,6 +25,19 @@ export type RealtimeSubscription = {
      * Prefer `unsubscribe()` for per-subscription teardown and `Realtime.disconnect()` for full shutdown.
      */
     close: () => Promise<void>;
+
+    /**
+     * Resolves once the server has registered this subscription on the current
+     * connection, i.e. after the subscribe acknowledgement frame naming this
+     * subscription arrives. `subscribe()` only confirms the request was queued
+     * and `Realtime.onOpen()` only confirms the WebSocket handshake, so a
+     * snapshot read taken after either can miss writes committed before
+     * server-side registration. Await this before the initial read, and call
+     * it again after a reconnect (the SDK re-subscribes automatically) to
+     * await re-registration. Rejects if the subscription is removed before
+     * the server acknowledges it.
+     */
+    ready: () => Promise<void>;
 };
 
 export type RealtimeCallback<T = any> = {
@@ -49,6 +62,14 @@ export type RealtimeResponseEvent<T = any> = {
 export type RealtimeResponseConnected = {
     channels: string[];
     user?: object;
+};
+
+export type RealtimeResponseSubscribe = {
+    to: string;
+    success?: boolean;
+    subscriptions?: {
+        subscriptionId?: string;
+    }[];
 };
 
 export type RealtimeRequest = {
@@ -93,6 +114,7 @@ export class Realtime {
     private readonly TYPE_EVENT = 'event';
     private readonly TYPE_PONG = 'pong';
     private readonly TYPE_CONNECTED = 'connected';
+    private readonly TYPE_RESPONSE = 'response';
     private readonly DEBOUNCE_MS = 1;
     private readonly HEARTBEAT_INTERVAL = 20000; // 20 seconds in milliseconds
 
@@ -100,6 +122,17 @@ export class Realtime {
     private socket?: WebSocket;
     private activeSubscriptions = new Map<string, RealtimeCallback<any>>();
     private pendingSubscribes = new Map<string, RealtimeRequestSubscribeRow>();
+    // Subscription ids the server has acknowledged on the current connection.
+    // Cleared when the socket closes: registrations are gone server-side, and
+    // the re-connect path re-subscribes and re-acknowledges them.
+    private ackedSubscriptions = new Set<string>();
+    private readyWaiters = new Map<
+        string,
+        Array<{
+            resolve: () => void;
+            reject: (error: AppwriteException) => void;
+        }>
+    >();
     private pendingPresence?: Record<string, any>;
     private appConnected = false;
     private heartbeatTimer?: number;
@@ -285,6 +318,11 @@ export class Realtime {
                         return;
                     }
                     this.appConnected = false;
+                    // Registrations are gone server-side; the reconnect path
+                    // re-subscribes and re-acknowledges. Waiters stay pending
+                    // so a `ready()` called before the drop resolves on the
+                    // re-registration instead of a stale one.
+                    this.ackedSubscriptions.clear();
                     this.stopHeartbeat();
                     this.onCloseCallbacks.forEach((callback) => callback());
 
@@ -427,6 +465,8 @@ export class Realtime {
     public async disconnect(): Promise<void> {
         this.activeSubscriptions.clear();
         this.pendingSubscribes.clear();
+        this.ackedSubscriptions.clear();
+        this.rejectReadyWaiters();
         this.pendingPresence = undefined;
         this.appConnected = false;
         this.reconnect = false;
@@ -606,6 +646,8 @@ export class Realtime {
             }
             this.activeSubscriptions.delete(subscriptionId);
             this.pendingSubscribes.delete(subscriptionId);
+            this.ackedSubscriptions.delete(subscriptionId);
+            this.rejectReadyWaiters([subscriptionId]);
             this.sendUnsubscribeMessage([subscriptionId]);
         };
 
@@ -649,6 +691,22 @@ export class Realtime {
             }
         };
 
+        const ready = (): Promise<void> => {
+            if (!this.activeSubscriptions.has(subscriptionId)) {
+                return Promise.reject(
+                    new AppwriteException('Subscription is not active'),
+                );
+            }
+            if (this.ackedSubscriptions.has(subscriptionId)) {
+                return Promise.resolve();
+            }
+            return new Promise<void>((resolve, reject) => {
+                const waiters = this.readyWaiters.get(subscriptionId) ?? [];
+                waiters.push({ resolve, reject });
+                this.readyWaiters.set(subscriptionId, waiters);
+            });
+        };
+
         const close = async (): Promise<void> => {
             await unsubscribe();
             if (this.activeSubscriptions.size === 0) {
@@ -657,7 +715,7 @@ export class Realtime {
             }
         };
 
-        return { unsubscribe, update, close };
+        return { unsubscribe, update, close, ready };
     }
 
     /**
@@ -743,6 +801,9 @@ export class Realtime {
             case this.TYPE_PONG:
                 // Handle pong response if needed
                 break;
+            case this.TYPE_RESPONSE:
+                this.handleResponseMessage(message);
+                break;
         }
     }
 
@@ -797,6 +858,51 @@ export class Realtime {
         this.onErrorCallbacks.forEach((callback) =>
             callback(error, statusCode),
         );
+    }
+
+    private handleResponseMessage(message: RealtimeResponse): void {
+        const data = message.data as RealtimeResponseSubscribe | undefined;
+        if (!data || data.to !== 'subscribe') {
+            return;
+        }
+
+        const ids = (data.subscriptions ?? [])
+            .map((subscription) => subscription.subscriptionId)
+            .filter((id): id is string => typeof id === 'string');
+        if (ids.length > 0) {
+            ids.forEach((id) => this.acknowledgeSubscription(id));
+        } else {
+            // Servers that ack the batch without naming ids: release every
+            // waiter, they were all queued on the same subscribe frame.
+            this.readyWaiters.forEach((_waiters, id) =>
+                this.acknowledgeSubscription(id),
+            );
+        }
+    }
+
+    private acknowledgeSubscription(subscriptionId: string): void {
+        this.ackedSubscriptions.add(subscriptionId);
+        const waiters = this.readyWaiters.get(subscriptionId);
+        if (!waiters) {
+            return;
+        }
+        this.readyWaiters.delete(subscriptionId);
+        waiters.forEach((waiter) => waiter.resolve());
+    }
+
+    private rejectReadyWaiters(subscriptionIds?: Iterable<string>): void {
+        const ids = subscriptionIds ?? this.readyWaiters.keys();
+        for (const id of Array.from(ids)) {
+            const waiters = this.readyWaiters.get(id);
+            if (!waiters) {
+                continue;
+            }
+            this.readyWaiters.delete(id);
+            const error = new AppwriteException(
+                'Subscription was removed before the server acknowledged it',
+            );
+            waiters.forEach((waiter) => waiter.reject(error));
+        }
     }
 
     private handleResponseEvent(message: RealtimeResponse): void {
